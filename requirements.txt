@@ -1,0 +1,6 @@
+wheel==0.38.4
+setuptools==65.5.1
+annotated-types==0.6.0
+pydantic==2.6.1
+pydantic_core==2.16.2
+typing_extensions==4.9.0
