@@ -5,6 +5,7 @@ from enum import Enum
 from typing import Optional, Dict, Any, List, Callable
 from pydantic import BaseModel
 from autobotai_integrations.integration_schema import IntegrationSchema
+from autobotai_integrations.utils import list_of_unique_elements
 
 
 class AuthMethods(Enum):
@@ -52,14 +53,51 @@ class BaseSchema(IntegrationSchema):
 
 class BaseService:
 
-    def __init__(self, integration: dict):
-        pass
+    def __init__(self, ctx: dict, integration: dict):
+        """
+        Integration should have all the data regarding the integration
+        """
+        self.integration = integration
+        self.ctx = ctx
+
+    @staticmethod
+    def filter_bots(bots: list, data: dict) -> list:
+        return bots
+
+    @staticmethod
+    def test_integration(integration: dict) -> dict:
+        """
+        Returns a dictionary with the following keys:
+        - success: bool
+        - error: str
+        """
+        raise NotImplementedError()
 
     @staticmethod
     def get_schema() -> BaseSchema:
         raise NotImplementedError()
 
-    # TODO: Generate accountId if not given
+    @staticmethod
+    def get_all_python_sdk_clients():
+        raise NotImplementedError()
+
+    @classmethod
+    def get_details(cls):
+        return {
+            "automation_code": "",
+            "fetcher_code": "",
+            "fetcher_supported": ["code", "no_code"],
+            "listener_supported": False,
+            "automation_supported": ["communication", 'mutation'],
+            "clients": list_of_unique_elements(cls.get_all_python_sdk_clients()),
+            "supported_executor": "ecs",
+            "compliance_supported": False
+        }
+
+
+    def get_credentials(self):
+        raise NotImplementedError("To be implemented")
+
     def generate_steampipe_creds(self) -> SteampipeCreds:
         raise NotImplementedError()
 

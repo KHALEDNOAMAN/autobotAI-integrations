@@ -30,6 +30,12 @@ class IntegrationServiceFactory:
             details_list.append(temp)
         return details_list
 
+    def get_service(self, service, ctx, integration):
+        cls = self._services.get(service)
+        if not cls:
+            raise ValueError(service)
+        return cls(ctx, integration)
+
     @staticmethod
     def _get_subclasses():
         # get current working directory
