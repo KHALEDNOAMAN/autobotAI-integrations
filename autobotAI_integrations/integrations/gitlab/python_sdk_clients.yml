@@ -1,0 +1,5 @@
+- name: gitlab
+  import_library_names:
+    - gitlab
+  pip_package_names:
+    - python-gitlab

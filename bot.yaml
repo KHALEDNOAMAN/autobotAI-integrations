@@ -1,0 +1,88 @@
+bot:
+        _id: 65ffc3c45e274790d5599cc7
+        resource_type: bot
+        name: Test For IntegrationV2
+        arn: arn:bot::test-for-integrationv2-d3fD4e
+        cron_expression: null
+        topic: Test For IntegrationV2
+        subject: test-byamit-7dec1
+        description: null
+        links: null
+        category: Security
+        importance: High
+        examples: null
+        permissions: null
+        fetcher_id: arn:fetcher::testqafeb15
+        listener_id: null
+        evaluator_id: arn:evaluator::eval-test-for-integrationv2-F1Bfab
+        actions: []
+        tags: null
+        integration_type: aws
+        run_at: null
+        status: disabled
+        fleet_in_sync: true
+        fleet_id: null
+fetchers:
+        -
+                _id: 65cde2f0b914af57dddd53d3
+                resource_type: fetcher
+                name: testqafeb15
+                arn: arn:fetcher::testqafeb15
+                root_user_id: amit@shunyeka.com
+                user_id: amit@shunyeka.com
+                clients:
+                        - s3
+                code: |-
+                        import traceback
+
+                        def fetch(clients, test=False):
+                            s3_client = clients['s3']
+                            aws_response = s3_client.list_buckets()
+
+                            return_list = []
+                            for bucket in aws_response['Buckets']:
+                                bucket_region = s3_client.get_bucket_location(Bucket=bucket['Name']).get('LocationConstraint', 'us-east-1')
+                                if not bucket_region:
+                                    bucket_region = 'us-east-1'
+                                if bucket_region != s3_client.meta.region_name:
+                                    continue
+                                item_object = {
+                                    'id': bucket['Name'],
+                                    'name': bucket['Name']
+                                }
+                                return_list.append(item_object)
+
+                            return return_list
+                created_at: '2024-02-15T10:09:52.462000'
+                is_global: false
+                updated_at: '2024-02-16T06:28:13.553000'
+                integration_type: aws
+                data_schema: null
+                data_keys:
+                        -
+                                name: id
+                                type: str
+                        -
+                                name: name
+                                type: str
+                        -
+                                name: region
+                                type: str
+                type: code
+listeners: []
+evaluators:
+        -
+                _id: 65ffc3c35e274790d5599cc4
+                resource_type: evaluator
+                name: eval-Test For IntegrationV2
+                arn: arn:evaluator::eval-test-for-integrationv2-F1Bfab
+                root_user_id: amit@shunyeka.com
+                user_id: amit@shunyeka.com
+                integration_type: null
+                eval_details:
+                        code: null
+                        qb_rules: null
+                        preference: null
+                created_at: '2024-03-24T06:10:11.659000'
+                updated_at: '2024-03-24T06:10:11.659000'
+automations: []

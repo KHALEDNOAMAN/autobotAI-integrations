@@ -1,12 +1,17 @@
+import importlib
+import os
 import uuid
+from typing import List
 
-from autobotai_integrations.autobotai_integrations import BaseSchema, SteampipeCreds, RestAPICreds, SDKCreds, CLICreds, \
-    BaseService
+from pydantic import Field
+
+from autobotAI_integrations import BaseSchema, SteampipeCreds, RestAPICreds, SDKCreds, CLICreds, \
+    BaseService, ConnectionInterfaces, PayloadTask, SDKClient
 
 
 class GitlabIntegration(BaseSchema):
     base_url: str
-    token: str
+    token: str = Field(default=None, exclude=True)
 
     def __init__(self, **kwargs):
         kwargs["accountId"] = str(uuid.uuid4().hex)
@@ -15,41 +20,65 @@ class GitlabIntegration(BaseSchema):
 
 class GitlabService(BaseService):
 
-    def __init__(self, ctx, integration: dict):
+    def __init__(self, ctx, integration: GitlabIntegration):
         super().__init__(ctx, integration)
-        self.base_url = integration["base_url"]
-        self.token = integration["token"]
+
+    def get_forms(self):
+        return {
+            "token_form": {
+                "fields": [
+                    {
+                        "name": "base_url",
+                        "type": "text",
+                        "label": "Gitlab Base URL",
+                        "default": "https://gitlab.com/",
+                        "required": True
+                    },
+                    {
+                        "name": "token",
+                        "type": "password",
+                        "label": "Gitlab Token",
+                        "placeholder": "Enter the gitlab token",
+                        "required": True
+                    }
+                ],
+                "submit_label": "Submit"
+            }
+        }
 
     @staticmethod
     def get_schema():
         return GitlabIntegration
 
     @staticmethod
-    def test_integration(integration: dict):
-        return {'success': True}
+    def supported_connection_interfaces():
+        return [ConnectionInterfaces.REST_API, ConnectionInterfaces.CLI, ConnectionInterfaces.PYTHON_SDK, ConnectionInterfaces.STEAMPIPE]
 
-    def get_credentials(self):
-        return {
-            "base_url": self.base_url,
-            "token": self.token
-        }
+    def _test_integration(self, integration: dict):
+        creds = self.generate_rest_api_creds()
+        try:
+            response = BaseService.generic_rest_api_call(creds, "get", "/api/v4/user")
+            print(response)
+            return {'success': True}
+        except BaseException as e:
+            return {'success': False}
 
-    @staticmethod
-    def get_all_python_sdk_clients():
-        clients = {
-            "gitlab": {
-                "name": "gitlab",
-                "code": "gitlab.Gitlab(os.getenv('GITLAB_ADDR'), private_token=os.getenv('GITLAB_TOKEN'))",
-                "package_names": ["python-gitlab"],
-                "library_names": ["gitlab"]
+    def build_python_exec_combinations_hook(self, payload_task: PayloadTask,
+                                            client_definitions: List[SDKClient]) -> list:
+        gitlab = importlib.import_module(client_definitions[0].import_library_names[0], package=None)
+
+        return [
+            {
+                "clients": {
+                    "gitlab": gitlab.Gitlab(os.getenv('GITLAB_ADDR'), private_token=os.getenv('GITLAB_TOKEN'))
+                }
             }
-        }
-        return clients
+        ]
 
     def generate_steampipe_creds(self) -> SteampipeCreds:
         envs = {
-            "GITLAB_ADDR": self.base_url,
-            "GITLAB_TOKEN": self.token,
+            "GITLAB_ADDR": self.integration.base_url,
+            "GITLAB_TOKEN": self.integration.token,
         }
         conf_path = "~/.steampipe/config/gitlab.spc"
 
@@ -58,26 +87,25 @@ class GitlabService(BaseService):
 
     def generate_rest_api_creds(self) -> RestAPICreds:
         headers = {
-            "Authorization": f"Bearer {self.token}"
+            "Authorization": f"Bearer {self.integration.token}"
         }
-        return RestAPICreds(api_url=self.base_url, token=self.token, headers=headers)
+        return RestAPICreds(api_url=self.integration.base_url, token=self.integration.token, headers=headers)
 
     def generate_python_sdk_creds(self) -> SDKCreds:
         package_names = ["python-gitlab"]
         library_names = ["gitlab"]
         envs = {
-            "GITLAB_ADDR": self.base_url,
-            "GITLAB_TOKEN": self.token,
+            "GITLAB_ADDR": self.integration.base_url,
+            "GITLAB_TOKEN": self.integration.token,
         }
-        clients = self.get_all_python_sdk_clients()
-        return SDKCreds(library_names=library_names, clients=clients, envs=envs, package_names=package_names)
+        return SDKCreds(library_names=library_names, envs=envs, package_names=package_names)
 
     def generate_cli_creds(self) -> CLICreds:
         installer_check = "brew"
         install_command = "brew list glab || brew install glab"
         envs = {
-            "GITLAB_HOST": self.base_url,
-            "GITLAB_TOKEN": self.token,
+            "GITLAB_HOST": self.integration.base_url,
+            "GITLAB_TOKEN": self.integration.token,
         }
         return CLICreds(installer_check=installer_check, install_command=install_command, envs=envs)
 

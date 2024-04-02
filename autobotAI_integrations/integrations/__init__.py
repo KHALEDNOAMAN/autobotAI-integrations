@@ -2,7 +2,10 @@ import importlib
 import platform
 import inspect
 import os
-from autobotai_integrations.autobotai_integrations import BaseService
+
+from pydantic import BaseModel
+
+from autobotAI_integrations import BaseService
 
 
 class IntegrationServiceFactory:
@@ -30,31 +33,39 @@ class IntegrationServiceFactory:
             details_list.append(temp)
         return details_list
 
-    def get_service(self, service, ctx, integration):
-        cls = self._services.get(service)
+    def get_service(self, ctx, integration):
+        cls = self._services.get(integration.cspName)
         if not cls:
-            raise ValueError(service)
+            raise ValueError(integration.cspName)
+        if isinstance(integration, BaseModel) and not isinstance(integration, cls.get_schema()):
+            return cls(ctx, integration.model_dump())
         return cls(ctx, integration)
+
 
     @staticmethod
     def _get_subclasses():
         # get current working directory
         directory = os.path.dirname(os.path.abspath(__file__))
         # get folder names
-        integrations_list = [f.name for f in os.scandir(directory) if f.is_file() and f.name.endswith(".py")]
+        integrations_list = [
+            f.name 
+            for f in os.scandir(directory) 
+            if f.is_dir() 
+            and not f.name.startswith(".")
+            and not f.name.startswith("__")
+        ]
 
         system_os = platform.system()
         if system_os == "Windows":
             sep = "\\"
         else:
             sep = "/"
-
-        # import each file in each folder where the file ends with 'service.py'
+        # import integration service folder
         for filename in integrations_list:
-            importlib.import_module(f"autobotai_integrations.integrations.{filename[:-3]}", package=None)
+            importlib.import_module(f"autobotAI_integrations.integrations.{filename}", package=None)
         result = []
         for x in BaseService.__subclasses__():
-            module_name = inspect.getfile(x).split(sep)[-1][:-3]
+            module_name = os.path.dirname(inspect.getfile(x)).split(sep)[-1]
             subclass = x
             result.append({"module_name": module_name, "subclass": subclass})
         return result
@@ -66,4 +77,3 @@ class InvalidIntegration(Exception):
 
 
 integration_service_factory = IntegrationServiceFactory()
-print(integration_service_factory.get_services())
