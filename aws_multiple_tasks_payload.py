@@ -7,9 +7,9 @@ import uuid
 aws_tokens = [
     # First account credentials
     {
-        "AWS_ACCESS_KEY_ID": "",
-        "AWS_SECRET_ACCESS_KEY": "",
-        "AWS_SESSION_TOKEN": ""
+        "AWS_ACCESS_KEY_ID":"",
+        "AWS_SECRET_ACCESS_KEY":"",
+        "AWS_SESSION_TOKEN":""
     },
     # Second account credentials
     {
@@ -19,7 +19,7 @@ aws_tokens = [
     }
 ]
 
-def get_payload_token():
+def get_aws_payload_token():
     for i in range(2):
         aws_json = {
             "userId": "amit@shunyeka.com*",
@@ -45,14 +45,23 @@ def get_payload_token():
         }
         yield aws_json
 
+
 def get_two_tasks_with_different_credentials():
     payload_dict = {"job_id": uuid.uuid4().hex, "tasks": []}
-    for token in get_payload_token():
-        # payload = generate_aws_python_payload(token)
-        payload = generate_aws_steampipe_payload(token)
-        payload_dict['tasks'].append(payload.tasks[0])
+    for token in get_aws_payload_token():
+        payload1 = generate_aws_python_payload(token)
+        payload2 = generate_aws_steampipe_payload(token)
+        payload_dict['tasks'].append(payload1.tasks[0])
+        payload_dict["tasks"].append(payload2.tasks[0])
+    
+    gitlab_payload1 = generate_gitlab_python_payload()
+    gitlab_payload2 = generate_gitlab_steampipe_payload()
+    payload_dict['tasks'].append(gitlab_payload1.tasks[0])
+    payload_dict["tasks"].append(gitlab_payload2.tasks[0])
+
     payload = Payload(**payload_dict)
     return payload
 
 final_payload = get_two_tasks_with_different_credentials()
+
 handle(final_payload)
