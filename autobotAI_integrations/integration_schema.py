@@ -3,7 +3,7 @@ from typing import Optional
 from pydantic import BaseModel
 
 
-class ConnectionTypes(Enum):
+class ConnectionTypes(str, Enum):
     DIRECT = "DIRECT"
     AGENT = "AGENT"
 
@@ -11,7 +11,7 @@ class ConnectionTypes(Enum):
         return self.value
 
 
-class IntegrationStates(Enum):
+class IntegrationStates(str, Enum):
     ACTIVE = "ACTIVE"  # Accessible
     INACTIVE = "INACTIVE"  # In-Accessible
     AGENT_UPDATE_REQUIRED = "AGENT_UPDATE_REQUIRED"
