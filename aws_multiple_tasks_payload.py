@@ -48,12 +48,15 @@ def get_aws_payload_token():
 
 def get_two_tasks_with_different_credentials():
     payload_dict = {"job_id": uuid.uuid4().hex, "tasks": []}
+    
+    # Setting AWS Tasks
     for token in get_aws_payload_token():
         payload1 = generate_aws_python_payload(token)
         payload2 = generate_aws_steampipe_payload(token)
         payload_dict['tasks'].append(payload1.tasks[0])
         payload_dict["tasks"].append(payload2.tasks[0])
     
+    # Setting UP Gitlab Tasks
     gitlab_payload1 = generate_gitlab_python_payload()
     gitlab_payload2 = generate_gitlab_steampipe_payload()
     payload_dict['tasks'].append(gitlab_payload1.tasks[0])
