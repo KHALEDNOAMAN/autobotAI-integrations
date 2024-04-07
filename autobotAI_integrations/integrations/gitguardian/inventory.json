@@ -1,0 +1,86 @@
+{
+    "gitguardian": [
+        {
+            "name": "gitguardian_audit_log",
+            "all_columns":  [
+                "action_type",
+                "api_token_id",
+                "data",
+                "date",
+                "event_name",
+                "id",
+                "ip_address",
+                "member_email",
+                "member_id",
+                "member_name"
+            ],
+            "included": [],
+            "excluded": [],
+            "aliases": [],
+            "inventory_supported": false
+        },          
+        {
+            "name": "gitguardian_member",
+            "all_columns": [
+                "email",
+                "id",
+                "name",
+                "role"
+            ],
+            "included": [],
+            "excluded": [],
+            "aliases": [],
+            "inventory_supported": false
+        },
+        {
+            "name": "gitguardian_secret_incident",
+            "all_columns": [
+                "assignee_email",
+                "date",
+                "detector_display_name",
+                "detector_family",
+                "detector_group_display_name",
+                "detector_group_name",
+                "detector_name",
+                "detector_nature",
+                "gitguardian_url",
+                "id",
+                "ignore_reason",
+                "ignored_at",
+                "occurrences_count",
+                "regression",
+                "resolved_at",
+                "secret_hash",
+                "secret_revoked",
+                "severity",
+                "share_url",
+                "status",
+                "tags",
+                "validity"
+            ],
+            "included": [],
+            "excluded": [],
+            "aliases": [],
+            "inventory_supported": false 
+        },
+        {
+            "name": "gitguardian_source",
+            "all_columns": [
+                "closed_incidents_count",
+                "full_name",
+                "health",
+                "id",
+                "last_scan_date",
+                "last_scan_status",
+                "open_incidents_count",
+                "type",
+                "url",
+                "visibility"
+            ],
+            "included": [],
+            "excluded": [],
+            "aliases": [],
+            "inventory_supported": false
+        }   
+    ]
+}
