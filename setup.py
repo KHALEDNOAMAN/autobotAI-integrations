@@ -7,6 +7,13 @@ setup(
     author_email='hello@shunyeka.com',
     description='A python package that contains all the integrations for autobotAI',
     packages=find_packages(),
+    install_requires=[
+        "boto3",
+        "botocore",
+        "pydantic",
+        "PyYAML",
+        "pydash"
+    ],
     package_data={'': ['integrations/*/inventory.json', 'integrations/*/python_sdk_clients.yml']},
     classifiers=[
         'License :: Other/Proprietary License'

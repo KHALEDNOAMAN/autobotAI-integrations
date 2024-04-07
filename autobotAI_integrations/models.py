@@ -6,11 +6,14 @@ from pydantic import BaseModel, ConfigDict
 from autobotAI_integrations import IntegrationSchema
 
 
-class ConnectionInterfaces(Enum):
+class ConnectionInterfaces(str, Enum):
     STEAMPIPE = 'steampipe'
     PYTHON_SDK = 'python_sdk'
     REST_API = 'rest_api'
     CLI = 'cli'
+
+    def __str__(self):
+        return self.value
 
 
 class BaseCreds(BaseModel):

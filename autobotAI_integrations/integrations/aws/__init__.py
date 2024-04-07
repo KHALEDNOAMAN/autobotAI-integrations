@@ -119,7 +119,7 @@ class AWSService(BaseService):
         regional_clients = pydash.filter_(client_definitions, lambda x: x.is_regional is True)
         if global_clients:
             for client in global_clients:
-                built_clients["global"].append(boto3.client(client.name))
+                built_clients["global"][client.name] = boto3.client(client.name)
         active_regions = self.integration.activeRegions
         if not active_regions:
             active_regions = ["us-east-1"]
