@@ -13,6 +13,19 @@ gcp_json = {
     "userId": "amit@shunyeka.com*",
     "accountId": "175c0fa813244bc5a1aa6264e7ba20cc",
     # Mention GC Keys
+    "project_id": "",
+    "credentials": {
+        "type": "service_account",
+        "project_id": "your-project-id",
+        "private_key_id": "your-private-key-id",
+        "private_key": "-----BEGIN PRIVATE KEY-----\nYourPrivateKey\n-----END PRIVATE KEY-----\n",
+        "client_email": "your-service-account@your-project-id.iam.gserviceaccount.com",
+        "client_id": "your-client-id",
+        "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+        "token_uri": "https://oauth2.googleapis.com/token",
+        "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+        "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/your-service-account%40your-project-id.iam.gserviceaccount.com"
+    },
     "integrationState": "INACTIVE",
     "cspName": "gcp",
     "alias": "test-gcp-integrationsv2",
@@ -106,11 +119,11 @@ def generate_gcp_python_payload(gcp_json=gcp_json):
 if __name__ == '__main__':
     gcp_steampipe_payload = generate_gcp_steampipe_payload(gcp_json)
     print(gcp_steampipe_payload.model_dump_json(indent=2))
-    # for task in gcp_steampipe_payload.tasks:
-    #     integration = IntegrationSchema.model_validate(task.context.integration)
-    #     service = integration_service_factory.get_service(None, integration)
-    #     output = service.execute_steampipe_task(task, job_type="query")
-    #     print(output)
+    for task in gcp_steampipe_payload.tasks:
+        integration = IntegrationSchema.model_validate(task.context.integration)
+        service = integration_service_factory.get_service(None, integration)
+        output = service.execute_steampipe_task(task, job_type="query")
+        print(output)
 
     # gcp_python_payload = generate_gcp_python_payload(gcp_json)
     # for task in python_payload.tasks:
