@@ -4,14 +4,19 @@ import json
 import os
 from pydantic import Field
 from functools import wraps
+import importlib
+import sys
 
-from autobotAI_integrations import BaseService, list_of_unique_elements, PayloadTask
+from autobotAI_integrations import list_of_unique_elements
 from autobotAI_integrations.models import *
 from autobotAI_integrations.models import List
+from autobotAI_integrations import BaseSchema, SteampipeCreds, RestAPICreds, SDKCreds, CLICreds, \
+    BaseService, ConnectionInterfaces, PayloadTask, SDKClient
 
 
 class GCPSDKClient(SDKClient):
     pass
+
 
 class GCPCredentials(BaseModel):
     model_config = ConfigDict(frozen=True)
@@ -48,7 +53,7 @@ class GCPService(BaseService):
         if not isinstance(integration, GCPIntegration):
             integration = GCPIntegration(**integration)
         super().__init__(ctx, integration)
-
+    
     def _test_integration(self, integration: dict) -> dict:
         pass
 
@@ -93,10 +98,25 @@ class GCPService(BaseService):
     def build_python_exec_combinations_hook(
         self, payload_task: PayloadTask, client_definitions: List[SDKClient]
     ) -> list:
-        pass
+        clients_classes = dict()
+        for client in client_definitions:
+            try:
+                client_module = importlib.import_module(client.module, package=None)
+                if hasattr(client_module, client.class_name):
+                    cls = getattr(client_module, client.class_name)
+                    clients_classes[client.class_name] = cls()
+            except BaseException as e:
+                print(e)
+                continue
+        return [
+            {
+                "clients": clients_classes
+            }
+        ]
 
     def generate_python_sdk_creds(self, requested_clients=None) -> SDKCreds:
-        pass
+        envs = self._temp_credentials()
+        return SDKCreds(creds={}, envs=envs)
 
     @staticmethod
     def supported_connection_interfaces():

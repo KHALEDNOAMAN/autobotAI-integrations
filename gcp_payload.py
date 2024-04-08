@@ -57,6 +57,16 @@ connection "gcp" {
 }
 """
 
+gcp_code = """
+def executor(context):
+    clients = context[\'clients\']
+    integration_details = context[\'integration\']
+    project_client = clients["ProjectsClient"]
+    project = project_client.get_project(name="projects/totemic-chalice-419613")
+    result = [{"result": project}]
+    return result
+"""
+
 context = {
     "execution_details": {
         "execution_id": "660275c610755f71b634e572",
@@ -97,8 +107,8 @@ def generate_gcp_python_payload(gcp_json=gcp_json):
         "task_id": uuid.uuid4().hex,
         "creds": creds,
         "connection_interface": ConnectionInterfaces.PYTHON_SDK,
-        "executable": "",
-        "clients": ["s3"],
+        "executable": gcp_code,
+        "clients": ["ProjectsClient"],
         "params": {},
         "node_details": {"filter_resources": False},
         "context": PayloadTaskContext(**context, **{"integration": gcp_integration}),
@@ -112,17 +122,17 @@ def generate_gcp_python_payload(gcp_json=gcp_json):
     return payload
 
 if __name__ == '__main__':
-    gcp_steampipe_payload = generate_gcp_steampipe_payload(gcp_json)
-    print(gcp_steampipe_payload.model_dump_json(indent=2))
-    for task in gcp_steampipe_payload.tasks:
-        integration = IntegrationSchema.model_validate(task.context.integration)
-        service = integration_service_factory.get_service(None, integration)
-        output = service.execute_steampipe_task(task, job_type="query")
-        print(output)
-
-    # gcp_python_payload = generate_gcp_python_payload(gcp_json)
-    # for task in python_payload.tasks:
+    # gcp_steampipe_payload = generate_gcp_steampipe_payload(gcp_json)
+    # print(gcp_steampipe_payload.model_dump_json(indent=2))
+    # for task in gcp_steampipe_payload.tasks:
     #     integration = IntegrationSchema.model_validate(task.context.integration)
     #     service = integration_service_factory.get_service(None, integration)
-    #     output = service.python_sdk_processor(payload_task=task)
+    #     output = service.execute_steampipe_task(task, job_type="query")
     #     print(output)
+
+    gcp_python_payload = generate_gcp_python_payload(gcp_json)
+    for task in gcp_python_payload.tasks:
+        integration = IntegrationSchema.model_validate(task.context.integration)
+        service = integration_service_factory.get_service(None, integration)
+        output = service.python_sdk_processor(payload_task=task)
+        print(output)
