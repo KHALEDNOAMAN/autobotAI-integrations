@@ -151,13 +151,12 @@ class AWSService(BaseService):
                 combo["params"] = payload_task.params
                 combo["context"] = payload_task.context
                 combinations.append(combo)
+        print(combinations)
         return combinations
 
     def generate_python_sdk_creds(self, requested_clients=None) -> SDKCreds:
         creds = self._temp_credentials()
-        clients = self.get_all_python_sdk_clients()
-        package_names = None
-        return SDKCreds(library_names=[], clients=[], envs=creds, package_names=package_names)
+        return SDKCreds(envs=creds)
 
     @staticmethod
     def supported_connection_interfaces():

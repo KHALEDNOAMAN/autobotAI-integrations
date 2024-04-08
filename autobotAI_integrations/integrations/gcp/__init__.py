@@ -7,17 +7,16 @@ from functools import wraps
 
 from autobotAI_integrations import BaseService, list_of_unique_elements, PayloadTask
 from autobotAI_integrations.models import *
-from autobotAI_integrations.models import Dict, List
+from autobotAI_integrations.models import List
 
 
 class GCPSDKClient(SDKClient):
     pass
 
-
 class GCPCredentials(BaseModel):
     model_config = ConfigDict(frozen=True)
 
-    credential_type: str = Field(..., alias="type")
+    type_: str = Field(alias="type")
     project_id: str
     private_key_id: str
     private_key: str
@@ -31,13 +30,12 @@ class GCPCredentials(BaseModel):
 
 class GCPIntegration(BaseSchema):
     account_id: Optional[str] = uuid.uuid4().hex
-    project_id: Optional[str] = None  # If not provided fetch the active project ID
     credentials: GCPCredentials = Field(
         default=None, exclude=True
     )  # Credentials Json of service account
     
     def __init__(self, **kwargs):
-        kwargs["accountId"] = self.account_id
+        kwargs["accountId"] = str(uuid.uuid4().hex)
         super().__init__(**kwargs)
 
 
@@ -58,12 +56,6 @@ class GCPService(BaseService):
         return {
             "token_form": {
                 "fields": [
-                    {
-                        "name": "project_id",
-                        "type": "text",
-                        "label": "Project ID",
-                        "required": True,
-                    },
                     {
                         "name": "credentials",
                         "type": "json",
@@ -120,26 +112,25 @@ class GCPService(BaseService):
 
     def _temp_credentials(self):
         return {
-            "CLOUDSDK_CORE_PROJECT": self.integration.project_id,
-            "GOOGLE_APPLICATION_CREDENTIALS": self.integration.credentials.model_dump_json()
+            "CLOUDSDK_CORE_PROJECT": self.integration.credentials.project_id,
+            "GOOGLE_APPLICATION_CREDENTIALS": self.integration.credentials.model_dump_json(by_alias=True)
         }
     
     def _get_creds_config_path(self):
         creds_path = f"gcp-creds-{uuid.uuid4().hex}.json"
         with open(creds_path, "w") as f:
-            json.dump(self.integration.credentials.model_dump_json(), fp=f)
+            f.write(self.integration.credentials.model_dump_json(by_alias=True))
         return creds_path
 
     @staticmethod
     def manage_creds_path(func):
         @wraps(func)
-        def wrapper(self, *args, **kwargs):
+        def wrapper(self, payload_task: PayloadTask, *args, **kwargs):
             creds_path = self._get_creds_config_path()
-            payload_task = args[0]
             try:
                 if payload_task.creds and payload_task.creds.envs:
                     payload_task.creds.envs["GOOGLE_APPLICATION_CREDENTIALS"] = creds_path
-                return func(self, *args, **kwargs)  # Call the original function
+                return func(self, payload_task, *args, **kwargs)  # Call the original function
             finally:
                 os.remove(creds_path)  # Ensure path is removed even if exceptions occur
         return wrapper

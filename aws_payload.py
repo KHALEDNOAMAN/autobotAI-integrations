@@ -116,7 +116,7 @@ def generate_aws_python_payload(aws_json=aws_json):
     return payload
 
 if __name__ == '__main__':
-    aws_steampipe_payload = generate_aws_steampipe_payload(aws_json)
+    # aws_steampipe_payload = generate_aws_steampipe_payload(aws_json)
     # for task in steampipe_payload.tasks:
     #     integration = IntegrationSchema.model_validate(task.context.integration)
     #     service = integration_service_factory.get_service(None, integration)
@@ -124,8 +124,8 @@ if __name__ == '__main__':
     #     print(output)
 
     aws_python_payload = generate_aws_python_payload(aws_json)
-    # for task in python_payload.tasks:
-    #     integration = IntegrationSchema.model_validate(task.context.integration)
-    #     service = integration_service_factory.get_service(None, integration)
-    #     output = service.python_sdk_processor(payload_task=task)
-    #     print(output)
+    for task in aws_python_payload.tasks:
+        integration = IntegrationSchema.model_validate(task.context.integration)
+        service = integration_service_factory.get_service(None, integration)
+        output = service.python_sdk_processor(payload_task=task)
+        print(output)
