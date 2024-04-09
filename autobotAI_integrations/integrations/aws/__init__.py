@@ -105,8 +105,13 @@ class AWSService(BaseService):
     def generate_steampipe_creds(self) -> SteampipeCreds:
         creds = self._temp_credentials()
         conf_path = "~/.steampipe/config/aws.spc"
+        config = """connection "aws" {
+  plugin = "aws"
+  ignore_error_codes = ["AccessDenied", "AccessDeniedException", "NotAuthorized", "UnauthorizedOperation", "UnrecognizedClientException", "AuthorizationError"]
+}
+"""
         return SteampipeCreds(envs=creds, plugin_name="aws", connection_name="aws",
-                              conf_path=conf_path)
+                              conf_path=conf_path, config=config)
 
     def build_python_exec_combinations_hook(self, payload_task: PayloadTask, client_definitions: List[SDKClient]) -> list:
         built_clients = {
