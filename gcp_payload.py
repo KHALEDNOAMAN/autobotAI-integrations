@@ -122,13 +122,13 @@ def generate_gcp_python_payload(gcp_json=gcp_json):
     return payload
 
 if __name__ == '__main__':
-    # gcp_steampipe_payload = generate_gcp_steampipe_payload(gcp_json)
-    # print(gcp_steampipe_payload.model_dump_json(indent=2))
-    # for task in gcp_steampipe_payload.tasks:
-    #     integration = IntegrationSchema.model_validate(task.context.integration)
-    #     service = integration_service_factory.get_service(None, integration)
-    #     output = service.execute_steampipe_task(task, job_type="query")
-    #     print(output)
+    gcp_steampipe_payload = generate_gcp_steampipe_payload(gcp_json)
+    print(gcp_steampipe_payload.model_dump_json(indent=2))
+    for task in gcp_steampipe_payload.tasks:
+        integration = IntegrationSchema.model_validate(task.context.integration)
+        service = integration_service_factory.get_service(None, integration)
+        output = service.execute_steampipe_task(task, job_type="query")
+        print(output)
 
     gcp_python_payload = generate_gcp_python_payload(gcp_json)
     for task in gcp_python_payload.tasks:
