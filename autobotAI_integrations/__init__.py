@@ -146,7 +146,10 @@ class BaseService:
         client_definitions = self.find_client_definitions(payload_task.clients)
         for client in client_definitions:
             if client.pip_package_names:
-                subprocess.check_call([sys.executable, '-m', 'pip', 'install', " ".join(client.pip_package_names)])
+                try:
+                    subprocess.check_output(['pip', 'show', " ".join(client.pip_package_names)])
+                except subprocess.CalledProcessError:
+                    subprocess.check_call([sys.executable, '-m', 'pip', 'install', " ".join(client.pip_package_names)])
 
         return self.build_python_exec_combinations_hook(payload_task, client_definitions)
 

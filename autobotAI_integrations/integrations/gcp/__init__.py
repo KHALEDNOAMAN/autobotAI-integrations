@@ -5,17 +5,13 @@ import os
 from pydantic import Field
 from functools import wraps
 import importlib
-import sys
 
 from autobotAI_integrations import list_of_unique_elements
+from autobotAI_integrations.utils import GCPHelper
 from autobotAI_integrations.models import *
 from autobotAI_integrations.models import List
 from autobotAI_integrations import BaseSchema, SteampipeCreds, RestAPICreds, SDKCreds, CLICreds, \
     BaseService, ConnectionInterfaces, PayloadTask, SDKClient
-
-
-class GCPSDKClient(SDKClient):
-    pass
 
 
 class GCPCredentials(BaseModel):
@@ -31,7 +27,10 @@ class GCPCredentials(BaseModel):
     token_uri: str
     auth_provider_x509_cert_url: str
     client_x509_cert_url: str
-
+    
+    def model_dump_json(self, *args, **kwargs) -> str:
+        kwargs["by_alias"] = True
+        return super().model_dump_json(*args, **kwargs)
 
 class GCPIntegration(BaseSchema):
     account_id: Optional[str] = uuid.uuid4().hex
@@ -55,7 +54,11 @@ class GCPService(BaseService):
         super().__init__(ctx, integration)
     
     def _test_integration(self, integration: dict) -> dict:
-        pass
+        try:
+            gcp_helper = GCPHelper(self.ctx, integration=self.integration)
+            return {'success': True}
+        except BaseException as e:
+            return {'success': False, 'error': str(e)}
 
     def get_forms(self):
         return {
@@ -98,16 +101,11 @@ class GCPService(BaseService):
     def build_python_exec_combinations_hook(
         self, payload_task: PayloadTask, client_definitions: List[SDKClient]
     ) -> list:
-        clients_classes = dict()
-        for client in client_definitions:
-            try:
-                client_module = importlib.import_module(client.module, package=None)
-                if hasattr(client_module, client.class_name):
-                    cls = getattr(client_module, client.class_name)
-                    clients_classes[client.class_name] = cls()
-            except BaseException as e:
-                print(e)
-                continue
+        # to use credentials with client remove the decorator and 
+        # use generate_clients_with_session method
+        gcp_helper = GCPHelper(self.ctx, integration=self.integration)
+        clients_classes = gcp_helper.generate_clients(client_definitions)
+        # clients_classes = gcp_helper.generate_clients_with_session(client_definitions)
         return [
             {
                 "clients": clients_classes

@@ -5,6 +5,7 @@ import importlib.util
 import traceback
 import uuid
 from pathlib import Path
+from .gcp_helper import GCPHelper
 
 
 def fromisoformat(strdate):
