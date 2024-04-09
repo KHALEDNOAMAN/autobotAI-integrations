@@ -6,10 +6,6 @@ from autobotAI_integrations.models import *
 
 import uuid
 
-class AzureSDKClient(SDKClient):
-    pass
-
-
 class AzureIntegration(BaseSchema):
     account_id: Optional[str] = uuid.uuid4().hex
     tenant_id: Optional[str] = Field(default=None, exclude=True)
@@ -64,13 +60,16 @@ class AzureService(BaseService):
 
     def generate_python_sdk_creds(self, requested_clients=None) -> SDKCreds:
         creds = self._temp_credentials()
-        clients = self.get_all_python_sdk_clients()
-        package_names = None
-        return SDKCreds(library_names=[], clients=[], envs=creds, package_names=package_names)
+        return SDKCreds(envs=creds)
 
     @staticmethod
     def supported_connection_interfaces():
-        return [ConnectionInterfaces.REST_API, ConnectionInterfaces.CLI, ConnectionInterfaces.PYTHON_SDK, ConnectionInterfaces.STEAMPIPE]
+        return [
+            ConnectionInterfaces.REST_API,
+            ConnectionInterfaces.CLI,
+            ConnectionInterfaces.PYTHON_SDK,
+            ConnectionInterfaces.STEAMPIPE
+        ]
 
     def generate_cli_creds(self) -> CLICreds:
         raise NotImplementedError()

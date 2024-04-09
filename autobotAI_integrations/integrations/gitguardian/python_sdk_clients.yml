@@ -1,0 +1,5 @@
+- name: GGClient
+  module: pygitguardian
+  pip_package_names:
+    - pygitguardian
+  class_name: GGClient

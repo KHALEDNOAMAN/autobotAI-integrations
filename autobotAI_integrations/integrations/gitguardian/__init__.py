@@ -54,11 +54,28 @@ class GitGuardianService(BaseService):
 
     def _test_integration(self, integration: dict):
         pass
+    
+    def _get_clients(self, client_definations: List[SDKClient]):
+        client_classes = dict()
+        for client in client_definations:
+            try:
+                client_module = importlib.import_module(client.module, package=None)
+                if hasattr(client_module, client.class_name):
+                    cls = getattr(client_module, client.class_name)
+                    client_classes[client.class_name] = cls(api_key=self.integration.token)
+            except BaseException as e:
+                print(e)
+                continue
+        return client_classes
 
     def build_python_exec_combinations_hook(self, payload_task: PayloadTask,
                                             client_definitions: List[SDKClient]) -> list:
-        pass
-
+        clients = self._get_clients(client_definitions)
+        return [
+            {
+                "clients": clients
+            }
+        ]
 
     def generate_steampipe_creds(self) -> SteampipeCreds:
         envs = {
@@ -74,9 +91,11 @@ class GitGuardianService(BaseService):
         }
         return RestAPICreds(api_url=self.integration.base_url, token=self.integration.token, headers=headers)
 
-
     def generate_python_sdk_creds(self) -> SDKCreds:
-        pass
+        envs = {
+            "GITGUARDIAN_API_KEY": self.integration.token,
+        }
+        return SDKCreds(envs=envs)
 
     def generate_cli_creds(self) -> CLICreds:
         pass

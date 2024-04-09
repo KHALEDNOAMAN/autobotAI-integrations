@@ -52,25 +52,42 @@ context = {
     "node_steps": {},
     "global_variables": {},
 }
-
-# def generate_gitguardian_python_payload(gitguardian_json=gitguardian_json) -> Payload:
-#     integration = GitguardianIntegration(**gitguardian_json)
-#     service = integration_service_factory.get_service(None, integration)
-#     creds = service.generate_python_sdk_creds()
-#     task_dict = {
-#         "task_id": uuid.uuid4().hex,
-#         "creds": creds,
-#         "connection_interface": ConnectionInterfaces.PYTHON_SDK,
-#         "executable": code,
-#         "clients": ["gitguardian"],
-#         "context": PayloadTaskContext(**context, **{"integration": gitguardian_json}),
-#     }
-#     payload_dict = {
-#         "job_id": uuid.uuid4().hex,
-#         "tasks": [PayloadTask(**task_dict)]
-#     }
-#     payload = Payload(**payload_dict)
-#     return payload
+code = """
+import json
+def executor(context):
+    gg_client = context["clients"]["GGClient"]
+    response = gg_client.get(
+            endpoint="https://api.gitguardian.com/v1/incidents/secrets"
+        )
+    result = []
+    if response.status_code == 200:
+        incidents = json.loads(response.text)
+        for incident in incidents:
+            result.append(incident)
+    return [
+        {
+            "result": result
+        }
+    ]
+"""
+def generate_gitguardian_python_payload(gitguardian_json=gitguardian_json) -> Payload:
+    integration = GitGuardianIntegration(**gitguardian_json)
+    service = integration_service_factory.get_service(None, integration)
+    creds = service.generate_python_sdk_creds()
+    task_dict = {
+        "task_id": uuid.uuid4().hex,
+        "creds": creds,
+        "connection_interface": ConnectionInterfaces.PYTHON_SDK,
+        "executable": code,
+        "clients": ["GGClient"],
+        "context": PayloadTaskContext(**context, **{"integration": gitguardian_json}),
+    }
+    payload_dict = {
+        "job_id": uuid.uuid4().hex,
+        "tasks": [PayloadTask(**task_dict)]
+    }
+    payload = Payload(**payload_dict)
+    return payload
 
 def generate_gitguardian_steampipe_payload(gitguardian_json=gitguardian_json):
     integration = GitGuardianIntegration(**gitguardian_json)
@@ -89,11 +106,11 @@ def generate_gitguardian_steampipe_payload(gitguardian_json=gitguardian_json):
     return payload
 
 if __name__ == "__main__":
-    # gitguardian_python_payload = generate_gitguardian_python_payload()
-    # for task in gitguardian_python_payload.tasks:
-    #     integration = IntegrationSchema.model_validate(task.context.integration)
-    #     service = integration_service_factory.get_service(None, integration)
-    #     print(service.python_sdk_processor(task))
+    gitguardian_python_payload = generate_gitguardian_python_payload()
+    for task in gitguardian_python_payload.tasks:
+        integration = IntegrationSchema.model_validate(task.context.integration)
+        service = integration_service_factory.get_service(None, integration)
+        print(service.python_sdk_processor(task))
 
 
     gitguardian_steampipe_payload = generate_gitguardian_steampipe_payload()
