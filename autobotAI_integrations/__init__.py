@@ -146,7 +146,10 @@ class BaseService:
         client_definitions = self.find_client_definitions(payload_task.clients)
         for client in client_definitions:
             if client.pip_package_names:
-                subprocess.check_call([sys.executable, '-m', 'pip', 'install', " ".join(client.pip_package_names)])
+                try:
+                    subprocess.check_output(['pip', 'show', " ".join(client.pip_package_names)])
+                except subprocess.CalledProcessError:
+                    subprocess.check_call([sys.executable, '-m', 'pip', 'install', " ".join(client.pip_package_names)])
 
         return self.build_python_exec_combinations_hook(payload_task, client_definitions)
 
@@ -158,7 +161,7 @@ class BaseService:
             client_details.append(SDKClient(**client_def))
         return client_details
 
-    def python_sdk_processor(self, payload_task: PayloadTask) -> (List[Dict[str, Any]], List[str]):
+    def python_sdk_processor(self, payload_task: PayloadTask) -> (List[Dict[str, Any]], List[str]): # type: ignore
 
         if payload_task.creds and payload_task.creds.envs:
             for key, value in payload_task.creds.envs.items():
@@ -213,24 +216,24 @@ class BaseService:
         except FileNotFoundError:
             print("File Not Found on path {}".format(config_path))
 
-    def execute_steampipe_task(self, task: PayloadTask, job_type="query"):
+    def execute_steampipe_task(self, payload_task:PayloadTask, job_type="query"):
         """
         Executes a Steampipe Task
         """
         subprocess.run(
-            ["steampipe", "plugin", "install", task.creds.plugin_name]
+            ["steampipe", "plugin", "install", payload_task.creds.plugin_name]
         )
 
         # Save the configuration in the creds.config_path with value creds.config
         self.set_steampipe_spc_config(
-            config_str=task.creds.config,
+            config_str=payload_task.creds.config,
         )
 
         process = subprocess.run(
-            ["steampipe", "query", "{}".format(task.executable), "--output", "json"],
+            ["steampipe", "query", "{}".format(payload_task.executable), "--output", "json"],
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
-            env={**os.environ, **task.creds.envs}
+            env={**os.environ, **payload_task.creds.envs}
         )
 
         # clear config file

@@ -92,13 +92,11 @@ class GitlabService(BaseService):
         return RestAPICreds(api_url=self.integration.base_url, token=self.integration.token, headers=headers)
 
     def generate_python_sdk_creds(self) -> SDKCreds:
-        package_names = ["python-gitlab"]
-        library_names = ["gitlab"]
         envs = {
             "GITLAB_ADDR": self.integration.base_url,
             "GITLAB_TOKEN": self.integration.token,
         }
-        return SDKCreds(library_names=library_names, envs=envs, package_names=package_names)
+        return SDKCreds(envs=envs)
 
     def generate_cli_creds(self) -> CLICreds:
         installer_check = "brew"

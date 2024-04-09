@@ -14,7 +14,7 @@ from autobotAI_integrations.utils.boto3_helper import Boto3Helper
 class Forms:
     pass
 
-
+# NOTE: NOT IMPLEMENTED ANYWHERE
 class AWSSDKClient(SDKClient):
     is_regional: bool
 
@@ -155,9 +155,7 @@ class AWSService(BaseService):
 
     def generate_python_sdk_creds(self, requested_clients=None) -> SDKCreds:
         creds = self._temp_credentials()
-        clients = self.get_all_python_sdk_clients()
-        package_names = None
-        return SDKCreds(library_names=[], clients=[], envs=creds, package_names=package_names)
+        return SDKCreds(envs=creds)
 
     @staticmethod
     def supported_connection_interfaces():

@@ -108,13 +108,14 @@ def generate_gitlab_steampipe_payload(gitlab_json=gitlab_json):
 
 if __name__ == "__main__":
     gitlab_python_payload = generate_gitlab_python_payload()
-    # for task in gitlab_python_payload.tasks:
-    #     integration = IntegrationSchema.model_validate(task.context.integration)
-    #     service = integration_service_factory.get_service(None, integration)
-    #     print(service.python_sdk_processor(task))
+    # print(gitlab_python_payload.model_dump_json(indent=2))
+    for task in gitlab_python_payload.tasks:
+        integration = IntegrationSchema.model_validate(task.context.integration)
+        service = integration_service_factory.get_service(None, integration)
+        print(service.python_sdk_processor(task))
 
 
-    gitlab_steampipe_payload = generate_gitlab_steampipe_payload()
+    # gitlab_steampipe_payload = generate_gitlab_steampipe_payload()
     # for task in gitlab_steampipe_payload.tasks:
     #     integration = IntegrationSchema.model_validate(task.context.integration)
     #     service = integration_service_factory.get_service(None, integration)
