@@ -31,7 +31,7 @@ class GithubService(BaseService):
                     {
                         "name": "base_url",
                         "type": "text",
-                        "label": "Github Base URL if Using Enterprise Version",
+                        "label": "Github Base URL",
                         "default": "https://<hostname/>/api/v3",
                         "description": "Github Base URL if Using Enterprise Version",
                         "required": False
@@ -62,14 +62,7 @@ class GithubService(BaseService):
         ]
 
     def _test_integration(self, integration: dict):
-        # TODO
-        creds = self.generate_rest_api_creds()
-        try:
-            # response = BaseService.generic_rest_api_call(creds, "get", "/api/v4/user")
-            # print(response)
-            return {'success': True}
-        except BaseException as e:
-            return {'success': False}
+        pass
 
     def build_python_exec_combinations_hook(self, payload_task: PayloadTask,
                                             client_definitions: List[SDKClient]) -> list:
@@ -99,11 +92,7 @@ class GithubService(BaseService):
                               conf_path=conf_path)
 
     def generate_rest_api_creds(self) -> RestAPICreds:
-        # TODO
-        headers = {
-            "Authorization": f"Bearer {self.integration.token}"
-        }
-        return RestAPICreds(api_url=self.integration.base_url, token=self.integration.token, headers=headers)
+        pass
 
     def generate_python_sdk_creds(self) -> SDKCreds:
         envs = {
@@ -113,10 +102,4 @@ class GithubService(BaseService):
         return SDKCreds(envs=envs)
 
     def generate_cli_creds(self) -> CLICreds:
-        installer_check = "brew"
-        install_command = "brew list glab || brew install glab"
-        envs = {
-            "GITHUB_BASE_URL": self.integration.base_url,
-            "GITHUB_TOKEN": self.integration.token,
-        }
-        return CLICreds(installer_check=installer_check, install_command=install_command, envs=envs)
+        pass

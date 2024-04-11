@@ -1,25 +1,25 @@
-- class: ComputeManagementClient
-  integration_type: azure
+- class_name: ComputeManagementClient
   module: azure.mgmt.compute
   name: ComputeManagementClient
-  pkg: azure-mgmt-compute
-- class: ResourceManagementClient
-  integration_type: azure
+  pip_package_names:
+    - azure-mgmt-compute
+- class_name: ResourceManagementClient
   module: azure.mgmt.resource
   name: ResourceManagementClient
-  pkg: azure-mgmt-resource
-- class: PolicyClient
-  integration_type: azure
+  pip_package_names:
+    - azure-mgmt-resource
+- class_name: PolicyClient
   module: azure.mgmt.resource
   name: PolicyClient
-  pkg: azure-mgmt-resource
-- class: SubscriptionClient
-  integration_type: azure
+  pip_package_names:
+    - azure-mgmt-resource
+- class_name: SubscriptionClient
   module: azure.mgmt.subscription
   name: SubscriptionClient
-  pkg: azure-mgmt-subscription
-- class: NetworkManagementClient
-  integration_type: azure
+  pip_package_names:
+    - azure-mgmt-subscription
+- class_name: NetworkManagementClient
   module: azure.mgmt.network
   name: NetworkManagementClient
-  pkg: azure-mgmt-network
+  pip_package_names:
+    - azure-mgmt-network
