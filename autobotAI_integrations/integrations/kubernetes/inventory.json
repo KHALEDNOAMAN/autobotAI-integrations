@@ -1,0 +1,1381 @@
+{
+    "kubernetes": [
+        {
+            "name": "kubernetes_cluster_role",
+            "all_columns": [
+                "name",
+                "uid",
+                "rules",
+                "aggregation_rule",
+                "title",
+                "tags",
+                "generate_name",
+                "resource_version",
+                "generation",
+                "creation_timestamp",
+                "deletion_timestamp",
+                "deletion_grace_period_seconds",
+                "labels",
+                "annotations",
+                "owner_references",
+                "finalizers",
+                "context_name"
+            ],
+            "included": [],
+            "excluded": [],
+            "aliases": [
+                {
+                    "name": "uid",
+                    "alias": "urn"
+                },
+                {
+                    "name": "uid",
+                    "alias": "id"
+                }
+            ],
+            "inventory_supported": true
+        },
+        {
+            "name": "kubernetes_cluster_role_binding",
+            "all_columns": [
+                "name",
+                "uid",
+                "subjects",
+                "role_name",
+                "role_api_group",
+                "role_kind",
+                "title",
+                "tags",
+                "generate_name",
+                "resource_version",
+                "generation",
+                "creation_timestamp",
+                "deletion_timestamp",
+                "deletion_grace_period_seconds",
+                "labels",
+                "annotations",
+                "owner_references",
+                "finalizers",
+                "context_name"
+            ],
+            "included": [],
+            "excluded": [],
+            "aliases": [
+                {
+                    "name": "uid",
+                    "alias": "urn"
+                },
+                {
+                    "name": "uid",
+                    "alias": "id"
+                }
+            ],
+            "inventory_supported": true
+        },
+        {
+            "name": "kubernetes_config_map",
+            "all_columns": [
+                "name",
+                "namespace",
+                "uid",
+                "immutable",
+                "data",
+                "binary_data",
+                "title",
+                "tags",
+                "generate_name",
+                "resource_version",
+                "generation",
+                "creation_timestamp",
+                "deletion_timestamp",
+                "deletion_grace_period_seconds",
+                "labels",
+                "annotations",
+                "owner_references",
+                "finalizers",
+                "context_name"
+            ],
+            "included": [],
+            "excluded": [],
+            "aliases": [
+                {
+                    "name": "uid",
+                    "alias": "urn"
+                },
+                {
+                    "name": "uid",
+                    "alias": "id"
+                }
+            ],
+            "inventory_supported": true
+        },
+        {
+            "name": "kubernetes_cronjob",
+            "all_columns": [
+                "name",
+                "namespace",
+                "uid",
+                "failed_jobs_history_limit",
+                "schedule",
+                "starting_deadline_seconds",
+                "successful_jobs_history_limit",
+                "suspend",
+                "concurrency_policy",
+                "job_template",
+                "last_schedule_time",
+                "last_successful_time",
+                "active",
+                "title",
+                "tags",
+                "generate_name",
+                "resource_version",
+                "generation",
+                "creation_timestamp",
+                "deletion_timestamp",
+                "deletion_grace_period_seconds",
+                "labels",
+                "annotations",
+                "owner_references",
+                "finalizers",
+                "context_name"
+            ],
+            "included": [],
+            "excluded": [],
+            "aliases": [
+                {
+                    "name": "uid",
+                    "alias": "urn"
+                },
+                {
+                    "name": "uid",
+                    "alias": "id"
+                }
+            ],
+            "inventory_supported": true
+        },
+        {
+            "name": "kubernetes_custom_resource_definition",
+            "all_columns": [
+                "name",
+                "namespace",
+                "uid",
+                "spec",
+                "status",
+                "generate_name",
+                "resource_version",
+                "generation",
+                "creation_timestamp",
+                "deletion_timestamp",
+                "deletion_grace_period_seconds",
+                "labels",
+                "annotations",
+                "owner_references",
+                "finalizers",
+                "context_name"
+            ],
+            "included": [],
+            "excluded": [],
+            "aliases": [
+                {
+                    "name": "uid",
+                    "alias": "urn"
+                },
+                {
+                    "name": "uid",
+                    "alias": "id"
+                }
+            ],
+            "inventory_supported": true
+        },
+        {
+            "name": "kubernetes_daemonset",
+            "all_columns": [
+                "name",
+                "namespace",
+                "uid",
+                "min_ready_seconds",
+                "revision_history_limit",
+                "selector_query",
+                "selector",
+                "template",
+                "update_strategy",
+                "current_number_scheduled",
+                "number_misscheduled",
+                "desired_number_scheduled",
+                "number_ready",
+                "observed_generation",
+                "updated_number_scheduled",
+                "number_available",
+                "number_unavailable",
+                "collision_count",
+                "conditions",
+                "title",
+                "tags",
+                "generate_name",
+                "resource_version",
+                "generation",
+                "creation_timestamp",
+                "deletion_timestamp",
+                "deletion_grace_period_seconds",
+                "labels",
+                "annotations",
+                "owner_references",
+                "finalizers",
+                "context_name"
+            ],
+            "included": [],
+            "excluded": [],
+            "aliases": [
+                {
+                    "name": "uid",
+                    "alias": "urn"
+                },
+                {
+                    "name": "uid",
+                    "alias": "id"
+                }
+            ],
+            "inventory_supported": true
+        },
+        {
+            "name": "kubernetes_deployment",
+            "all_columns": [
+                "name",
+                "namespace",
+                "uid",
+                "replicas",
+                "selector_query",
+                "selector",
+                "template",
+                "strategy",
+                "min_ready_seconds",
+                "revision_history_limit",
+                "paused",
+                "progress_deadline_seconds",
+                "observed_generation",
+                "status_replicas",
+                "updated_replicas",
+                "ready_replicas",
+                "available_replicas",
+                "unavailable_replicas",
+                "conditions",
+                "collision_count",
+                "title",
+                "tags",
+                "generate_name",
+                "resource_version",
+                "generation",
+                "creation_timestamp",
+                "deletion_timestamp",
+                "deletion_grace_period_seconds",
+                "labels",
+                "annotations",
+                "owner_references",
+                "finalizers",
+                "context_name"
+            ],
+            "included": [],
+            "excluded": [],
+            "aliases": [
+                {
+                    "name": "uid",
+                    "alias": "urn"
+                },
+                {
+                    "name": "uid",
+                    "alias": "id"
+                }
+            ],
+            "inventory_supported": true
+        },
+        {
+            "name": "kubernetes_endpoint",
+            "all_columns": [
+                "name",
+                "namespace",
+                "uid",
+                "subsets",
+                "title",
+                "tags",
+                "generate_name",
+                "resource_version",
+                "generation",
+                "creation_timestamp",
+                "deletion_timestamp",
+                "deletion_grace_period_seconds",
+                "labels",
+                "annotations",
+                "owner_references",
+                "finalizers",
+                "context_name"
+            ],
+            "included": [],
+            "excluded": [],
+            "aliases": [
+                {
+                    "name": "uid",
+                    "alias": "urn"
+                },
+                {
+                    "name": "uid",
+                    "alias": "id"
+                }
+            ]
+        },
+        {
+            "name": "kubernetes_endpoint_slice",
+            "all_columns": [
+                "name",
+                "namespace",
+                "uid",
+                "address_type",
+                "endpoints",
+                "ports",
+                "title",
+                "tags",
+                "generate_name",
+                "resource_version",
+                "generation",
+                "creation_timestamp",
+                "deletion_timestamp",
+                "deletion_grace_period_seconds",
+                "labels",
+                "annotations",
+                "owner_references",
+                "finalizers",
+                "context_name"
+            ],
+            "included": [],
+            "excluded": [],
+            "aliases": [
+                {
+                    "name": "uid",
+                    "alias": "urn"
+                },
+                {
+                    "name": "uid",
+                    "alias": "id"
+                }
+            ]
+        },
+        {
+            "name": "kubernetes_event",
+            "all_columns": [
+                "name",
+                "namespace",
+                "uid",
+                "last_timestamp",
+                "type",
+                "reason",
+                "message",
+                "action",
+                "count",
+                "event_time",
+                "first_timestamp",
+                "reporting_component",
+                "reporting_instance",
+                "involved_object",
+                "related",
+                "series",
+                "source",
+                "generate_name",
+                "resource_version",
+                "generation",
+                "creation_timestamp",
+                "deletion_timestamp",
+                "deletion_grace_period_seconds",
+                "labels",
+                "annotations",
+                "owner_references",
+                "finalizers",
+                "context_name"
+            ],
+            "included": [],
+            "excluded": [],
+            "aliases": [
+                {
+                    "name": "uid",
+                    "alias": "urn"
+                },
+                {
+                    "name": "uid",
+                    "alias": "id"
+                }
+            ]
+        },
+        {
+            "name": "kubernetes_horizontal_pod_autoscaler",
+            "all_columns": [
+                "name",
+                "namespace",
+                "uid",
+                "scale_target_ref",
+                "min_replicas",
+                "max_replicas",
+                "metrics",
+                "scale_up_behavior",
+                "scale_down_behavior",
+                "observed_generation",
+                "last_scale_time",
+                "current_replicas",
+                "desired_replicas",
+                "current_metrics",
+                "conditions",
+                "title",
+                "tags",
+                "generate_name",
+                "resource_version",
+                "generation",
+                "creation_timestamp",
+                "deletion_timestamp",
+                "deletion_grace_period_seconds",
+                "labels",
+                "annotations",
+                "owner_references",
+                "finalizers",
+                "context_name"
+            ],
+            "included": [],
+            "excluded": [],
+            "aliases": [
+                {
+                    "name": "uid",
+                    "alias": "urn"
+                },
+                {
+                    "name": "uid",
+                    "alias": "id"
+                }
+            ],
+            "inventory_supported": true
+        },
+        {
+            "name": "kubernetes_ingress",
+            "all_columns": [
+                "name",
+                "namespace",
+                "uid",
+                "ingress_class_name",
+                "default_backend",
+                "tls",
+                "rules",
+                "load_balancer",
+                "title",
+                "tags",
+                "generate_name",
+                "resource_version",
+                "generation",
+                "creation_timestamp",
+                "deletion_timestamp",
+                "deletion_grace_period_seconds",
+                "labels",
+                "annotations",
+                "owner_references",
+                "finalizers",
+                "context_name"
+            ],
+            "included": [],
+            "excluded": [],
+            "aliases": [
+                {
+                    "name": "uid",
+                    "alias": "urn"
+                },
+                {
+                    "name": "uid",
+                    "alias": "id"
+                }
+            ],
+            "inventory_supported": true
+        },
+        {
+            "name": "kubernetes_job",
+            "all_columns": [
+                "name",
+                "namespace",
+                "uid",
+                "parallelism",
+                "completions",
+                "active_deadline_seconds",
+                "backoff_limit",
+                "manual_selector",
+                "ttl_seconds_after_finished",
+                "selector_query",
+                "selector",
+                "template",
+                "start_time",
+                "completion_time",
+                "active",
+                "succeeded",
+                "failed",
+                "conditions",
+                "title",
+                "tags",
+                "generate_name",
+                "resource_version",
+                "generation",
+                "creation_timestamp",
+                "deletion_timestamp",
+                "deletion_grace_period_seconds",
+                "labels",
+                "annotations",
+                "owner_references",
+                "finalizers",
+                "context_name"
+            ],
+            "included": [],
+            "excluded": [],
+            "aliases": [
+                {
+                    "name": "uid",
+                    "alias": "urn"
+                },
+                {
+                    "name": "uid",
+                    "alias": "id"
+                }
+            ],
+            "inventory_supported": true
+        },
+        {
+            "name": "kubernetes_limit_range",
+            "all_columns": [
+                "name",
+                "namespace",
+                "uid",
+                "spec_limits",
+                "title",
+                "tags",
+                "generate_name",
+                "resource_version",
+                "generation",
+                "creation_timestamp",
+                "deletion_timestamp",
+                "deletion_grace_period_seconds",
+                "labels",
+                "annotations",
+                "owner_references",
+                "finalizers",
+                "context_name"
+            ],
+            "included": [],
+            "excluded": [],
+            "aliases": [
+                {
+                    "name": "uid",
+                    "alias": "urn"
+                },
+                {
+                    "name": "uid",
+                    "alias": "id"
+                }
+            ]
+        },
+        {
+            "name": "kubernetes_namespace",
+            "all_columns": [
+                "name",
+                "uid",
+                "spec_finalizers",
+                "phase",
+                "conditions",
+                "title",
+                "tags",
+                "generate_name",
+                "resource_version",
+                "generation",
+                "creation_timestamp",
+                "deletion_timestamp",
+                "deletion_grace_period_seconds",
+                "labels",
+                "annotations",
+                "owner_references",
+                "finalizers",
+                "context_name"
+            ],
+            "included": [],
+            "excluded": [],
+            "aliases": [
+                {
+                    "name": "uid",
+                    "alias": "urn"
+                },
+                {
+                    "name": "uid",
+                    "alias": "id"
+                }
+            ],
+            "inventory_supported": true
+        },
+        {
+            "name": "kubernetes_network_policy",
+            "all_columns": [
+                "name",
+                "namespace",
+                "uid",
+                "pod_selector",
+                "ingress",
+                "egress",
+                "policy_types",
+                "title",
+                "tags",
+                "generate_name",
+                "resource_version",
+                "generation",
+                "creation_timestamp",
+                "deletion_timestamp",
+                "deletion_grace_period_seconds",
+                "labels",
+                "annotations",
+                "owner_references",
+                "finalizers",
+                "context_name"
+            ],
+            "included": [],
+            "excluded": [],
+            "aliases": [
+                {
+                    "name": "uid",
+                    "alias": "urn"
+                },
+                {
+                    "name": "uid",
+                    "alias": "id"
+                }
+            ],
+            "inventory_supported": true
+        },
+        {
+            "name": "kubernetes_node",
+            "all_columns": [
+                "name",
+                "uid",
+                "pod_cidr",
+                "pod_cidrs",
+                "provider_id",
+                "unschedulable",
+                "taints",
+                "config_source",
+                "capacity",
+                "allocatable",
+                "phase",
+                "conditions",
+                "addresses",
+                "daemon_endpoints",
+                "node_info",
+                "images",
+                "volumes_in_use",
+                "volumes_attached",
+                "config",
+                "title",
+                "tags",
+                "generate_name",
+                "resource_version",
+                "generation",
+                "creation_timestamp",
+                "deletion_timestamp",
+                "deletion_grace_period_seconds",
+                "labels",
+                "annotations",
+                "owner_references",
+                "finalizers",
+                "context_name"
+            ],
+            "included": [],
+            "excluded": [],
+            "aliases": [
+                {
+                    "name": "uid",
+                    "alias": "urn"
+                },
+                {
+                    "name": "uid",
+                    "alias": "id"
+                }
+            ],
+            "inventory_supported": true
+        },
+        {
+            "name": "kubernetes_persistent_volume",
+            "all_columns": [
+                "name",
+                "uid",
+                "storage_class",
+                "volume_mode",
+                "persistent_volume_reclaim_policy",
+                "access_modes",
+                "capacity",
+                "claim_ref",
+                "mount_options",
+                "node_affinity",
+                "persistent_volume_source",
+                "phase",
+                "message",
+                "reason",
+                "title",
+                "tags",
+                "generate_name",
+                "resource_version",
+                "generation",
+                "creation_timestamp",
+                "deletion_timestamp",
+                "deletion_grace_period_seconds",
+                "labels",
+                "annotations",
+                "owner_references",
+                "finalizers",
+                "context_name"
+            ],
+            "included": [],
+            "excluded": [],
+            "aliases": [
+                {
+                    "name": "uid",
+                    "alias": "urn"
+                },
+                {
+                    "name": "uid",
+                    "alias": "id"
+                }
+            ],
+            "inventory_supported": true
+        },
+        {
+            "name": "kubernetes_persistent_volume_claim",
+            "all_columns": [
+                "name",
+                "namespace",
+                "uid",
+                "volume_name",
+                "volume_mode",
+                "storage_class",
+                "access_modes",
+                "data_source",
+                "resources",
+                "selector",
+                "phase",
+                "status_access_modes",
+                "capacity",
+                "conditions",
+                "title",
+                "tags",
+                "generate_name",
+                "resource_version",
+                "generation",
+                "creation_timestamp",
+                "deletion_timestamp",
+                "deletion_grace_period_seconds",
+                "labels",
+                "annotations",
+                "owner_references",
+                "finalizers",
+                "context_name"
+            ],
+            "included": [],
+            "excluded": [],
+            "aliases": [
+                {
+                    "name": "uid",
+                    "alias": "urn"
+                },
+                {
+                    "name": "uid",
+                    "alias": "id"
+                }
+            ]
+        },
+        {
+            "name": "kubernetes_pod",
+            "all_columns": [
+                "name",
+                "namespace",
+                "uid",
+                "selector_search",
+                "volumes",
+                "containers",
+                "ephemeral_containers",
+                "init_containers",
+                "restart_policy",
+                "termination_grace_period_seconds",
+                "active_deadline_seconds",
+                "dns_policy",
+                "node_selector",
+                "service_account_name",
+                "automount_service_account_token",
+                "node_name",
+                "host_network",
+                "host_pid",
+                "host_ipc",
+                "share_process_namespace",
+                "security_context",
+                "image_pull_secrets",
+                "hostname",
+                "subdomain",
+                "affinity",
+                "scheduler_name",
+                "tolerations",
+                "host_aliases",
+                "priority_class_name",
+                "priority",
+                "dns_config",
+                "readiness_gates",
+                "runtime_class_name",
+                "enable_service_links",
+                "preemption_policy",
+                "overhead",
+                "topology_spread_constraints",
+                "set_hostname_as_fqdn",
+                "phase",
+                "conditions",
+                "status_message",
+                "status_reason",
+                "nominated_node_name",
+                "host_ip",
+                "pod_ip",
+                "pod_ips",
+                "start_time",
+                "init_container_statuses",
+                "container_statuses",
+                "qos_class",
+                "ephemeral_container_statuses",
+                "title",
+                "tags",
+                "generate_name",
+                "resource_version",
+                "generation",
+                "creation_timestamp",
+                "deletion_timestamp",
+                "deletion_grace_period_seconds",
+                "labels",
+                "annotations",
+                "owner_references",
+                "finalizers",
+                "context_name"
+            ],
+            "included": [],
+            "excluded": [],
+            "aliases": [
+                {
+                    "name": "uid",
+                    "alias": "urn"
+                },
+                {
+                    "name": "uid",
+                    "alias": "id"
+                }
+            ],
+            "inventory_supported": true
+        },
+        {
+            "name": "kubernetes_pod_disruption_budget",
+            "all_columns": [
+                "name",
+                "namespace",
+                "uid",
+                "min_available",
+                "selector",
+                "max_unavailable",
+                "title",
+                "tags",
+                "generate_name",
+                "resource_version",
+                "generation",
+                "creation_timestamp",
+                "deletion_timestamp",
+                "deletion_grace_period_seconds",
+                "labels",
+                "annotations",
+                "owner_references",
+                "finalizers",
+                "context_name"
+            ],
+            "included": [],
+            "excluded": [],
+            "aliases": [
+                {
+                    "name": "uid",
+                    "alias": "urn"
+                },
+                {
+                    "name": "uid",
+                    "alias": "id"
+                }
+            ]
+        },
+        {
+            "name": "kubernetes_pod_security_policy",
+            "all_columns": [
+                "name",
+                "uid",
+                "allow_privilege_escalation",
+                "default_allow_privilege_escalation",
+                "host_network",
+                "host_ports",
+                "host_pid",
+                "host_ipc",
+                "privileged",
+                "read_only_root_filesystem",
+                "allowed_csi_drivers",
+                "allowed_host_paths",
+                "allowed_flex_volumes",
+                "allowed_proc_mount_types",
+                "allowed_unsafe_sysctls",
+                "default_add_capabilities",
+                "forbidden_sysctls",
+                "fs_group",
+                "required_drop_capabilities",
+                "run_as_group",
+                "run_as_user",
+                "runtime_class",
+                "se_linux",
+                "supplemental_groups",
+                "volumes",
+                "title",
+                "tags",
+                "generate_name",
+                "resource_version",
+                "generation",
+                "creation_timestamp",
+                "deletion_timestamp",
+                "deletion_grace_period_seconds",
+                "labels",
+                "annotations",
+                "owner_references",
+                "finalizers",
+                "context_name"
+            ],
+            "included": [],
+            "excluded": [],
+            "aliases": [
+                {
+                    "name": "uid",
+                    "alias": "urn"
+                },
+                {
+                    "name": "uid",
+                    "alias": "id"
+                }
+            ],
+            "inventory_supported": true
+        },
+        {
+            "name": "kubernetes_replicaset",
+            "all_columns": [
+                "name",
+                "namespace",
+                "uid",
+                "replicas",
+                "min_ready_seconds",
+                "selector_query",
+                "selector",
+                "template",
+                "status_replicas",
+                "fully_labeled_replicas",
+                "ready_replicas",
+                "available_replicas",
+                "observed_generation",
+                "conditions",
+                "title",
+                "tags",
+                "generate_name",
+                "resource_version",
+                "generation",
+                "creation_timestamp",
+                "deletion_timestamp",
+                "deletion_grace_period_seconds",
+                "labels",
+                "annotations",
+                "owner_references",
+                "finalizers",
+                "context_name"
+            ],
+            "included": [],
+            "excluded": [],
+            "aliases": [
+                {
+                    "name": "uid",
+                    "alias": "urn"
+                },
+                {
+                    "name": "uid",
+                    "alias": "id"
+                }
+            ],
+            "inventory_supported": true
+        },
+        {
+            "name": "kubernetes_replication_controller",
+            "all_columns": [
+                "name",
+                "namespace",
+                "uid",
+                "replicas",
+                "min_ready_seconds",
+                "selector_query",
+                "selector",
+                "template",
+                "status_replicas",
+                "fully_labeled_replicas",
+                "ready_replicas",
+                "available_replicas",
+                "observed_generation",
+                "conditions",
+                "title",
+                "tags",
+                "generate_name",
+                "resource_version",
+                "generation",
+                "creation_timestamp",
+                "deletion_timestamp",
+                "deletion_grace_period_seconds",
+                "labels",
+                "annotations",
+                "owner_references",
+                "finalizers",
+                "context_name"
+            ],
+            "included": [],
+            "excluded": [],
+            "aliases": [
+                {
+                    "name": "uid",
+                    "alias": "urn"
+                },
+                {
+                    "name": "uid",
+                    "alias": "id"
+                }
+            ],
+            "inventory_supported": true
+        },
+        {
+            "name": "kubernetes_resource_quota",
+            "all_columns": [
+                "name",
+                "namespace",
+                "uid",
+                "spec_hard",
+                "spec_scopes",
+                "spec_scope_selector",
+                "status_hard",
+                "status_used",
+                "title",
+                "tags",
+                "generate_name",
+                "resource_version",
+                "generation",
+                "creation_timestamp",
+                "deletion_timestamp",
+                "deletion_grace_period_seconds",
+                "labels",
+                "annotations",
+                "owner_references",
+                "finalizers",
+                "context_name"
+            ],
+            "included": [],
+            "excluded": [],
+            "aliases": [
+                {
+                    "name": "uid",
+                    "alias": "urn"
+                },
+                {
+                    "name": "uid",
+                    "alias": "id"
+                }
+            ]
+        },
+        {
+            "name": "kubernetes_role",
+            "all_columns": [
+                "name",
+                "namespace",
+                "uid",
+                "rules",
+                "title",
+                "tags",
+                "generate_name",
+                "resource_version",
+                "generation",
+                "creation_timestamp",
+                "deletion_timestamp",
+                "deletion_grace_period_seconds",
+                "labels",
+                "annotations",
+                "owner_references",
+                "finalizers",
+                "context_name"
+            ],
+            "included": [],
+            "excluded": [],
+            "aliases": [
+                {
+                    "name": "uid",
+                    "alias": "urn"
+                },
+                {
+                    "name": "uid",
+                    "alias": "id"
+                }
+            ],
+            "inventory_supported": true
+        },
+        {
+            "name": "kubernetes_role_binding",
+            "all_columns": [
+                "name",
+                "namespace",
+                "uid",
+                "subjects",
+                "role_name",
+                "role_api_group",
+                "role_kind",
+                "title",
+                "tags",
+                "generate_name",
+                "resource_version",
+                "generation",
+                "creation_timestamp",
+                "deletion_timestamp",
+                "deletion_grace_period_seconds",
+                "labels",
+                "annotations",
+                "owner_references",
+                "finalizers",
+                "context_name"
+            ],
+            "included": [],
+            "excluded": [],
+            "aliases": [
+                {
+                    "name": "uid",
+                    "alias": "urn"
+                },
+                {
+                    "name": "uid",
+                    "alias": "id"
+                }
+            ],
+            "inventory_supported": true
+        },
+        {
+            "name": "kubernetes_secret",
+            "all_columns": [
+                "name",
+                "namespace",
+                "uid",
+                "immutable",
+                "type",
+                "data",
+                "string_data",
+                "title",
+                "tags",
+                "generate_name",
+                "resource_version",
+                "generation",
+                "creation_timestamp",
+                "deletion_timestamp",
+                "deletion_grace_period_seconds",
+                "labels",
+                "annotations",
+                "owner_references",
+                "finalizers",
+                "context_name"
+            ],
+            "included": [],
+            "excluded": [],
+            "aliases": [
+                {
+                    "name": "uid",
+                    "alias": "urn"
+                },
+                {
+                    "name": "uid",
+                    "alias": "id"
+                }
+            ],
+            "inventory_supported": true
+        },
+        {
+            "name": "kubernetes_service",
+            "all_columns": [
+                "name",
+                "namespace",
+                "uid",
+                "type",
+                "allocate_load_balancer_node_ports",
+                "cluster_ip",
+                "external_name",
+                "external_traffic_policy",
+                "health_check_node_port",
+                "ip_family_policy",
+                "load_balancer_ip",
+                "publish_not_ready_addresses",
+                "session_affinity",
+                "session_affinity_client_ip_timeout",
+                "cluster_ips",
+                "external_ips",
+                "ip_families",
+                "load_balancer_ingress",
+                "load_balancer_source_ranges",
+                "ports",
+                "selector_query",
+                "selector",
+                "topology_keys",
+                "title",
+                "tags",
+                "generate_name",
+                "resource_version",
+                "generation",
+                "creation_timestamp",
+                "deletion_timestamp",
+                "deletion_grace_period_seconds",
+                "labels",
+                "annotations",
+                "owner_references",
+                "finalizers",
+                "context_name"
+            ],
+            "included": [],
+            "excluded": [],
+            "aliases": [
+                {
+                    "name": "uid",
+                    "alias": "urn"
+                },
+                {
+                    "name": "uid",
+                    "alias": "id"
+                }
+            ],
+            "inventory_supported": true
+        },
+        {
+            "name": "kubernetes_service_account",
+            "all_columns": [
+                "name",
+                "namespace",
+                "uid",
+                "automount_service_account_token",
+                "image_pull_secrets",
+                "secrets",
+                "title",
+                "tags",
+                "generate_name",
+                "resource_version",
+                "generation",
+                "creation_timestamp",
+                "deletion_timestamp",
+                "deletion_grace_period_seconds",
+                "labels",
+                "annotations",
+                "owner_references",
+                "finalizers",
+                "context_name"
+            ],
+            "included": [],
+            "excluded": [],
+            "aliases": [
+                {
+                    "name": "uid",
+                    "alias": "urn"
+                },
+                {
+                    "name": "uid",
+                    "alias": "id"
+                }
+            ],
+            "inventory_supported": true
+        },
+        {
+            "name": "kubernetes_stateful_set",
+            "all_columns": [
+                "name",
+                "namespace",
+                "uid",
+                "service_name",
+                "replicas",
+                "collision_count",
+                "available_replicas",
+                "current_replicas",
+                "current_revision",
+                "observed_generation",
+                "pod_management_policy",
+                "ready_replicas",
+                "revision_history_limit",
+                "updated_replicas",
+                "update_revision",
+                "conditions",
+                "template",
+                "update_strategy",
+                "title",
+                "tags",
+                "generate_name",
+                "resource_version",
+                "generation",
+                "creation_timestamp",
+                "deletion_timestamp",
+                "deletion_grace_period_seconds",
+                "labels",
+                "annotations",
+                "owner_references",
+                "finalizers",
+                "context_name"
+            ],
+            "included": [],
+            "excluded": [],
+            "aliases": [
+                {
+                    "name": "uid",
+                    "alias": "urn"
+                },
+                {
+                    "name": "uid",
+                    "alias": "id"
+                }
+            ],
+            "inventory_supported": true
+        },
+        {
+            "name": "kubernetes_storage_class",
+            "all_columns": [
+                "name",
+                "namespace",
+                "uid",
+                "provisioner",
+                "reclaim_policy",
+                "allow_volume_expansion",
+                "volume_binding_mode",
+                "allowed_topologies",
+                "mount_options",
+                "parameters",
+                "title",
+                "generate_name",
+                "resource_version",
+                "generation",
+                "creation_timestamp",
+                "deletion_timestamp",
+                "deletion_grace_period_seconds",
+                "labels",
+                "annotations",
+                "owner_references",
+                "finalizers",
+                "context_name"
+            ],
+            "included": [],
+            "excluded": [],
+            "aliases": [
+                {
+                    "name": "uid",
+                    "alias": "urn"
+                },
+                {
+                    "name": "uid",
+                    "alias": "id"
+                }
+            ],
+            "inventory_supported": true
+        }
+    ]
+}

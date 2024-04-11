@@ -1,0 +1,10 @@
+- name: client
+  module: kubernetes
+  pip_package_names:
+    - kubernetes
+  class_name: client
+- name: config
+  module: kubernetes
+  pip_package_names:
+    - kubernetes
+  class_name: config
