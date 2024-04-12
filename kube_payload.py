@@ -35,27 +35,23 @@ connection "kubernetes" {
 
 k8s_code = """
 def executor(context):
-    config = context['clients']['config']
-    config.load_kube_config()
-    
-    kbs_client = context['clients']['client']
+    kbs_client = context['clients']['kubernetes']
     
     v1 = kbs_client.CoreV1Api()
     namespace = "default"
-    pod_list = v1.list_namespaced_pod(namespace)
-
+    # pod_list = v1.list_namespaced_pod(namespace)
+    pod_list = v1.list_pod_for_all_namespaces(watch=False)
     # Prepare the return list of pod information
     return_list = []
     for pod in pod_list.items:
         return_list.append({
             'id': pod.metadata.uid,
-            'name': pod.metadata.name
+            'name': pod.metadata.name,
+            'namespace': pod.metadata.namespace,
+            'creation_timestamp': pod.metadata.creation_timestamp,
+            'pod_ip': pod.status.pod_ip,
+            'phase': pod.status.phase
         })
-
-    print("Listing pods with their IPs:")
-    ret = v1.list_pod_for_all_namespaces(watch=False)
-    for i in ret.items:
-        print(i.status.pod_ip, i.metadata.namespace, i.metadata.name)
 
     result = [{"result": return_list}]
     return result
@@ -101,7 +97,7 @@ def generate_k8s_python_payload(agent_json=agent_json):
         "creds": creds,
         "connection_interface": ConnectionInterfaces.PYTHON_SDK,
         "executable": k8s_code,
-        "clients": ["config", "client"],
+        "clients": ["kubernetes"],
         "params": {},
         "node_details": {"filter_resources": False},
         "context": PayloadTaskContext(**context, **{"integration": k8s_integration}),
@@ -122,12 +118,12 @@ if __name__ == '__main__':
         output = service.execute_steampipe_task(task, job_type="query")
         print(output)
 
-    # k8s_python_payload = generate_k8s_python_payload(agent_json)
-    # for task in k8s_python_payload.tasks:
-    #     integration = IntegrationSchema.model_validate(task.context.integration)
-    #     service = integration_service_factory.get_service(None, integration)
-    #     output = service.python_sdk_processor(payload_task=task)
-    #     print(output)
+    k8s_python_payload = generate_k8s_python_payload(agent_json)
+    for task in k8s_python_payload.tasks:
+        integration = IntegrationSchema.model_validate(task.context.integration)
+        service = integration_service_factory.get_service(None, integration)
+        output = service.python_sdk_processor(payload_task=task)
+        print(output)
 
 
 

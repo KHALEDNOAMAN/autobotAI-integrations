@@ -1,10 +1,9 @@
 import uuid
-from typing import Dict, List
-import importlib
+from typing import List
 from autobotAI_integrations import BaseSchema, SteampipeCreds, RestAPICreds, SDKCreds, CLICreds, \
     BaseService, ConnectionInterfaces, PayloadTask, SDKClient, list_of_unique_elements
 from autobotAI_integrations.integration_schema import ConnectionTypes
-from autobotAI_integrations.models import Dict
+from autobotAI_integrations.utils import KubernetesHelper
 
 
 class KubernetesIntegration(BaseSchema):
@@ -52,22 +51,12 @@ class KubernetesService(BaseService):
     def _test_integration(self, integration: dict):
         pass
 
-    def _get_clients(self, client_definations: List[SDKClient]):
-        client_classes = dict()
-        for client in client_definations:
-            try:
-                client_module = importlib.import_module(client.module, package=None)
-                if hasattr(client_module, client.class_name):
-                    cls = getattr(client_module, client.class_name)
-                    client_classes[client.class_name] = cls
-            except BaseException as e:
-                print(e)
-                continue
-        return client_classes
-
     def build_python_exec_combinations_hook(self, payload_task: PayloadTask,
                                             client_definitions: List[SDKClient]) -> list:
-        clients = self._get_clients(client_definitions)
+        k8s_helper = KubernetesHelper(self.ctx, self.integration)
+        clients = k8s_helper.generate_clients(client_definitions)
+        # Loading kubernet Config
+        k8s_helper.get_kubernetes_config()
         return [
             {
                 "clients": clients
@@ -75,15 +64,22 @@ class KubernetesService(BaseService):
         ]
 
     def generate_steampipe_creds(self) -> SteampipeCreds:
-        creds = {}
+        envs = self._temp_credentials()
         conf_path = "~/.steampipe/config/kubernetes.spc"
         return SteampipeCreds(
-            envs=creds, plugin_name="kubernetes", connection_name="kubernetes", conf_path=conf_path
+            envs=envs, plugin_name="kubernetes", connection_name="kubernetes", conf_path=conf_path
         )
 
     def generate_python_sdk_creds(self) -> SDKCreds:
-        return SDKCreds()
+        envs = self._temp_credentials()
+        return SDKCreds(envs=envs)
 
     def generate_cli_creds(self) -> CLICreds:
-        return CLICreds()
+        envs = self._temp_credentials()
+        return CLICreds(envs=envs)
+    
+    def _temp_credentials(self):
+        return {
+            "KUBECONFIG": "~/.kube/config"
+        }
 
