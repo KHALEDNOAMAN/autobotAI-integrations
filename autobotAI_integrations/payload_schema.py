@@ -2,7 +2,7 @@ from typing import List, Optional, Any, Union
 
 from pydantic import BaseModel, SerializeAsAny, field_validator, ValidationError
 
-from autobotAI_integrations import IntegrationSchema
+from autobotAI_integrations import IntegrationV2Schema
 from autobotAI_integrations.models import (
     BaseCreds,
     ConnectionInterfaces,
@@ -25,7 +25,7 @@ class ExecutionDetails(BaseModel):
 
 
 class PayloadTaskContext(BaseModel):
-    integration: SerializeAsAny[IntegrationSchema]
+    integration: SerializeAsAny[IntegrationV2Schema]
     global_variables: dict = {}  # Global Variables defined by User, this will be store in secret manager
     integration_variables: dict = {}  # Secret manager variables stored for the specific Integration.
     integration_group_vars: dict = {}  # Secret manager variables stored for the specific Integration Group.
@@ -36,7 +36,7 @@ class PayloadTaskContext(BaseModel):
     @classmethod
     def validate_integration(cls, integration):
         if isinstance(integration, dict):
-            for base_schema in IntegrationSchema.__subclasses__():
+            for base_schema in IntegrationV2Schema.__subclasses__():
                 for subclass in base_schema.__subclasses__():
                     dir_name = os.path.dirname(inspect.getfile(subclass)).split('/')[-1]
                     if dir_name == integration['cspName']:

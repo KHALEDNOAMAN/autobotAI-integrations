@@ -3,7 +3,7 @@ from typing import Optional, List, Any, Dict, ClassVar
 
 from pydantic import BaseModel, ConfigDict
 
-from autobotAI_integrations import IntegrationSchema
+from autobotAI_integrations import IntegrationV2Schema
 
 
 class ConnectionInterfaces(str, Enum):
@@ -66,7 +66,7 @@ class CLICreds(BaseCreds):
 
 
 # Setting default to None
-class BaseSchema(IntegrationSchema):
+class BaseSchema(IntegrationV2Schema):
     name: Optional[str] = None
     description: Optional[str] = None
     logo: Optional[str] = None
