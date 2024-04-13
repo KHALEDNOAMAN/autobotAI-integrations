@@ -4,7 +4,7 @@ import dotenv
 
 dotenv.load_dotenv()
 
-from autobotAI_integrations import ConnectionInterfaces, IntegrationV2Schema
+from autobotAI_integrations import ConnectionInterfaces, IntegrationSchema
 from autobotAI_integrations.integrations.gitlab import GitlabIntegration
 from autobotAI_integrations.integrations import integration_service_factory
 from autobotAI_integrations.payload_schema import Payload, PayloadTask, PayloadTaskContext

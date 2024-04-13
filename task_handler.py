@@ -3,7 +3,7 @@ import json
 import argparse
 import os
 
-from autobotAI_integrations import IntegrationV2Schema
+from autobotAI_integrations import IntegrationSchema
 from autobotAI_integrations.integrations import integration_service_factory
 from autobotAI_integrations.models import ConnectionInterfaces
 from autobotAI_integrations.payload_schema import PayloadTask
@@ -28,7 +28,7 @@ with open(task_input_file) as task_file:
 
     task = PayloadTask.model_validate_json(task_file.read(), strict=False)
 
-    integration = IntegrationV2Schema.model_validate(task.context.integration)
+    integration = IntegrationSchema.model_validate(task.context.integration)
     service = integration_service_factory.get_service(None, integration)
 
     result = None

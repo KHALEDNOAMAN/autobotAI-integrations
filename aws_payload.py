@@ -1,4 +1,4 @@
-from autobotAI_integrations import IntegrationV2Schema
+from autobotAI_integrations import IntegrationSchema
 from autobotAI_integrations.integrations import integration_service_factory
 from autobotAI_integrations import ConnectionInterfaces
 from autobotAI_integrations.integrations.aws import AWSIntegration

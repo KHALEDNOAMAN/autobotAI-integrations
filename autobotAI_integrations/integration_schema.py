@@ -20,7 +20,7 @@ class IntegrationStates(str, Enum):
         return self.value
 
 
-class IntegrationV2Schema(BaseModel):
+class IntegrationSchema(BaseModel):
     userId: str  # The user creating the Integration
     accountId: str  # Unique ID for the integration, For AWS it is Account ID, Azure it is subscription id and GCP it is project id, if no unique id available we generate an unique id.
     integrationState: IntegrationStates = IntegrationStates.INACTIVE.value
