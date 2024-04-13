@@ -69,3 +69,29 @@ class Payload(BaseModel):
     job_id: str
     state: Optional[dict] = None
     tasks: List[PayloadTask]
+
+
+class ResponseError(BaseModel):
+    message: str
+    other_details: dict = None
+
+
+class ResponseDebugInfo(BaseModel):
+    executable: str
+    job_type: str
+    integration_id: str
+    integration_type: str
+    resource_type: str = None
+    environs: dict = None
+
+
+class PayloadTaskResult(BaseModel):
+    task_id: str
+    resources: Optional[List] = None
+    errors: Optional[List[ResponseError]] = None
+    debug_info: ResponseDebugInfo
+
+
+class PayloadResponseSchema(BaseModel):
+    job_id: str
+    task_results: List[PayloadTaskResult]
