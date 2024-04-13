@@ -79,19 +79,19 @@ class ResponseError(BaseModel):
 class ResponseDebugInfo(BaseModel):
     executable: str
     job_type: str
-    integration_id: str
-    integration_type: str
     resource_type: str = None
     environs: dict = None
 
 
-class PayloadTaskResult(BaseModel):
+class TaskResult(BaseModel):
     task_id: str
+    integration_id: str
+    integration_type: str
     resources: Optional[List] = None
     errors: Optional[List[ResponseError]] = None
     debug_info: ResponseDebugInfo
 
 
-class PayloadResponseSchema(BaseModel):
+class JobResult(BaseModel):
     job_id: str
-    task_results: List[PayloadTaskResult]
+    task_results: List[TaskResult]
