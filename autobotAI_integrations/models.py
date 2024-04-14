@@ -56,7 +56,6 @@ class SDKCreds(BaseCreds):
     envs: Optional[dict] = None
 
 
-
 class CLICreds(BaseCreds):
     connection_interface: ClassVar[ConnectionInterfaces] = ConnectionInterfaces.CLI
     creds_type: str = ConnectionInterfaces.CLI.value

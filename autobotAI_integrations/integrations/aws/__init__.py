@@ -14,7 +14,7 @@ from autobotAI_integrations.utils.boto3_helper import Boto3Helper
 class Forms:
     pass
 
-
+# NOTE: NOT IMPLEMENTED ANYWHERE
 class AWSSDKClient(SDKClient):
     is_regional: bool
 
@@ -145,7 +145,7 @@ class AWSService(BaseService):
                     "clients": {**built_clients["global"], **built_clients["regional"][region]}
                 }
                 resources = []
-                if payload_task.node_details.get("filter_resources"):
+                if getattr(payload_task, "node_details", {}) and payload_task.node_details.get("filter_resources"):
                     for resource in payload_task.resources:
                         if resource.get("integration_type") == self.get_integration_type():
                             if resource.get("region") == region:
@@ -160,9 +160,7 @@ class AWSService(BaseService):
 
     def generate_python_sdk_creds(self, requested_clients=None) -> SDKCreds:
         creds = self._temp_credentials()
-        clients = self.get_all_python_sdk_clients()
-        package_names = None
-        return SDKCreds(library_names=[], clients=[], envs=creds, package_names=package_names)
+        return SDKCreds(envs=creds)
 
     @staticmethod
     def supported_connection_interfaces():

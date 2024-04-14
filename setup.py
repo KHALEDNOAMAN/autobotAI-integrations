@@ -12,7 +12,10 @@ setup(
         "botocore",
         "pydantic",
         "PyYAML",
-        "pydash"
+        "pydash",
+        "PyGithub",
+        "kubernetes",
+        "google-auth",
     ],
     package_data={'': ['integrations/*/inventory.json', 'integrations/*/python_sdk_clients.yml']},
     classifiers=[

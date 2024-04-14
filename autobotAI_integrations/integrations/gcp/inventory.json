@@ -1,0 +1,2662 @@
+{
+    "gcp": [
+        {
+            "name": "gcp_audit_policy",
+            "all_columns": [
+                "service",
+                "audit_log_configs",
+                "akas",
+                "location",
+                "project"
+            ],
+            "included": [],
+            "excluded": [
+                "location"
+            ],
+            "aliases": [
+                {
+                    "name": "akas[0]",
+                    "alias": "urn"
+                },
+                {
+                    "name": "akas[0]",
+                    "alias": "name"
+                },
+                {
+                    "name": "akas[0]",
+                    "alias": "id"
+                },
+                {
+                    "name": "case when (SELECT count(*) FROM regexp_matches(location, '-', 'g')) > 1 then left(location,-2) else location end",
+                    "alias": "region"
+                }
+            ],
+            "inventory_supported": false
+        },
+        {
+            "name": "gcp_bigquery_dataset",
+            "all_columns": [
+                "name",
+                "dataset_id",
+                "id",
+                "kind",
+                "creation_time",
+                "description",
+                "etag",
+                "default_partition_expiration_ms",
+                "default_table_expiration_ms",
+                "kms_key_name",
+                "last_modified_time",
+                "self_link",
+                "access",
+                "labels",
+                "title",
+                "tags",
+                "akas",
+                "location",
+                "project"
+            ],
+            "included": [],
+            "excluded": [
+                "location"
+            ],
+            "aliases": [
+                {
+                    "name": "id",
+                    "alias": "urn"
+                },
+                {
+                    "name": "case when (SELECT count(*) FROM regexp_matches(location, '-', 'g')) > 1 then left(location,-2) else location end",
+                    "alias": "region"
+                }
+            ],
+            "inventory_supported": false
+        },
+        {
+            "name": "gcp_bigquery_job",
+            "all_columns": [
+                "id",
+                "job_id",
+                "state",
+                "self_link",
+                "completion_ratio",
+                "creation_time",
+                "end_time",
+                "etag",
+                "kind",
+                "num_child_jobs",
+                "parent_job_id",
+                "reservation_id",
+                "start_time",
+                "total_bytes_processed",
+                "total_slot_ms",
+                "user_email",
+                "configuration",
+                "error_result",
+                "errors",
+                "extract",
+                "labels",
+                "load",
+                "query",
+                "quota_deferments",
+                "reservation_usage",
+                "row_level_security_statistics",
+                "script_statistics",
+                "session_info_template",
+                "transaction_info",
+                "title",
+                "tags",
+                "akas",
+                "location",
+                "project"
+            ],
+            "included": [],
+            "excluded": [
+                "location"
+            ],
+            "aliases": [
+                {
+                    "name": "id",
+                    "alias": "urn"
+                },
+                {
+                    "name": "title",
+                    "alias": "name"
+                },
+                {
+                    "name": "case when (SELECT count(*) FROM regexp_matches(location, '-', 'g')) > 1 then left(location,-2) else location end",
+                    "alias": "region"
+                }
+            ],
+            "inventory_supported": false
+        },
+        {
+            "name": "gcp_bigquery_table",
+            "tags": [
+                "compute"
+            ],
+            "all_columns": [
+                "name",
+                "table_id",
+                "dataset_id",
+                "id",
+                "type",
+                "self_link",
+                "creation_time",
+                "description",
+                "etag",
+                "expiration_time",
+                "kind",
+                "kms_key_name",
+                "last_modified_time",
+                "num_bytes",
+                "num_long_term_bytes",
+                "num_physical_bytes",
+                "num_rows",
+                "require_partition_filter",
+                "snapshot_time",
+                "view_query",
+                "view_use_legacy_sql",
+                "clustering_fields",
+                "external_data_configuration",
+                "labels",
+                "materialized_view",
+                "range_partitioning",
+                "schema_fields",
+                "streaming_buffer",
+                "time_partitioning",
+                "view",
+                "title",
+                "tags",
+                "akas",
+                "location",
+                "project"
+            ],
+            "included": [],
+            "excluded": [
+                "location"
+            ],
+            "aliases": [
+                {
+                    "name": "id",
+                    "alias": "urn"
+                },
+                {
+                    "name": "case when (SELECT count(*) FROM regexp_matches(location, '-', 'g')) > 1 then left(location,-2) else location end",
+                    "alias": "region"
+                }
+            ],
+            "inventory_supported": false
+        },
+        {
+            "name": "gcp_bigtable_instance",
+            "tags": [
+                "compute"
+            ],
+            "all_columns": [
+                "name",
+                "display_name",
+                "instance_type",
+                "self_link",
+                "state",
+                "labels",
+                "iam_policy",
+                "tags",
+                "title",
+                "akas",
+                "location",
+                "project"
+            ],
+            "included": [],
+            "excluded": [
+                "location"
+            ],
+            "aliases": [
+                {
+                    "name": "akas[0]",
+                    "alias": "urn"
+                },
+                {
+                    "name": "akas[0]",
+                    "alias": "id"
+                },
+                {
+                    "name": "case when (SELECT count(*) FROM regexp_matches(location, '-', 'g')) > 1 then left(location,-2) else location end",
+                    "alias": "region"
+                }
+            ],
+            "inventory_supported": true
+        },
+        {
+            "name": "gcp_cloudfunctions_function",
+            "tags": [
+                "compute"
+            ],
+            "all_columns": [
+                "name",
+                "status",
+                "self_link",
+                "description",
+                "runtime",
+                "available_memory_mb",
+                "build_environment_variables",
+                "build_id",
+                "entry_point",
+                "environment_variables",
+                "event_trigger",
+                "https_trigger",
+                "iam_policy",
+                "ingress_settings",
+                "labels",
+                "max_instances",
+                "network",
+                "service_account_email",
+                "source_archive_url",
+                "source_repository",
+                "source_upload_url",
+                "timeout",
+                "update_time",
+                "version_id",
+                "vpc_connector",
+                "vpc_connector_egress_settings",
+                "title",
+                "tags",
+                "akas",
+                "location",
+                "project"
+            ],
+            "included": [],
+            "excluded": [
+                "location"
+            ],
+            "aliases": [
+                {
+                    "name": "akas[0]",
+                    "alias": "urn"
+                },
+                {
+                    "name": "akas[0]",
+                    "alias": "id"
+                },
+                {
+                    "name": "case when (SELECT count(*) FROM regexp_matches(location, '-', 'g')) > 1 then left(location,-2) else location end",
+                    "alias": "region"
+                }
+            ],
+            "inventory_supported": true
+        },
+        {
+            "name": "gcp_compute_address",
+            "all_columns": [
+                "name",
+                "id",
+                "address",
+                "address_type",
+                "ip_version",
+                "description",
+                "creation_timestamp",
+                "kind",
+                "network",
+                "network_tier",
+                "prefix_length",
+                "purpose",
+                "self_link",
+                "status",
+                "subnetwork",
+                "users",
+                "title",
+                "akas",
+                "location",
+                "project"
+            ],
+            "included": [],
+            "excluded": [
+                "location"
+            ],
+            "aliases": [
+                {
+                    "name": "id",
+                    "alias": "urn"
+                },
+                {
+                    "name": "case when (SELECT count(*) FROM regexp_matches(location, '-', 'g')) > 1 then left(location,-2) else location end",
+                    "alias": "region"
+                }
+            ],
+            "inventory_supported": true
+        },
+        {
+            "name": "gcp_compute_autoscaler",
+            "all_columns": [
+                "name",
+                "id",
+                "creation_timestamp",
+                "description",
+                "kind",
+                "recommended_size",
+                "region",
+                "region_name",
+                "self_link",
+                "status",
+                "target",
+                "zone",
+                "zone_name",
+                "autoscaling_policy",
+                "scaling_schedule_status",
+                "status_details",
+                "title",
+                "akas",
+                "location",
+                "project"
+            ],
+            "included": [],
+            "excluded": [
+                "region"
+            ],
+            "aliases": [
+                {
+                    "name": "id",
+                    "alias": "urn"
+                },
+                {
+                    "name": "split_part(region,'/',-1)",
+                    "alias": "region"
+                }
+            ],
+            "inventory_supported": true
+        },
+        {
+            "name": "gcp_compute_backend_bucket",
+            "all_columns": [
+                "name",
+                "id",
+                "description",
+                "kind",
+                "enable_cdn",
+                "bucket_name",
+                "creation_timestamp",
+                "signed_url_cache_max_age_sec",
+                "self_link",
+                "signed_url_key_names",
+                "title",
+                "akas",
+                "location",
+                "project"
+            ],
+            "included": [],
+            "excluded": [
+                "location"
+            ],
+            "aliases": [
+                {
+                    "name": "id",
+                    "alias": "urn"
+                },
+                {
+                    "name": "case when (SELECT count(*) FROM regexp_matches(location, '-', 'g')) > 1 then left(location,-2) else location end",
+                    "alias": "region"
+                }
+            ],
+            "inventory_supported": true
+        },
+        {
+            "name": "gcp_compute_backend_service",
+            "all_columns": [
+                "name",
+                "id",
+                "enable_cdn",
+                "load_balancing_scheme",
+                "description",
+                "kind",
+                "creation_timestamp",
+                "affinity_cookie_ttl_sec",
+                "connection_draining_timeout_sec",
+                "fingerprint",
+                "locality_lb_policy",
+                "log_config_enable",
+                "log_config_sample_rate",
+                "network",
+                "port",
+                "port_name",
+                "protocol",
+                "region",
+                "security_policy",
+                "self_link",
+                "session_affinity",
+                "signed_url_cache_max_age_sec",
+                "timeout_sec",
+                "backends",
+                "cdn_policy_cache_key_policy",
+                "circuit_breakers",
+                "failover_policy",
+                "health_checks",
+                "iap",
+                "security_settings",
+                "signed_url_key_names",
+                "location_type",
+                "title",
+                "akas",
+                "location",
+                "project"
+            ],
+            "included": [],
+            "excluded": [
+                "region"
+            ],
+            "aliases": [
+                {
+                    "name": "id",
+                    "alias": "urn"
+                },
+                {
+                    "name": "split_part(region,'/',-1)",
+                    "alias": "region"
+                }
+            ],
+            "inventory_supported": true
+        },
+        {
+            "name": "gcp_compute_disk",
+            "all_columns": [
+                "name",
+                "id",
+                "creation_timestamp",
+                "size_gb",
+                "status",
+                "description",
+                "disk_encryption_key",
+                "disk_encryption_key_type",
+                "kind",
+                "last_attach_timestamp",
+                "last_detach_timestamp",
+                "physical_block_size_bytes",
+                "self_link",
+                "source_disk",
+                "source_disk_id",
+                "source_image",
+                "source_image_id",
+                "source_snapshot",
+                "source_snapshot_id",
+                "source_image_encryption_key",
+                "source_snapshot_encryption_key",
+                "type",
+                "type_name",
+                "location_type",
+                "region",
+                "region_name",
+                "zone",
+                "zone_name",
+                "guest_os_features",
+                "labels",
+                "licenses",
+                "license_codes",
+                "replica_zones",
+                "resource_policies",
+                "users",
+                "iam_policy",
+                "title",
+                "tags",
+                "akas",
+                "location",
+                "project"
+            ],
+            "included": [],
+            "excluded": [
+                "region"
+            ],
+            "aliases": [
+                {
+                    "name": "id",
+                    "alias": "urn"
+                },
+                {
+                    "name": "split_part(region,'/',-1)",
+                    "alias": "region"
+                }
+            ],
+            "inventory_supported": true
+        },
+        {
+            "name": "gcp_compute_forwarding_rule",
+            "all_columns": [
+                "name",
+                "id",
+                "description",
+                "ip_address",
+                "allow_global_access",
+                "kind",
+                "region",
+                "self_link",
+                "creation_timestamp",
+                "all_ports",
+                "backend_service",
+                "fingerprint",
+                "ip_protocol",
+                "ip_version",
+                "is_mirroring_collector",
+                "load_balancing_scheme",
+                "network",
+                "network_tier",
+                "port_range",
+                "service_label",
+                "service_name",
+                "subnetwork",
+                "target",
+                "metadata_filters",
+                "ports",
+                "labels",
+                "tags",
+                "title",
+                "akas",
+                "location",
+                "project"
+            ],
+            "included": [],
+            "excluded": [
+                "region"
+            ],
+            "aliases": [
+                {
+                    "name": "id",
+                    "alias": "urn"
+                },
+                {
+                    "name": "split_part(region,'/',-1)",
+                    "alias": "region"
+                }
+            ],
+            "inventory_supported": false
+        },
+        {
+            "name": "gcp_compute_global_address",
+            "all_columns": [
+                "name",
+                "id",
+                "address",
+                "address_type",
+                "ip_version",
+                "description",
+                "creation_timestamp",
+                "kind",
+                "network",
+                "network_tier",
+                "prefix_length",
+                "purpose",
+                "self_link",
+                "status",
+                "subnetwork",
+                "users",
+                "title",
+                "akas",
+                "location",
+                "project"
+            ],
+            "included": [],
+            "excluded": [
+                "location"
+            ],
+            "aliases": [
+                {
+                    "name": "id",
+                    "alias": "urn"
+                },
+                {
+                    "name": "case when (SELECT count(*) FROM regexp_matches(location, '-', 'g')) > 1 then left(location,-2) else location end",
+                    "alias": "region"
+                }
+            ],
+            "inventory_supported": true
+        },
+        {
+            "name": "gcp_compute_global_forwarding_rule",
+            "all_columns": [
+                "name",
+                "id",
+                "description",
+                "ip_address",
+                "allow_global_access",
+                "kind",
+                "self_link",
+                "creation_timestamp",
+                "all_ports",
+                "backend_service",
+                "fingerprint",
+                "ip_protocol",
+                "ip_version",
+                "is_mirroring_collector",
+                "load_balancing_scheme",
+                "network",
+                "network_tier",
+                "port_range",
+                "service_label",
+                "service_name",
+                "subnetwork",
+                "target",
+                "metadata_filters",
+                "ports",
+                "title",
+                "akas",
+                "location",
+                "project"
+            ],
+            "included": [],
+            "excluded": [
+                "location"
+            ],
+            "aliases": [
+                {
+                    "name": "id",
+                    "alias": "urn"
+                },
+                {
+                    "name": "case when (SELECT count(*) FROM regexp_matches(location, '-', 'g')) > 1 then left(location,-2) else location end",
+                    "alias": "region"
+                }
+            ],
+            "inventory_supported": false
+        },
+        {
+            "name": "gcp_compute_ha_vpn_gateway",
+            "tags": [
+                "compute"
+            ],
+            "all_columns": [
+                "name",
+                "id",
+                "creation_timestamp",
+                "description",
+                "kind",
+                "label_fingerprint",
+                "network",
+                "region",
+                "region_name",
+                "self_link",
+                "vpn_connections",
+                "labels",
+                "vpn_interfaces",
+                "title",
+                "tags",
+                "akas",
+                "location",
+                "project"
+            ],
+            "included": [],
+            "excluded": [
+                "region"
+            ],
+            "aliases": [
+                {
+                    "name": "id",
+                    "alias": "urn"
+                },
+                {
+                    "name": "split_part(region,'/',-1)",
+                    "alias": "region"
+                }
+            ],
+            "inventory_supported": true
+        },
+        {
+            "name": "gcp_compute_image",
+            "all_columns": [
+                "name",
+                "id",
+                "kind",
+                "description",
+                "self_link",
+                "status",
+                "deprecated",
+                "deprecation_state",
+                "archive_size_bytes",
+                "creation_timestamp",
+                "disk_size_gb",
+                "family",
+                "label_fingerprint",
+                "source_disk",
+                "source_disk_id",
+                "source_image",
+                "source_image_id",
+                "source_project",
+                "source_snapshot",
+                "source_snapshot_id",
+                "source_type",
+                "image_encryption_key",
+                "guest_os_features",
+                "iam_policy",
+                "licenses",
+                "raw_disk",
+                "source_disk_encryption_key",
+                "source_image_encryption_key",
+                "source_snapshot_encryption_key",
+                "storage_locations",
+                "labels",
+                "tags",
+                "title",
+                "akas",
+                "location",
+                "project"
+            ],
+            "included": [],
+            "excluded": [
+                "location"
+            ],
+            "aliases": [
+                {
+                    "name": "id",
+                    "alias": "urn"
+                },
+                {
+                    "name": "case when (SELECT count(*) FROM regexp_matches(location, '-', 'g')) > 1 then left(location,-2) else location end",
+                    "alias": "region"
+                }
+            ],
+            "inventory_supported": true
+        },
+        {
+            "name": "gcp_compute_instance",
+            "tags": [
+                "compute"
+            ],
+            "all_columns": [
+                "name",
+                "id",
+                "machine_type_name",
+                "status",
+                "can_ip_forward",
+                "cpu_platform",
+                "creation_timestamp",
+                "deletion_protection",
+                "description",
+                "fingerprint",
+                "hostname",
+                "kind",
+                "label_fingerprint",
+                "last_start_timestamp",
+                "last_stop_timestamp",
+                "last_suspended_timestamp",
+                "machine_type",
+                "min_cpu_platform",
+                "private_ipv6_google_access",
+                "self_link",
+                "start_restricted",
+                "status_message",
+                "zone",
+                "zone_name",
+                "confidential_instance_config",
+                "disks",
+                "display_device",
+                "guest_accelerators",
+                "labels",
+                "metadata",
+                "network_interfaces",
+                "reservation_affinity",
+                "resource_policies",
+                "scheduling",
+                "service_accounts",
+                "shielded_instance_config",
+                "shielded_instance_integrity_policy",
+                "network_tags",
+                "iam_policy",
+                "title",
+                "tags",
+                "akas",
+                "location",
+                "project"
+            ],
+            "included": [],
+            "excluded": [
+                "location"
+            ],
+            "aliases": [
+                {
+                    "name": "id",
+                    "alias": "urn"
+                },
+                {
+                    "name": "case when (SELECT count(*) FROM regexp_matches(location, '-', 'g')) > 1 then left(location,-2) else location end",
+                    "alias": "region"
+                }
+            ],
+            "inventory_supported": true
+        },
+        {
+            "name": "gcp_compute_instance_group",
+            "all_columns": [
+                "name",
+                "id",
+                "creation_timestamp",
+                "description",
+                "fingerprint",
+                "kind",
+                "network",
+                "region",
+                "region_name",
+                "self_link",
+                "size",
+                "subnetwork",
+                "zone",
+                "named_ports",
+                "instances",
+                "zone_name",
+                "title",
+                "akas",
+                "location",
+                "project"
+            ],
+            "included": [],
+            "excluded": [
+                "region"
+            ],
+            "aliases": [
+                {
+                    "name": "id",
+                    "alias": "urn"
+                },
+                {
+                    "name": "split_part(region,'/',-1)",
+                    "alias": "region"
+                }
+            ],
+            "inventory_supported": false
+        },
+        {
+            "name": "gcp_compute_instance_template",
+            "all_columns": [
+                "name",
+                "id",
+                "creation_timestamp",
+                "self_link",
+                "kind",
+                "description",
+                "instance_description",
+                "instance_machine_type",
+                "instance_can_ip_forward",
+                "instance_min_cpu_platform",
+                "instance_private_ipv6_google_access",
+                "source_instance",
+                "source_instance_name",
+                "instance_disks",
+                "instance_guest_accelerators",
+                "instance_metadata",
+                "instance_network_interfaces",
+                "instance_reservation_affinity",
+                "instance_resource_policies",
+                "instance_scheduling",
+                "instance_service_accounts",
+                "instance_shielded_instance_config",
+                "instance_tags",
+                "labels",
+                "tags",
+                "title",
+                "akas",
+                "location",
+                "project"
+            ],
+            "included": [],
+            "excluded": [
+                "location"
+            ],
+            "aliases": [
+                {
+                    "name": "id",
+                    "alias": "urn"
+                },
+                {
+                    "name": "case when (SELECT count(*) FROM regexp_matches(location, '-', 'g')) > 1 then left(location,-2) else location end",
+                    "alias": "region"
+                }
+            ],
+            "inventory_supported": false
+        },
+        {
+            "name": "gcp_compute_network",
+            "all_columns": [
+                "name",
+                "id",
+                "creation_timestamp",
+                "auto_create_subnetworks",
+                "description",
+                "gateway_ipv4",
+                "ipv4_range",
+                "kind",
+                "mtu",
+                "self_link",
+                "routing_mode",
+                "peerings",
+                "subnetworks",
+                "title",
+                "akas",
+                "location",
+                "project"
+            ],
+            "included": [],
+            "excluded": [
+                "location"
+            ],
+            "aliases": [
+                {
+                    "name": "id",
+                    "alias": "urn"
+                },
+                {
+                    "name": "case when (SELECT count(*) FROM regexp_matches(location, '-', 'g')) > 1 then left(location,-2) else location end",
+                    "alias": "region"
+                }
+            ],
+            "inventory_supported": true
+        },
+        {
+            "name": "gcp_compute_node_group",
+            "all_columns": [
+                "name",
+                "id",
+                "status",
+                "size",
+                "description",
+                "kind",
+                "autoscaling_policy_mode",
+                "autoscaling_policy_max_nodes",
+                "autoscaling_policy_min_nodes",
+                "creation_timestamp",
+                "fingerprint",
+                "maintenance_policy",
+                "node_template",
+                "self_link",
+                "zone",
+                "zone_name",
+                "iam_policy",
+                "title",
+                "akas",
+                "location",
+                "project"
+            ],
+            "included": [],
+            "excluded": [
+                "location"
+            ],
+            "aliases": [
+                {
+                    "name": "id",
+                    "alias": "urn"
+                },
+                {
+                    "name": "case when (SELECT count(*) FROM regexp_matches(location, '-', 'g')) > 1 then left(location,-2) else location end",
+                    "alias": "region"
+                }
+            ],
+            "inventory_supported": true
+        },
+        {
+            "name": "gcp_compute_node_template",
+            "all_columns": [
+                "name",
+                "id",
+                "status",
+                "description",
+                "kind",
+                "creation_timestamp",
+                "cpu_overcommit_type",
+                "node_type",
+                "node_type_flexibility_cpus",
+                "node_type_flexibility_local_ssd",
+                "node_type_flexibility_memory",
+                "region",
+                "self_link",
+                "server_binding_type",
+                "status_message",
+                "node_affinity_labels",
+                "iam_policy",
+                "title",
+                "akas",
+                "location",
+                "project"
+            ],
+            "included": [],
+            "excluded": [
+                "region"
+            ],
+            "aliases": [
+                {
+                    "name": "id",
+                    "alias": "urn"
+                },
+                {
+                    "name": "split_part(region,'/',-1)",
+                    "alias": "region"
+                }
+            ],
+            "inventory_supported": true
+        },
+        {
+            "name": "gcp_compute_project_metadata",
+            "all_columns": [
+                "name",
+                "id",
+                "default_service_account",
+                "description",
+                "creation_timestamp",
+                "default_network_tier",
+                "kind",
+                "self_link",
+                "xpn_project_status",
+                "common_instance_metadata",
+                "enabled_features",
+                "quotas",
+                "usage_export_location",
+                "title",
+                "akas",
+                "location",
+                "project"
+            ],
+            "included": [],
+            "excluded": [
+                "location"
+            ],
+            "aliases": [
+                {
+                    "name": "id",
+                    "alias": "urn"
+                },
+                {
+                    "name": "case when (SELECT count(*) FROM regexp_matches(location, '-', 'g')) > 1 then left(location,-2) else location end",
+                    "alias": "region"
+                }
+            ],
+            "inventory_supported": true
+        },
+        {
+            "name": "gcp_compute_resource_policy",
+            "all_columns": [
+                "name",
+                "id",
+                "status",
+                "self_link",
+                "creation_timestamp",
+                "description",
+                "kind",
+                "group_placement_policy",
+                "instance_schedule_policy",
+                "resource_status",
+                "snapshot_schedule_policy",
+                "iam_policy",
+                "title",
+                "akas",
+                "location",
+                "project"
+            ],
+            "included": [],
+            "excluded": [
+                "location"
+            ],
+            "aliases": [
+                {
+                    "name": "id",
+                    "alias": "urn"
+                },
+                {
+                    "name": "case when (SELECT count(*) FROM regexp_matches(location, '-', 'g')) > 1 then left(location,-2) else location end",
+                    "alias": "region"
+                }
+            ],
+            "inventory_supported": true
+        },
+        {
+            "name": "gcp_compute_router",
+            "all_columns": [
+                "name",
+                "id",
+                "description",
+                "kind",
+                "creation_timestamp",
+                "network",
+                "self_link",
+                "bgp_advertise_mode",
+                "bgp_asn",
+                "bgp_advertised_groups",
+                "bgp_advertised_ip_ranges",
+                "bgp_peers",
+                "interfaces",
+                "nats",
+                "title",
+                "akas",
+                "location",
+                "project"
+            ],
+            "included": [],
+            "excluded": [
+                "location"
+            ],
+            "aliases": [
+                {
+                    "name": "id",
+                    "alias": "urn"
+                },
+                {
+                    "name": "case when (SELECT count(*) FROM regexp_matches(location, '-', 'g')) > 1 then left(location,-2) else location end",
+                    "alias": "region"
+                }
+            ],
+            "inventory_supported": true
+        },
+        {
+            "name": "gcp_compute_snapshot",
+            "all_columns": [
+                "name",
+                "source_disk",
+                "source_disk_name",
+                "description",
+                "auto_created",
+                "creation_timestamp",
+                "disk_size_gb",
+                "download_bytes",
+                "label_fingerprint",
+                "self_link",
+                "status",
+                "storage_bytes",
+                "storage_bytes_status",
+                "kms_key_name",
+                "kms_key_service_account",
+                "encryption_key_raw_key",
+                "encryption_key_sha256",
+                "source_disk_encryption_key",
+                "labels",
+                "licenses",
+                "storage_locations",
+                "title",
+                "tags",
+                "akas",
+                "location",
+                "project"
+            ],
+            "included": [],
+            "excluded": [
+                "location"
+            ],
+            "aliases": [
+                {
+                    "name": "akas[0]",
+                    "alias": "urn"
+                },
+                {
+                    "name": "akas[0]",
+                    "alias": "id"
+                },
+                {
+                    "name": "case when (SELECT count(*) FROM regexp_matches(location, '-', 'g')) > 1 then left(location,-2) else location end",
+                    "alias": "region"
+                }
+            ],
+            "inventory_supported": false
+        },
+        {
+            "name": "gcp_compute_ssl_policy",
+            "all_columns": [
+                "name",
+                "id",
+                "kind",
+                "description",
+                "creation_timestamp",
+                "fingerprint",
+                "min_tls_version",
+                "profile",
+                "self_link",
+                "custom_features",
+                "enabled_features",
+                "warnings",
+                "title",
+                "akas",
+                "location",
+                "project"
+            ],
+            "included": [],
+            "excluded": [
+                "location"
+            ],
+            "aliases": [
+                {
+                    "name": "id",
+                    "alias": "urn"
+                },
+                {
+                    "name": "case when (SELECT count(*) FROM regexp_matches(location, '-', 'g')) > 1 then left(location,-2) else location end",
+                    "alias": "region"
+                }
+            ],
+            "inventory_supported": false
+        },
+        {
+            "name": "gcp_compute_subnetwork",
+            "all_columns": [
+                "name",
+                "id",
+                "network_name",
+                "state",
+                "kind",
+                "description",
+                "creation_timestamp",
+                "enable_flow_logs",
+                "fingerprint",
+                "log_config_aggregation_interval",
+                "log_config_enable",
+                "log_config_filter_expr",
+                "log_config_flow_sampling",
+                "log_config_metadata",
+                "gateway_address",
+                "ip_cidr_range",
+                "ipv6_cidr_range",
+                "network",
+                "private_ip_google_access",
+                "private_ipv6_google_access",
+                "purpose",
+                "region",
+                "role",
+                "self_link",
+                "log_config_metadata_fields",
+                "secondary_ip_ranges",
+                "iam_policy",
+                "title",
+                "akas",
+                "location",
+                "project"
+            ],
+            "included": [],
+            "excluded": [
+                "region"
+            ],
+            "aliases": [
+                {
+                    "name": "id",
+                    "alias": "urn"
+                },
+                {
+                    "name": "split_part(region,'/',-1)",
+                    "alias": "region"
+                }
+            ],
+            "inventory_supported": true
+        },
+        {
+            "name": "gcp_compute_target_https_proxy",
+            "all_columns": [
+                "name",
+                "id",
+                "creation_timestamp",
+                "description",
+                "authorization_policy",
+                "kind",
+                "proxy_bind",
+                "quic_override",
+                "region",
+                "self_link",
+                "server_tls_policy",
+                "ssl_policy",
+                "url_map",
+                "ssl_certificates",
+                "location_type",
+                "title",
+                "akas",
+                "location",
+                "project"
+            ],
+            "included": [],
+            "excluded": [
+                "region"
+            ],
+            "aliases": [
+                {
+                    "name": "id",
+                    "alias": "urn"
+                },
+                {
+                    "name": "split_part(region,'/',-1)",
+                    "alias": "region"
+                }
+            ],
+            "inventory_supported": false
+        },
+        {
+            "name": "gcp_compute_target_pool",
+            "all_columns": [
+                "name",
+                "id",
+                "description",
+                "creation_timestamp",
+                "kind",
+                "self_link",
+                "region",
+                "region_name",
+                "session_affinity",
+                "health_checks",
+                "instances",
+                "title",
+                "akas",
+                "location",
+                "project"
+            ],
+            "included": [],
+            "excluded": [
+                "region"
+            ],
+            "aliases": [
+                {
+                    "name": "id",
+                    "alias": "urn"
+                },
+                {
+                    "name": "split_part(region,'/',-1)",
+                    "alias": "region"
+                }
+            ],
+            "inventory_supported": false
+        },
+        {
+            "name": "gcp_compute_target_ssl_proxy",
+            "all_columns": [
+                "name",
+                "id",
+                "kind",
+                "description",
+                "creation_timestamp",
+                "proxy_header",
+                "self_link",
+                "service",
+                "ssl_policy",
+                "ssl_certificates",
+                "title",
+                "akas",
+                "location",
+                "project"
+            ],
+            "included": [],
+            "excluded": [
+                "location"
+            ],
+            "aliases": [
+                {
+                    "name": "id",
+                    "alias": "urn"
+                },
+                {
+                    "name": "case when (SELECT count(*) FROM regexp_matches(location, '-', 'g')) > 1 then left(location,-2) else location end",
+                    "alias": "region"
+                }
+            ],
+            "inventory_supported": false
+        },
+        {
+            "name": "gcp_compute_target_vpn_gateway",
+            "all_columns": [
+                "name",
+                "id",
+                "kind",
+                "description",
+                "status",
+                "creation_timestamp",
+                "network",
+                "region",
+                "self_link",
+                "forwarding_rules",
+                "tunnels",
+                "title",
+                "akas",
+                "location",
+                "project"
+            ],
+            "included": [],
+            "excluded": [
+                "region"
+            ],
+            "aliases": [
+                {
+                    "name": "id",
+                    "alias": "urn"
+                },
+                {
+                    "name": "split_part(region,'/',-1)",
+                    "alias": "region"
+                }
+            ],
+            "inventory_supported": true
+        },
+        {
+            "name": "gcp_compute_url_map",
+            "all_columns": [
+                "name",
+                "id",
+                "description",
+                "kind",
+                "creation_timestamp",
+                "default_service",
+                "default_service_name",
+                "fingerprint",
+                "default_url_host_redirect",
+                "default_url_https_redirect",
+                "default_url_path_redirect",
+                "default_url_prefix_redirect",
+                "default_url_redirect_response_code",
+                "default_url_strip_query",
+                "region",
+                "self_link",
+                "default_route_action",
+                "host_rules",
+                "path_matchers",
+                "request_headers_to_add",
+                "request_headers_to_remove",
+                "response_headers_to_add",
+                "response_headers_to_remove",
+                "tests",
+                "location_type",
+                "title",
+                "akas",
+                "location",
+                "project"
+            ],
+            "included": [],
+            "excluded": [
+                "region"
+            ],
+            "aliases": [
+                {
+                    "name": "id",
+                    "alias": "urn"
+                },
+                {
+                    "name": "split_part(region,'/',-1)",
+                    "alias": "region"
+                }
+            ],
+            "inventory_supported": true
+        },
+        {
+            "name": "gcp_compute_vpn_tunnel",
+            "all_columns": [
+                "name",
+                "id",
+                "kind",
+                "description",
+                "status",
+                "creation_timestamp",
+                "detailed_status",
+                "ike_version",
+                "peer_external_gateway",
+                "peer_external_gateway_interface",
+                "peer_gcp_gateway",
+                "peer_ip",
+                "region",
+                "router",
+                "self_link",
+                "shared_secret",
+                "shared_secret_hash",
+                "target_vpn_gateway",
+                "vpn_gateway",
+                "vpn_gateway_name",
+                "vpn_gateway_interface",
+                "local_traffic_selector",
+                "remote_traffic_selector",
+                "title",
+                "akas",
+                "location",
+                "project"
+            ],
+            "included": [],
+            "excluded": [
+                "region"
+            ],
+            "aliases": [
+                {
+                    "name": "id",
+                    "alias": "urn"
+                },
+                {
+                    "name": "split_part(region,'/',-1)",
+                    "alias": "region"
+                }
+            ],
+            "inventory_supported": true
+        },
+        {
+            "name": "gcp_dataproc_cluster",
+            "tags": [
+                "compute"
+            ],
+            "all_columns": [
+                "cluster_name",
+                "cluster_uuid",
+                "state",
+                "config",
+                "labels",
+                "metrics",
+                "status",
+                "status_history",
+                "self_link",
+                "title",
+                "tags",
+                "akas",
+                "location",
+                "project"
+            ],
+            "included": [],
+            "excluded": [
+                "location"
+            ],
+            "aliases": [
+                {
+                    "name": "akas[0]",
+                    "alias": "urn"
+                },
+                {
+                    "name": "title",
+                    "alias": "name"
+                },
+                {
+                    "name": "akas[0]",
+                    "alias": "id"
+                },
+                {
+                    "name": "case when (SELECT count(*) FROM regexp_matches(location, '-', 'g')) > 1 then left(location,-2) else location end",
+                    "alias": "region"
+                }
+            ],
+            "inventory_supported": true
+        },
+        {
+            "name": "gcp_dns_managed_zone",
+            "all_columns": [
+                "name",
+                "id",
+                "kind",
+                "dns_name",
+                "visibility",
+                "creation_time",
+                "description",
+                "dnssec_config_non_existence",
+                "dnssec_config_state",
+                "name_server_set",
+                "service_directory_config_namespace_deletion_time",
+                "self_link",
+                "dnssec_config_default_key_specs",
+                "forwarding_config_target_name_servers",
+                "peering_config_target_network",
+                "private_visibility_config_networks",
+                "labels",
+                "name_servers",
+                "title",
+                "tags",
+                "akas",
+                "location",
+                "project"
+            ],
+            "included": [],
+            "excluded": [
+                "location"
+            ],
+            "aliases": [
+                {
+                    "name": "id",
+                    "alias": "urn"
+                },
+                {
+                    "name": "case when (SELECT count(*) FROM regexp_matches(location, '-', 'g')) > 1 then left(location,-2) else location end",
+                    "alias": "region"
+                }
+            ],
+            "inventory_supported": false
+        },
+        {
+            "name": "gcp_dns_policy",
+            "all_columns": [
+                "name",
+                "id",
+                "enable_logging",
+                "description",
+                "enable_inbound_forwarding",
+                "kind",
+                "networks",
+                "target_name_servers",
+                "title",
+                "akas",
+                "location",
+                "project"
+            ],
+            "included": [],
+            "excluded": [
+                "location"
+            ],
+            "aliases": [
+                {
+                    "name": "id",
+                    "alias": "urn"
+                },
+                {
+                    "name": "case when (SELECT count(*) FROM regexp_matches(location, '-', 'g')) > 1 then left(location,-2) else location end",
+                    "alias": "region"
+                }
+            ],
+            "inventory_supported": false
+        },
+        {
+            "name": "gcp_dns_record_set",
+            "all_columns": [
+                "name",
+                "managed_zone_name",
+                "type",
+                "kind",
+                "routing_policy",
+                "rrdatas",
+                "signature_rrdatas",
+                "ttl",
+                "title",
+                "akas",
+                "location",
+                "project"
+            ],
+            "included": [],
+            "excluded": [
+                "location"
+            ],
+            "aliases": [
+                {
+                    "name": "akas[0]",
+                    "alias": "urn"
+                },
+                {
+                    "name": "akas[0]",
+                    "alias": "id"
+                },
+                {
+                    "name": "case when (SELECT count(*) FROM regexp_matches(location, '-', 'g')) > 1 then left(location,-2) else location end",
+                    "alias": "region"
+                }
+            ],
+            "inventory_supported": false
+        },
+        {
+            "name": "gcp_iam_policy",
+            "all_columns": [
+                "version",
+                "etag",
+                "bindings",
+                "title",
+                "akas",
+                "location",
+                "project"
+            ],
+            "included": [],
+            "excluded": [
+                "location"
+            ],
+            "aliases": [
+                {
+                    "name": "akas[0]",
+                    "alias": "urn"
+                },
+                {
+                    "name": "title",
+                    "alias": "name"
+                },
+                {
+                    "name": "akas[0]",
+                    "alias": "id"
+                },
+                {
+                    "name": "case when (SELECT count(*) FROM regexp_matches(location, '-', 'g')) > 1 then left(location,-2) else location end",
+                    "alias": "region"
+                }
+            ],
+            "inventory_supported": false
+        },
+        {
+            "name": "gcp_iam_role",
+            "all_columns": [
+                "name",
+                "deleted",
+                "role_id",
+                "is_gcp_managed",
+                "stage",
+                "description",
+                "etag",
+                "included_permissions",
+                "title",
+                "akas",
+                "location",
+                "project"
+            ],
+            "included": [],
+            "excluded": [
+                "location"
+            ],
+            "aliases": [
+                {
+                    "name": "akas[0]",
+                    "alias": "urn"
+                },
+                {
+                    "name": "akas[0]",
+                    "alias": "id"
+                },
+                {
+                    "name": "case when (SELECT count(*) FROM regexp_matches(location, '-', 'g')) > 1 then left(location,-2) else location end",
+                    "alias": "region"
+                }
+            ],
+            "inventory_supported": false
+        },
+        {
+            "name": "gcp_kms_key",
+            "all_columns": [
+                "name",
+                "key_ring_name",
+                "self_link",
+                "create_time",
+                "purpose",
+                "next_rotation_time",
+                "rotation_period",
+                "iam_policy",
+                "labels",
+                "primary",
+                "version_template",
+                "title",
+                "tags",
+                "akas",
+                "location",
+                "project"
+            ],
+            "included": [],
+            "excluded": [
+                "location"
+            ],
+            "aliases": [
+                {
+                    "name": "akas[0]",
+                    "alias": "urn"
+                },
+                {
+                    "name": "akas[0]",
+                    "alias": "id"
+                },
+                {
+                    "name": "case when (SELECT count(*) FROM regexp_matches(location, '-', 'g')) > 1 then left(location,-2) else location end",
+                    "alias": "region"
+                }
+            ],
+            "inventory_supported": false
+        },
+        {
+            "name": "gcp_kms_key_ring",
+            "all_columns": [
+                "name",
+                "create_time",
+                "iam_policy",
+                "title",
+                "akas",
+                "location",
+                "project"
+            ],
+            "included": [],
+            "excluded": [
+                "location"
+            ],
+            "aliases": [
+                {
+                    "name": "akas[0]",
+                    "alias": "urn"
+                },
+                {
+                    "name": "akas[0]",
+                    "alias": "id"
+                },
+                {
+                    "name": "case when (SELECT count(*) FROM regexp_matches(location, '-', 'g')) > 1 then left(location,-2) else location end",
+                    "alias": "region"
+                }
+            ],
+            "inventory_supported": false
+        },
+        {
+            "name": "gcp_kms_key_version",
+            "all_columns": [
+                "name",
+                "crypto_key_version",
+                "key_ring_name",
+                "self_link",
+                "state",
+                "algorithm",
+                "create_time",
+                "destroy_event_time",
+                "destroy_time",
+                "external_key_uri",
+                "generate_time",
+                "import_failure_reason",
+                "import_job",
+                "protection_level",
+                "attestation",
+                "title",
+                "akas",
+                "location",
+                "project"
+            ],
+            "included": [],
+            "excluded": [
+                "location"
+            ],
+            "aliases": [
+                {
+                    "name": "akas[0]",
+                    "alias": "urn"
+                },
+                {
+                    "name": "akas[0]",
+                    "alias": "id"
+                },
+                {
+                    "name": "case when (SELECT count(*) FROM regexp_matches(location, '-', 'g')) > 1 then left(location,-2) else location end",
+                    "alias": "region"
+                }
+            ],
+            "inventory_supported": false
+        },
+        {
+            "name": "gcp_kubernetes_cluster",
+            "tags": [
+                "compute"
+            ],
+            "all_columns": [
+                "name",
+                "self_link",
+                "location_type",
+                "status",
+                "autopilot_enabled",
+                "description",
+                "create_time",
+                "cluster_ipv4_cidr",
+                "shielded_nodes_enabled",
+                "database_encryption_key_name",
+                "database_encryption_state",
+                "max_pods_per_node",
+                "legacy_abac_enabled",
+                "current_master_version",
+                "current_node_count",
+                "current_node_version",
+                "status_message",
+                "subnetwork",
+                "enable_kubernetes_alpha",
+                "enable_tpu",
+                "endpoint",
+                "expire_time",
+                "initial_cluster_version",
+                "initial_node_count",
+                "label_fingerprint",
+                "logging_service",
+                "monitoring_service",
+                "network",
+                "node_ipv4_cidr_size",
+                "services_ipv4_cidr",
+                "tpu_ipv4_cidr_block",
+                "zone",
+                "addons_config",
+                "authenticator_groups_config",
+                "autoscaling",
+                "conditions",
+                "binary_authorization",
+                "instance_group_urls",
+                "ip_allocation_policy",
+                "locations",
+                "maintenance_policy",
+                "master_auth",
+                "master_authorized_networks_config",
+                "network_config",
+                "network_policy",
+                "node_config",
+                "node_pools",
+                "notification_config",
+                "private_cluster_config",
+                "release_channel",
+                "resource_labels",
+                "resource_usage_export_config",
+                "vertical_pod_autoscaling",
+                "workload_identity_config",
+                "title",
+                "tags",
+                "akas",
+                "location",
+                "project"
+            ],
+            "included": [],
+            "excluded": [
+                "location"
+            ],
+            "aliases": [
+                {
+                    "name": "akas[0]",
+                    "alias": "urn"
+                },
+                {
+                    "name": "akas[0]",
+                    "alias": "id"
+                },
+                {
+                    "name": "case when (SELECT count(*) FROM regexp_matches(location, '-', 'g')) > 1 then left(location,-2) else location end",
+                    "alias": "region"
+                }
+            ],
+            "inventory_supported": true
+        },
+        {
+            "name": "gcp_kubernetes_node_pool",
+            "tags": [
+                "compute"
+            ],
+            "all_columns": [
+                "name",
+                "self_link",
+                "location_type",
+                "status",
+                "cluster_name",
+                "initial_node_count",
+                "version",
+                "pod_ipv4_cidr_size",
+                "autoscaling",
+                "conditions",
+                "config",
+                "instance_group_urls",
+                "locations",
+                "management",
+                "max_pods_constraint",
+                "upgrade_settings",
+                "title",
+                "akas",
+                "location",
+                "project"
+            ],
+            "included": [],
+            "excluded": [
+                "location"
+            ],
+            "aliases": [
+                {
+                    "name": "akas[0]",
+                    "alias": "urn"
+                },
+                {
+                    "name": "akas[0]",
+                    "alias": "id"
+                },
+                {
+                    "name": "case when (SELECT count(*) FROM regexp_matches(location, '-', 'g')) > 1 then left(location,-2) else location end",
+                    "alias": "region"
+                }
+            ],
+            "inventory_supported": true
+        },
+        {
+            "name": "gcp_logging_bucket",
+            "all_columns": [
+                "name",
+                "self_link",
+                "create_time",
+                "description",
+                "lifecycle_state",
+                "locked",
+                "retention_days",
+                "update_time",
+                "title",
+                "akas",
+                "location",
+                "project"
+            ],
+            "included": [],
+            "excluded": [
+                "location"
+            ],
+            "aliases": [
+                {
+                    "name": "akas[0]",
+                    "alias": "urn"
+                },
+                {
+                    "name": "akas[0]",
+                    "alias": "id"
+                },
+                {
+                    "name": "case when (SELECT count(*) FROM regexp_matches(location, '-', 'g')) > 1 then left(location,-2) else location end",
+                    "alias": "region"
+                }
+            ],
+            "inventory_supported": true
+        },
+        {
+            "name": "gcp_logging_exclusion",
+            "all_columns": [
+                "name",
+                "disabled",
+                "filter",
+                "description",
+                "create_time",
+                "update_time",
+                "title",
+                "akas",
+                "location",
+                "project"
+            ],
+            "included": [],
+            "excluded": [
+                "location"
+            ],
+            "aliases": [
+                {
+                    "name": "akas[0]",
+                    "alias": "urn"
+                },
+                {
+                    "name": "akas[0]",
+                    "alias": "id"
+                },
+                {
+                    "name": "case when (SELECT count(*) FROM regexp_matches(location, '-', 'g')) > 1 then left(location,-2) else location end",
+                    "alias": "region"
+                }
+            ],
+            "inventory_supported": false
+        },
+        {
+            "name": "gcp_monitoring_alert_policy",
+            "all_columns": [
+                "display_name",
+                "name",
+                "enabled",
+                "combiner",
+                "creation_record",
+                "mutation_record",
+                "conditions",
+                "documentation",
+                "notification_channels",
+                "user_labels",
+                "validity",
+                "title",
+                "tags",
+                "akas",
+                "location",
+                "project"
+            ],
+            "included": [],
+            "excluded": [
+                "location"
+            ],
+            "aliases": [
+                {
+                    "name": "akas[0]",
+                    "alias": "urn"
+                },
+                {
+                    "name": "akas[0]",
+                    "alias": "id"
+                },
+                {
+                    "name": "case when (SELECT count(*) FROM regexp_matches(location, '-', 'g')) > 1 then left(location,-2) else location end",
+                    "alias": "region"
+                }
+            ],
+            "inventory_supported": true
+        },
+        {
+            "name": "gcp_monitoring_group",
+            "all_columns": [
+                "name",
+                "display_name",
+                "filter",
+                "is_cluster",
+                "parent_name",
+                "title",
+                "akas",
+                "location",
+                "project"
+            ],
+            "included": [],
+            "excluded": [
+                "location"
+            ],
+            "aliases": [
+                {
+                    "name": "akas[0]",
+                    "alias": "urn"
+                },
+                {
+                    "name": "akas[0]",
+                    "alias": "id"
+                },
+                {
+                    "name": "case when (SELECT count(*) FROM regexp_matches(location, '-', 'g')) > 1 then left(location,-2) else location end",
+                    "alias": "region"
+                }
+            ],
+            "inventory_supported": false
+        },
+        {
+            "name": "gcp_monitoring_notification_channel",
+            "all_columns": [
+                "name",
+                "display_name",
+                "enabled",
+                "self_link",
+                "type",
+                "description",
+                "verification_status",
+                "user_labels",
+                "labels",
+                "tags",
+                "title",
+                "akas",
+                "location",
+                "project"
+            ],
+            "included": [],
+            "excluded": [
+                "location"
+            ],
+            "aliases": [
+                {
+                    "name": "akas[0]",
+                    "alias": "urn"
+                },
+                {
+                    "name": "akas[0]",
+                    "alias": "id"
+                },
+                {
+                    "name": "case when (SELECT count(*) FROM regexp_matches(location, '-', 'g')) > 1 then left(location,-2) else location end",
+                    "alias": "region"
+                }
+            ],
+            "inventory_supported": false
+        },
+        {
+            "name": "gcp_organization",
+            "all_columns": [
+                "display_name",
+                "name",
+                "organization_id",
+                "lifecycle_state",
+                "creation_time",
+                "directory_customer_id",
+                "essential_contacts",
+                "title",
+                "akas"
+            ],
+            "included": [],
+            "excluded": [],
+            "aliases": [
+                {
+                    "name": "akas[0]",
+                    "alias": "urn"
+                },
+                {
+                    "name": "akas[0]",
+                    "alias": "id"
+                },
+                {
+                    "name": "'global'",
+                    "alias": "region"
+                }
+            ],
+            "inventory_supported": true
+        },
+        {
+            "name": "gcp_project",
+            "all_columns": [
+                "name",
+                "project_id",
+                "self_link",
+                "project_number",
+                "lifecycle_state",
+                "create_time",
+                "parent",
+                "labels",
+                "access_approval_settings",
+                "title",
+                "tags",
+                "akas"
+            ],
+            "included": [],
+            "excluded": [],
+            "aliases": [
+                {
+                    "name": "akas[0]",
+                    "alias": "urn"
+                },
+                {
+                    "name": "akas[0]",
+                    "alias": "id"
+                },
+                {
+                    "name": "'global'",
+                    "alias": "region"
+                }
+            ],
+            "inventory_supported": true
+        },
+        {
+            "name": "gcp_project_organization_policy",
+            "all_columns": [
+                "id",
+                "update_time",
+                "version",
+                "etag",
+                "list_policy",
+                "boolean_policy",
+                "restore_default",
+                "title",
+                "akas",
+                "location",
+                "project"
+            ],
+            "included": [],
+            "excluded": [
+                "location"
+            ],
+            "aliases": [
+                {
+                    "name": "id",
+                    "alias": "urn"
+                },
+                {
+                    "name": "title",
+                    "alias": "name"
+                },
+                {
+                    "name": "case when (SELECT count(*) FROM regexp_matches(location, '-', 'g')) > 1 then left(location,-2) else location end",
+                    "alias": "region"
+                }
+            ],
+            "inventory_supported": false
+        },
+        {
+            "name": "gcp_project_service",
+            "all_columns": [
+                "name",
+                "state",
+                "parent",
+                "akas",
+                "location",
+                "project"
+            ],
+            "included": [],
+            "excluded": [
+                "location"
+            ],
+            "aliases": [
+                {
+                    "name": "akas[0]",
+                    "alias": "urn"
+                },
+                {
+                    "name": "akas[0]",
+                    "alias": "id"
+                },
+                {
+                    "name": "case when (SELECT count(*) FROM regexp_matches(location, '-', 'g')) > 1 then left(location,-2) else location end",
+                    "alias": "region"
+                }
+            ],
+            "inventory_supported": false
+        },
+        {
+            "name": "gcp_pubsub_snapshot",
+            "all_columns": [
+                "name",
+                "topic",
+                "topic_name",
+                "self_link",
+                "expire_time",
+                "iam_policy",
+                "labels",
+                "tags",
+                "title",
+                "akas",
+                "location",
+                "project"
+            ],
+            "included": [],
+            "excluded": [
+                "location"
+            ],
+            "aliases": [
+                {
+                    "name": "akas[0]",
+                    "alias": "urn"
+                },
+                {
+                    "name": "akas[0]",
+                    "alias": "id"
+                },
+                {
+                    "name": "case when (SELECT count(*) FROM regexp_matches(location, '-', 'g')) > 1 then left(location,-2) else location end",
+                    "alias": "region"
+                }
+            ],
+            "inventory_supported": false
+        },
+        {
+            "name": "gcp_pubsub_subscription",
+            "all_columns": [
+                "name",
+                "topic",
+                "topic_name",
+                "self_link",
+                "filter",
+                "ack_deadline_seconds",
+                "message_retention_duration",
+                "retain_acked_messages",
+                "dead_letter_policy_topic",
+                "dead_letter_policy_max_delivery_attempts",
+                "enable_message_ordering",
+                "expiration_policy_ttl",
+                "push_config_endpoint",
+                "push_config_attributes",
+                "push_config_oidc_token_service_account_email",
+                "push_config_oidc_token_audience",
+                "retry_policy_maximum_backoff",
+                "retry_policy_minimum_backoff",
+                "iam_policy",
+                "labels",
+                "tags",
+                "title",
+                "akas",
+                "location",
+                "project"
+            ],
+            "included": [],
+            "excluded": [
+                "location"
+            ],
+            "aliases": [
+                {
+                    "name": "akas[0]",
+                    "alias": "urn"
+                },
+                {
+                    "name": "akas[0]",
+                    "alias": "id"
+                },
+                {
+                    "name": "case when (SELECT count(*) FROM regexp_matches(location, '-', 'g')) > 1 then left(location,-2) else location end",
+                    "alias": "region"
+                }
+            ],
+            "inventory_supported": false
+        },
+        {
+            "name": "gcp_pubsub_topic",
+            "all_columns": [
+                "name",
+                "kms_key_name",
+                "self_link",
+                "message_storage_policy_allowed_persistence_regions",
+                "iam_policy",
+                "labels",
+                "tags",
+                "title",
+                "akas",
+                "location",
+                "project"
+            ],
+            "included": [],
+            "excluded": [
+                "location"
+            ],
+            "aliases": [
+                {
+                    "name": "akas[0]",
+                    "alias": "urn"
+                },
+                {
+                    "name": "akas[0]",
+                    "alias": "id"
+                },
+                {
+                    "name": "case when (SELECT count(*) FROM regexp_matches(location, '-', 'g')) > 1 then left(location,-2) else location end",
+                    "alias": "region"
+                }
+            ],
+            "inventory_supported": false
+        },
+        {
+            "name": "gcp_service_account",
+            "all_columns": [
+                "name",
+                "email",
+                "unique_id",
+                "display_name",
+                "disabled",
+                "description",
+                "oauth2_client_id",
+                "iam_policy",
+                "title",
+                "akas",
+                "location",
+                "project"
+            ],
+            "included": [],
+            "excluded": [
+                "location"
+            ],
+            "aliases": [
+                {
+                    "name": "akas[0]",
+                    "alias": "urn"
+                },
+                {
+                    "name": "akas[0]",
+                    "alias": "id"
+                },
+                {
+                    "name": "case when (SELECT count(*) FROM regexp_matches(location, '-', 'g')) > 1 then left(location,-2) else location end",
+                    "alias": "region"
+                }
+            ],
+            "inventory_supported": false
+        },
+        {
+            "name": "gcp_service_account_key",
+            "all_columns": [
+                "name",
+                "service_account_name",
+                "key_type",
+                "key_algorithm",
+                "key_origin",
+                "private_key_data",
+                "private_key_type",
+                "public_key_data",
+                "valid_after_time",
+                "valid_before_time",
+                "title",
+                "akas",
+                "location",
+                "project"
+            ],
+            "included": [],
+            "excluded": [
+                "location"
+            ],
+            "aliases": [
+                {
+                    "name": "akas[0]",
+                    "alias": "urn"
+                },
+                {
+                    "name": "akas[0]",
+                    "alias": "id"
+                },
+                {
+                    "name": "case when (SELECT count(*) FROM regexp_matches(location, '-', 'g')) > 1 then left(location,-2) else location end",
+                    "alias": "region"
+                }
+            ],
+            "inventory_supported": false
+        },
+        {
+            "name": "gcp_sql_backup",
+            "all_columns": [
+                "id",
+                "instance_name",
+                "kind",
+                "description",
+                "status",
+                "end_time",
+                "enqueued_time",
+                "start_time",
+                "window_start_time",
+                "self_link",
+                "type",
+                "disk_encryption_configuration",
+                "disk_encryption_status",
+                "error",
+                "title",
+                "akas",
+                "location",
+                "project"
+            ],
+            "included": [],
+            "excluded": [
+                "location"
+            ],
+            "aliases": [
+                {
+                    "name": "id",
+                    "alias": "urn"
+                },
+                {
+                    "name": "title",
+                    "alias": "name"
+                },
+                {
+                    "name": "case when (SELECT count(*) FROM regexp_matches(location, '-', 'g')) > 1 then left(location,-2) else location end",
+                    "alias": "region"
+                }
+            ],
+            "inventory_supported": false
+        },
+        {
+            "name": "gcp_sql_database",
+            "tags": [
+                "compute"
+            ],
+            "all_columns": [
+                "name",
+                "instance_name",
+                "kind",
+                "charset",
+                "collation",
+                "self_link",
+                "sql_server_database_compatibility_level",
+                "sql_server_database_recovery_model",
+                "title",
+                "akas",
+                "location",
+                "project"
+            ],
+            "included": [],
+            "excluded": [
+                "location"
+            ],
+            "aliases": [
+                {
+                    "name": "akas[0]",
+                    "alias": "urn"
+                },
+                {
+                    "name": "akas[0]",
+                    "alias": "id"
+                },
+                {
+                    "name": "case when (SELECT count(*) FROM regexp_matches(location, '-', 'g')) > 1 then left(location,-2) else location end",
+                    "alias": "region"
+                }
+            ],
+            "inventory_supported": true
+        },
+        {
+            "name": "gcp_sql_database_instance",
+            "tags": [
+                "compute"
+            ],
+            "all_columns": [
+                "name",
+                "state",
+                "instance_type",
+                "database_version",
+                "machine_type",
+                "data_disk_type",
+                "data_disk_size_gb",
+                "storage_auto_resize",
+                "enable_point_in_time_recovery",
+                "binary_log_enabled",
+                "kind",
+                "activation_policy",
+                "availability_type",
+                "backend_type",
+                "backup_enabled",
+                "backup_location",
+                "backup_replication_log_archiving_enabled",
+                "backup_start_time",
+                "connection_name",
+                "crash_safe_replication_enabled",
+                "current_disk_size",
+                "database_replication_enabled",
+                "gce_zone",
+                "ipv6_address",
+                "kms_key_name",
+                "kms_key_version_name",
+                "master_instance_name",
+                "max_disk_size",
+                "pricing_plan",
+                "replication_type",
+                "self_link",
+                "service_account_email_address",
+                "settings_version",
+                "storage_auto_resize_limit",
+                "failover_replica_available",
+                "failover_replica_name",
+                "can_defer_maintenance",
+                "can_reschedule_maintenance",
+                "maintenance_start_time",
+                "authorized_gae_applications",
+                "database_flags",
+                "instance_users",
+                "ip_addresses",
+                "ip_configuration",
+                "location_preference",
+                "labels",
+                "maintenance_window",
+                "on_premises_configuration",
+                "replica_names",
+                "replication_configuration",
+                "ssl_configuration",
+                "suspension_reason",
+                "tags",
+                "title",
+                "akas",
+                "location",
+                "project"
+            ],
+            "included": [],
+            "excluded": [
+                "location"
+            ],
+            "aliases": [
+                {
+                    "name": "akas[0]",
+                    "alias": "urn"
+                },
+                {
+                    "name": "akas[0]",
+                    "alias": "id"
+                },
+                {
+                    "name": "case when (SELECT count(*) FROM regexp_matches(location, '-', 'g')) > 1 then left(location,-2) else location end",
+                    "alias": "region"
+                }
+            ],
+            "inventory_supported": true
+        }
+    ]
+}
