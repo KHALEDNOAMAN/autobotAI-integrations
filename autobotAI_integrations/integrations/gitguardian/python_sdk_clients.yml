@@ -1,4 +1,4 @@
-- name: GGClient
+- name: gitguardian
   module: pygitguardian
   pip_package_names:
     - pygitguardian
