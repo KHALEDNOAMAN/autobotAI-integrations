@@ -15,13 +15,12 @@ import traceback
 def executor(context):
     print("in execute")
     gl = context["clients"]['gitlab']    
-    gl.auth()
     current_user = gl.user
-    print(current_user)
+    # print(current_user)
     group = gl.groups.get(84850810)    
     pj = []
     for project in group.projects.list(iterator=True):
-        print(project)
+        # print(project)
         pj.append(project.asdict())
 
     return pj
@@ -107,14 +106,14 @@ def generate_gitlab_steampipe_payload(gitlab_json=gitlab_json):
     return payload
 
 if __name__ == "__main__":
-    gitlab_python_payload = generate_gitlab_python_payload()
+    # gitlab_python_payload = generate_gitlab_python_payload()
     # for task in gitlab_python_payload.tasks:
     #     integration = IntegrationSchema.model_validate(task.context.integration)
     #     service = integration_service_factory.get_service(None, integration)
     #     print(service.python_sdk_processor(task))
+    pass
 
-
-    gitlab_steampipe_payload = generate_gitlab_steampipe_payload()
+    # gitlab_steampipe_payload = generate_gitlab_steampipe_payload()
     # for task in gitlab_steampipe_payload.tasks:
     #     integration = IntegrationSchema.model_validate(task.context.integration)
     #     service = integration_service_factory.get_service(None, integration)

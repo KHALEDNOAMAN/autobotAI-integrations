@@ -161,3 +161,7 @@ cython_debug/
 
 # Temperory Output files
 temp/
+
+# VS code files
+*.code-workspace
+.vscode/
