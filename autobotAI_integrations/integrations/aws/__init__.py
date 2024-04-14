@@ -140,7 +140,7 @@ class AWSService(BaseService):
                     "clients": {**built_clients["global"], **built_clients["regional"][region]}
                 }
                 resources = []
-                if payload_task.node_details.get("filter_resources"):
+                if getattr(payload_task, "node_details", {}) and payload_task.node_details.get("filter_resources"):
                     for resource in payload_task.resources:
                         if resource.get("integration_type") == self.get_integration_type():
                             if resource.get("region") == region:
