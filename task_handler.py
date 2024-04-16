@@ -41,3 +41,4 @@ with open(task_input_file) as task_file:
 
     with open(task_ouput_file, "w") as output:
         output.write(json.dumps(result, default=str))
+        print(result)

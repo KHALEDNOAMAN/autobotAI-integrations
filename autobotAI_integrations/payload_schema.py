@@ -85,8 +85,8 @@ class ResponseError(BaseModel):
 class ResponseDebugInfo(BaseModel):
     executable: str
     job_type: str
-    resource_type: str = None
-    environs: dict = None
+    resource_type: Optional[str] = None
+    environs: Optional[dict] = None
 
 
 class TaskResult(BaseModel):

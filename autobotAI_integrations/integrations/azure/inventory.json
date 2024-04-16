@@ -1,0 +1,4501 @@
+{
+    "azure": [
+        {
+            "name": "azure_ad_group",
+            "all_columns": [
+                "object_id",
+                "object_type",
+                "display_name",
+                "mail",
+                "mail_enabled",
+                "mail_nickname",
+                "deletion_timestamp",
+                "security_enabled",
+                "additional_properties",
+                "title",
+                "akas"
+            ],
+            "included": [],
+            "excluded": [],
+            "aliases": [
+                {
+                    "name": "object_id",
+                    "alias": "urn"
+                },
+                {
+                    "name": "display_name",
+                    "alias": "name"
+                },
+                {
+                    "name": "object_id",
+                    "alias": "id"
+                },
+                {
+                    "name": "'global'",
+                    "alias": "region"
+                }
+            ],
+            "inventory_supported": false
+        },
+        {
+            "name": "azure_ad_user",
+            "all_columns": [
+                "object_id",
+                "user_principal_name",
+                "display_name",
+                "object_type",
+                "user_type",
+                "given_name",
+                "surname",
+                "account_enabled",
+                "deletion_timestamp",
+                "immutable_id",
+                "mail",
+                "mail_nickname",
+                "usage_location",
+                "additional_properties",
+                "sign_in_names",
+                "title",
+                "akas"
+            ],
+            "included": [],
+            "excluded": [],
+            "aliases": [
+                {
+                    "name": "object_id",
+                    "alias": "urn"
+                },
+                {
+                    "name": "display_name",
+                    "alias": "name"
+                },
+                {
+                    "name": "object_id",
+                    "alias": "id"
+                },
+                {
+                    "name": "usage_location",
+                    "alias": "region"
+                }
+            ],
+            "inventory_supported": false
+        },
+        {
+            "name": "azure_ad_service_principal",
+            "all_columns": [
+                "object_id",
+                "object_type",
+                "display_name",
+                "account_enabled",
+                "app_role_assignment_required",
+                "deletion_timestamp",
+                "error_url",
+                "homepage",
+                "logout_url",
+                "saml_metadata_url",
+                "additional_properties",
+                "alternative_names",
+                "app_roles",
+                "key_credentials",
+                "oauth2_permissions",
+                "password_credentials",
+                "reply_urls",
+                "service_principal_names",
+                "title",
+                "akas"
+            ],
+            "included": [],
+            "excluded": [],
+            "aliases": [
+                {
+                    "name": "object_id",
+                    "alias": "urn"
+                },
+                {
+                    "name": "display_name",
+                    "alias": "name"
+                },
+                {
+                    "name": "object_id",
+                    "alias": "id"
+                },
+                {
+                    "name": "'global'",
+                    "alias": "region"
+                }
+            ],
+            "inventory_supported": false
+        },
+        {
+            "name": "azure_api_management",
+            "all_columns": [
+                "name",
+                "id",
+                "provisioning_state",
+                "type",
+                "created_at_utc",
+                "developer_portal_url",
+                "disable_gateway",
+                "enable_client_certificate",
+                "etag",
+                "gateway_regional_url",
+                "gateway_url",
+                "identity_principal_id",
+                "identity_tenant_id",
+                "identity_type",
+                "management_api_url",
+                "notification_sender_email",
+                "portal_url",
+                "publisher_email",
+                "publisher_name",
+                "restore",
+                "scm_url",
+                "sku_capacity",
+                "sku_name",
+                "target_provisioning_state",
+                "virtual_network_configuration_subnet_name",
+                "virtual_network_configuration_subnet_resource_id",
+                "virtual_network_configuration_id",
+                "virtual_network_type",
+                "additional_locations",
+                "api_version_constraint",
+                "certificates",
+                "custom_properties",
+                "diagnostic_settings",
+                "host_name_configurations",
+                "identity_user_assigned_identities",
+                "private_ip_addresses",
+                "public_ip_addresses",
+                "zones",
+                "title",
+                "tags",
+                "akas",
+                "region",
+                "resource_group",
+                "cloud_environment",
+                "subscription_id"
+            ],
+            "included": [],
+            "excluded": [],
+            "aliases": [
+                {
+                    "name": "id",
+                    "alias": "urn"
+                }
+            ],
+            "inventory_supported": false
+        },
+        {
+            "name": "azure_app_configuration",
+            "all_columns": [
+                "name",
+                "id",
+                "provisioning_state",
+                "type",
+                "creation_date",
+                "endpoint",
+                "public_network_access",
+                "sku_name",
+                "diagnostic_settings",
+                "encryption",
+                "identity",
+                "private_endpoint_connections",
+                "title",
+                "tags",
+                "akas",
+                "region",
+                "resource_group",
+                "cloud_environment",
+                "subscription_id"
+            ],
+            "included": [],
+            "excluded": [],
+            "aliases": [
+                {
+                    "name": "id",
+                    "alias": "urn"
+                }
+            ],
+            "inventory_supported": false
+        },
+        {
+            "name": "azure_app_service_environment",
+            "all_columns": [
+                "name",
+                "id",
+                "kind",
+                "type",
+                "status",
+                "provisioning_state",
+                "default_front_end_scale_factor",
+                "dynamic_cache_enabled",
+                "front_end_scale_factor",
+                "has_linux_workers",
+                "internal_load_balancing_mode",
+                "is_healthy_environment",
+                "suspended",
+                "vnet_name",
+                "vnet_resource_group_name",
+                "vnet_subnet_name",
+                "cluster_settings",
+                "title",
+                "tags",
+                "akas",
+                "region",
+                "resource_group",
+                "cloud_environment",
+                "subscription_id"
+            ],
+            "included": [],
+            "excluded": [],
+            "aliases": [
+                {
+                    "name": "id",
+                    "alias": "urn"
+                }
+            ],
+            "inventory_supported": false
+        },
+        {
+            "name": "azure_app_service_function_app",
+            "all_columns": [
+                "name",
+                "id",
+                "kind",
+                "state",
+                "type",
+                "client_affinity_enabled",
+                "client_cert_enabled",
+                "default_site_hostname",
+                "enabled",
+                "host_name_disabled",
+                "https_only",
+                "outbound_ip_addresses",
+                "possible_outbound_ip_addresses",
+                "reserved",
+                "host_names",
+                "auth_settings",
+                "configuration",
+                "site_config",
+                "title",
+                "tags",
+                "akas",
+                "region",
+                "resource_group",
+                "cloud_environment",
+                "subscription_id"
+            ],
+            "included": [],
+            "excluded": [],
+            "aliases": [
+                {
+                    "name": "id",
+                    "alias": "urn"
+                }
+            ],
+            "tags": [
+                "compute"
+            ],
+            "inventory_supported": true
+        },
+        {
+            "name": "azure_app_service_plan",
+            "all_columns": [
+                "name",
+                "id",
+                "kind",
+                "type",
+                "hyper_v",
+                "is_spot",
+                "is_xenon",
+                "maximum_elastic_worker_count",
+                "maximum_number_of_workers",
+                "per_site_scaling",
+                "provisioning_state",
+                "reserved",
+                "sku_capacity",
+                "sku_family",
+                "sku_name",
+                "sku_size",
+                "sku_tier",
+                "status",
+                "apps",
+                "title",
+                "tags",
+                "akas",
+                "region",
+                "resource_group",
+                "cloud_environment",
+                "subscription_id"
+            ],
+            "included": [],
+            "excluded": [],
+            "aliases": [
+                {
+                    "name": "id",
+                    "alias": "urn"
+                }
+            ],
+            "inventory_supported": true
+        },
+        {
+            "name": "azure_app_service_web_app",
+            "all_columns": [
+                "name",
+                "id",
+                "kind",
+                "state",
+                "type",
+                "client_affinity_enabled",
+                "client_cert_enabled",
+                "default_site_hostname",
+                "enabled",
+                "host_name_disabled",
+                "https_only",
+                "identity",
+                "outbound_ip_addresses",
+                "possible_outbound_ip_addresses",
+                "reserved",
+                "host_names",
+                "auth_settings",
+                "configuration",
+                "diagnostic_logs_configuration",
+                "site_config",
+                "vnet_connection",
+                "title",
+                "tags",
+                "akas",
+                "region",
+                "resource_group",
+                "cloud_environment",
+                "subscription_id"
+            ],
+            "included": [],
+            "excluded": [],
+            "aliases": [
+                {
+                    "name": "id",
+                    "alias": "urn"
+                }
+            ],
+            "inventory_supported": true
+        },
+        {
+            "name": "azure_application_gateway",
+            "tags": [
+                "compute"
+            ],
+            "all_columns": [
+                "name",
+                "id",
+                "provisioning_state",
+                "type",
+                "enable_fips",
+                "enable_http2",
+                "etag",
+                "force_firewall_policy_association",
+                "operational_state",
+                "resource_guid",
+                "authentication_certificates",
+                "autoscale_configuration",
+                "backend_address_pools",
+                "backend_http_settings_collection",
+                "custom_error_configurations",
+                "diagnostic_settings",
+                "firewall_policy",
+                "frontend_ip_configurations",
+                "frontend_ports",
+                "gateway_ip_configurations",
+                "http_listeners",
+                "identity",
+                "private_endpoint_connections",
+                "private_link_configurations",
+                "probes",
+                "redirect_configurations",
+                "request_routing_rules",
+                "rewrite_rule_sets",
+                "sku",
+                "ssl_certificates",
+                "ssl_policy",
+                "ssl_profiles",
+                "trusted_client_certificates",
+                "trusted_root_certificates",
+                "url_path_maps",
+                "web_application_firewall_configuration",
+                "zones",
+                "title",
+                "tags",
+                "akas",
+                "region",
+                "resource_group",
+                "cloud_environment",
+                "subscription_id"
+            ],
+            "included": [],
+            "excluded": [],
+            "aliases": [
+                {
+                    "name": "id",
+                    "alias": "urn"
+                }
+            ],
+            "inventory_supported": true
+        },
+        {
+            "name": "azure_application_security_group",
+            "all_columns": [
+                "name",
+                "id",
+                "etag",
+                "type",
+                "provisioning_state",
+                "resource_guid",
+                "title",
+                "tags",
+                "akas",
+                "region",
+                "resource_group",
+                "cloud_environment",
+                "subscription_id"
+            ],
+            "included": [],
+            "excluded": [],
+            "aliases": [
+                {
+                    "name": "id",
+                    "alias": "urn"
+                }
+            ],
+            "inventory_supported": true
+        },
+        {
+            "name": "azure_batch_account",
+            "all_columns": [
+                "name",
+                "id",
+                "type",
+                "provisioning_state",
+                "account_endpoint",
+                "active_job_and_job_schedule_quota",
+                "dedicated_core_quota",
+                "dedicated_core_quota_per_vm_family_enforced",
+                "low_priority_core_quota",
+                "pool_allocation_mode",
+                "pool_quota",
+                "public_network_access",
+                "auto_storage",
+                "dedicated_core_quota_per_vm_family",
+                "diagnostic_settings",
+                "encryption",
+                "identity",
+                "key_vault_reference",
+                "private_endpoint_connections",
+                "title",
+                "tags",
+                "akas",
+                "region",
+                "resource_group",
+                "cloud_environment",
+                "subscription_id"
+            ],
+            "included": [],
+            "excluded": [],
+            "aliases": [
+                {
+                    "name": "id",
+                    "alias": "urn"
+                }
+            ],
+            "inventory_supported": true
+        },
+        {
+            "name": "azure_cognitive_account",
+            "all_columns": [
+                "name",
+                "id",
+                "kind",
+                "provisioning_state",
+                "type",
+                "custom_sub_domain_name",
+                "date_created",
+                "disable_local_auth",
+                "endpoint",
+                "etag",
+                "is_migrated",
+                "migration_token",
+                "public_network_access",
+                "restore",
+                "restrict_outbound_network_access",
+                "allowed_fqdn_list",
+                "api_properties",
+                "call_rate_limit",
+                "capabilities",
+                "diagnostic_settings",
+                "encryption",
+                "endpoints",
+                "identity",
+                "network_acls",
+                "private_endpoint_connections",
+                "quota_limit",
+                "sku",
+                "sku_change_info",
+                "system_data",
+                "user_owned_storage",
+                "title",
+                "tags",
+                "akas",
+                "region",
+                "resource_group",
+                "cloud_environment",
+                "subscription_id"
+            ],
+            "included": [],
+            "excluded": [],
+            "aliases": [
+                {
+                    "name": "id",
+                    "alias": "urn"
+                }
+            ],
+            "inventory_supported": true
+        },
+        {
+            "name": "azure_compute_disk",
+            "all_columns": [
+                "name",
+                "id",
+                "type",
+                "provisioning_state",
+                "managed_by",
+                "sku_name",
+                "sku_tier",
+                "time_created",
+                "unique_id",
+                "disk_access_id",
+                "disk_size_bytes",
+                "disk_size_gb",
+                "disk_state",
+                "hyper_v_generation",
+                "disk_iops_read_only",
+                "disk_iops_read_write",
+                "disk_iops_mbps_read_only",
+                "disk_iops_mbps_read_write",
+                "max_shares",
+                "os_type",
+                "encryption_settings_collection_enabled",
+                "encryption_settings_collection_version",
+                "encryption_disk_encryption_set_id",
+                "encryption_type",
+                "network_access_policy",
+                "creation_data_option",
+                "creation_data_storage_account_id",
+                "creation_data_source_uri",
+                "creation_data_source_resource_id",
+                "creation_data_source_unique_id",
+                "creation_data_upload_size_bytes",
+                "creation_data_image_reference_id",
+                "creation_data_image_reference_lun",
+                "creation_data_gallery_image_reference_id",
+                "creation_data_gallery_image_reference_lun",
+                "encryption_settings_collection_settings",
+                "share_info",
+                "zones",
+                "managed_by_extended",
+                "title",
+                "tags",
+                "akas",
+                "region",
+                "resource_group",
+                "cloud_environment",
+                "subscription_id"
+            ],
+            "included": [],
+            "excluded": [],
+            "aliases": [
+                {
+                    "name": "id",
+                    "alias": "urn"
+                }
+            ],
+            "inventory_supported": true
+        },
+        {
+            "name": "azure_compute_disk_access",
+            "all_columns": [
+                "name",
+                "id",
+                "type",
+                "provisioning_state",
+                "time_created",
+                "private_endpoint_connections",
+                "title",
+                "tags",
+                "akas",
+                "region",
+                "resource_group",
+                "cloud_environment",
+                "subscription_id"
+            ],
+            "included": [],
+            "excluded": [],
+            "aliases": [
+                {
+                    "name": "id",
+                    "alias": "urn"
+                }
+            ],
+            "inventory_supported": false
+        },
+        {
+            "name": "azure_compute_disk_encryption_set",
+            "all_columns": [
+                "name",
+                "id",
+                "type",
+                "provisioning_state",
+                "active_key_source_vault_id",
+                "active_key_url",
+                "encryption_type",
+                "identity_principal_id",
+                "identity_tenant_id",
+                "identity_type",
+                "previous_keys",
+                "title",
+                "tags",
+                "akas",
+                "region",
+                "resource_group",
+                "cloud_environment",
+                "subscription_id"
+            ],
+            "included": [],
+            "excluded": [],
+            "aliases": [
+                {
+                    "name": "id",
+                    "alias": "urn"
+                }
+            ],
+            "inventory_supported": false
+        },
+        {
+            "name": "azure_compute_snapshot",
+            "all_columns": [
+                "name",
+                "id",
+                "type",
+                "provisioning_state",
+                "create_option",
+                "disk_access_id",
+                "disk_encryption_set_id",
+                "disk_size_bytes",
+                "disk_size_gb",
+                "encryption_setting_collection_enabled",
+                "encryption_setting_version",
+                "encryption_type",
+                "gallery_image_reference_id",
+                "gallery_reference_lun",
+                "hyperv_generation",
+                "image_reference_id",
+                "image_reference_lun",
+                "incremental",
+                "network_access_policy",
+                "os_type",
+                "sku_name",
+                "sku_tier",
+                "source_resource_id",
+                "source_unique_id",
+                "source_uri",
+                "storage_account_id",
+                "time_created",
+                "unique_id",
+                "upload_size_bytes",
+                "encryption_settings",
+                "virtual_machines",
+                "title",
+                "tags",
+                "akas",
+                "region",
+                "resource_group",
+                "cloud_environment",
+                "subscription_id"
+            ],
+            "included": [],
+            "excluded": [],
+            "aliases": [
+                {
+                    "name": "id",
+                    "alias": "urn"
+                }
+            ],
+            "inventory_supported": false
+        },
+        {
+            "name": "azure_compute_virtual_machine",
+            "tags": [
+                "compute"
+            ],
+            "all_columns": [
+                "name",
+                "power_state",
+                "id",
+                "type",
+                "provisioning_state",
+                "vm_id",
+                "size",
+                "admin_user_name",
+                "allow_extension_operations",
+                "availability_set_id",
+                "billing_profile_max_price",
+                "boot_diagnostics_enabled",
+                "boot_diagnostics_storage_uri",
+                "computer_name",
+                "disable_password_authentication",
+                "enable_automatic_updates",
+                "eviction_policy",
+                "image_exact_version",
+                "image_id",
+                "image_offer",
+                "image_publisher",
+                "image_sku",
+                "image_version",
+                "managed_disk_id",
+                "os_disk_caching",
+                "os_disk_create_option",
+                "os_disk_name",
+                "os_disk_vhd_uri",
+                "os_name",
+                "os_version",
+                "os_type",
+                "priority",
+                "provision_vm_agent",
+                "provision_vm_agent_windows",
+                "require_guest_provision_signal",
+                "ultra_ssd_enabled",
+                "time_zone",
+                "additional_unattend_content",
+                "data_disks",
+                "linux_configuration_ssh_public_keys",
+                "network_interfaces",
+                "patch_settings",
+                "private_ips",
+                "public_ips",
+                "secrets",
+                "statuses",
+                "extensions",
+                "guest_configuration_assignments",
+                "identity",
+                "security_profile",
+                "win_rm",
+                "zones",
+                "title",
+                "tags",
+                "akas",
+                "region",
+                "resource_group",
+                "cloud_environment",
+                "subscription_id"
+            ],
+            "included": [],
+            "excluded": [],
+            "aliases": [
+                {
+                    "name": "id",
+                    "alias": "urn"
+                }
+            ],
+            "inventory_supported": true
+        },
+        {
+            "name": "azure_compute_virtual_machine_scale_set",
+            "all_columns": [
+                "name",
+                "id",
+                "provisioning_state",
+                "type",
+                "location",
+                "do_not_run_extensions_on_overprovisioned_vms",
+                "overprovision",
+                "platform_fault_domain_count",
+                "single_placement_group",
+                "sku_name",
+                "sku_capacity",
+                "sku_tier",
+                "unique_id",
+                "extensions",
+                "identity",
+                "plan",
+                "scale_in_policy",
+                "tags_src",
+                "upgrade_policy",
+                "virtual_machine_diagnostics_profile",
+                "virtual_machine_extension_profile",
+                "virtual_machine_network_profile",
+                "virtual_machine_os_profile",
+                "virtual_machine_storage_profile",
+                "virtual_machine_security_profile",
+                "zones",
+                "title",
+                "tags",
+                "akas",
+                "region",
+                "resource_group",
+                "cloud_environment",
+                "subscription_id"
+            ],
+            "included": [],
+            "excluded": [],
+            "aliases": [
+                {
+                    "name": "id",
+                    "alias": "urn"
+                }
+            ],
+            "inventory_supported": true
+        },
+        {
+            "name": "azure_compute_virtual_machine_scale_set_vm",
+            "all_columns": [
+                "name",
+                "scale_set_name",
+                "id",
+                "instance_id",
+                "latest_model_applied",
+                "provisioning_state",
+                "type",
+                "license_type",
+                "location",
+                "model_definition_applied",
+                "sku_name",
+                "sku_capacity",
+                "sku_tier",
+                "vm_id",
+                "additional_capabilities",
+                "availability_set",
+                "plan",
+                "protection_policy",
+                "resources",
+                "tags_src",
+                "upgrade_policy",
+                "virtual_machine_diagnostics_profile",
+                "virtual_machine_hardware_profile",
+                "virtual_machine_network_profile",
+                "virtual_machine_network_profile_configuration",
+                "virtual_machine_os_profile",
+                "virtual_machine_security_profile",
+                "virtual_machine_storage_profile",
+                "zones",
+                "title",
+                "tags",
+                "akas",
+                "region",
+                "resource_group",
+                "cloud_environment",
+                "subscription_id"
+            ],
+            "included": [],
+            "excluded": [],
+            "aliases": [
+                {
+                    "name": "id",
+                    "alias": "urn"
+                }
+            ],
+            "inventory_supported": true
+        },
+        {
+            "name": "azure_container_registry",
+            "all_columns": [
+                "name",
+                "id",
+                "type",
+                "provisioning_state",
+                "creation_date",
+                "admin_user_enabled",
+                "data_endpoint_enabled",
+                "login_server",
+                "network_rule_bypass_options",
+                "public_network_access",
+                "sku_name",
+                "sku_tier",
+                "status",
+                "status_message",
+                "status_timestamp",
+                "storage_account_id",
+                "zone_redundancy",
+                "data_endpoint_host_names",
+                "encryption",
+                "identity",
+                "login_credentials",
+                "network_rule_set",
+                "policies",
+                "private_endpoint_connections",
+                "system_data",
+                "usages",
+                "title",
+                "tags",
+                "akas",
+                "region",
+                "resource_group",
+                "cloud_environment",
+                "subscription_id"
+            ],
+            "included": [],
+            "excluded": [],
+            "aliases": [
+                {
+                    "name": "id",
+                    "alias": "urn"
+                }
+            ],
+            "inventory_supported": true
+        },
+        {
+            "name": "azure_cosmosdb_account",
+            "all_columns": [
+                "name",
+                "id",
+                "kind",
+                "type",
+                "connector_offer",
+                "consistency_policy_max_interval",
+                "consistency_policy_max_staleness_prefix",
+                "database_account_offer_type",
+                "default_consistency_level",
+                "disable_key_based_metadata_write_access",
+                "document_endpoint",
+                "enable_analytical_storage",
+                "enable_automatic_failover",
+                "enable_cassandra_connector",
+                "enable_free_tier",
+                "enable_multiple_write_locations",
+                "is_virtual_network_filter_enabled",
+                "key_vault_key_uri",
+                "provisioning_state",
+                "public_network_access",
+                "server_version",
+                "capabilities",
+                "cors",
+                "failover_policies",
+                "ip_rules",
+                "locations",
+                "private_endpoint_connections",
+                "read_locations",
+                "virtual_network_rules",
+                "write_locations",
+                "title",
+                "tags",
+                "akas",
+                "region",
+                "resource_group",
+                "cloud_environment",
+                "subscription_id"
+            ],
+            "included": [],
+            "excluded": [],
+            "aliases": [
+                {
+                    "name": "id",
+                    "alias": "urn"
+                }
+            ],
+            "inventory_supported": false
+        },
+        {
+            "name": "azure_cosmosdb_mongo_database",
+            "tags": [
+                "compute"
+            ],
+            "all_columns": [
+                "name",
+                "account_name",
+                "id",
+                "type",
+                "autoscale_settings_max_throughput",
+                "database_etag",
+                "database_id",
+                "database_rid",
+                "database_ts",
+                "throughput",
+                "title",
+                "tags",
+                "akas",
+                "region",
+                "resource_group",
+                "cloud_environment",
+                "subscription_id"
+            ],
+            "included": [],
+            "excluded": [],
+            "aliases": [
+                {
+                    "name": "id",
+                    "alias": "urn"
+                }
+            ],
+            "inventory_supported": true
+        },
+        {
+            "name": "azure_cosmosdb_sql_database",
+            "tags": [
+                "compute"
+            ],
+            "all_columns": [
+                "name",
+                "account_name",
+                "id",
+                "type",
+                "autoscale_settings_max_throughput",
+                "database_colls",
+                "database_etag",
+                "database_id",
+                "database_rid",
+                "database_ts",
+                "database_users",
+                "throughput",
+                "title",
+                "tags",
+                "akas",
+                "region",
+                "resource_group",
+                "cloud_environment",
+                "subscription_id"
+            ],
+            "included": [],
+            "excluded": [],
+            "aliases": [
+                {
+                    "name": "id",
+                    "alias": "urn"
+                }
+            ],
+            "inventory_supported": true
+        },
+        {
+            "name": "azure_data_factory",
+            "all_columns": [
+                "name",
+                "id",
+                "type",
+                "version",
+                "create_time",
+                "etag",
+                "provisioning_state",
+                "public_network_access",
+                "additional_properties",
+                "identity",
+                "encryption",
+                "repo_configuration",
+                "global_parameters",
+                "private_endpoint_connections",
+                "title",
+                "tags",
+                "akas",
+                "region",
+                "resource_group",
+                "cloud_environment",
+                "subscription_id"
+            ],
+            "included": [],
+            "excluded": [],
+            "aliases": [
+                {
+                    "name": "id",
+                    "alias": "urn"
+                }
+            ],
+            "inventory_supported": false
+        },
+        {
+            "name": "azure_data_factory_dataset",
+            "all_columns": [
+                "name",
+                "id",
+                "factory_name",
+                "etag",
+                "type",
+                "properties",
+                "title",
+                "akas",
+                "resource_group",
+                "cloud_environment",
+                "subscription_id"
+            ],
+            "included": [],
+            "excluded": [],
+            "aliases": [
+                {
+                    "name": "id",
+                    "alias": "urn"
+                },
+                {
+                    "name": "'global'",
+                    "alias": "region"
+                }
+            ],
+            "inventory_supported": false
+        },
+        {
+            "name": "azure_data_factory_pipeline",
+            "all_columns": [
+                "name",
+                "id",
+                "factory_name",
+                "description",
+                "etag",
+                "type",
+                "concurrency",
+                "pipeline_folder",
+                "activities",
+                "annotations",
+                "parameters",
+                "pipeline_policy",
+                "variables",
+                "run_dimensions",
+                "title",
+                "akas",
+                "resource_group",
+                "cloud_environment",
+                "subscription_id"
+            ],
+            "included": [],
+            "excluded": [],
+            "aliases": [
+                {
+                    "name": "id",
+                    "alias": "urn"
+                },
+                {
+                    "name": "'global'",
+                    "alias": "region"
+                }
+            ],
+            "inventory_supported": false
+        },
+        {
+            "name": "azure_data_lake_analytics_account",
+            "all_columns": [
+                "name",
+                "id",
+                "state",
+                "provisioning_state",
+                "type",
+                "account_id",
+                "creation_time",
+                "current_tier",
+                "default_data_lake_store_account",
+                "endpoint",
+                "firewall_state",
+                "last_modified_time",
+                "max_degree_of_parallelism",
+                "max_degree_of_parallelism_per_job",
+                "max_job_count",
+                "min_priority_per_job",
+                "new_tier",
+                "query_store_retention",
+                "system_max_degree_of_parallelism",
+                "system_max_job_count",
+                "compute_policies",
+                "diagnostic_settings",
+                "data_lake_store_accounts",
+                "firewall_allow_azure_ips",
+                "firewall_rules",
+                "storage_accounts",
+                "title",
+                "tags",
+                "akas",
+                "region",
+                "resource_group",
+                "cloud_environment",
+                "subscription_id"
+            ],
+            "included": [],
+            "excluded": [],
+            "aliases": [
+                {
+                    "name": "id",
+                    "alias": "urn"
+                }
+            ],
+            "inventory_supported": false
+        },
+        {
+            "name": "azure_data_lake_store",
+            "all_columns": [
+                "name",
+                "id",
+                "type",
+                "account_id",
+                "creation_time",
+                "current_tier",
+                "default_group",
+                "encryption_state",
+                "encryption_provisioning_state",
+                "endpoint",
+                "firewall_state",
+                "last_modified_time",
+                "new_tier",
+                "provisioning_state",
+                "state",
+                "trusted_id_provider_state",
+                "diagnostic_settings",
+                "encryption_config",
+                "firewall_allow_azure_ips",
+                "firewall_rules",
+                "identity",
+                "trusted_id_providers",
+                "virtual_network_rules",
+                "title",
+                "tags",
+                "akas",
+                "region",
+                "resource_group",
+                "cloud_environment",
+                "subscription_id"
+            ],
+            "included": [],
+            "excluded": [],
+            "aliases": [
+                {
+                    "name": "id",
+                    "alias": "urn"
+                }
+            ],
+            "inventory_supported": true
+        },
+        {
+            "name": "azure_databox_edge_device",
+            "all_columns": [
+                "name",
+                "id",
+                "friendly_name",
+                "type",
+                "data_box_edge_device_status",
+                "culture",
+                "description",
+                "device_model",
+                "device_type",
+                "device_hcs_version",
+                "device_local_capacity",
+                "device_software_version",
+                "etag",
+                "location",
+                "model_description",
+                "node_count",
+                "serial_number",
+                "sku_name",
+                "sku_tier",
+                "time_zone",
+                "configured_role_types",
+                "title",
+                "tags",
+                "akas",
+                "region",
+                "resource_group",
+                "cloud_environment",
+                "subscription_id"
+            ],
+            "included": [],
+            "excluded": [],
+            "aliases": [
+                {
+                    "name": "id",
+                    "alias": "urn"
+                }
+            ],
+            "inventory_supported": false
+        },
+        {
+            "name": "azure_eventgrid_domain",
+            "all_columns": [
+                "name",
+                "id",
+                "type",
+                "provisioning_state",
+                "auto_create_topic_with_first_subscription",
+                "auto_delete_topic_with_last_subscription",
+                "created_at",
+                "created_by",
+                "created_by_type",
+                "disable_local_auth",
+                "endpoint",
+                "identity_type",
+                "input_schema",
+                "last_modified_at",
+                "last_modified_by",
+                "last_modified_by_type",
+                "location",
+                "principal_id",
+                "public_network_access",
+                "sku_name",
+                "user_assigned_identities",
+                "diagnostic_settings",
+                "inbound_ip_rules",
+                "input_schema_mapping",
+                "private_endpoint_connections",
+                "title",
+                "tags",
+                "akas",
+                "region",
+                "resource_group",
+                "cloud_environment",
+                "subscription_id"
+            ],
+            "included": [],
+            "excluded": [],
+            "aliases": [
+                {
+                    "name": "id",
+                    "alias": "urn"
+                }
+            ],
+            "inventory_supported": false
+        },
+        {
+            "name": "azure_eventgrid_topic",
+            "all_columns": [
+                "name",
+                "id",
+                "type",
+                "provisioning_state",
+                "created_at",
+                "created_by",
+                "created_by_type",
+                "disable_local_auth",
+                "endpoint",
+                "input_schema",
+                "kind",
+                "last_modified_at",
+                "last_modified_by",
+                "last_modified_by_type",
+                "location",
+                "public_network_access",
+                "sku_name",
+                "diagnostic_settings",
+                "extended_location",
+                "identity",
+                "inbound_ip_rules",
+                "input_schema_mapping",
+                "private_endpoint_connections",
+                "title",
+                "tags",
+                "akas",
+                "region",
+                "resource_group",
+                "cloud_environment",
+                "subscription_id"
+            ],
+            "included": [],
+            "excluded": [],
+            "aliases": [
+                {
+                    "name": "id",
+                    "alias": "urn"
+                }
+            ],
+            "inventory_supported": false
+        },
+        {
+            "name": "azure_eventhub_namespace",
+            "all_columns": [
+                "name",
+                "id",
+                "type",
+                "provisioning_state",
+                "created_at",
+                "cluster_arm_id",
+                "is_auto_inflate_enabled",
+                "kafka_enabled",
+                "maximum_throughput_units",
+                "metric_id",
+                "service_bus_endpoint",
+                "sku_capacity",
+                "sku_name",
+                "sku_tier",
+                "updated_at",
+                "zone_redundant",
+                "diagnostic_settings",
+                "encryption",
+                "identity",
+                "network_rule_set",
+                "private_endpoint_connections",
+                "title",
+                "tags",
+                "akas",
+                "region",
+                "resource_group",
+                "cloud_environment",
+                "subscription_id"
+            ],
+            "included": [],
+            "excluded": [],
+            "aliases": [
+                {
+                    "name": "id",
+                    "alias": "urn"
+                }
+            ],
+            "inventory_supported": false
+        },
+        {
+            "name": "azure_express_route_circuit",
+            "all_columns": [
+                "name",
+                "id",
+                "etag",
+                "sku_name",
+                "sku_tier",
+                "sku_family",
+                "allow_classic_operations",
+                "circuit_provisioning_state",
+                "service_provider_provisioning_state",
+                "authorizations",
+                "peerings",
+                "service_key",
+                "service_provider_notes",
+                "service_provider_properties",
+                "express_route_port",
+                "bandwidth_in_gbps",
+                "provisioning_state",
+                "global_reach_enabled",
+                "title",
+                "tags",
+                "akas",
+                "region",
+                "resource_group",
+                "cloud_environment",
+                "subscription_id"
+            ],
+            "included": [],
+            "excluded": [],
+            "aliases": [
+                {
+                    "name": "id",
+                    "alias": "urn"
+                }
+            ],
+            "inventory_supported": true
+        },
+        {
+            "name": "azure_firewall",
+            "all_columns": [
+                "name",
+                "id",
+                "etag",
+                "type",
+                "provisioning_state",
+                "firewall_policy_id",
+                "hub_private_ip_address",
+                "hub_public_ip_address_count",
+                "sku_name",
+                "sku_tier",
+                "threat_intel_mode",
+                "virtual_hub_id",
+                "additional_properties",
+                "application_rule_collections",
+                "availability_zones",
+                "hub_public_ip_addresses",
+                "ip_configurations",
+                "ip_groups",
+                "nat_rule_collections",
+                "network_rule_collections",
+                "title",
+                "tags",
+                "akas",
+                "region",
+                "resource_group",
+                "cloud_environment",
+                "subscription_id"
+            ],
+            "included": [],
+            "excluded": [],
+            "aliases": [
+                {
+                    "name": "id",
+                    "alias": "urn"
+                }
+            ],
+            "inventory_supported": true
+        },
+        {
+            "name": "azure_frontdoor",
+            "all_columns": [
+                "name",
+                "id",
+                "provisioning_state",
+                "type",
+                "cname",
+                "enabled_state",
+                "friendly_name",
+                "front_door_id",
+                "resource_state",
+                "backend_pools",
+                "backend_pools_settings",
+                "diagnostic_settings",
+                "frontend_endpoints",
+                "health_probe_settings",
+                "load_balancing_settings",
+                "rules_engines",
+                "routing_rules",
+                "title",
+                "tags",
+                "akas",
+                "region",
+                "resource_group",
+                "cloud_environment",
+                "subscription_id"
+            ],
+            "included": [],
+            "excluded": [],
+            "aliases": [
+                {
+                    "name": "id",
+                    "alias": "urn"
+                }
+            ],
+            "inventory_supported": true
+        },
+        {
+            "name": "azure_hdinsight_cluster",
+            "all_columns": [
+                "name",
+                "id",
+                "provisioning_state",
+                "type",
+                "cluster_hdp_version",
+                "cluster_id",
+                "cluster_state",
+                "cluster_version",
+                "created_date",
+                "etag",
+                "min_supported_tls_version",
+                "os_type",
+                "tier",
+                "cluster_definition",
+                "compute_isolation_properties",
+                "compute_profile",
+                "connectivity_endpoints",
+                "diagnostic_settings",
+                "disk_encryption_properties",
+                "encryption_in_transit_properties",
+                "errors",
+                "excluded_services_config",
+                "identity",
+                "kafka_rest_properties",
+                "network_properties",
+                "quota_info",
+                "security_profile",
+                "storage_profile",
+                "title",
+                "tags",
+                "akas",
+                "region",
+                "resource_group",
+                "cloud_environment",
+                "subscription_id"
+            ],
+            "included": [],
+            "excluded": [],
+            "aliases": [
+                {
+                    "name": "id",
+                    "alias": "urn"
+                }
+            ],
+            "inventory_supported": true
+        },
+        {
+            "name": "azure_healthcare_service",
+            "all_columns": [
+                "name",
+                "id",
+                "etag",
+                "type",
+                "provisioning_state",
+                "allow_credentials",
+                "audience",
+                "authority",
+                "kind",
+                "location",
+                "max_age",
+                "smart_proxy_enabled",
+                "access_policies",
+                "cosmos_db_configuration",
+                "diagnostic_settings",
+                "headers",
+                "methods",
+                "origins",
+                "private_endpoint_connections",
+                "title",
+                "tags",
+                "akas",
+                "region",
+                "resource_group",
+                "cloud_environment",
+                "subscription_id"
+            ],
+            "included": [],
+            "excluded": [],
+            "aliases": [
+                {
+                    "name": "id",
+                    "alias": "urn"
+                }
+            ],
+            "inventory_supported": false
+        },
+        {
+            "name": "azure_hpc_cache",
+            "all_columns": [
+                "name",
+                "id",
+                "provisioning_state",
+                "type",
+                "cache_size_gb",
+                "sku_name",
+                "subnet",
+                "directory_services_settings",
+                "encryption_settings",
+                "health",
+                "identity",
+                "mount_addresses",
+                "network_settings",
+                "security_settings",
+                "system_data",
+                "upgrade_status",
+                "title",
+                "tags",
+                "akas",
+                "region",
+                "resource_group",
+                "cloud_environment",
+                "subscription_id"
+            ],
+            "included": [],
+            "excluded": [],
+            "aliases": [
+                {
+                    "name": "id",
+                    "alias": "urn"
+                }
+            ],
+            "inventory_supported": false
+        },
+        {
+            "name": "azure_hybrid_compute_machine",
+            "tags": [
+                "compute"
+            ],
+            "all_columns": [
+                "name",
+                "id",
+                "status",
+                "provisioning_state",
+                "type",
+                "ad_fqdn",
+                "agent_version",
+                "client_public_key",
+                "dns_fqdn",
+                "display_name",
+                "domain_name",
+                "last_status_change",
+                "machine_fqdn",
+                "os_name",
+                "os_sku",
+                "os_version",
+                "vm_id",
+                "vm_uuid",
+                "error_details",
+                "extensions",
+                "identity",
+                "location_data",
+                "machine_properties_extensions",
+                "os_profile",
+                "title",
+                "tags",
+                "akas",
+                "region",
+                "resource_group",
+                "cloud_environment",
+                "subscription_id"
+            ],
+            "included": [],
+            "excluded": [],
+            "aliases": [
+                {
+                    "name": "id",
+                    "alias": "urn"
+                }
+            ],
+            "inventory_supported": true
+        },
+        {
+            "name": "azure_hybrid_kubernetes_connected_cluster",
+            "all_columns": [
+                "name",
+                "id",
+                "connectivity_status",
+                "provisioning_state",
+                "type",
+                "agent_public_key_certificate",
+                "agent_version",
+                "created_at",
+                "created_by",
+                "created_by_type",
+                "distribution",
+                "infrastructure",
+                "kubernetes_version",
+                "last_connectivity_time",
+                "last_modified_at",
+                "last_modified_by",
+                "last_modified_by_type",
+                "location",
+                "managed_identity_certificate_expiration_time",
+                "offering",
+                "total_core_count",
+                "total_node_count",
+                "extensions",
+                "identity",
+                "title",
+                "tags",
+                "akas",
+                "region",
+                "resource_group",
+                "cloud_environment",
+                "subscription_id"
+            ],
+            "included": [],
+            "excluded": [],
+            "aliases": [
+                {
+                    "name": "id",
+                    "alias": "urn"
+                }
+            ],
+            "inventory_supported": true
+        },
+        {
+            "name": "azure_iothub",
+            "all_columns": [
+                "name",
+                "id",
+                "state",
+                "provisioning_state",
+                "type",
+                "comments",
+                "enable_file_upload_notifications",
+                "etag",
+                "features",
+                "host_name",
+                "min_tls_version",
+                "public_network_access",
+                "sku_capacity",
+                "sku_name",
+                "sku_tier",
+                "authorization_policies",
+                "cloud_to_device",
+                "diagnostic_settings",
+                "event_hub_endpoints",
+                "ip_filter_rules",
+                "locations",
+                "messaging_endpoints",
+                "private_endpoint_connections",
+                "routing",
+                "storage_endpoints",
+                "title",
+                "tags",
+                "akas",
+                "region",
+                "resource_group",
+                "cloud_environment",
+                "subscription_id"
+            ],
+            "included": [],
+            "excluded": [],
+            "aliases": [
+                {
+                    "name": "id",
+                    "alias": "urn"
+                }
+            ],
+            "inventory_supported": false
+        },
+        {
+            "name": "azure_iothub_dps",
+            "all_columns": [
+                "name",
+                "id",
+                "state",
+                "provisioning_state",
+                "type",
+                "allocation_policy",
+                "device_provisioning_host_name",
+                "etag",
+                "id_scope",
+                "service_operations_host_name",
+                "sku_capacity",
+                "sku_name",
+                "sku_tier",
+                "authorization_policies",
+                "diagnostic_settings",
+                "iot_hubs",
+                "title",
+                "tags",
+                "akas",
+                "region",
+                "resource_group",
+                "cloud_environment",
+                "subscription_id"
+            ],
+            "included": [],
+            "excluded": [],
+            "aliases": [
+                {
+                    "name": "id",
+                    "alias": "urn"
+                }
+            ],
+            "inventory_supported": false
+        },
+        {
+            "name": "azure_key_vault",
+            "all_columns": [
+                "name",
+                "id",
+                "vault_uri",
+                "type",
+                "create_mode",
+                "enabled_for_deployment",
+                "enabled_for_disk_encryption",
+                "enabled_for_template_deployment",
+                "enable_rbac_authorization",
+                "purge_protection_enabled",
+                "soft_delete_enabled",
+                "soft_delete_retention_in_days",
+                "sku_family",
+                "sku_name",
+                "tenant_id",
+                "access_policies",
+                "diagnostic_settings",
+                "network_acls",
+                "private_endpoint_connections",
+                "title",
+                "tags",
+                "akas",
+                "region",
+                "resource_group",
+                "cloud_environment",
+                "subscription_id"
+            ],
+            "included": [],
+            "excluded": [],
+            "aliases": [
+                {
+                    "name": "id",
+                    "alias": "urn"
+                }
+            ],
+            "inventory_supported": false
+        },
+        {
+            "name": "azure_key_vault_deleted_vault",
+            "all_columns": [
+                "name",
+                "id",
+                "vault_id",
+                "type",
+                "deletion_date",
+                "scheduled_purge_date",
+                "title",
+                "tags",
+                "akas",
+                "region",
+                "resource_group",
+                "cloud_environment",
+                "subscription_id"
+            ],
+            "included": [],
+            "excluded": [],
+            "aliases": [
+                {
+                    "name": "id",
+                    "alias": "urn"
+                }
+            ],
+            "inventory_supported": false
+        },
+        {
+            "name": "azure_key_vault_key",
+            "all_columns": [
+                "name",
+                "id",
+                "vault_name",
+                "enabled",
+                "key_type",
+                "created_at",
+                "curve_name",
+                "expires_at",
+                "key_size",
+                "key_uri",
+                "key_uri_with_version",
+                "location",
+                "not_before",
+                "recovery_level",
+                "type",
+                "updated_at",
+                "key_ops",
+                "title",
+                "tags",
+                "akas",
+                "region",
+                "resource_group",
+                "cloud_environment",
+                "subscription_id"
+            ],
+            "included": [],
+            "excluded": [],
+            "aliases": [
+                {
+                    "name": "id",
+                    "alias": "urn"
+                }
+            ],
+            "inventory_supported": false
+        },
+        {
+            "name": "azure_key_vault_managed_hardware_security_module",
+            "all_columns": [
+                "name",
+                "id",
+                "type",
+                "provisioning_state",
+                "hsm_uri",
+                "enable_soft_delete",
+                "soft_delete_retention_in_days",
+                "enable_purge_protection",
+                "status_message",
+                "create_mode",
+                "sku_family",
+                "sku_name",
+                "tenant_id",
+                "diagnostic_settings",
+                "title",
+                "tags",
+                "akas",
+                "region",
+                "resource_group",
+                "cloud_environment",
+                "subscription_id"
+            ],
+            "included": [],
+            "excluded": [],
+            "aliases": [
+                {
+                    "name": "id",
+                    "alias": "urn"
+                }
+            ],
+            "inventory_supported": false
+        },
+        {
+            "name": "azure_key_vault_secret",
+            "all_columns": [
+                "name",
+                "id",
+                "vault_name",
+                "enabled",
+                "managed",
+                "content_type",
+                "created_at",
+                "expires_at",
+                "kid",
+                "not_before",
+                "recoverable_days",
+                "recovery_level",
+                "updated_at",
+                "value",
+                "title",
+                "tags",
+                "akas",
+                "region",
+                "resource_group",
+                "cloud_environment",
+                "subscription_id"
+            ],
+            "included": [],
+            "excluded": [],
+            "aliases": [
+                {
+                    "name": "id",
+                    "alias": "urn"
+                }
+            ],
+            "inventory_supported": false
+        },
+        {
+            "name": "azure_kubernetes_cluster",
+            "tags": [
+                "compute"
+            ],
+            "all_columns": [
+                "name",
+                "id",
+                "type",
+                "location",
+                "azure_portal_fqdn",
+                "disk_encryption_set_id",
+                "dns_prefix",
+                "enable_pod_security_policy",
+                "enable_rbac",
+                "fqdn",
+                "fqdn_subdomain",
+                "kubernetes_version",
+                "max_agent_pools",
+                "node_resource_group",
+                "private_fqdn",
+                "provisioning_state",
+                "aad_profile",
+                "addon_profiles",
+                "agent_pool_profiles",
+                "api_server_access_profile",
+                "auto_scaler_profile",
+                "auto_upgrade_profile",
+                "identity",
+                "identity_profile",
+                "linux_profile",
+                "network_profile",
+                "pod_identity_profile",
+                "power_state",
+                "service_principal_profile",
+                "sku",
+                "windows_profile",
+                "title",
+                "tags",
+                "akas",
+                "region",
+                "resource_group",
+                "cloud_environment",
+                "subscription_id"
+            ],
+            "included": [],
+            "excluded": [],
+            "aliases": [
+                {
+                    "name": "id",
+                    "alias": "urn"
+                }
+            ],
+            "inventory_supported": true
+        },
+        {
+            "name": "azure_kusto_cluster",
+            "tags": [
+                "compute"
+            ],
+            "all_columns": [
+                "name",
+                "id",
+                "provisioning_state",
+                "state",
+                "type",
+                "location",
+                "data_ingestion_uri",
+                "etag",
+                "enable_disk_encryption",
+                "enable_double_encryption",
+                "enable_purge",
+                "enable_streaming_ingest",
+                "engine_type",
+                "sku_capacity",
+                "sku_name",
+                "sku_tier",
+                "state_reason",
+                "uri",
+                "language_extensions",
+                "key_vault_properties",
+                "optimized_autoscale",
+                "trusted_external_tenants",
+                "virtual_network_configuration",
+                "title",
+                "tags",
+                "akas",
+                "region",
+                "resource_group",
+                "cloud_environment",
+                "subscription_id"
+            ],
+            "included": [],
+            "excluded": [],
+            "aliases": [
+                {
+                    "name": "id",
+                    "alias": "urn"
+                }
+            ],
+            "inventory_supported": true
+        },
+        {
+            "name": "azure_lb",
+            "tags": [
+                "compute"
+            ],
+            "all_columns": [
+                "name",
+                "id",
+                "provisioning_state",
+                "type",
+                "etag",
+                "extended_location_name",
+                "extended_location_type",
+                "resource_guid",
+                "sku_name",
+                "sku_tier",
+                "backend_address_pools",
+                "diagnostic_settings",
+                "frontend_ip_configurations",
+                "inbound_nat_pools",
+                "inbound_nat_rules",
+                "load_balancing_rules",
+                "outbound_rules",
+                "probes",
+                "title",
+                "tags",
+                "akas",
+                "region",
+                "resource_group",
+                "cloud_environment",
+                "subscription_id"
+            ],
+            "included": [],
+            "excluded": [],
+            "aliases": [
+                {
+                    "name": "id",
+                    "alias": "urn"
+                }
+            ],
+            "inventory_supported": true
+        },
+        {
+            "name": "azure_lb_backend_address_pool",
+            "all_columns": [
+                "name",
+                "id",
+                "load_balancer_name",
+                "provisioning_state",
+                "type",
+                "etag",
+                "outbound_rule_id",
+                "backend_ip_configurations",
+                "gateway_load_balancer_tunnel_interface",
+                "load_balancer_backend_addresses",
+                "load_balancing_rules",
+                "outbound_rules",
+                "title",
+                "akas",
+                "resource_group",
+                "cloud_environment",
+                "subscription_id"
+            ],
+            "included": [],
+            "excluded": [],
+            "aliases": [
+                {
+                    "name": "id",
+                    "alias": "urn"
+                },
+                {
+                    "name": "'global'",
+                    "alias": "region"
+                }
+            ],
+            "inventory_supported": true
+        },
+        {
+            "name": "azure_lb_nat_rule",
+            "all_columns": [
+                "name",
+                "id",
+                "load_balancer_name",
+                "provisioning_state",
+                "type",
+                "etag",
+                "backend_port",
+                "enable_floating_ip",
+                "frontend_port",
+                "enable_tcp_reset",
+                "idle_timeout_in_minutes",
+                "protocol",
+                "backend_ip_configuration",
+                "frontend_ip_configuration",
+                "title",
+                "akas",
+                "resource_group",
+                "cloud_environment",
+                "subscription_id"
+            ],
+            "included": [],
+            "excluded": [],
+            "aliases": [
+                {
+                    "name": "id",
+                    "alias": "urn"
+                },
+                {
+                    "name": "'global'",
+                    "alias": "region"
+                }
+            ],
+            "inventory_supported": true
+        },
+        {
+            "name": "azure_lb_outbound_rule",
+            "all_columns": [
+                "name",
+                "id",
+                "load_balancer_name",
+                "provisioning_state",
+                "type",
+                "etag",
+                "allocated_outbound_ports",
+                "enable_tcp_reset",
+                "idle_timeout_in_minutes",
+                "protocol",
+                "backend_address_pools",
+                "frontend_ip_configurations",
+                "title",
+                "akas",
+                "resource_group",
+                "cloud_environment",
+                "subscription_id"
+            ],
+            "included": [],
+            "excluded": [],
+            "aliases": [
+                {
+                    "name": "id",
+                    "alias": "urn"
+                },
+                {
+                    "name": "'global'",
+                    "alias": "region"
+                }
+            ],
+            "inventory_supported": true
+        },
+        {
+            "name": "azure_lb_probe",
+            "all_columns": [
+                "name",
+                "id",
+                "load_balancer_name",
+                "provisioning_state",
+                "type",
+                "etag",
+                "interval_in_seconds",
+                "number_of_probes",
+                "port",
+                "protocol",
+                "request_path",
+                "load_balancing_rules",
+                "title",
+                "akas",
+                "resource_group",
+                "cloud_environment",
+                "subscription_id"
+            ],
+            "included": [],
+            "excluded": [],
+            "aliases": [
+                {
+                    "name": "id",
+                    "alias": "urn"
+                },
+                {
+                    "name": "'global'",
+                    "alias": "region"
+                }
+            ],
+            "inventory_supported": true
+        },
+        {
+            "name": "azure_lb_rule",
+            "all_columns": [
+                "name",
+                "id",
+                "load_balancer_name",
+                "provisioning_state",
+                "type",
+                "etag",
+                "backend_address_pool_id",
+                "backend_port",
+                "disable_outbound_snat",
+                "enable_floating_ip",
+                "enable_tcp_reset",
+                "frontend_ip_configuration_id",
+                "frontend_port",
+                "idle_timeout_in_minutes",
+                "load_distribution",
+                "probe_id",
+                "protocol",
+                "backend_address_pools",
+                "title",
+                "akas",
+                "resource_group",
+                "cloud_environment",
+                "subscription_id"
+            ],
+            "included": [],
+            "excluded": [],
+            "aliases": [
+                {
+                    "name": "id",
+                    "alias": "urn"
+                },
+                {
+                    "name": "'global'",
+                    "alias": "region"
+                }
+            ],
+            "inventory_supported": true
+        },
+        {
+            "name": "azure_log_alert",
+            "all_columns": [
+                "name",
+                "id",
+                "type",
+                "enabled",
+                "description",
+                "location",
+                "scopes",
+                "condition",
+                "actions",
+                "title",
+                "tags",
+                "akas",
+                "region",
+                "resource_group",
+                "cloud_environment",
+                "subscription_id"
+            ],
+            "included": [],
+            "excluded": [],
+            "aliases": [
+                {
+                    "name": "id",
+                    "alias": "urn"
+                }
+            ],
+            "inventory_supported": false
+        },
+        {
+            "name": "azure_log_profile",
+            "all_columns": [
+                "name",
+                "id",
+                "type",
+                "location",
+                "storage_account_id",
+                "service_bus_rule_id",
+                "log_event_location",
+                "categories",
+                "retention_policy",
+                "title",
+                "tags",
+                "akas",
+                "region",
+                "resource_group",
+                "cloud_environment",
+                "subscription_id"
+            ],
+            "included": [],
+            "excluded": [],
+            "aliases": [
+                {
+                    "name": "id",
+                    "alias": "urn"
+                }
+            ],
+            "inventory_supported": false
+        },
+        {
+            "name": "azure_logic_app_workflow",
+            "tags": [
+                "compute"
+            ],
+            "all_columns": [
+                "name",
+                "id",
+                "state",
+                "provisioning_state",
+                "type",
+                "access_endpoint",
+                "created_time",
+                "changed_time",
+                "sku_name",
+                "version",
+                "access_control",
+                "definition",
+                "diagnostic_settings",
+                "endpoints_configuration",
+                "integration_account",
+                "integration_service_environment",
+                "parameters",
+                "sku_plan",
+                "title",
+                "tags",
+                "akas",
+                "region",
+                "resource_group",
+                "cloud_environment",
+                "subscription_id"
+            ],
+            "included": [],
+            "excluded": [],
+            "aliases": [
+                {
+                    "name": "id",
+                    "alias": "urn"
+                }
+            ],
+            "inventory_supported": false
+        },
+        {
+            "name": "azure_machine_learning_workspace",
+            "tags": [
+                "compute"
+            ],
+            "all_columns": [
+                "name",
+                "friendly_name",
+                "id",
+                "provisioning_state",
+                "creation_time",
+                "workspace_id",
+                "application_insights",
+                "container_registry",
+                "description",
+                "discovery_url",
+                "hbi_workspace",
+                "key_vault",
+                "location",
+                "service_provisioned_resource_group",
+                "sku_name",
+                "sku_tier",
+                "storage_account",
+                "type",
+                "diagnostic_settings",
+                "encryption",
+                "identity",
+                "title",
+                "tags",
+                "akas",
+                "region",
+                "resource_group",
+                "cloud_environment",
+                "subscription_id"
+            ],
+            "included": [],
+            "excluded": [],
+            "aliases": [
+                {
+                    "name": "id",
+                    "alias": "urn"
+                }
+            ],
+            "inventory_supported": false
+        },
+        {
+            "name": "azure_management_group",
+            "all_columns": [
+                "id",
+                "name",
+                "type",
+                "display_name",
+                "tenant_id",
+                "updated_by",
+                "updated_time",
+                "version",
+                "children",
+                "parent",
+                "title",
+                "akas"
+            ],
+            "included": [],
+            "excluded": [],
+            "aliases": [
+                {
+                    "name": "id",
+                    "alias": "urn"
+                },
+                {
+                    "name": "'global'",
+                    "alias": "region"
+                }
+            ],
+            "inventory_supported": false
+        },
+        {
+            "name": "azure_management_lock",
+            "all_columns": [
+                "name",
+                "id",
+                "type",
+                "lock_level",
+                "scope",
+                "notes",
+                "owners",
+                "title",
+                "akas",
+                "resource_group",
+                "cloud_environment",
+                "subscription_id"
+            ],
+            "included": [],
+            "excluded": [],
+            "aliases": [
+                {
+                    "name": "id",
+                    "alias": "urn"
+                },
+                {
+                    "name": "'global'",
+                    "alias": "region"
+                }
+            ],
+            "inventory_supported": false
+        },
+        {
+            "name": "azure_mariadb_server",
+            "tags": [
+                "compute"
+            ],
+            "all_columns": [
+                "name",
+                "id",
+                "type",
+                "version",
+                "geo_redundant_backup_enabled",
+                "user_visible_state",
+                "administrator_login",
+                "auto_grow_enabled",
+                "backup_retention_days",
+                "earliest_restore_date",
+                "fully_qualified_domain_name",
+                "master_service_id",
+                "public_network_access",
+                "replication_role",
+                "replica_capacity",
+                "sku_capacity",
+                "sku_family",
+                "sku_name",
+                "sku_size",
+                "sku_tier",
+                "ssl_enforcement",
+                "storage_mb",
+                "private_endpoint_connections",
+                "title",
+                "tags",
+                "akas",
+                "region",
+                "resource_group",
+                "cloud_environment",
+                "subscription_id"
+            ],
+            "included": [],
+            "excluded": [],
+            "aliases": [
+                {
+                    "name": "id",
+                    "alias": "urn"
+                }
+            ],
+            "inventory_supported": true
+        },
+        {
+            "name": "azure_mssql_elasticpool",
+            "all_columns": [
+                "name",
+                "server_name",
+                "id",
+                "type",
+                "state",
+                "creation_date",
+                "database_dtu_max",
+                "database_dtu_min",
+                "dtu",
+                "edition",
+                "kind",
+                "storage_mb",
+                "zone_redundant",
+                "title",
+                "tags",
+                "akas",
+                "region",
+                "resource_group",
+                "cloud_environment",
+                "subscription_id"
+            ],
+            "included": [],
+            "excluded": [],
+            "aliases": [
+                {
+                    "name": "id",
+                    "alias": "urn"
+                }
+            ],
+            "inventory_supported": true
+        },
+        {
+            "name": "azure_mssql_managed_instance",
+            "tags": [
+                "compute"
+            ],
+            "all_columns": [
+                "name",
+                "id",
+                "type",
+                "state",
+                "administrator_login",
+                "administrator_login_password",
+                "collation",
+                "dns_zone",
+                "dns_zone_partner",
+                "fully_qualified_domain_name",
+                "instance_pool_id",
+                "license_type",
+                "maintenance_configuration_id",
+                "managed_instance_create_mode",
+                "minimal_tls_version",
+                "proxy_override",
+                "public_data_endpoint_enabled",
+                "restore_point_in_time",
+                "source_managed_instance_id",
+                "storage_size_in_gb",
+                "subnet_id",
+                "timezone_id",
+                "v_cores",
+                "encryption_protectors",
+                "identity",
+                "security_alert_policies",
+                "sku",
+                "vulnerability_assessments",
+                "title",
+                "tags",
+                "akas",
+                "region",
+                "resource_group",
+                "cloud_environment",
+                "subscription_id"
+            ],
+            "included": [],
+            "excluded": [],
+            "aliases": [
+                {
+                    "name": "id",
+                    "alias": "urn"
+                }
+            ],
+            "inventory_supported": true
+        },
+        {
+            "name": "azure_mssql_virtual_machine",
+            "tags": [
+                "compute"
+            ],
+            "all_columns": [
+                "name",
+                "id",
+                "provisioning_state",
+                "type",
+                "sql_image_offer",
+                "sql_image_sku",
+                "sql_management",
+                "sql_server_license_type",
+                "sql_virtual_machine_group_resource_id",
+                "virtual_machine_resource_id",
+                "auto_backup_settings",
+                "auto_patching_settings",
+                "identity",
+                "key_vault_credential_settings",
+                "server_configurations_management_settings",
+                "storage_configuration_settings",
+                "wsfc_domain_credentials",
+                "title",
+                "akas",
+                "tags",
+                "region",
+                "resource_group",
+                "cloud_environment",
+                "subscription_id"
+            ],
+            "included": [],
+            "excluded": [],
+            "aliases": [
+                {
+                    "name": "id",
+                    "alias": "urn"
+                }
+            ],
+            "inventory_supported": true
+        },
+        {
+            "name": "azure_mysql_flexible_server",
+            "tags": [
+                "compute"
+            ],
+            "all_columns": [
+                "name",
+                "id",
+                "type",
+                "state",
+                "version",
+                "administrator_login",
+                "availability_zone",
+                "backup_retention_days",
+                "create_mode",
+                "earliest_restore_date",
+                "fully_qualified_domain_name",
+                "geo_redundant_backup",
+                "location",
+                "public_network_access",
+                "replica_capacity",
+                "replication_role",
+                "restore_point_in_time",
+                "sku_name",
+                "sku_tier",
+                "source_server_resource_id",
+                "storage_auto_grow",
+                "storage_iops",
+                "storage_size_gb",
+                "storage_sku",
+                "flexible_server_configurations",
+                "high_availability",
+                "network",
+                "maintenance_window",
+                "system_data",
+                "title",
+                "tags",
+                "akas",
+                "region",
+                "resource_group",
+                "cloud_environment",
+                "subscription_id"
+            ],
+            "included": [],
+            "excluded": [],
+            "aliases": [
+                {
+                    "name": "id",
+                    "alias": "urn"
+                }
+            ],
+            "inventory_supported": true
+        },
+        {
+            "name": "azure_mysql_server",
+            "tags": [
+                "compute"
+            ],
+            "all_columns": [
+                "name",
+                "id",
+                "type",
+                "state",
+                "version",
+                "user_visible_state",
+                "location",
+                "administrator_login",
+                "backup_retention_days",
+                "byok_enforcement",
+                "earliest_restore_date",
+                "fully_qualified_domain_name",
+                "geo_redundant_backup",
+                "infrastructure_encryption",
+                "master_server_id",
+                "minimal_tls_version",
+                "public_network_access",
+                "replica_capacity",
+                "replication_role",
+                "sku_capacity",
+                "sku_family",
+                "sku_name",
+                "sku_size",
+                "sku_tier",
+                "ssl_enforcement",
+                "storage_auto_grow",
+                "storage_mb",
+                "private_endpoint_connections",
+                "server_configurations",
+                "server_keys",
+                "title",
+                "tags",
+                "akas",
+                "region",
+                "resource_group",
+                "cloud_environment",
+                "subscription_id"
+            ],
+            "included": [],
+            "excluded": [],
+            "aliases": [
+                {
+                    "name": "id",
+                    "alias": "urn"
+                }
+            ],
+            "inventory_supported": true
+        },
+        {
+            "name": "azure_network_interface",
+            "all_columns": [
+                "name",
+                "id",
+                "etag",
+                "type",
+                "provisioning_state",
+                "enable_accelerated_networking",
+                "enable_ip_forwarding",
+                "internal_dns_name_label",
+                "internal_domain_name_suffix",
+                "internal_fqdn",
+                "is_primary",
+                "mac_address",
+                "network_security_group_id",
+                "resource_guid",
+                "virtual_machine_id",
+                "applied_dns_servers",
+                "dns_servers",
+                "hosted_workloads",
+                "ip_configurations",
+                "tap_configurations",
+                "title",
+                "tags",
+                "akas",
+                "region",
+                "resource_group",
+                "cloud_environment",
+                "subscription_id"
+            ],
+            "included": [],
+            "excluded": [],
+            "aliases": [
+                {
+                    "name": "id",
+                    "alias": "urn"
+                }
+            ],
+            "inventory_supported": true
+        },
+        {
+            "name": "azure_network_security_group",
+            "all_columns": [
+                "name",
+                "id",
+                "etag",
+                "type",
+                "provisioning_state",
+                "resource_guid",
+                "default_security_rules",
+                "diagnostic_settings",
+                "flow_logs",
+                "network_interfaces",
+                "security_rules",
+                "subnets",
+                "title",
+                "tags",
+                "akas",
+                "region",
+                "resource_group",
+                "cloud_environment",
+                "subscription_id"
+            ],
+            "included": [],
+            "excluded": [],
+            "aliases": [
+                {
+                    "name": "id",
+                    "alias": "urn"
+                }
+            ],
+            "inventory_supported": true
+        },
+        {
+            "name": "azure_network_watcher",
+            "all_columns": [
+                "name",
+                "id",
+                "etag",
+                "type",
+                "provisioning_state",
+                "title",
+                "tags",
+                "akas",
+                "region",
+                "resource_group",
+                "cloud_environment",
+                "subscription_id"
+            ],
+            "included": [],
+            "excluded": [],
+            "aliases": [
+                {
+                    "name": "id",
+                    "alias": "urn"
+                }
+            ],
+            "inventory_supported": false
+        },
+        {
+            "name": "azure_network_watcher_flow_log",
+            "all_columns": [
+                "name",
+                "id",
+                "enabled",
+                "network_watcher_name",
+                "provisioning_state",
+                "type",
+                "version",
+                "etag",
+                "file_type",
+                "retention_policy_days",
+                "retention_policy_enabled",
+                "storage_id",
+                "target_resource_id",
+                "target_resource_guid",
+                "traffic_analytics",
+                "title",
+                "tags",
+                "akas",
+                "region",
+                "resource_group",
+                "cloud_environment",
+                "subscription_id"
+            ],
+            "included": [],
+            "excluded": [],
+            "aliases": [
+                {
+                    "name": "id",
+                    "alias": "urn"
+                }
+            ],
+            "inventory_supported": false
+        },
+        {
+            "name": "azure_policy_assignment",
+            "all_columns": [
+                "id",
+                "name",
+                "display_name",
+                "policy_definition_id",
+                "description",
+                "enforcement_mode",
+                "scope",
+                "sku_name",
+                "sku_tier",
+                "type",
+                "identity",
+                "metadata",
+                "not_scopes",
+                "parameters",
+                "title",
+                "akas",
+                "cloud_environment",
+                "subscription_id"
+            ],
+            "included": [],
+            "excluded": [],
+            "aliases": [
+                {
+                    "name": "id",
+                    "alias": "urn"
+                },
+                {
+                    "name": "'global'",
+                    "alias": "region"
+                }
+            ],
+            "inventory_supported": false
+        },
+        {
+            "name": "azure_policy_definition",
+            "all_columns": [
+                "id",
+                "name",
+                "display_name",
+                "description",
+                "mode",
+                "policy_type",
+                "type",
+                "metadata",
+                "parameters",
+                "policy_rule",
+                "title",
+                "akas",
+                "cloud_environment",
+                "subscription_id"
+            ],
+            "included": [],
+            "excluded": [
+                "policy_rule"
+            ],
+            "aliases": [
+                {
+                    "name": "id",
+                    "alias": "urn"
+                },
+                {
+                    "name": "'global'",
+                    "alias": "region"
+                }
+            ],
+            "inventory_supported": false
+        },
+        {
+            "name": "azure_postgresql_server",
+            "tags": [
+                "compute"
+            ],
+            "all_columns": [
+                "name",
+                "id",
+                "type",
+                "user_visible_state",
+                "version",
+                "location",
+                "administrator_login",
+                "backup_retention_days",
+                "byok_enforcement",
+                "earliest_restore_date",
+                "fully_qualified_domain_name",
+                "geo_redundant_backup",
+                "infrastructure_encryption",
+                "master_server_id",
+                "minimal_tls_version",
+                "public_network_access",
+                "replica_capacity",
+                "replication_role",
+                "sku_capacity",
+                "sku_family",
+                "sku_name",
+                "sku_size",
+                "sku_tier",
+                "ssl_enforcement",
+                "storage_auto_grow",
+                "storage_mb",
+                "private_endpoint_connections",
+                "firewall_rules",
+                "server_administrators",
+                "server_configurations",
+                "server_keys",
+                "title",
+                "tags",
+                "akas",
+                "region",
+                "resource_group",
+                "cloud_environment",
+                "subscription_id"
+            ],
+            "included": [],
+            "excluded": [],
+            "aliases": [
+                {
+                    "name": "id",
+                    "alias": "urn"
+                }
+            ],
+            "inventory_supported": true
+        },
+        {
+            "name": "azure_public_ip",
+            "all_columns": [
+                "name",
+                "id",
+                "etag",
+                "type",
+                "provisioning_state",
+                "ddos_custom_policy_id",
+                "ddos_settings_protected_ip",
+                "ddos_settings_protection_coverage",
+                "dns_settings_domain_name_label",
+                "dns_settings_fqdn",
+                "dns_settings_reverse_fqdn",
+                "idle_timeout_in_minutes",
+                "ip_address",
+                "ip_configuration_id",
+                "public_ip_address_version",
+                "public_ip_allocation_method",
+                "public_ip_prefix_id",
+                "resource_guid",
+                "sku_name",
+                "ip_tags",
+                "zones",
+                "title",
+                "tags",
+                "akas",
+                "region",
+                "resource_group",
+                "cloud_environment",
+                "subscription_id"
+            ],
+            "included": [],
+            "excluded": [],
+            "aliases": [
+                {
+                    "name": "id",
+                    "alias": "urn"
+                }
+            ],
+            "inventory_supported": true
+        },
+        {
+            "name": "azure_recovery_services_vault",
+            "all_columns": [
+                "name",
+                "id",
+                "type",
+                "provisioning_state",
+                "etag",
+                "private_endpoint_state_for_site_recovery",
+                "private_endpoint_state_for_backup",
+                "sku_name",
+                "diagnostic_settings",
+                "identity",
+                "private_endpoint_connections",
+                "upgrade_details",
+                "title",
+                "tags",
+                "akas",
+                "region",
+                "resource_group",
+                "cloud_environment",
+                "subscription_id"
+            ],
+            "included": [],
+            "excluded": [],
+            "aliases": [
+                {
+                    "name": "id",
+                    "alias": "urn"
+                }
+            ],
+            "inventory_supported": true
+        },
+        {
+            "name": "azure_redis_cache",
+            "tags": [
+                "compute"
+            ],
+            "all_columns": [
+                "name",
+                "id",
+                "type",
+                "provisioning_state",
+                "redis_version",
+                "enable_non_ssl_port",
+                "host_name",
+                "minimum_tls_version",
+                "port",
+                "public_network_access",
+                "sku_capacity",
+                "sku_family",
+                "sku_name",
+                "ssl_port",
+                "subnet_id",
+                "static_ip",
+                "replicas_per_master",
+                "shard_count",
+                "access_keys",
+                "linked_servers",
+                "instances",
+                "private_endpoint_connections",
+                "redis_configuration",
+                "tenant_settings",
+                "zones",
+                "title",
+                "tags",
+                "akas",
+                "region",
+                "resource_group",
+                "cloud_environment",
+                "subscription_id"
+            ],
+            "included": [],
+            "excluded": [],
+            "aliases": [
+                {
+                    "name": "id",
+                    "alias": "urn"
+                }
+            ],
+            "inventory_supported": true
+        },
+        {
+            "name": "azure_resource_group",
+            "all_columns": [
+                "name",
+                "id",
+                "provisioning_state",
+                "managed_by",
+                "type",
+                "title",
+                "tags",
+                "akas",
+                "region",
+                "cloud_environment",
+                "subscription_id"
+            ],
+            "included": [],
+            "excluded": [],
+            "aliases": [
+                {
+                    "name": "id",
+                    "alias": "urn"
+                }
+            ],
+            "inventory_supported": true
+        },
+        {
+            "name": "azure_resource_link",
+            "all_columns": [
+                "name",
+                "id",
+                "type",
+                "source_id",
+                "target_id",
+                "notes",
+                "title",
+                "akas",
+                "resource_group",
+                "cloud_environment",
+                "subscription_id"
+            ],
+            "included": [],
+            "excluded": [],
+            "aliases": [
+                {
+                    "name": "id",
+                    "alias": "urn"
+                },
+                {
+                    "name": "'global'",
+                    "alias": "region"
+                }
+            ],
+            "inventory_supported": false
+        },
+        {
+            "name": "azure_role_assignment",
+            "all_columns": [
+                "name",
+                "id",
+                "scope",
+                "type",
+                "principal_id",
+                "principal_type",
+                "role_definition_id",
+                "title",
+                "akas",
+                "cloud_environment",
+                "subscription_id"
+            ],
+            "included": [],
+            "excluded": [],
+            "aliases": [
+                {
+                    "name": "id",
+                    "alias": "urn"
+                },
+                {
+                    "name": "'global'",
+                    "alias": "region"
+                }
+            ],
+            "inventory_supported": false
+        },
+        {
+            "name": "azure_role_definition",
+            "all_columns": [
+                "name",
+                "id",
+                "type",
+                "role_name",
+                "role_type",
+                "description",
+                "assignable_scopes",
+                "permissions",
+                "title",
+                "akas",
+                "cloud_environment",
+                "subscription_id"
+            ],
+            "included": [],
+            "excluded": [],
+            "aliases": [
+                {
+                    "name": "id",
+                    "alias": "urn"
+                },
+                {
+                    "name": "'global'",
+                    "alias": "region"
+                }
+            ],
+            "inventory_supported": false
+        },
+        {
+            "name": "azure_route_table",
+            "all_columns": [
+                "name",
+                "id",
+                "etag",
+                "type",
+                "disable_bgp_route_propagation",
+                "provisioning_state",
+                "routes",
+                "subnets",
+                "title",
+                "tags",
+                "akas",
+                "region",
+                "resource_group",
+                "cloud_environment",
+                "subscription_id"
+            ],
+            "included": [],
+            "excluded": [],
+            "aliases": [
+                {
+                    "name": "id",
+                    "alias": "urn"
+                }
+            ],
+            "inventory_supported": true
+        },
+        {
+            "name": "azure_search_service",
+            "tags": [
+                "compute"
+            ],
+            "all_columns": [
+                "name",
+                "id",
+                "provisioning_state",
+                "status",
+                "status_details",
+                "type",
+                "hosting_mode",
+                "partition_count",
+                "public_network_access",
+                "replica_count",
+                "sku_name",
+                "diagnostic_settings",
+                "identity",
+                "network_rule_set",
+                "private_endpoint_connections",
+                "shared_private_link_resources",
+                "title",
+                "tags",
+                "akas",
+                "region",
+                "resource_group",
+                "cloud_environment",
+                "subscription_id"
+            ],
+            "included": [],
+            "excluded": [],
+            "aliases": [
+                {
+                    "name": "id",
+                    "alias": "urn"
+                }
+            ],
+            "inventory_supported": false
+        },
+        {
+            "name": "azure_security_center_auto_provisioning",
+            "all_columns": [
+                "id",
+                "name",
+                "type",
+                "auto_provision",
+                "title",
+                "akas",
+                "cloud_environment",
+                "subscription_id"
+            ],
+            "included": [],
+            "excluded": [],
+            "aliases": [
+                {
+                    "name": "id",
+                    "alias": "urn"
+                },
+                {
+                    "name": "'global'",
+                    "alias": "region"
+                }
+            ],
+            "inventory_supported": false
+        },
+        {
+            "name": "azure_security_center_automation",
+            "all_columns": [
+                "id",
+                "name",
+                "type",
+                "description",
+                "is_enabled",
+                "kind",
+                "etag",
+                "actions",
+                "scopes",
+                "sources",
+                "title",
+                "tags",
+                "akas",
+                "region",
+                "resource_group",
+                "cloud_environment",
+                "subscription_id"
+            ],
+            "included": [],
+            "excluded": [],
+            "aliases": [
+                {
+                    "name": "id",
+                    "alias": "urn"
+                }
+            ],
+            "inventory_supported": false
+        },
+        {
+            "name": "azure_security_center_contact",
+            "all_columns": [
+                "id",
+                "name",
+                "type",
+                "email",
+                "phone",
+                "alert_notifications",
+                "alerts_to_admins",
+                "title",
+                "akas",
+                "cloud_environment",
+                "subscription_id"
+            ],
+            "included": [],
+            "excluded": [],
+            "aliases": [
+                {
+                    "name": "id",
+                    "alias": "urn"
+                },
+                {
+                    "name": "'global'",
+                    "alias": "region"
+                }
+            ],
+            "inventory_supported": false
+        },
+        {
+            "name": "azure_security_center_jit_network_access_policy",
+            "all_columns": [
+                "name",
+                "id",
+                "type",
+                "kind",
+                "provisioning_state",
+                "virtual_machines",
+                "title",
+                "akas",
+                "cloud_environment",
+                "subscription_id"
+            ],
+            "included": [],
+            "excluded": [],
+            "aliases": [
+                {
+                    "name": "id",
+                    "alias": "urn"
+                },
+                {
+                    "name": "'global'",
+                    "alias": "region"
+                }
+            ],
+            "inventory_supported": false
+        },
+        {
+            "name": "azure_security_center_setting",
+            "all_columns": [
+                "id",
+                "name",
+                "enabled",
+                "type",
+                "kind",
+                "title",
+                "akas",
+                "cloud_environment",
+                "subscription_id"
+            ],
+            "included": [],
+            "excluded": [],
+            "aliases": [
+                {
+                    "name": "id",
+                    "alias": "urn"
+                },
+                {
+                    "name": "'global'",
+                    "alias": "region"
+                }
+            ],
+            "inventory_supported": false
+        },
+        {
+            "name": "azure_security_center_sub_assessment",
+            "all_columns": [
+                "id",
+                "name",
+                "type",
+                "assessment_name",
+                "category",
+                "description",
+                "display_name",
+                "impact",
+                "remediation",
+                "time_generated",
+                "assessed_resource_type",
+                "container_registry_vulnerability_properties",
+                "resource_details",
+                "status",
+                "server_vulnerability_properties",
+                "sql_server_vulnerability_properties",
+                "title",
+                "akas",
+                "resource_group",
+                "cloud_environment",
+                "subscription_id"
+            ],
+            "included": [],
+            "excluded": [],
+            "aliases": [
+                {
+                    "name": "id",
+                    "alias": "urn"
+                },
+                {
+                    "name": "'global'",
+                    "alias": "region"
+                }
+            ],
+            "inventory_supported": false
+        },
+        {
+            "name": "azure_service_fabric_cluster",
+            "tags": [
+                "compute"
+            ],
+            "all_columns": [
+                "name",
+                "id",
+                "provisioning_state",
+                "type",
+                "cluster_code_version",
+                "cluster_endpoint",
+                "cluster_id",
+                "cluster_state",
+                "event_store_service_enabled",
+                "etag",
+                "management_endpoint",
+                "reliability_level",
+                "upgrade_mode",
+                "vm_image",
+                "add_on_features",
+                "available_cluster_versions",
+                "azure_active_directory",
+                "certificate",
+                "certificate_common_names",
+                "client_certificate_common_names",
+                "client_certificate_thumbprints",
+                "diagnostics_storage_account_config",
+                "fabric_settings",
+                "node_types",
+                "reverse_proxy_certificate",
+                "reverse_proxy_certificate_common_names",
+                "upgrade_description",
+                "title",
+                "tags",
+                "akas",
+                "region",
+                "resource_group",
+                "cloud_environment",
+                "subscription_id"
+            ],
+            "included": [],
+            "excluded": [],
+            "aliases": [
+                {
+                    "name": "id",
+                    "alias": "urn"
+                }
+            ],
+            "inventory_supported": true
+        },
+        {
+            "name": "azure_servicebus_namespace",
+            "all_columns": [
+                "name",
+                "id",
+                "type",
+                "provisioning_state",
+                "zone_redundant",
+                "created_at",
+                "metric_id",
+                "servicebus_endpoint",
+                "sku_capacity",
+                "sku_name",
+                "sku_tier",
+                "updated_at",
+                "diagnostic_settings",
+                "encryption",
+                "network_rule_set",
+                "private_endpoint_connections",
+                "title",
+                "tags",
+                "akas",
+                "region",
+                "resource_group",
+                "cloud_environment",
+                "subscription_id"
+            ],
+            "included": [],
+            "excluded": [],
+            "aliases": [
+                {
+                    "name": "id",
+                    "alias": "urn"
+                }
+            ],
+            "inventory_supported": false
+        },
+        {
+            "name": "azure_signalr_service",
+            "all_columns": [
+                "name",
+                "id",
+                "provisioning_state",
+                "type",
+                "external_ip",
+                "host_name",
+                "host_name_prefix",
+                "kind",
+                "public_port",
+                "server_port",
+                "version",
+                "cors",
+                "diagnostic_settings",
+                "features",
+                "network_acls",
+                "private_endpoint_connections",
+                "sku",
+                "upstream",
+                "title",
+                "tags",
+                "akas",
+                "region",
+                "resource_group",
+                "cloud_environment",
+                "subscription_id"
+            ],
+            "included": [],
+            "excluded": [],
+            "aliases": [
+                {
+                    "name": "id",
+                    "alias": "urn"
+                }
+            ],
+            "inventory_supported": false
+        },
+        {
+            "name": "azure_spring_cloud_service",
+            "all_columns": [
+                "name",
+                "id",
+                "provisioning_state",
+                "type",
+                "service_id",
+                "sku_name",
+                "sku_tier",
+                "sku_capacity",
+                "version",
+                "diagnostic_settings",
+                "network_profile",
+                "title",
+                "tags",
+                "akas",
+                "region",
+                "resource_group",
+                "cloud_environment",
+                "subscription_id"
+            ],
+            "included": [],
+            "excluded": [],
+            "aliases": [
+                {
+                    "name": "id",
+                    "alias": "urn"
+                }
+            ],
+            "inventory_supported": true
+        },
+        {
+            "name": "azure_sql_database",
+            "tags": [
+                "compute"
+            ],
+            "all_columns": [
+                "name",
+                "id",
+                "server_name",
+                "status",
+                "type",
+                "collation",
+                "containment_state",
+                "creation_date",
+                "current_service_objective_id",
+                "database_id",
+                "default_secondary_location",
+                "earliest_restore_date",
+                "edition",
+                "elastic_pool_name",
+                "failover_group_id",
+                "kind",
+                "location",
+                "max_size_bytes",
+                "recovery_services_recovery_point_resource_id",
+                "requested_service_objective_id",
+                "restore_point_in_time",
+                "requested_service_objective_name",
+                "retention_policy_id",
+                "retention_policy_name",
+                "retention_policy_type",
+                "source_database_deletion_date",
+                "source_database_id",
+                "zone_redundant",
+                "create_mode",
+                "read_scale",
+                "recommended_index",
+                "retention_policy_property",
+                "sample_name",
+                "service_level_objective",
+                "service_tier_advisors",
+                "transparent_data_encryption",
+                "vulnerability_assessments",
+                "vulnerability_assessment_scan_records",
+                "title",
+                "tags",
+                "akas",
+                "region",
+                "resource_group",
+                "cloud_environment",
+                "subscription_id"
+            ],
+            "included": [],
+            "excluded": [],
+            "aliases": [
+                {
+                    "name": "id",
+                    "alias": "urn"
+                }
+            ],
+            "inventory_supported": true
+        },
+        {
+            "name": "azure_sql_server",
+            "tags": [
+                "compute"
+            ],
+            "all_columns": [
+                "name",
+                "id",
+                "type",
+                "state",
+                "kind",
+                "location",
+                "administrator_login",
+                "administrator_login_password",
+                "minimal_tls_version",
+                "public_network_access",
+                "version",
+                "fully_qualified_domain_name",
+                "server_audit_policy",
+                "server_security_alert_policy",
+                "server_azure_ad_administrator",
+                "server_vulnerability_assessment",
+                "firewall_rules",
+                "encryption_protector",
+                "private_endpoint_connections",
+                "tags_src",
+                "virtual_network_rules",
+                "title",
+                "tags",
+                "akas",
+                "region",
+                "resource_group",
+                "cloud_environment",
+                "subscription_id"
+            ],
+            "included": [],
+            "excluded": [],
+            "aliases": [
+                {
+                    "name": "id",
+                    "alias": "urn"
+                }
+            ],
+            "inventory_supported": true
+        },
+        {
+            "name": "azure_storage_account",
+            "all_columns": [
+                "name",
+                "id",
+                "type",
+                "access_tier",
+                "kind",
+                "sku_name",
+                "sku_tier",
+                "creation_time",
+                "allow_blob_public_access",
+                "blob_change_feed_enabled",
+                "blob_container_soft_delete_enabled",
+                "blob_container_soft_delete_retention_days",
+                "blob_restore_policy_days",
+                "blob_restore_policy_enabled",
+                "blob_service_logging",
+                "blob_soft_delete_enabled",
+                "blob_soft_delete_retention_days",
+                "blob_versioning_enabled",
+                "enable_https_traffic_only",
+                "encryption_key_source",
+                "encryption_key_vault_properties_key_current_version_id",
+                "encryption_key_vault_properties_key_name",
+                "encryption_key_vault_properties_key_vault_uri",
+                "encryption_key_vault_properties_key_version",
+                "encryption_key_vault_properties_last_rotation_time",
+                "failover_in_progress",
+                "file_soft_delete_enabled",
+                "file_soft_delete_retention_days",
+                "is_hns_enabled",
+                "queue_logging_delete",
+                "queue_logging_read",
+                "queue_logging_retention_days",
+                "queue_logging_retention_enabled",
+                "queue_logging_version",
+                "queue_logging_write",
+                "minimum_tls_version",
+                "network_rule_bypass",
+                "network_rule_default_action",
+                "primary_blob_endpoint",
+                "primary_dfs_endpoint",
+                "primary_file_endpoint",
+                "primary_location",
+                "primary_queue_endpoint",
+                "primary_table_endpoint",
+                "primary_web_endpoint",
+                "provisioning_state",
+                "require_infrastructure_encryption",
+                "secondary_location",
+                "diagnostic_settings",
+                "encryption_scope",
+                "encryption_services",
+                "lifecycle_management_policy",
+                "network_ip_rules",
+                "private_endpoint_connections",
+                "virtual_network_rules",
+                "title",
+                "tags",
+                "akas",
+                "region",
+                "resource_group",
+                "cloud_environment",
+                "subscription_id"
+            ],
+            "included": [],
+            "excluded": [],
+            "aliases": [
+                {
+                    "name": "id",
+                    "alias": "urn"
+                }
+            ],
+            "inventory_supported": true
+        },
+        {
+            "name": "azure_storage_blob",
+            "all_columns": [
+                "name",
+                "storage_account_name",
+                "container_name",
+                "type",
+                "is_snapshot",
+                "access_tier",
+                "creation_time",
+                "deleted",
+                "deleted_time",
+                "etag",
+                "last_modified",
+                "snapshot",
+                "version_id",
+                "server_encrypted",
+                "encryption_scope",
+                "encryption_key_sha256",
+                "is_current_version",
+                "access_tier_change_time",
+                "access_tier_inferred",
+                "blob_sequence_number",
+                "content_length",
+                "cache_control",
+                "content_disposition",
+                "content_encoding",
+                "content_language",
+                "content_md5",
+                "content_type",
+                "copy_completion_time",
+                "copy_id",
+                "copy_progress",
+                "copy_source",
+                "copy_status",
+                "copy_status_description",
+                "destination_snapshot",
+                "lease_duration",
+                "lease_state",
+                "lease_status",
+                "incremental_copy",
+                "is_sealed",
+                "remaining_retention_days",
+                "archive_status",
+                "blob_tag_set",
+                "metadata",
+                "title",
+                "akas",
+                "region",
+                "resource_group",
+                "cloud_environment",
+                "subscription_id"
+            ],
+            "included": [],
+            "excluded": [],
+            "aliases": [
+                {
+                    "name": "version_id",
+                    "alias": "urn"
+                },
+                {
+                    "name": "version_id",
+                    "alias": "id"
+                }
+            ],
+            "inventory_supported": true
+        },
+        {
+            "name": "azure_storage_blob_service",
+            "all_columns": [
+                "name",
+                "id",
+                "storage_account_name",
+                "type",
+                "sku_name",
+                "sku_tier",
+                "automatic_snapshot_policy_enabled",
+                "change_feed_enabled",
+                "default_service_version",
+                "is_versioning_enabled",
+                "container_delete_retention_policy",
+                "cors_rules",
+                "delete_retention_policy",
+                "restore_policy",
+                "title",
+                "akas",
+                "region",
+                "resource_group",
+                "cloud_environment",
+                "subscription_id"
+            ],
+            "included": [],
+            "excluded": [],
+            "aliases": [
+                {
+                    "name": "id",
+                    "alias": "urn"
+                }
+            ],
+            "inventory_supported": true
+        },
+        {
+            "name": "azure_storage_container",
+            "all_columns": [
+                "name",
+                "id",
+                "account_name",
+                "deleted",
+                "public_access",
+                "type",
+                "default_encryption_scope",
+                "deleted_time",
+                "deny_encryption_scope_override",
+                "has_immutability_policy",
+                "has_legal_hold",
+                "last_modified_time",
+                "lease_status",
+                "lease_state",
+                "lease_duration",
+                "remaining_retention_days",
+                "version",
+                "immutability_policy",
+                "legal_hold",
+                "metadata",
+                "title",
+                "akas",
+                "resource_group",
+                "cloud_environment",
+                "subscription_id"
+            ],
+            "included": [],
+            "excluded": [],
+            "aliases": [
+                {
+                    "name": "id",
+                    "alias": "urn"
+                },
+                {
+                    "name": "'global'",
+                    "alias": "region"
+                }
+            ],
+            "inventory_supported": true
+        },
+        {
+            "name": "azure_storage_queue",
+            "all_columns": [
+                "name",
+                "id",
+                "storage_account_name",
+                "type",
+                "metadata",
+                "title",
+                "akas",
+                "region",
+                "resource_group",
+                "cloud_environment",
+                "subscription_id"
+            ],
+            "included": [],
+            "excluded": [],
+            "aliases": [
+                {
+                    "name": "id",
+                    "alias": "urn"
+                }
+            ],
+            "inventory_supported": true
+        },
+        {
+            "name": "azure_storage_share_file",
+            "all_columns": [
+                "name",
+                "storage_account_name",
+                "id",
+                "type",
+                "access_tier",
+                "access_tier_change_time",
+                "access_tier_status",
+                "last_modified_time",
+                "deleted",
+                "deleted_time",
+                "enabled_protocols",
+                "remaining_retention_days",
+                "root_squash",
+                "share_quota",
+                "share_usage_bytes",
+                "version",
+                "metadata",
+                "title",
+                "akas",
+                "resource_group",
+                "cloud_environment",
+                "subscription_id"
+            ],
+            "included": [],
+            "excluded": [],
+            "aliases": [
+                {
+                    "name": "id",
+                    "alias": "urn"
+                },
+                {
+                    "name": "'global'",
+                    "alias": "region"
+                }
+            ],
+            "inventory_supported": true
+        },
+        {
+            "name": "azure_storage_sync",
+            "all_columns": [
+                "name",
+                "id",
+                "provisioning_state",
+                "type",
+                "incoming_traffic_policy",
+                "last_operation_name",
+                "last_workflow_id",
+                "storage_sync_service_status",
+                "storage_sync_service_uid",
+                "private_endpoint_connections",
+                "title",
+                "tags",
+                "akas",
+                "region",
+                "resource_group",
+                "cloud_environment",
+                "subscription_id"
+            ],
+            "included": [],
+            "excluded": [],
+            "aliases": [
+                {
+                    "name": "id",
+                    "alias": "urn"
+                }
+            ],
+            "inventory_supported": false
+        },
+        {
+            "name": "azure_storage_table",
+            "all_columns": [
+                "name",
+                "id",
+                "storage_account_name",
+                "type",
+                "title",
+                "akas",
+                "region",
+                "resource_group",
+                "cloud_environment",
+                "subscription_id"
+            ],
+            "included": [],
+            "excluded": [],
+            "aliases": [
+                {
+                    "name": "id",
+                    "alias": "urn"
+                }
+            ],
+            "inventory_supported": true
+        },
+        {
+            "name": "azure_storage_table_service",
+            "all_columns": [
+                "name",
+                "id",
+                "storage_account_name",
+                "type",
+                "cors_rules",
+                "title",
+                "akas",
+                "region",
+                "resource_group",
+                "cloud_environment",
+                "subscription_id"
+            ],
+            "included": [],
+            "excluded": [],
+            "aliases": [
+                {
+                    "name": "id",
+                    "alias": "urn"
+                }
+            ],
+            "inventory_supported": true
+        },
+        {
+            "name": "azure_stream_analytics_job",
+            "all_columns": [
+                "name",
+                "id",
+                "job_id",
+                "job_state",
+                "provisioning_state",
+                "type",
+                "compatibility_level",
+                "created_date",
+                "data_locale",
+                "etag",
+                "events_late_arrival_max_delay_in_seconds",
+                "events_out_of_order_max_delay_in_seconds",
+                "events_out_of_order_policy",
+                "last_output_event_time",
+                "output_error_policy",
+                "output_start_mode",
+                "output_start_time",
+                "sku_name",
+                "diagnostic_settings",
+                "functions",
+                "inputs",
+                "outputs",
+                "transformation",
+                "title",
+                "tags",
+                "akas",
+                "region",
+                "resource_group",
+                "cloud_environment",
+                "subscription_id"
+            ],
+            "included": [],
+            "excluded": [],
+            "aliases": [
+                {
+                    "name": "id",
+                    "alias": "urn"
+                }
+            ],
+            "inventory_supported": false
+        },
+        {
+            "name": "azure_subnet",
+            "all_columns": [
+                "name",
+                "id",
+                "virtual_network_name",
+                "etag",
+                "type",
+                "provisioning_state",
+                "address_prefix",
+                "nat_gateway_id",
+                "network_security_group_id",
+                "private_endpoint_network_policies",
+                "private_link_service_network_policies",
+                "route_table_id",
+                "delegations",
+                "ip_configurations",
+                "service_endpoints",
+                "service_endpoint_policies",
+                "title",
+                "akas",
+                "resource_group",
+                "cloud_environment",
+                "subscription_id"
+            ],
+            "included": [],
+            "excluded": [],
+            "aliases": [
+                {
+                    "name": "id",
+                    "alias": "urn"
+                },
+                {
+                    "name": "'global'",
+                    "alias": "region"
+                }
+            ],
+            "inventory_supported": true
+        },
+        {
+            "name": "azure_subscription",
+            "all_columns": [
+                "id",
+                "subscription_id",
+                "display_name",
+                "tenant_id",
+                "state",
+                "authorization_source",
+                "managed_by_tenants",
+                "subscription_policies",
+                "title",
+                "akas",
+                "cloud_environment"
+            ],
+            "included": [],
+            "excluded": [],
+            "aliases": [
+                {
+                    "name": "id",
+                    "alias": "urn"
+                },
+                {
+                    "name": "display_name",
+                    "alias": "name"
+                },
+                {
+                    "name": "'global'",
+                    "alias": "region"
+                }
+            ],
+            "inventory_supported": true
+        },
+        {
+            "name": "azure_synapse_workspace",
+            "all_columns": [
+                "name",
+                "id",
+                "provisioning_state",
+                "type",
+                "adla_resource_id",
+                "managed_resource_group_name",
+                "managed_virtual_network",
+                "public_network_access",
+                "sql_administrator_login",
+                "sql_administrator_login_password",
+                "connectivity_endpoints",
+                "diagnostic_settings",
+                "default_data_lake_storage",
+                "encryption",
+                "extra_properties",
+                "identity",
+                "managed_virtual_network_settings",
+                "private_endpoint_connections",
+                "purview_configuration",
+                "virtual_network_profile",
+                "workspace_managed_sql_server_vulnerability_assessments",
+                "workspace_repository_configuration",
+                "workspace_uid",
+                "title",
+                "tags",
+                "akas",
+                "region",
+                "resource_group",
+                "cloud_environment",
+                "subscription_id"
+            ],
+            "included": [],
+            "excluded": [],
+            "aliases": [
+                {
+                    "name": "id",
+                    "alias": "urn"
+                }
+            ],
+            "inventory_supported": false
+        },
+        {
+            "name": "azure_tenant",
+            "all_columns": [
+                "name",
+                "id",
+                "tenant_id",
+                "tenant_category",
+                "country",
+                "country_code",
+                "display_name",
+                "domains",
+                "title",
+                "akas",
+                "cloud_environment",
+                "subscription_id"
+            ],
+            "included": [],
+            "excluded": [],
+            "aliases": [
+                {
+                    "name": "id",
+                    "alias": "urn"
+                },
+                {
+                    "name": "'global'",
+                    "alias": "region"
+                }
+            ],
+            "inventory_supported": true
+        },
+        {
+            "name": "azure_virtual_network",
+            "tags": [
+                "compute"
+            ],
+            "all_columns": [
+                "name",
+                "id",
+                "etag",
+                "type",
+                "enable_ddos_protection",
+                "enable_vm_protection",
+                "provisioning_state",
+                "resource_guid",
+                "address_prefixes",
+                "network_peerings",
+                "subnets",
+                "title",
+                "tags",
+                "akas",
+                "region",
+                "resource_group",
+                "cloud_environment",
+                "subscription_id"
+            ],
+            "included": [],
+            "excluded": [],
+            "aliases": [
+                {
+                    "name": "id",
+                    "alias": "urn"
+                }
+            ],
+            "inventory_supported": true
+        },
+        {
+            "name": "azure_virtual_network_gateway",
+            "tags": [
+                "compute"
+            ],
+            "all_columns": [
+                "name",
+                "id",
+                "type",
+                "gateway_type",
+                "vpn_type",
+                "vpn_gateway_generation",
+                "provisioning_state",
+                "active_active",
+                "enable_bgp",
+                "enable_dns_forwarding",
+                "enable_private_ip_address",
+                "etag",
+                "gateway_default_site",
+                "inbound_dns_forwarding_endpoint",
+                "resource_guid",
+                "sku_name",
+                "sku_tier",
+                "sku_capacity",
+                "bgp_settings",
+                "custom_routes_address_prefixes",
+                "gateway_connections",
+                "ip_configurations",
+                "vpn_client_configuration",
+                "title",
+                "tags",
+                "akas",
+                "region",
+                "resource_group",
+                "cloud_environment",
+                "subscription_id"
+            ],
+            "included": [],
+            "excluded": [],
+            "aliases": [
+                {
+                    "name": "id",
+                    "alias": "urn"
+                }
+            ],
+            "inventory_supported": true
+        }
+    ]
+}

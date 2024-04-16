@@ -5,48 +5,32 @@ import dotenv
 dotenv.load_dotenv()
 
 from autobotAI_integrations import ConnectionInterfaces, IntegrationSchema
-from autobotAI_integrations.integrations.gitlab import GitlabIntegration
+from autobotAI_integrations.integrations.gitguardian import GitGuardianIntegration
 from autobotAI_integrations.integrations import integration_service_factory
 from autobotAI_integrations.payload_schema import Payload, PayloadTask, PayloadTaskContext
 
-code = """
-import traceback
 
-def executor(context):
-    print("in execute")
-    gl = context["clients"]['gitlab']    
-    current_user = gl.user
-    # print(current_user)
-    group = gl.groups.get(84850810)    
-    pj = []
-    for project in group.projects.list(iterator=True):
-        # print(project)
-        pj.append(project.asdict())
+gitguardian_config_str = """
+connection "gitguardian" {
+  plugin = "francois2metz/gitguardian"
 
-    return pj
-"""
-
-gitlab_config_str = """
-connection "gitlab" {
-  plugin = "theapsgroup/gitlab"
-
-  # The baseUrl of your GitLab Instance API (ignore if set in GITLAB_ADDR env var)
-  # baseurl = "https://gitlab.company.com/api/v4"
-
-  # Access Token for which to use for the API (ignore if set in GITLAB_TOKEN env var)
-  # token = "x11x1xXxXx1xX1Xx11"
+  # Create a personal access token at: https://dashboard.gitguardian.com/api
+  # Scope:
+  #  - incidents:read
+  #  - audit_logs:read
+  #  - members:read
+  # token = ""
 }
 """
-gitlab_json = {
+gitguardian_json = {
     "userId": "ritin.tiwari001@gmail.com",
     "accountId": "175c0fa813244bc5a1aa6264e7ba20cc*",
     "integrationState": "INACTIVE",
-    "cspName": "gitlab",
-    "alias": "test-gitlab-integrationsv2*",
+    "cspName": "gitguardian",
+    "alias": "test-gitguardian-integrationsv2*",
     "connection_type": "DIRECT",
-    "token": os.environ["GITLAB_TOKEN"],
-    "base_url": "https://gitlab.com/",
-    "groups": ["gitlab", "shunyeka", "integrations-v2"],
+    "token": os.environ["GITGUARDIAN_TOKEN"],
+    "groups": ["gitguardian", "shunyeka", "integrations-v2"],
     "agent_ids": [],
     "accessToken": "",
     "createdAt": "2024-02-26T13:38:59.978056",
@@ -55,7 +39,6 @@ gitlab_json = {
     "isUnauthorized": False,
     "lastUsed": None,
     "resource_type": "integration",
-    "activeRegions": [],
 }
 
 context = {
@@ -69,9 +52,26 @@ context = {
     "node_steps": {},
     "global_variables": {},
 }
-
-def generate_gitlab_python_payload(gitlab_json=gitlab_json) -> Payload:
-    integration = GitlabIntegration(**gitlab_json)
+code = """
+import json
+def executor(context):
+    gg_client = context["clients"]["GGClient"]
+    response = gg_client.get(
+            endpoint="https://api.gitguardian.com/v1/incidents/secrets"
+        )
+    result = []
+    if response.status_code == 200:
+        incidents = json.loads(response.text)
+        for incident in incidents:
+            result.append(incident)
+    return [
+        {
+            "result": result
+        }
+    ]
+"""
+def generate_gitguardian_python_payload(gitguardian_json=gitguardian_json) -> Payload:
+    integration = GitGuardianIntegration(**gitguardian_json)
     service = integration_service_factory.get_service(None, integration)
     creds = service.generate_python_sdk_creds()
     task_dict = {
@@ -79,8 +79,8 @@ def generate_gitlab_python_payload(gitlab_json=gitlab_json) -> Payload:
         "creds": creds,
         "connection_interface": ConnectionInterfaces.PYTHON_SDK,
         "executable": code,
-        "clients": ["gitlab"],
-        "context": PayloadTaskContext(**context, **{"integration": gitlab_json}),
+        "clients": ["GGClient"],
+        "context": PayloadTaskContext(**context, **{"integration": gitguardian_json}),
     }
     payload_dict = {
         "job_id": uuid.uuid4().hex,
@@ -89,34 +89,33 @@ def generate_gitlab_python_payload(gitlab_json=gitlab_json) -> Payload:
     payload = Payload(**payload_dict)
     return payload
 
-def generate_gitlab_steampipe_payload(gitlab_json=gitlab_json):
-    integration = GitlabIntegration(**gitlab_json)
+def generate_gitguardian_steampipe_payload(gitguardian_json=gitguardian_json):
+    integration = GitGuardianIntegration(**gitguardian_json)
     service = integration_service_factory.get_service(None, integration)
     creds = service.generate_steampipe_creds()
-    creds.config = gitlab_config_str
-    gitlab_task_dict = {
+    creds.config = gitguardian_config_str
+    gitguardian_task_dict = {
         "task_id": uuid.uuid4().hex,
         "creds": creds,
         "connection_interface": ConnectionInterfaces.STEAMPIPE,
-        "executable": "select * from gitlab_group",
+        "executable": "select id, date, status from gitguardian_secret_incident;",
         "context": PayloadTaskContext(**context, **{"integration": integration}),
     }
-    payload_dict = {"job_id": uuid.uuid4().hex, "tasks": [PayloadTask(**gitlab_task_dict)]}
+    payload_dict = {"job_id": uuid.uuid4().hex, "tasks": [PayloadTask(**gitguardian_task_dict)]}
     payload = Payload(**payload_dict)
     return payload
 
 if __name__ == "__main__":
-    gitlab_python_payload = generate_gitlab_python_payload()
-    # print(gitlab_python_payload.model_dump_json(indent=2))
-    for task in gitlab_python_payload.tasks:
+    gitguardian_python_payload = generate_gitguardian_python_payload()
+    for task in gitguardian_python_payload.tasks:
         integration = IntegrationSchema.model_validate(task.context.integration)
         service = integration_service_factory.get_service(None, integration)
         print(service.python_sdk_processor(task))
 
 
-    # gitlab_steampipe_payload = generate_gitlab_steampipe_payload()
-    # for task in gitlab_steampipe_payload.tasks:
-    #     integration = IntegrationSchema.model_validate(task.context.integration)
-    #     service = integration_service_factory.get_service(None, integration)
-    #     print(service.execute_steampipe_task(task, job_type="query"))
+    gitguardian_steampipe_payload = generate_gitguardian_steampipe_payload()
+    for task in gitguardian_steampipe_payload.tasks:
+        integration = IntegrationSchema.model_validate(task.context.integration)
+        service = integration_service_factory.get_service(None, integration)
+        print(service.execute_steampipe_task(task, job_type="query"))
 

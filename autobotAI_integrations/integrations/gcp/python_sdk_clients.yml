@@ -1,0 +1,810 @@
+- class_name: OrgPolicyClient
+  module: google.cloud.orgpolicy_v2
+  name: OrgPolicyV2
+  pip_package_names:
+    - google-cloud-org-policy
+- class_name: ProjectsClient
+  module: google.cloud.resourcemanager_v3
+  name: ProjectsClient
+  pip_package_names:
+    - google-cloud-resource-manager
+- class_name: FoldersClient
+  module: google.cloud.resourcemanager_v3
+  name: FoldersClient
+  pip_package_names:
+    - google-cloud-resource-manager
+- class_name: Client
+  module: google.cloud.channel
+  name: Channel
+  pip_package_names:
+    - google-cloud-channel
+- class_name: Client
+  module: google.cloud.bigquery.datapolicies
+  name: Datapolicies
+  pip_package_names:
+    - google-cloud-bigquery-datapolicies
+- class_name: Client
+  module: google.cloud.service.control
+  name: Control
+  pip_package_names:
+    - google-cloud-service-control
+- class_name: Client
+  module: google.cloud.beyondcorp.clientconnectorservices
+  name: Clientconnectorservices
+  pip_package_names:
+    - google-cloud-beyondcorp-clientconnectorservices
+- class_name: Client
+  module: pandas.gbq
+  name: Gbq
+  pip_package_names:
+    - pandas-gbq
+- class_name: Client
+  module: google.cloud.monitoring
+  name: Monitoring
+  pip_package_names:
+    - google-cloud-monitoring
+- class_name: Client
+  module: google.cloud.dns
+  name: Dns
+  pip_package_names:
+    - google-cloud-dns
+- class_name: Client
+  module: google.cloud.tpu
+  name: Tpu
+  pip_package_names:
+    - google-cloud-tpu
+- class_name: Client
+  module: google.cloud.shell
+  name: Shell
+  pip_package_names:
+    - google-cloud-shell
+- class_name: Client
+  module: google.cloud.vision
+  name: Vision
+  pip_package_names:
+    - google-cloud-vision
+- class_name: Client
+  module: grafeas
+  name: Grafeas
+  pip_package_names:
+    - grafeas
+- class_name: Client
+  module: google.cloud.dataplex
+  name: Dataplex
+  pip_package_names:
+    - google-cloud-dataplex
+- class_name: Client
+  module: google.cloud.os.login
+  name: Login
+  pip_package_names:
+    - google-cloud-os-login
+- class_name: Client
+  module: google.cloud.datacatalog
+  name: Datacatalog
+  pip_package_names:
+    - google-cloud-datacatalog
+- class_name: Client
+  module: google.cloud.datastream
+  name: Datastream
+  pip_package_names:
+    - google-cloud-datastream
+- class_name: Client
+  module: google.cloud.recaptcha.enterprise
+  name: Enterprise
+  pip_package_names:
+    - google-cloud-recaptcha-enterprise
+- class_name: Client
+  module: google.cloud.documentai
+  name: Documentai
+  pip_package_names:
+    - google-cloud-documentai
+- class_name: Client
+  module: google.cloud.ids
+  name: Ids
+  pip_package_names:
+    - google-cloud-ids
+- class_name: Client
+  module: django.google.spanner
+  name: Django-Spanner
+  pip_package_names:
+    - django-google-spanner
+- class_name: Client
+  module: google.cloud.apigee.registry
+  name: Apigee-Registry
+  pip_package_names:
+    - google-cloud-apigee-registry
+- class_name: Client
+  module: google.cloud.recommendations.ai
+  name: Ai
+  pip_package_names:
+    - google-cloud-recommendations-ai
+- class_name: Client
+  module: google.cloud.pubsublite
+  name: Pubsublite
+  pip_package_names:
+    - google-cloud-pubsublite
+- class_name: Client
+  module: google.cloud.eventarc.publishing
+  name: Publishing
+  pip_package_names:
+    - google-cloud-eventarc-publishing
+- class_name: Client
+  module: google.cloud.language
+  name: Language
+  pip_package_names:
+    - google-cloud-language
+- class_name: Client
+  module: google.cloud.videointelligence
+  name: Videointelligence
+  pip_package_names:
+    - google-cloud-videointelligence
+- class_name: Client
+  module: google.cloud.vpc.access
+  name: Access
+  pip_package_names:
+    - google-cloud-vpc-access
+- class_name: Client
+  module: google.cloud.firestore
+  name: Firestore
+  pip_package_names:
+    - google-cloud-firestore
+- class_name: Client
+  module: google.cloud.bigquery.analyticshub
+  name: Analyticshub
+  pip_package_names:
+    - google-cloud-bigquery-analyticshub
+- class_name: Client
+  module: google.cloud.aiplatform
+  name: Aiplatform
+  pip_package_names:
+    - google-cloud-aiplatform
+- class_name: Client
+  module: google.cloud.logging
+  name: Logging
+  pip_package_names:
+    - google-cloud-logging
+- class_name: Client
+  module: google.cloud.network.connectivity
+  name: Connectivity
+  pip_package_names:
+    - google-cloud-network-connectivity
+- class_name: Client
+  module: google.cloud.storage
+  name: GCP-Storage
+  pip_package_names:
+    - google-cloud-storage
+- class_name: Client
+  module: google.cloud.private.ca
+  name: Private-Ca
+  pip_package_names:
+    - google-cloud-private-ca
+- class_name: Client
+  module: google.cloud.data.qna
+  name: Qna
+  pip_package_names:
+    - google-cloud-data-qna
+- class_name: Client
+  module: google.cloud.bare.metal.solution
+  name: Solution
+  pip_package_names:
+    - google-cloud-bare-metal-solution
+- class_name: Client
+  module: google.cloud.securitycenter
+  name: Securitycenter
+  pip_package_names:
+    - google-cloud-securitycenter
+- class_name: Client
+  module: google.cloud.speech
+  name: Speech
+  pip_package_names:
+    - google-cloud-speech
+- class_name: Client
+  module: google.cloud.network.services
+  name: Services
+  pip_package_names:
+    - google-cloud-network-services
+- class_name: Client
+  module: google.cloud.tasks
+  name: Tasks
+  pip_package_names:
+    - google-cloud-tasks
+- class_name: Client
+  module: google.cloud.deploy
+  name: Deploy
+  pip_package_names:
+    - google-cloud-deploy
+- class_name: Client
+  module: google.cloud.bigquery.datatransfer
+  name: Datatransfer
+  pip_package_names:
+    - google-cloud-bigquery-datatransfer
+- class_name: Client
+  module: google.cloud.iap
+  name: Iap
+  pip_package_names:
+    - google-cloud-iap
+- class_name: Client
+  module: google.cloud.retail
+  name: Retail
+  pip_package_names:
+    - google-cloud-retail
+- class_name: Client
+  module: google.cloud.source.context
+  name: Context
+  pip_package_names:
+    - google-cloud-source-context
+- class_name: Client
+  module: google.cloud.edgecontainer
+  name: Edgecontainer
+  pip_package_names:
+    - google-cloud-edgecontainer
+- class_name: Client
+  module: google.cloud.media.translation
+  name: Translation
+  pip_package_names:
+    - google-cloud-media-translation
+- class_name: Client
+  module: google.cloud.gke.connect.gateway
+  name: GKE-Connect-Gateway
+  pip_package_names:
+    - google-cloud-gke-connect-gateway
+- class_name: Client
+  module: google.cloud.containeranalysis
+  name: Containeranalysis
+  pip_package_names:
+    - google-cloud-containeranalysis
+- class_name: Client
+  module: google.cloud.dialogflow.cx
+  name: Cx
+  pip_package_names:
+    - google-cloud-dialogflow-cx
+- class_name: Client
+  module: google.cloud.secret.manager
+  name: Secret-Manager
+  pip_package_names:
+    - google-cloud-secret-manager
+- class_name: Client
+  module: google.cloud.notebooks
+  name: Notebooks
+  pip_package_names:
+    - google-cloud-notebooks
+- class_name: Client
+  module: google.cloud.bigtable
+  name: Bigtable
+  pip_package_names:
+    - google-cloud-bigtable
+- class_name: Client
+  module: google.cloud.appengine.logging
+  name: AppEngine-Logging
+  pip_package_names:
+    - google-cloud-appengine-logging
+- class_name: Client
+  module: grpc.google.iam.v1
+  name: V1
+  pip_package_names:
+    - grpc-google-iam-v1
+- class_name: Client
+  module: google.cloud.service.management
+  name: Service-Management
+  pip_package_names:
+    - google-cloud-service-management
+- class_name: Client
+  module: google.cloud.bigquery
+  name: GCP-Bigquery
+  pip_package_names:
+    - google-cloud-bigquery
+- class_name: Client
+  module: google.cloud.iot
+  name: Iot
+  pip_package_names:
+    - google-cloud-iot
+- class_name: Client
+  module: google.cloud.private.catalog
+  name: Catalog
+  pip_package_names:
+    - google-cloud-private-catalog
+- class_name: Client
+  module: db
+  name: Db
+  pip_package_names:
+    - db
+- class_name: Client
+  module: google.cloud.scheduler
+  name: Scheduler
+  pip_package_names:
+    - google-cloud-scheduler
+- class_name: Client
+  module: google.cloud.datastore
+  name: Datastore
+  pip_package_names:
+    - google-cloud-datastore
+- class_name: Client
+  module: google.cloud.gke.multicloud
+  name: Multicloud
+  pip_package_names:
+    - google-cloud-gke-multicloud
+- class_name: Client
+  module: google.cloud.runtimeconfig
+  name: Runtimeconfig
+  pip_package_names:
+    - google-cloud-runtimeconfig
+- class_name: Client
+  module: google.cloud.appengine.admin
+  name: AppEngine-Admin
+  pip_package_names:
+    - google-cloud-appengine-admin
+- class_name: Client
+  module: google.cloud.workflows
+  name: Workflows
+  pip_package_names:
+    - google-cloud-workflows
+- class_name: Client
+  module: google.cloud.datalabeling
+  name: Datalabeling
+  pip_package_names:
+    - google-cloud-datalabeling
+- class_name: Client
+  module: google.cloud.certificate.manager
+  name: Certificate-Manager
+  pip_package_names:
+    - google-cloud-certificate-manager
+- class_name: Client
+  module: google.cloud.memcache
+  name: Memcache
+  pip_package_names:
+    - google-cloud-memcache
+- class_name: Client
+  module: google.cloud.essential.contacts
+  name: Contacts
+  pip_package_names:
+    - google-cloud-essential-contacts
+- class_name: Client
+  module: google.cloud.billing.budgets
+  name: Budgets
+  pip_package_names:
+    - google-cloud-billing-budgets
+- class_name: Client
+  module: google.cloud.automl
+  name: Automl
+  pip_package_names:
+    - google-cloud-automl
+- class_name: Client
+  module: google.cloud.iam.logging
+  name: IAM-Logging
+  pip_package_names:
+    - google-cloud-iam-logging
+- class_name: Client
+  module: google.cloud.dataflow.client
+  name: Dataflow-Client
+  pip_package_names:
+    - google-cloud-dataflow-client
+- class_name: discovery
+  module: googleapiclient
+  name: Discovery
+  pip_package_names:
+    - google-api-python-client
+- class_name: Client
+  module: google.cloud.access.approval
+  name: Approval
+  pip_package_names:
+    - google-cloud-access-approval
+- class_name: Client
+  module: google.cloud.monitoring.dashboards
+  name: Dashboards
+  pip_package_names:
+    - google-cloud-monitoring-dashboards
+- class_name: Client
+  module: google.cloud.container
+  name: Container
+  pip_package_names:
+    - google-cloud-container
+- class_name: Client
+  module: google.cloud.compute
+  name: Compute
+  pip_package_names:
+    - google-cloud-compute
+- class_name: Client
+  module: google.cloud.texttospeech
+  name: Texttospeech
+  pip_package_names:
+    - google-cloud-texttospeech
+- class_name: Client
+  module: pandas
+  name: Pandas
+  pip_package_names:
+    - pandas
+- class_name: Client
+  module: google.cloud.public.ca
+  name: Public-Ca
+  pip_package_names:
+    - google-cloud-public-ca
+- class_name: Client
+  module: google.cloud.beyondcorp.clientgateways
+  name: Clientgateways
+  pip_package_names:
+    - google-cloud-beyondcorp-clientgateways
+- class_name: Client
+  module: sqlalchemy.bigquery
+  name: SQLAlchemy-Bigquery
+  pip_package_names:
+    - sqlalchemy-bigquery
+- class_name: Client
+  module: google.cloud.policy.troubleshooter
+  name: Troubleshooter
+  pip_package_names:
+    - google-cloud-policy-troubleshooter
+- class_name: Client
+  module: google.cloud.artifact.registry
+  name: Artifact-Registry
+  pip_package_names:
+    - google-cloud-artifact-registry
+- class_name: Client
+  module: google.cloud.billing
+  name: Billing
+  pip_package_names:
+    - google-cloud-billing
+- class_name: Client
+  module: google.cloud.recommender
+  name: Recommender
+  pip_package_names:
+    - google-cloud-recommender
+- class_name: Client
+  module: google.analytics.data
+  name: Data
+  pip_package_names:
+    - google-analytics-data
+- class_name: Client
+  module: google.cloud.phishing.protection
+  name: Protection
+  pip_package_names:
+    - google-cloud-phishing-protection
+- class_name: Client
+  module: google.cloud.orchestration.airflow
+  name: Airflow
+  pip_package_names:
+    - google-cloud-orchestration-airflow
+- class_name: Client
+  module: google.cloud.apigee.connect
+  name: Connect
+  pip_package_names:
+    - google-cloud-apigee-connect
+- class_name: Client
+  module: google.cloud.beyondcorp.appgateways
+  name: Appgateways
+  pip_package_names:
+    - google-cloud-beyondcorp-appgateways
+- class_name: Client
+  module: google.cloud.service.usage
+  name: Usage
+  pip_package_names:
+    - google-cloud-service-usage
+- class_name: Client
+  module: google.cloud.bigquery.reservation
+  name: Reservation
+  pip_package_names:
+    - google-cloud-bigquery-reservation
+- class_name: Client
+  module: google.analytics.admin
+  name: Analytics-Admin
+  pip_package_names:
+    - google-analytics-admin
+- class_name: Client
+  module: google.cloud.filestore
+  name: Filestore
+  pip_package_names:
+    - google-cloud-filestore
+- class_name: Client
+  module: google.cloud.talent
+  name: Talent
+  pip_package_names:
+    - google-cloud-talent
+- class_name: Client
+  module: google.cloud.network.security
+  name: Security
+  pip_package_names:
+    - google-cloud-network-security
+- class_name: Client
+  module: google.cloud.resource.manager
+  name: Resource-Manager
+  pip_package_names:
+    - google-cloud-resource-manager
+- class_name: Client
+  module: google.cloud.service.directory
+  name: Directory
+  pip_package_names:
+    - google-cloud-service-directory
+- class_name: Client
+  module: google.cloud.bigquery.migration
+  name: BigQuery-Migration
+  pip_package_names:
+    - google-cloud-bigquery-migration
+- class_name: Client
+  module: google.cloud.assured.workloads
+  name: Workloads
+  pip_package_names:
+    - google-cloud-assured-workloads
+- class_name: Client
+  module: google.cloud.dialogflow
+  name: Dialogflow
+  pip_package_names:
+    - google-cloud-dialogflow
+- class_name: Client
+  module: google.cloud.video.live.stream
+  name: Stream
+  pip_package_names:
+    - google-cloud-video-live-stream
+- class_name: Client
+  module: db.dtypes
+  name: Dtypes
+  pip_package_names:
+    - db-dtypes
+- class_name: Client
+  module: google.cloud.gke.hub
+  name: Hub
+  pip_package_names:
+    - google-cloud-gke-hub
+- class_name: Client
+  module: google.cloud.debugger.client
+  name: Debugger-Client
+  pip_package_names:
+    - google-cloud-debugger-client
+- class_name: Client
+  module: google.cloud.audit.log
+  name: Log
+  pip_package_names:
+    - google-cloud-audit-log
+- class_name: Client
+  module: google.cloud.managed.identities
+  name: Identities
+  pip_package_names:
+    - google-cloud-managed-identities
+- class_name: Client
+  module: google.cloud.dataproc
+  name: Dataproc
+  pip_package_names:
+    - google-cloud-dataproc
+- class_name: Client
+  module: google.cloud.redis
+  name: Redis
+  pip_package_names:
+    - google-cloud-redis
+- class_name: Client
+  module: google.cloud.error.reporting
+  name: Reporting
+  pip_package_names:
+    - google-cloud-error-reporting
+- class_name: Client
+  module: google.cloud.kms
+  name: Kms
+  pip_package_names:
+    - google-cloud-kms
+- class_name: Client
+  module: google.cloud.bigquery.data.exchange
+  name: Exchange
+  pip_package_names:
+    - google-cloud-bigquery-data-exchange
+- class_name: Client
+  module: google.cloud.trace
+  name: Trace
+  pip_package_names:
+    - google-cloud-trace
+- class_name: Client
+  module: google.area120.tables
+  name: Tables
+  pip_package_names:
+    - google-area120-tables
+- class_name: Client
+  module: google.cloud.dms
+  name: Dms
+  pip_package_names:
+    - google-cloud-dms
+- class_name: Client
+  module: google.cloud.dataform
+  name: Dataform
+  pip_package_names:
+    - google-cloud-dataform
+- class_name: Client
+  module: google.cloud.binary.authorization
+  name: Authorization
+  pip_package_names:
+    - google-cloud-binary-authorization
+- class_name: Client
+  module: google.cloud.translate
+  name: Translate
+  pip_package_names:
+    - google-cloud-translate
+- class_name: Client
+  module: google.cloud.common
+  name: Common
+  pip_package_names:
+    - google-cloud-common
+- class_name: Client
+  module: google.cloud.video.stitcher
+  name: Stitcher
+  pip_package_names:
+    - google-cloud-video-stitcher
+- class_name: Client
+  module: google.cloud.dataproc.metastore
+  name: Metastore
+  pip_package_names:
+    - google-cloud-dataproc-metastore
+- class_name: Client
+  module: google.cloud.domains
+  name: Domains
+  pip_package_names:
+    - google-cloud-domains
+- class_name: Client
+  module: google.cloud.spanner
+  name: GCP-Spanner
+  pip_package_names:
+    - google-cloud-spanner
+- class_name: Client
+  module: google.cloud.dlp
+  name: Dlp
+  pip_package_names:
+    - google-cloud-dlp
+- class_name: Client
+  module: google.cloud.functions
+  name: Functions
+  pip_package_names:
+    - google-cloud-functions
+- class_name: Client
+  module: google.cloud.websecurityscanner
+  name: Websecurityscanner
+  pip_package_names:
+    - google-cloud-websecurityscanner
+- class_name: Client
+  module: google.cloud.contact.center.insights
+  name: Insights
+  pip_package_names:
+    - google-cloud-contact-center-insights
+- class_name: Client
+  module: google.cloud.webrisk
+  name: Webrisk
+  pip_package_names:
+    - google-cloud-webrisk
+- class_name: Client
+  module: google.cloud.api.gateway
+  name: API-Gateway
+  pip_package_names:
+    - google-cloud-api-gateway
+- class_name: Client
+  module: sqlalchemy
+  name: Sqlalchemy
+  pip_package_names:
+    - sqlalchemy
+- class_name: Client
+  module: google.cloud.build
+  name: Build
+  pip_package_names:
+    - google-cloud-build
+- class_name: Client
+  module: google.cloud.data.fusion
+  name: Fusion
+  pip_package_names:
+    - google-cloud-data-fusion
+- class_name: Client
+  module: google.cloud.network.management
+  name: Network-Management
+  pip_package_names:
+    - google-cloud-network-management
+- class_name: Client
+  module: google.cloud.beyondcorp.appconnectors
+  name: Appconnectors
+  pip_package_names:
+    - google-cloud-beyondcorp-appconnectors
+- class_name: Client
+  module: google.cloud.batch
+  name: Batch
+  pip_package_names:
+    - google-cloud-batch
+- class_name: Client
+  module: google.cloud.asset
+  name: Asset
+  pip_package_names:
+    - google-cloud-asset
+- class_name: Client
+  module: google.cloud.ndb
+  name: Ndb
+  pip_package_names:
+    - google-cloud-ndb
+- class_name: Client
+  module: google.cloud.bigquery.storage
+  name: BigQuery-Storage
+  pip_package_names:
+    - google-cloud-bigquery-storage
+- class_name: Client
+  module: google.cloud.video.transcoder
+  name: Transcoder
+  pip_package_names:
+    - google-cloud-video-transcoder
+- class_name: Client
+  module: google.cloud.gke.backup
+  name: Backup
+  pip_package_names:
+    - google-cloud-gke-backup
+- class_name: Client
+  module: google.cloud.pubsub
+  name: Pubsub
+  pip_package_names:
+    - google-cloud-pubsub
+- class_name: Client
+  module: google.cloud.vm.migration
+  name: VM-Migration
+  pip_package_names:
+    - google-cloud-vm-migration
+- class_name: Client
+  module: google.cloud.bigquery.logging
+  name: BigQuery-Logging
+  pip_package_names:
+    - google-cloud-bigquery-logging
+- class_name: Client
+  module: google.cloud.monitoring.metrics.scopes
+  name: Scopes
+  pip_package_names:
+    - google-cloud-monitoring-metrics-scopes
+- class_name: Client
+  module: google.cloud.resource.settings
+  name: Settings
+  pip_package_names:
+    - google-cloud-resource-settings
+- class_name: Client
+  module: google.cloud.game.servers
+  name: Servers
+  pip_package_names:
+    - google-cloud-game-servers
+- class_name: Client
+  module: google.cloud.beyondcorp.appconnections
+  name: Appconnections
+  pip_package_names:
+    - google-cloud-beyondcorp-appconnections
+- class_name: FirewallsClient
+  module: google.cloud.compute_v1.services.firewalls
+  name: Firewall
+  pip_package_names:
+    - google-cloud-compute
+- class_name: Client
+  module: google.cloud.gsuiteaddons
+  name: Gsuiteaddons
+  pip_package_names:
+    - google-cloud-gsuiteaddons
+- class_name: Client
+  module: google.cloud.storage.transfer
+  name: Transfer
+  pip_package_names:
+    - google-cloud-storage-transfer
+- class_name: Client
+  module: google.cloud.iam
+  name: Iam
+  pip_package_names:
+    - google-cloud-iam
+- class_name: Client
+  module: google.cloud.api.keys
+  name: Keys
+  pip_package_names:
+    - google-cloud-api-keys
+- class_name: Client
+  module: google.cloud.life.sciences
+  name: Sciences
+  pip_package_names:
+    - google-cloud-life-sciences
+- class_name: Client
+  module: google.cloud.run
+  name: Run
+  pip_package_names:
+    - google-cloud-run
+- class_name: Client
+  module: google.cloud.eventarc
+  name: Eventarc
+  pip_package_names:
+    - google-cloud-eventarc
+- class_name: Client
+  module: google.cloud.bigquery.connection
+  name: Connection
+  pip_package_names:
+    - google-cloud-bigquery-connection
+- class_name: Client
+  module: google.cloud.optimization
+  name: Optimization
+  pip_package_names:
+    - google-cloud-optimization

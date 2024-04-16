@@ -8,7 +8,6 @@ from pydantic import Field
 
 from autobotAI_integrations import BaseService, list_of_unique_elements, PayloadTask
 from autobotAI_integrations.models import *
-from autobotAI_integrations.payload_schema import Param
 from autobotAI_integrations.utils.boto3_helper import Boto3Helper
 
 
@@ -53,39 +52,46 @@ class AWSService(BaseService):
             print(traceback.format_exc())
             return {'success': False, 'error': traceback.format_exc()}
 
-    def get_forms(self):
+    @staticmethod
+    def get_forms():
         return {
-            "access_secret_form": {
-                "fields": [
-                    {
-                        "name": "access_key",
-                        "type": "text",
-                        "label": "Access Key",
-                        "placeholder": "Enter your AWS access key",
-                        "required": True
-                    },
-                    {
-                        "name": "secret_key",
-                        "type": "password",
-                        "label": "Secret Key",
-                        "placeholder": "Enter your AWS secret key",
-                        "required": True
-                    }
-                ],
-                "submit_label": "Submit"
-            },
-            "iam_role_form": {
-                "fields": [
-                    {
-                        "name": "roleArn",
-                        "type": "text",
-                        "label": "IAM Role ARN",
-                        "placeholder": "Enter IAM role ARN",
-                        "required": True
-                    }
-                ],
-                "submit_label": "Submit"
-            }
+            "label": "AWS",
+            "type": "form",
+            "children": [
+                {
+                    "label": "AccessKey / SecretKey Integration",
+                    "type": "form",
+                    "children": [
+                        {
+                            "name": "access_key",
+                            "type": "text",
+                            "label": "Access Key",
+                            "placeholder": "Enter your AWS access key",
+                            "required": True
+                        },
+                        {
+                            "name": "secret_key",
+                            "type": "text/password",
+                            "label": "Secret Key",
+                            "placeholder": "Enter your AWS secret key",
+                            "required": True
+                        }
+                    ]
+                },
+                {
+                    "label": "IAM Role Integration",
+                    "type": "form",
+                    "children": [
+                        {
+                            "name": "roleArn",
+                            "type": "text",
+                            "label": "IAM Role ARN",
+                            "placeholder": "Enter IAM role ARN",
+                            "required": True
+                        }
+                    ]
+                }
+            ]
         }
 
     @staticmethod
@@ -100,8 +106,8 @@ class AWSService(BaseService):
             "clients": list_of_unique_elements(cls.get_all_python_sdk_clients()),
             "supported_executor": "ecs",
             "compliance_supported": False,
-            "supported_interfaces": cls.supported_connection_interfaces()
-        }
+        "supported_interfaces": cls.supported_connection_interfaces()
+    }
 
     def generate_steampipe_creds(self) -> SteampipeCreds:
         creds = self._temp_credentials()
@@ -120,13 +126,14 @@ class AWSService(BaseService):
             "global": {},
             "regional": {
 
+                }
             }
-        }
         global_clients = pydash.filter_(client_definitions, lambda x: x.is_regional is False)
         regional_clients = pydash.filter_(client_definitions, lambda x: x.is_regional is True)
         if global_clients:
             for client in global_clients:
                 built_clients["global"][client.name] = boto3.client(client.name)
+
         active_regions = self.integration.activeRegions
         if not active_regions:
             active_regions = ["us-east-1"]
@@ -164,9 +171,7 @@ class AWSService(BaseService):
 
     def generate_python_sdk_creds(self, requested_clients=None) -> SDKCreds:
         creds = self._temp_credentials()
-        clients = self.get_all_python_sdk_clients()
-        package_names = None
-        return SDKCreds(library_names=[], clients=[], envs=creds, package_names=package_names)
+        return SDKCreds(envs=creds)
 
     @staticmethod
     def supported_connection_interfaces():
