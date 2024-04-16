@@ -17,7 +17,7 @@ import yaml
 from pydantic import BaseModel
 from autobotAI_integrations.integration_schema import IntegrationSchema
 from autobotAI_integrations.models import *
-from autobotAI_integrations.payload_schema import PayloadTask, Payload
+from autobotAI_integrations.payload_schema import PayloadTask, Payload, Param
 from autobotAI_integrations.utils import list_of_unique_elements, load_mod_from_string, run_mod_func
 
 
@@ -139,7 +139,8 @@ class BaseService:
     def generate_cli_creds(self) -> CLICreds:
         raise NotImplementedError()
 
-    def build_python_exec_combinations_hook(self, payload_task: PayloadTask, client_definitions: List[SDKClient]) -> list:
+    def build_python_exec_combinations_hook(self, payload_task: PayloadTask,
+                                            client_definitions: List[SDKClient]) -> list:
         raise NotImplementedError()
 
     def build_python_exec_combinations(self, payload_task: PayloadTask):
@@ -180,8 +181,15 @@ class BaseService:
 
         return results, errors
 
-    @staticmethod
-    def _execute_python_sdk_code(combination, payload_task: PayloadTask):
+    @classmethod
+    def prepare_params(cls, params: List[Param]):
+        flattened_params = {}
+        for param in params:
+            flattened_params[param.name] = param.values
+        return flattened_params
+
+    @classmethod
+    def _execute_python_sdk_code(cls, combination, payload_task: PayloadTask):
         mod = load_mod_from_string(payload_task.executable)
         context = {**payload_task.context.model_dump(), **combination}
         result = run_mod_func(mod.executor, context=context)
@@ -199,6 +207,7 @@ class BaseService:
             "{}.spc".format(self.integration.cspName)
         )
         return config_path
+
 
     def set_steampipe_spc_config(self, config_str):
         config_path = self._get_steampipe_config_path()

@@ -44,16 +44,22 @@ class PayloadTaskContext(BaseModel):
         return integration
 
 
+class Param(BaseModel):
+    type: str
+    name: str
+    values: Optional[Any] = None
+    filter_relevant_resources: bool
+
+
 class PayloadTask(BaseModel):
     task_id: Optional[str]
     creds: SerializeAsAny[BaseCreds]
     connection_interface: ConnectionInterfaces
     executable: str
     clients: Optional[List[str]] = None
-    params: Optional[Any] = None
+    params: Optional[List[Param]] = None
     node_details: Optional[Any] = None
     context: PayloadTaskContext
-    resources: Optional[List] = None
 
     @field_validator('creds', mode='before')
     @classmethod

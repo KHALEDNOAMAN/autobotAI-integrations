@@ -71,7 +71,9 @@ class GitlabService(BaseService):
             {
                 "clients": {
                     "gitlab": gitlab.Gitlab(os.getenv('GITLAB_ADDR'), private_token=os.getenv('GITLAB_TOKEN'))
-                }
+                },
+                "params": self.prepare_params(payload_task.params),
+                "context": payload_task.context
             }
         ]
 

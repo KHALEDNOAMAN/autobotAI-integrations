@@ -106,7 +106,6 @@ def generate_aws_python_payload(aws_json=aws_json):
         "params": {},
         "node_details": {"filter_resources": False},
         "context": PayloadTaskContext(**context, **{"integration": aws_integration}),
-        "resources": [],
     }
     payload_dict = {
         "job_id": uuid.uuid4().hex,
