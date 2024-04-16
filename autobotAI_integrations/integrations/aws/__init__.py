@@ -6,13 +6,14 @@ import pydash
 from botocore.exceptions import ClientError
 from pydantic import Field
 
-from autobotAI_integrations import BaseService, list_of_unique_elements,PayloadTask
+from autobotAI_integrations import BaseService, list_of_unique_elements, PayloadTask
 from autobotAI_integrations.models import *
 from autobotAI_integrations.utils.boto3_helper import Boto3Helper
 
 
 class Forms:
     pass
+
 
 # NOTE: NOT IMPLEMENTED ANYWHERE
 class AWSSDKClient(SDKClient):
@@ -52,55 +53,62 @@ class AWSService(BaseService):
             print(traceback.format_exc())
             return {'success': False, 'error': traceback.format_exc()}
 
-    def get_forms(self):
-        return {
-            "access_secret_form": {
-                "fields": [
-                    {
-                        "name": "access_key",
-                        "type": "text",
-                        "label": "Access Key",
-                        "placeholder": "Enter your AWS access key",
-                        "required": True
-                    },
-                    {
-                        "name": "secret_key",
-                        "type": "password",
-                        "label": "Secret Key",
-                        "placeholder": "Enter your AWS secret key",
-                        "required": True
-                    }
-                ],
-                "submit_label": "Submit"
-            },
-            "iam_role_form": {
-                "fields": [
-                    {
-                        "name": "roleArn",
-                        "type": "text",
-                        "label": "IAM Role ARN",
-                        "placeholder": "Enter IAM role ARN",
-                        "required": True
-                    }
-                ],
-                "submit_label": "Submit"
-            }
-        }
-
     @staticmethod
-    def get_schema() -> Type[BaseSchema]:
-        return AWSIntegration
-
-    @classmethod
-    def get_details(cls):
+    def get_forms():
         return {
-            "automation_code": "",
-            "fetcher_code": "",
-            "automation_supported": ["communication", 'mutation'],
-            "clients": list_of_unique_elements(cls.get_all_python_sdk_clients()),
-            "supported_executor": "ecs",
-            "compliance_supported": False
+            "label": "AWS",
+            "type": "form",
+            "children": [
+                {
+                    "label": "AccessKey / SecretKey Integration",
+                    "type": "form",
+                    "children": [
+                        {
+                            "name": "access_key",
+                            "type": "text",
+                            "label": "Access Key",
+                            "placeholder": "Enter your AWS access key",
+                            "required": True
+                        },
+                        {
+                            "name": "secret_key",
+                            "type": "text/password",
+                            "label": "Secret Key",
+                            "placeholder": "Enter your AWS secret key",
+                            "required": True
+                        }
+                    ]
+                },
+                {
+                    "label": "IAM Role Integration",
+                    "type": "form",
+                    "children": [
+                        {
+                            "name": "roleArn",
+                            "type": "text",
+                            "label": "IAM Role ARN",
+                            "placeholder": "Enter IAM role ARN",
+                            "required": True
+                        }
+                    ]
+                }
+            ]
         }
+
+        @staticmethod
+        def get_schema() -> Type[BaseSchema]:
+            return AWSIntegration
+
+        @classmethod
+        def get_details(cls):
+            return {
+                "automation_code": "",
+                "fetcher_code": "",
+                "automation_supported": ["communication", 'mutation'],
+                "clients": list_of_unique_elements(cls.get_all_python_sdk_clients()),
+                "supported_executor": "ecs",
+                "compliance_supported": False
+            }
 
     def generate_steampipe_creds(self) -> SteampipeCreds:
         creds = self._temp_credentials()
@@ -113,18 +121,20 @@ class AWSService(BaseService):
         return SteampipeCreds(envs=creds, plugin_name="aws", connection_name="aws",
                               conf_path=conf_path, config=config)
 
-    def build_python_exec_combinations_hook(self, payload_task: PayloadTask, client_definitions: List[SDKClient]) -> list:
-        built_clients = {
-            "global": {},
-            "regional": {
+        def build_python_exec_combinations_hook(self, payload_task: PayloadTask,
+                                                client_definitions: List[SDKClient]) -> list:
+            built_clients = {
+                "global": {},
+                "regional": {
 
+                }
             }
-        }
-        global_clients = pydash.filter_(client_definitions, lambda x: x.is_regional is False)
-        regional_clients = pydash.filter_(client_definitions, lambda x: x.is_regional is True)
-        if global_clients:
-            for client in global_clients:
-                built_clients["global"][client.name] = boto3.client(client.name)
+            global_clients = pydash.filter_(client_definitions, lambda x: x.is_regional is False)
+            regional_clients = pydash.filter_(client_definitions, lambda x: x.is_regional is True)
+            if global_clients:
+                for client in global_clients:
+                    built_clients["global"][client.name] = boto3.client(client.name)
+
         active_regions = self.integration.activeRegions
         if not active_regions:
             active_regions = ["us-east-1"]
@@ -162,9 +172,10 @@ class AWSService(BaseService):
         creds = self._temp_credentials()
         return SDKCreds(envs=creds)
 
-    @staticmethod
-    def supported_connection_interfaces():
-        return [ConnectionInterfaces.REST_API, ConnectionInterfaces.CLI, ConnectionInterfaces.PYTHON_SDK, ConnectionInterfaces.STEAMPIPE]
+        @staticmethod
+        def supported_connection_interfaces():
+            return [ConnectionInterfaces.REST_API, ConnectionInterfaces.CLI, ConnectionInterfaces.PYTHON_SDK,
+                    ConnectionInterfaces.STEAMPIPE]
 
     def generate_cli_creds(self) -> CLICreds:
         raise NotImplementedError()

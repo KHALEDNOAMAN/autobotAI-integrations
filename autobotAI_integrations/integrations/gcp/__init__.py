@@ -27,17 +27,18 @@ class GCPCredentials(BaseModel):
     token_uri: str
     auth_provider_x509_cert_url: str
     client_x509_cert_url: str
-    
+
     def model_dump_json(self, *args, **kwargs) -> str:
         kwargs["by_alias"] = True
         return super().model_dump_json(*args, **kwargs)
+
 
 class GCPIntegration(BaseSchema):
     account_id: Optional[str] = uuid.uuid4().hex
     credentials: GCPCredentials = Field(
         default=None, exclude=True
     )  # Credentials Json of service account
-    
+
     def __init__(self, **kwargs):
         kwargs["accountId"] = str(uuid.uuid4().hex)
         super().__init__(**kwargs)
@@ -52,7 +53,7 @@ class GCPService(BaseService):
         if not isinstance(integration, GCPIntegration):
             integration = GCPIntegration(**integration)
         super().__init__(ctx, integration)
-    
+
     def _test_integration(self, integration: dict) -> dict:
         try:
             gcp_helper = GCPHelper(self.ctx, integration=self.integration)
@@ -60,20 +61,26 @@ class GCPService(BaseService):
         except BaseException as e:
             return {'success': False, 'error': str(e)}
 
-    def get_forms(self):
+    @staticmethod
+    def get_forms():
         return {
-            "token_form": {
-                "fields": [
-                    {
-                        "name": "credentials",
-                        "type": "json",
-                        "label": "Credentials JSON",
-                        "placeholder": "Enter the Credentials In JSON Format",
-                        "required": True,
-                    },
-                ],
-                "submit_label": "Submit",
-            }
+            "label": "GCP",
+            "type": "form",
+            "children": [
+                {
+                    "label": "Service Account Integration",
+                    "type": "form",
+                    "children": [
+                        {
+                            "name": "credentials",
+                            "type": "json",
+                            "label": "Credentials JSON",
+                            "placeholder": "Enter the Credentials In JSON Format",
+                            "required": True,
+                        }
+                    ]
+                }
+            ]
         }
 
     @staticmethod
@@ -99,7 +106,7 @@ class GCPService(BaseService):
         )
 
     def build_python_exec_combinations_hook(
-        self, payload_task: PayloadTask, client_definitions: List[SDKClient]
+            self, payload_task: PayloadTask, client_definitions: List[SDKClient]
     ) -> list:
         # to use credentials with client remove the decorator and 
         # use generate_clients_with_session method
@@ -133,7 +140,7 @@ class GCPService(BaseService):
             "CLOUDSDK_CORE_PROJECT": self.integration.credentials.project_id,
             "GOOGLE_APPLICATION_CREDENTIALS": self.integration.credentials.model_dump_json(by_alias=True)
         }
-    
+
     def _get_creds_config_path(self):
         creds_path = f"gcp-creds-{uuid.uuid4().hex}.json"
         with open(creds_path, "w") as f:
@@ -151,12 +158,13 @@ class GCPService(BaseService):
                 return func(self, payload_task, *args, **kwargs)  # Call the original function
             finally:
                 os.remove(creds_path)  # Ensure path is removed even if exceptions occur
+
         return wrapper
 
     @manage_creds_path
-    def python_sdk_processor(self, payload_task: PayloadTask) -> (List[Dict[str, Any]], List[str]): # type: ignore
+    def python_sdk_processor(self, payload_task: PayloadTask) -> (List[Dict[str, Any]], List[str]):  # type: ignore
         return super().python_sdk_processor(payload_task)
-    
+
     @manage_creds_path
     def execute_steampipe_task(self, payload_task: PayloadTask, job_type="query"):
         return super().execute_steampipe_task(payload_task, job_type)

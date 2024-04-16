@@ -23,20 +23,26 @@ class GitGuardianService(BaseService):
     def __init__(self, ctx, integration: GitGuardianIntegration):
         super().__init__(ctx, integration)
 
-    def get_forms(self):
+    @staticmethod
+    def get_forms():
         return {
-            "token_form": {
-                "fields": [
-                    {
-                        "name": "token",
-                        "type": "password",
-                        "label": "GitGuardian Token",
-                        "placeholder": "Enter the GitGuardian token",
-                        "required": True
-                    }
-                ],
-                "submit_label": "Submit"
-            }
+            "label": "GitGuardian",
+            "type": "form",
+            "children": [
+                {
+                    "label": "Token Integration",
+                    "type": "form",
+                    "children": [
+                        {
+                            "name": "token",
+                            "type": "password",
+                            "label": "GitGuardian Token",
+                            "placeholder": "Enter the GitGuardian token",
+                            "required": True
+                        }
+                    ]
+                }
+            ]
         }
 
     @staticmethod
@@ -54,7 +60,7 @@ class GitGuardianService(BaseService):
 
     def _test_integration(self, integration: dict):
         pass
-    
+
     def _get_clients(self, client_definations: List[SDKClient]):
         client_classes = dict()
         for client in client_definations:

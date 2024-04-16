@@ -34,7 +34,8 @@ class BaseService:
     def supported_connection_interfaces():
         return [ConnectionInterfaces.REST_API]
 
-    def get_forms(self):
+    @staticmethod
+    def get_forms():
         """
         Returns a list of Forms Represented in JSON format for UI
         - success: bool

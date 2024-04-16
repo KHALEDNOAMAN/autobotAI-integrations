@@ -20,7 +20,8 @@ class KubernetesService(BaseService):
         # Assuming the cluster is alredy running in activate state
         super().__init__(ctx, integration)
 
-    def get_forms(self):
+    @staticmethod
+    def get_forms():
         pass
 
     @staticmethod

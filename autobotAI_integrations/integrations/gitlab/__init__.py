@@ -23,27 +23,33 @@ class GitlabService(BaseService):
     def __init__(self, ctx, integration: GitlabIntegration):
         super().__init__(ctx, integration)
 
-    def get_forms(self):
+    @staticmethod
+    def get_forms():
         return {
-            "token_form": {
-                "fields": [
-                    {
-                        "name": "base_url",
-                        "type": "text",
-                        "label": "Gitlab Base URL",
-                        "default": "https://gitlab.com/",
-                        "required": True
-                    },
-                    {
-                        "name": "token",
-                        "type": "password",
-                        "label": "Gitlab Token",
-                        "placeholder": "Enter the gitlab token",
-                        "required": True
-                    }
-                ],
-                "submit_label": "Submit"
-            }
+            "label": "Gitlab",
+            "type": "form",
+            "children": [
+                {
+                    "label": "Token Integration",
+                    "type": "form",
+                    "children": [
+                        {
+                            "name": "base_url",
+                            "type": "text/url",
+                            "label": "Gitlab Base URL",
+                            "default_value": "https://gitlab.com/",
+                            "required": True
+                        },
+                        {
+                            "name": "token",
+                            "type": "text/password",
+                            "label": "Gitlab Token",
+                            "placeholder": "Enter the Gitlab Token",
+                            "required": True
+                        }
+                    ]
+                }
+            ]
         }
 
     @staticmethod
@@ -52,7 +58,8 @@ class GitlabService(BaseService):
 
     @staticmethod
     def supported_connection_interfaces():
-        return [ConnectionInterfaces.REST_API, ConnectionInterfaces.CLI, ConnectionInterfaces.PYTHON_SDK, ConnectionInterfaces.STEAMPIPE]
+        return [ConnectionInterfaces.REST_API, ConnectionInterfaces.CLI, ConnectionInterfaces.PYTHON_SDK,
+                ConnectionInterfaces.STEAMPIPE]
 
     def _test_integration(self, integration: dict):
         creds = self.generate_rest_api_creds()

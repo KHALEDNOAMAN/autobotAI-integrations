@@ -31,7 +31,8 @@ class AzureService(BaseService):
     def _test_integration(self, integration: dict) -> dict:
         pass
 
-    def get_forms(self):
+    @staticmethod
+    def get_forms():
         return {}
 
     @staticmethod

@@ -24,28 +24,34 @@ class GithubService(BaseService):
     def __init__(self, ctx, integration: GithubIntegration):
         super().__init__(ctx, integration)
 
-    def get_forms(self):
+    @staticmethod
+    def get_forms():
         return {
-            "token_form": {
-                "fields": [
-                    {
-                        "name": "base_url",
-                        "type": "text",
-                        "label": "Github Base URL",
-                        "default": "https://<hostname/>/api/v3",
-                        "description": "Github Base URL if Using Enterprise Version",
-                        "required": False
-                    },
-                    {
-                        "name": "token",
-                        "type": "password",
-                        "label": "Github Token",
-                        "placeholder": "Enter the github token",
-                        "required": True
-                    }
-                ],
-                "submit_label": "Submit"
-            }
+            "label": "Github",
+            "type": "form",
+            "children": [
+                {
+                    "label": "Token Integration",
+                    "type": "form",
+                    "children": [
+                        {
+                            "name": "base_url",
+                            "type": "text",
+                            "label": "Github Base URL",
+                            "default_value": "https://<hostname/>/api/v3",
+                            "description": "Github Base URL if Using Enterprise Version",
+                            "required": False
+                        },
+                        {
+                            "name": "token",
+                            "type": "password",
+                            "label": "Github Token",
+                            "placeholder": "Enter the github token",
+                            "required": True
+                        }
+                    ]
+                }
+            ]
         }
 
     @staticmethod
