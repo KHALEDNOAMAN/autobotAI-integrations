@@ -161,12 +161,11 @@ class AWSService(BaseService):
             if not param.filter_relevant_resources or not param.values:
                 filtered_params.append(param)
             else:
-                if param.values:
-                    filtered_values = []
-                    for value in param.values:
-                        if value.get("region") == region:
-                            filtered_values.append(value)
-                    filtered_params.append({"name": param.name, "values": filtered_values})
+                filtered_values = []
+                for value in param.values:
+                    if value.get("region") == region:
+                        filtered_values.append(value)
+                filtered_params.append({"name": param.name, "values": filtered_values})
         return filtered_params
 
     def generate_python_sdk_creds(self, requested_clients=None) -> SDKCreds:
