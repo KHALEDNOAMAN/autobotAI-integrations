@@ -32,7 +32,7 @@ class BaseService:
 
     @staticmethod
     def supported_connection_interfaces():
-        return [ConnectionInterfaces.REST_API]
+        return [ConnectionInterfaces.PYTHON_SDK]
 
     @staticmethod
     def get_forms():
@@ -92,11 +92,11 @@ class BaseService:
     @classmethod
     def get_details(cls):
         return {
-            "automation_code": "",
-            "fetcher_code": "",
+            "python_code_sample": "print('dummy code')",
             "fetcher_supported": ["code", "no_code"],
             "listener_supported": False,
-            "automation_supported": ["communication", 'mutation'],
+            "supported_interfaces": cls.supported_connection_interfaces(),
+            "supported_execution_types": cls.supported_connection_interfaces(),
             "clients": list_of_unique_elements(cls.get_all_python_sdk_clients()),
             "supported_executor": "ecs",
             "compliance_supported": False

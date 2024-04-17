@@ -41,7 +41,6 @@ class IntegrationServiceFactory:
             return cls(ctx, integration.model_dump())
         return cls(ctx, integration)
 
-
     @staticmethod
     def _get_subclasses():
         # get current working directory
