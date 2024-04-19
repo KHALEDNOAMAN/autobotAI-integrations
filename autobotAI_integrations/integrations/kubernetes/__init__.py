@@ -3,8 +3,8 @@ from typing import List
 from autobotAI_integrations import BaseSchema, SteampipeCreds, RestAPICreds, SDKCreds, CLICreds, \
     BaseService, ConnectionInterfaces, PayloadTask, SDKClient, list_of_unique_elements
 from autobotAI_integrations.integration_schema import ConnectionTypes
-from autobotAI_integrations.utils import KubernetesHelper
-
+import importlib
+from kubernetes import config
 
 class KubernetesIntegration(BaseSchema):
     agent_ids: list = []
@@ -54,13 +54,19 @@ class KubernetesService(BaseService):
 
     def build_python_exec_combinations_hook(self, payload_task: PayloadTask,
                                             client_definitions: List[SDKClient]) -> list:
-        k8s_helper = KubernetesHelper(self.ctx, self.integration)
-        clients = k8s_helper.generate_clients(client_definitions)
-        # Loading kubernet Config
-        k8s_helper.get_kubernetes_config()
+        kubernetes = importlib.import_module(client_definitions[0].import_library_names[0], package=None)
+        try:
+            config.load_kube_config()
+        except:
+            try:
+                config.load_incluster_config()
+            except:
+                raise BaseException("Failed to load configurations")
         return [
             {
-                "clients": clients
+                "clients": {
+                    "kubernetes": kubernetes,
+                }
             }
         ]
 

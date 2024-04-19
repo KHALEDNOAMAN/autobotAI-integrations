@@ -1,5 +1,5 @@
 - name: gitguardian
-  module: pygitguardian
+  import_library_names:
+    - pygitguardian.client
   pip_package_names:
     - pygitguardian
-  class_name: GGClient

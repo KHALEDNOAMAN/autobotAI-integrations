@@ -226,7 +226,8 @@ class BaseService:
         except FileNotFoundError:
             print("File Not Found on path {}".format(config_path))
 
-    def execute_steampipe_task(self, payload_task:PayloadTask, job_type="query"):
+
+    def execute_steampipe_task(self, payload_task:PayloadTask):
         """
         Executes a Steampipe Task
         """

@@ -55,7 +55,7 @@ context = {
 code = """
 import json
 def executor(context):
-    gg_client = context["clients"]["GGClient"]
+    gg_client = context["clients"]["gitguardian"]
     response = gg_client.get(
             endpoint="https://api.gitguardian.com/v1/incidents/secrets"
         )
@@ -79,7 +79,7 @@ def generate_gitguardian_python_payload(gitguardian_json=gitguardian_json) -> Pa
         "creds": creds,
         "connection_interface": ConnectionInterfaces.PYTHON_SDK,
         "executable": code,
-        "clients": ["GGClient"],
+        "clients": ["gitguardian"],
         "context": PayloadTaskContext(**context, **{"integration": gitguardian_json}),
     }
     payload_dict = {
@@ -113,9 +113,9 @@ if __name__ == "__main__":
         print(service.python_sdk_processor(task))
 
 
-    gitguardian_steampipe_payload = generate_gitguardian_steampipe_payload()
-    for task in gitguardian_steampipe_payload.tasks:
-        integration = IntegrationSchema.model_validate(task.context.integration)
-        service = integration_service_factory.get_service(None, integration)
-        print(service.execute_steampipe_task(task, job_type="query"))
+    # gitguardian_steampipe_payload = generate_gitguardian_steampipe_payload()
+    # for task in gitguardian_steampipe_payload.tasks:
+    #     integration = IntegrationSchema.model_validate(task.context.integration)
+    #     service = integration_service_factory.get_service(None, integration)
+    #     print(service.execute_steampipe_task(task, job_type="query"))
 

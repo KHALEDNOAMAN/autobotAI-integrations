@@ -1,3 +1,0 @@
-create user
-pod related activity
-cluster relative activity

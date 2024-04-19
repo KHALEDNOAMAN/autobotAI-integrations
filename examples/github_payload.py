@@ -8,6 +8,7 @@ from autobotAI_integrations import ConnectionInterfaces, IntegrationSchema
 from autobotAI_integrations.integrations.github import GithubIntegration
 from autobotAI_integrations.integrations import integration_service_factory
 from autobotAI_integrations.payload_schema import Payload, PayloadTask, PayloadTaskContext
+from autobotAI_integrations.handlers import handle_payload
 
 code = """
 def executor(context):
@@ -108,16 +109,11 @@ def generate_github_steampipe_payload(github_json=github_json):
 
 
 if __name__ == "__main__":
-    github_python_payload = generate_github_python_payload()
-    for task in github_python_payload.tasks:
-        integration = IntegrationSchema.model_validate(task.context.integration)
-        service = integration_service_factory.get_service(None, integration)
-        print(service.python_sdk_processor(task))
-
-
+    github_payload = generate_github_python_payload()
     github_steampipe_payload = generate_github_steampipe_payload()
-    for task in github_steampipe_payload.tasks:
-        integration = IntegrationSchema.model_validate(task.context.integration)
-        service = integration_service_factory.get_service(None, integration)
-        print(service.execute_steampipe_task(task, job_type="query"))
+
+    # github_payload.tasks.append(github_steampipe_payload.tasks[0])
+
+    print(handle_payload(github_payload))
+    
 

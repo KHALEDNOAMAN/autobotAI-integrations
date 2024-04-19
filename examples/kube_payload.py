@@ -78,6 +78,7 @@ def generate_k8s_steampipe_payload(agent_json=agent_json) -> Payload:
         "task_id": uuid.uuid4().hex,
         "creds": creds,
         "connection_interface": ConnectionInterfaces.STEAMPIPE,
+        # "executable": "kubernetes_compliance.benchmark.nsa_cisa_v1",
         "executable": "select name, namespace, phase, creation_timestamp, pod_ip from kubernetes_pod",
         "context": PayloadTaskContext(**context, **{"integration": k8s_integration}),
     }
@@ -98,7 +99,7 @@ def generate_k8s_python_payload(agent_json=agent_json):
         "connection_interface": ConnectionInterfaces.PYTHON_SDK,
         "executable": k8s_code,
         "clients": ["kubernetes"],
-        "params": {},
+        "params": [],
         "node_details": {"filter_resources": False},
         "context": PayloadTaskContext(**context, **{"integration": k8s_integration}),
         "resources": [],
@@ -111,12 +112,12 @@ def generate_k8s_python_payload(agent_json=agent_json):
     return payload
 
 if __name__ == '__main__':
-    k8s_steampipe_payload = generate_k8s_steampipe_payload(agent_json)
-    for task in k8s_steampipe_payload.tasks:
-        integration = IntegrationSchema.model_validate(task.context.integration)
-        service = integration_service_factory.get_service(None, integration)
-        output = service.execute_steampipe_task(task, job_type="query")
-        print(output)
+    # k8s_steampipe_payload = generate_k8s_steampipe_payload(agent_json)
+    # for task in k8s_steampipe_payload.tasks:
+    #     integration = IntegrationSchema.model_validate(task.context.integration)
+    #     service = integration_service_factory.get_service(None, integration)
+    #     output = service.execute_steampipe_task(task, job_type="query")
+    #     print(output)
 
     k8s_python_payload = generate_k8s_python_payload(agent_json)
     for task in k8s_python_payload.tasks:

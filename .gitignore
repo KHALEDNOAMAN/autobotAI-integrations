@@ -165,3 +165,6 @@ temp/
 # VS code files
 *.code-workspace
 .vscode/
+
+# Steampipe Compliance
+compliances/

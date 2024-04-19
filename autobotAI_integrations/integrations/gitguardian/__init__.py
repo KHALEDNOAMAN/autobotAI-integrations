@@ -61,25 +61,14 @@ class GitGuardianService(BaseService):
     def _test_integration(self, integration: dict):
         pass
 
-    def _get_clients(self, client_definations: List[SDKClient]):
-        client_classes = dict()
-        for client in client_definations:
-            try:
-                client_module = importlib.import_module(client.module, package=None)
-                if hasattr(client_module, client.class_name):
-                    cls = getattr(client_module, client.class_name)
-                    client_classes[client.class_name] = cls(api_key=self.integration.token)
-            except BaseException as e:
-                print(e)
-                continue
-        return client_classes
-
     def build_python_exec_combinations_hook(self, payload_task: PayloadTask,
                                             client_definitions: List[SDKClient]) -> list:
-        clients = self._get_clients(client_definitions)
+        gitguardian = importlib.import_module(client_definitions[0].import_library_names[0], package=None)
         return [
             {
-                "clients": clients
+                "clients": {
+                    "gitguardian": gitguardian.GGClient(api_key=self.integration.token)
+                }
             }
         ]
 

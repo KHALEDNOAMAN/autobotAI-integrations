@@ -6,7 +6,6 @@ import traceback
 import uuid
 from pathlib import Path
 from .gcp_helper import GCPHelper
-from .kubernetes_helper import KubernetesHelper
 
 
 def fromisoformat(strdate):

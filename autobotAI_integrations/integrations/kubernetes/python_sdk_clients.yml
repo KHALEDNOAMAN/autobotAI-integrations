@@ -1,5 +1,5 @@
 - name: kubernetes
-  module: kubernetes
+  import_library_names:
+    - kubernetes.client
   pip_package_names:
     - kubernetes
-  class_name: client
