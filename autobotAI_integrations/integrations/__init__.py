@@ -34,9 +34,15 @@ class IntegrationServiceFactory:
         return details_list
 
     def get_service(self, ctx, integration):
-        cls = self._services.get(integration.cspName)
+
+        if not isinstance(integration, BaseModel):
+            csp_name = integration.get("cspName")
+        else:
+            csp_name = integration.cspName
+        cls = self._services.get(csp_name)
         if not cls:
-            raise ValueError(integration.cspName)
+            raise ValueError(csp_name)
+
         if isinstance(integration, BaseModel) and not isinstance(integration, cls.get_schema()):
             return cls(ctx, integration.model_dump())
         return cls(ctx, integration)
