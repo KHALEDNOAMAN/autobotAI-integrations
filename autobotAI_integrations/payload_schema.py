@@ -1,6 +1,6 @@
 from typing import List, Optional, Any, Union
 
-from pydantic import BaseModel, SerializeAsAny, field_validator, ValidationError, Field
+from pydantic import BaseModel, SerializeAsAny, field_validator, Field, model_validator
 
 from autobotAI_integrations import IntegrationSchema
 from autobotAI_integrations.models import (
@@ -53,6 +53,14 @@ class Param(BaseModel):
     def model_dump_json(self, *args, **kwargs) -> str:
         kwargs["by_alias"] = True
         return super().model_dump_json(*args, **kwargs)
+
+    @model_validator(mode="before")
+    def resource_type_validator(cls, values: Any) -> Any:
+        if not values.get("params_type") and values.get("type"):
+            values["params_type"] = values["type"]
+        if not values.get("type") and values.get("params_type"):
+            values["type"] = values["params_type"]
+        return values
 
 
 class PayloadTask(BaseModel):
