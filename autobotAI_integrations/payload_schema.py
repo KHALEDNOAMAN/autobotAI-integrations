@@ -84,7 +84,7 @@ class Payload(BaseModel):
 
 class ResponseError(BaseModel):
     message: str
-    other_details: dict = None
+    other_details: Optional[dict] = None
 
 
 class ResponseDebugInfo(BaseModel):
