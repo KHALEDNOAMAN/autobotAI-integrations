@@ -90,9 +90,12 @@ class GitlabService(BaseService):
             "GITLAB_TOKEN": self.integration.token,
         }
         conf_path = "~/.steampipe/config/gitlab.spc"
-
+        config_str = """connection "gitlab" {
+  plugin = "theapsgroup/gitlab"
+}
+"""
         return SteampipeCreds(envs=envs, plugin_name="theapsgroup/gitlab", connection_name="gitlab",
-                              conf_path=conf_path)
+                              conf_path=conf_path, config=config_str)
 
     def generate_rest_api_creds(self) -> RestAPICreds:
         headers = {
@@ -115,53 +118,3 @@ class GitlabService(BaseService):
             "GITLAB_TOKEN": self.integration.token,
         }
         return CLICreds(installer_check=installer_check, install_command=install_command, envs=envs)
-
-
-"""def fetch(clients, test=False):
-    if clients.get("Storage"):
-        print("GCP Storage client found'")
-        print(clients.get("Storage").list_buckets(0))
-        return clients.get("Storage").list_buckets(0)
-    if clients.get("ComputeManagementClient"):
-        print("Azure Compute Management Client fond")
-        print(clients.get("ComputeManagementClient").virtual_machines.list_all())
-        return list(clients.get("ComputeManagementClient").virtual_machines.list_all())
-    if clients.get("s3"):
-        print("AWS S3 Client Found")
-        print(clients.get("s3").list_buckets())
-        return clients.get("s3").list_buckets()
-    if clients.get("gitlab"):
-        print("Gitlab Client Found")
-        print(clients.get("gitlab").projects.list())
-        return list(clients.get("gitlab").projects.list())"""
-
-"""
-{
-    "userId": "amit@shunyeka.com",
-    "accountId": "175c0fa813244bc5a1aa6264e7ba20cc",
-    "integrationState": "INACTIVE",
-    "cspName": "gitlab",
-    "alias": "test-gitlab-integrationsv2",
-    "connection_type": "DIRECT",
-    "groups": [
-        "gitlab",
-        "shunyeka",
-        "integrations-v2"
-    ],
-    "agent_ids": [],
-    "accessToken": "",
-    "createdAt": "2024-02-26T13:38:59.978056",
-    "updatedAt": "2024-02-26T13:38:59.978056",
-    "indexFailures": 0,
-    "isUnauthorized": false,
-    "lastUsed": null,
-    "resource_type": "integration",
-    "activeRegions": null
-}
-"""
-"""
-Fetcher = ObjectId("65defd146f1cc88d60ec857a")
-"""
-"""
-BotV2 = ObjectId("65defe3c6795ab5c72c74f22")
-"""

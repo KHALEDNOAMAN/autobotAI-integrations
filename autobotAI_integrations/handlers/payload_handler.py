@@ -22,12 +22,15 @@ def handle_payload(
         result_file = tempfile.NamedTemporaryFile()
         result_file.write(bytes(resutls.model_dump_json(), encoding="utf-8"))
         result_file.seek(0)
-        data = {**payload.output_url['fields'], 'file': result_file}
-        response = requests.post(payload.output_url["url"], data=data)
-
+        files = {'file': result_file}
+        response = requests.post(
+            payload.output_url["url"],
+            data=payload.output_url['fields'],
+            files=files
+        )
         result_file.close()
 
-        if response.status_code == 200:
+        if response.status_code == 204:
             print("File uploaded successfully!")
         else:
             print(f"Error uploading file: {response.status_code}")
@@ -36,6 +39,9 @@ def handle_payload(
         print(resutls.model_dump_json(indent=2))
 
     if return_results:
-        return resutls.model_dump_json(indent=2)
+        return {
+            "success": True,
+            "results": resutls.model_dump_json(indent=2)
+        }
 
     return {"success": True}

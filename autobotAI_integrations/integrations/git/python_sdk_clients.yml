@@ -1,0 +1,5 @@
+- name: git
+  import_library_names:
+    - git
+  pip_package_names:
+    - GitPython

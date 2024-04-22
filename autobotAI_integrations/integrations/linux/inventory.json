@@ -1,0 +1,30 @@
+{
+    "linux": [
+        {
+            "name": "exec_command",
+            "all_columns": [
+                "command",
+                "exit_code",
+                "stderr_output",
+                "stdout_output"
+            ],
+            "included": [],
+            "excluded": [],
+            "aliases": [],
+            "inventory_supported": false
+        },
+        {
+            "name": "exec_command_line",
+            "all_columns": [
+                "command",
+                "line",
+                "line_number",
+                "stream"
+            ],
+            "included": [],
+            "excluded": [],
+            "aliases": [],
+            "inventory_supported": false
+        }
+    ]    
+}

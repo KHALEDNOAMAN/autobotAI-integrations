@@ -1,0 +1,5 @@
+- name: WebClient
+  import_library_names:
+    - slack_sdk
+  pip_package_names:
+    - slack-sdk

@@ -74,7 +74,7 @@ class BaseService:
     def get_steampipe_tables(cls) -> List[dict]:
         base_path = os.path.dirname(inspect.getfile(cls))
         integration_type = cls.get_integration_type()
-        with open(path.join(base_path, ".", 'inventory.json')) as f:
+        with open(path.join(base_path,'inventory.json')) as f:
             clients_data = f.read()
             data = json.loads(clients_data)
         return data[integration_type]
@@ -202,8 +202,16 @@ class BaseService:
         result = run_mod_func(mod.executor, context=context)
         resources = []
         if result:
+            if not isinstance(result, list):
+                result = [result]
             for r in result:
-                resources.append({**r, **combination.get("metadata", {})})
+                if isinstance(r, dict):
+                    resources.append({**r, **combination.get("metadata", {})})
+                else:
+                    resources.append({
+                        "result": r,
+                        **combination.get("metadata", {})
+                    })
         return resources
 
     def _get_steampipe_config_path(self):
@@ -254,21 +262,20 @@ class BaseService:
         self.clear_steampipe_spc_config()
 
         stdout = process.stdout.decode("utf-8")
-        stderr = process.stderr.decode("utf-8")
-
-        if stderr:
-            print(stdout)
-            print(stderr)
+        stderr = [{
+                "message": process.stderr.decode("utf-8")
+        }]
 
         try:
             stdout = json.loads(stdout)
-            return {"success": True, "resources": stdout}
         except json.decoder.JSONDecodeError:
             if stdout == "None" or not stdout or stdout == "null":
-                return {"success": True, "resources": []}
+                stdout = []
         except BaseException as e:
-            stdout = {
-                "non_json_output": stdout,
-                "message": traceback.format_exc()
-            }
-        return {"success": False, "output": stdout}
+            stderr = [{
+                "message": traceback.format_exc(),
+                "other_details": {
+                    "non_json_output": stdout,
+                }
+            }]
+        return stdout, stderr

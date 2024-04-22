@@ -1,0 +1,16 @@
+- name: os
+  import_library_names:
+    - os
+- name: subprocess
+  import_library_names:
+    - subprocess
+- name: paramiko
+  import_library_names:
+    - paramiko
+  pip_package_names:
+    - paramiko
+- name: psutil
+  import_library_names:
+    - psutil
+  pip_package_names:
+    - psutil

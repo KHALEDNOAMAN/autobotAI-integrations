@@ -1,13 +1,11 @@
 import uuid
 from typing import Dict, List, Type, Union
-import json
 import os
+import importlib
 from pydantic import Field
 from functools import wraps
-import importlib
 
 from autobotAI_integrations import list_of_unique_elements
-from autobotAI_integrations.utils import GCPHelper
 from autobotAI_integrations.models import *
 from autobotAI_integrations.models import List
 from autobotAI_integrations import BaseSchema, SteampipeCreds, RestAPICreds, SDKCreds, CLICreds, \
@@ -55,11 +53,7 @@ class GCPService(BaseService):
         super().__init__(ctx, integration)
 
     def _test_integration(self, integration: dict) -> dict:
-        try:
-            gcp_helper = GCPHelper(self.ctx, integration=self.integration)
-            return {'success': True}
-        except BaseException as e:
-            return {'success': False, 'error': str(e)}
+        raise NotImplementedError()
 
     @staticmethod
     def get_forms():
@@ -90,8 +84,6 @@ class GCPService(BaseService):
     @classmethod
     def get_details(cls):
         return {
-            "automation_code": "",
-            "fetcher_code": "",
             "automation_supported": ["communication", "mutation"],
             "clients": list_of_unique_elements(cls.get_all_python_sdk_clients()),
             "supported_executor": "ecs",
@@ -101,21 +93,36 @@ class GCPService(BaseService):
     def generate_steampipe_creds(self) -> SteampipeCreds:
         creds = self._temp_credentials()
         conf_path = "~/.steampipe/config/gcp.spc"
+        config = """connection "gcp" {
+  plugin    = "gcp"
+
+  ignore_error_codes = ["401", "403"]
+}
+"""
         return SteampipeCreds(
-            envs=creds, plugin_name="gcp", connection_name="gcp", conf_path=conf_path
+            envs=creds, plugin_name="gcp", connection_name="gcp", conf_path=conf_path, config=config,
         )
 
     def build_python_exec_combinations_hook(
             self, payload_task: PayloadTask, client_definitions: List[SDKClient]
     ) -> list:
-        # to use credentials with client remove the decorator and 
-        # use generate_clients_with_session method
-        gcp_helper = GCPHelper(self.ctx, integration=self.integration)
-        clients_classes = gcp_helper.generate_clients(client_definitions)
-        # clients_classes = gcp_helper.generate_clients_with_session(client_definitions)
+        
+        clients_classes = dict()
+        for client in client_definitions:
+            try:
+                client_module = importlib.import_module(client.module, package=None)
+                if hasattr(client_module, client.class_name):
+                    cls = getattr(client_module, client.class_name)
+                    clients_classes[client.name] = cls()
+            except BaseException as e:
+                print(e)
+                continue
+        
         return [
             {
-                "clients": clients_classes
+                "clients": clients_classes,
+                "params": self.prepare_params(payload_task.params),
+                "context": payload_task.context
             }
         ]
 
@@ -166,5 +173,5 @@ class GCPService(BaseService):
         return super().python_sdk_processor(payload_task)
 
     @manage_creds_path
-    def execute_steampipe_task(self, payload_task: PayloadTask, job_type="query"):
-        return super().execute_steampipe_task(payload_task, job_type)
+    def execute_steampipe_task(self, payload_task: PayloadTask):
+        return super().execute_steampipe_task(payload_task)

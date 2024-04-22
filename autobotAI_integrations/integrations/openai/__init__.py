@@ -9,35 +9,34 @@ from autobotAI_integrations import BaseSchema, SteampipeCreds, RestAPICreds, SDK
     BaseService, ConnectionInterfaces, PayloadTask, SDKClient
 
 
-class GitGuardianIntegration(BaseSchema):
-    base_url: str = "https://api.gitguardian.com/v1/"
-    token: str = Field(default=None, exclude=True)
+class OpenAIIntegration(BaseSchema):
+    api_key: str = Field(default=None, exclude=True)
 
     def __init__(self, **kwargs):
         kwargs["accountId"] = str(uuid.uuid4().hex)
         super().__init__(**kwargs)
 
 
-class GitGuardianService(BaseService):
+class OpenAIService(BaseService):
 
-    def __init__(self, ctx, integration: GitGuardianIntegration):
+    def __init__(self, ctx, integration: OpenAIIntegration):
         super().__init__(ctx, integration)
 
     @staticmethod
     def get_forms():
         return {
-            "label": "GitGuardian",
+            "label": "OpenAI",
             "type": "form",
             "children": [
                 {
-                    "label": "Token Integration",
+                    "label": "API Key Integration",
                     "type": "form",
                     "children": [
                         {
-                            "name": "token",
-                            "type": "password",
-                            "label": "GitGuardian Token",
-                            "placeholder": "Enter the GitGuardian token",
+                            "name": "api_key",
+                            "type": "text/password",
+                            "label": "OpenAI api_key",
+                            "placeholder": "Enter the OpenAI API Key",
                             "required": True
                         }
                     ]
@@ -47,7 +46,7 @@ class GitGuardianService(BaseService):
 
     @staticmethod
     def get_schema():
-        return GitGuardianIntegration
+        return OpenAIIntegration
 
     @staticmethod
     def supported_connection_interfaces():
@@ -59,15 +58,22 @@ class GitGuardianService(BaseService):
         ]
 
     def _test_integration(self, integration: dict):
-        pass
+        creds = self.generate_rest_api_creds()
+        try:
+            response = BaseService.generic_rest_api_call(creds, "get", "/api/v4/user")
+            print(response)
+            return {'success': True}
+        except BaseException as e:
+            return {'success': False}
 
     def build_python_exec_combinations_hook(self, payload_task: PayloadTask,
                                             client_definitions: List[SDKClient]) -> list:
-        gitguardian = importlib.import_module(client_definitions[0].import_library_names[0], package=None)
+        openai = importlib.import_module(client_definitions[0].import_library_names[0], package=None)
+
         return [
             {
                 "clients": {
-                    "gitguardian": gitguardian.GGClient(api_key=self.integration.token)
+                    "openai": openai.OpenAI(api_key=self.integration.api_key)
                 },
                 "params": self.prepare_params(payload_task.params),
                 "context": payload_task.context
@@ -76,25 +82,25 @@ class GitGuardianService(BaseService):
 
     def generate_steampipe_creds(self) -> SteampipeCreds:
         envs = {
-            "GITGUARDIAN_TOKEN": self.integration.token,
+            "OPENAI_API_KEY": self.integration.api_key,
         }
-        conf_path = "~/.steampipe/config/gitguardian.spc"
-        config = """connection "gitguardian" {
-  plugin = "francois2metz/gitguardian"
+        conf_path = "~/.steampipe/config/openai.spc"
+        config_str = """connection "openai" {
+  plugin = "openai"
 }
 """
-        return SteampipeCreds(envs=envs, plugin_name="francois2metz/gitguardian", connection_name="gitguardian",
-                              conf_path=conf_path, config=config)
+        return SteampipeCreds(envs=envs, plugin_name="openai", connection_name="openai",
+                              conf_path=conf_path, config=config_str)
 
     def generate_rest_api_creds(self) -> RestAPICreds:
         headers = {
-            "Authorization": f"Token {self.integration.token}"
+            "Authorization": f"Bearer {self.integration.api_key}"
         }
-        return RestAPICreds(api_url=self.integration.base_url, token=self.integration.token, headers=headers)
+        return RestAPICreds(api_key=self.integration.api_key, headers=headers)
 
     def generate_python_sdk_creds(self) -> SDKCreds:
         envs = {
-            "GITGUARDIAN_API_KEY": self.integration.token,
+            "OPENAI_API_KEY": self.integration.api_key,
         }
         return SDKCreds(envs=envs)
 

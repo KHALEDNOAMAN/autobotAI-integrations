@@ -83,7 +83,9 @@ class GithubService(BaseService):
             {
                 "clients": {
                     "github": github_client,
-                }
+                },
+                "params": self.prepare_params(payload_task.params),
+                "context": payload_task.context
             }
         ]
 
@@ -93,7 +95,9 @@ class GithubService(BaseService):
             "GITHUB_TOKEN": self.integration.token,
         }
         conf_path = "~/.steampipe/config/github.spc"
-
+        config = """connection "github" {
+  plugin = "github"
+}"""
         return SteampipeCreds(envs=envs, plugin_name="github", connection_name="github",
                               conf_path=conf_path)
 

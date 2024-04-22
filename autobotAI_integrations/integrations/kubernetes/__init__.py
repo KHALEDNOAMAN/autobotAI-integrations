@@ -22,7 +22,25 @@ class KubernetesService(BaseService):
 
     @staticmethod
     def get_forms():
-        pass
+        return  {
+            "label": "Kubernetes",
+            "type": "form",
+            "children": [
+                {
+                    "label": "Cluster Connection",
+                    "type": "form",
+                    "children": [
+                        {
+                            "name": "Agent Ids",
+                            "type": "select",
+                            "label": "Kubernetes Agent Ids",
+                            "placeholder": "",
+                        }
+                    ]
+                }
+            ]
+        }
+
 
     @staticmethod
     def get_schema():
@@ -31,13 +49,10 @@ class KubernetesService(BaseService):
     @classmethod
     def get_details(cls):
         return {
-            "automation_code": "",
-            "fetcher_code": "",
             "fetcher_supported": ["code"],
             "listener_supported": False,
             "automation_supported": ['mutation'],
             "clients": list_of_unique_elements(cls.get_all_python_sdk_clients()),
-            "compliance_supported": True
         }
 
     @staticmethod
@@ -66,13 +81,19 @@ class KubernetesService(BaseService):
             {
                 "clients": {
                     "kubernetes": kubernetes,
-                }
+                },
+                "params": self.prepare_params(payload_task.params),
+                "context": payload_task.context
             }
         ]
 
     def generate_steampipe_creds(self) -> SteampipeCreds:
         envs = self._temp_credentials()
         conf_path = "~/.steampipe/config/kubernetes.spc"
+        config = """connection "kubernetes" {
+  plugin         = "kubernetes"
+  config_path    = "~/.kube/config"
+}"""
         return SteampipeCreds(
             envs=envs, plugin_name="kubernetes", connection_name="kubernetes", conf_path=conf_path
         )
@@ -89,4 +110,3 @@ class KubernetesService(BaseService):
         return {
             "KUBECONFIG": "~/.kube/config"
         }
-

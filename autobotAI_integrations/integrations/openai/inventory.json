@@ -1,0 +1,50 @@
+{
+    "openai": [
+        {
+            "name": "openai_completion",
+            "all_columns": [
+                "completion",
+                "finish_reason",
+                "index",
+                "log_probs",
+                "prompt",
+                "settings"
+            ],
+            "included": [],
+            "excluded": [],
+            "aliases": [],
+            "inventory_supported": false
+        },
+        {
+            "name": "openai_file",
+            "all_columns": [
+                "bytes",
+                "created_at",
+                "file_name",
+                "id",
+                "object",
+                "owner",
+                "purpose"
+            ],
+            "included": [],
+            "excluded": [],
+            "aliases": [],
+            "inventory_supported": false
+        },
+        {
+            "name": "openai_model",
+            "all_columns": [
+                "created_at",
+                "id",
+                "object",
+                "owned_by",
+                "permission",
+                "root"
+            ],
+            "included": [],
+            "excluded": [],
+            "aliases": [],
+            "inventory_supported": false
+        }
+    ]
+}
