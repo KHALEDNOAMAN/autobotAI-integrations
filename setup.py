@@ -21,9 +21,9 @@ setup(
     classifiers=[
         'License :: Other/Proprietary License'
         'Operating System :: OS Independent',
-        'Programming Language :: Python :: 3.11'
+        'Programming Language :: Python :: 3.10'
     ],
-    python_requires='>=3.11',
+    python_requires='>=3.10',
     include_package_data=True
 
 )
