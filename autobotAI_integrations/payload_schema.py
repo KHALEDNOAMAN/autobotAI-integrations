@@ -48,7 +48,7 @@ class Param(BaseModel):
     params_type: str = Field(alias="type")
     name: str
     values: Optional[Any] = None
-    filter_relevant_resources: bool
+    filter_relevant_resources: bool = False
     
     def model_dump_json(self, *args, **kwargs) -> str:
         kwargs["by_alias"] = True
