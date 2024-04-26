@@ -29,7 +29,7 @@ class LinuxService(BaseService):
             integration = LinuxIntegration(**integration)
         super().__init__(ctx, integration)
 
-    def _test_integration(self, integration: dict) -> dict:
+    def _test_integration(self) -> dict:
         try:
             import platform
             linux_version = platform.linux_distribution()

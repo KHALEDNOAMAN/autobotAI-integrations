@@ -43,3 +43,10 @@ class IntegrationSchema(BaseModel):
     @classmethod
     def encryption_exclusions(self):
         return ["agent_ids"]
+    
+    def dump_all_data(self):
+        excluded =[key for key, val in  self.__class__.model_fields.items() if val.exclude]
+        raw_dict =  self.model_dump()
+        for key in excluded:
+            raw_dict[key] = getattr(self, key)
+        return raw_dict

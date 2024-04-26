@@ -1,0 +1,5 @@
+- name: pymsteams
+  import_library_names:
+    - pymsteams
+  pip_package_names:
+    - pymsteams

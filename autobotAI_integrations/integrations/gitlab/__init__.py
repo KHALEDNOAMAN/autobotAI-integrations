@@ -7,10 +7,11 @@ from pydantic import Field
 
 from autobotAI_integrations import BaseSchema, SteampipeCreds, RestAPICreds, SDKCreds, CLICreds, \
     BaseService, ConnectionInterfaces, PayloadTask, SDKClient
+from gitlab import Gitlab
 
 
 class GitlabIntegration(BaseSchema):
-    base_url: str
+    base_url: str = "https://gitlab.com/"
     token: str = Field(default=None, exclude=True)
 
     def __init__(self, **kwargs):
@@ -22,6 +23,18 @@ class GitlabService(BaseService):
 
     def __init__(self, ctx, integration: GitlabIntegration):
         super().__init__(ctx, integration)
+
+    def _test_integration(self):
+        try:
+            if self.integration.base_url:
+                gitlab = Gitlab(url=self.integration.base_url, private_token=self.integration.token)
+            else:
+                gitlab = Gitlab(private_token=self.integration.token)
+            gitlab.auth()
+            print(f"Gitlab Username: {gitlab.user.username}")
+            return {"success": True}
+        except Exception as e:
+            return {"success": False, "error": str(e)}
 
     @staticmethod
     def get_forms():
@@ -60,15 +73,6 @@ class GitlabService(BaseService):
     def supported_connection_interfaces():
         return [ConnectionInterfaces.REST_API, ConnectionInterfaces.CLI, ConnectionInterfaces.PYTHON_SDK,
                 ConnectionInterfaces.STEAMPIPE]
-
-    def _test_integration(self, integration: dict):
-        creds = self.generate_rest_api_creds()
-        try:
-            response = BaseService.generic_rest_api_call(creds, "get", "/api/v4/user")
-            print(response)
-            return {'success': True}
-        except BaseException as e:
-            return {'success': False}
 
     def build_python_exec_combinations_hook(self, payload_task: PayloadTask,
                                             client_definitions: List[SDKClient]) -> list:

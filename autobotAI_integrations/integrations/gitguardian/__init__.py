@@ -1,5 +1,6 @@
 import importlib
 import os
+from typing_extensions import Literal
 import uuid
 from typing import List
 
@@ -7,7 +8,7 @@ from pydantic import Field
 
 from autobotAI_integrations import BaseSchema, SteampipeCreds, RestAPICreds, SDKCreds, CLICreds, \
     BaseService, ConnectionInterfaces, PayloadTask, SDKClient
-
+from pygitguardian.client import GGClient
 
 class GitGuardianIntegration(BaseSchema):
     base_url: str = "https://api.gitguardian.com/v1/"
@@ -58,8 +59,15 @@ class GitGuardianService(BaseService):
             ConnectionInterfaces.STEAMPIPE
         ]
 
-    def _test_integration(self, integration: dict):
-        pass
+    def _test_integration(self):
+        try:
+            client = GGClient(api_key=self.integration.token)
+            if client.health_check().success:
+                return {"success": True}
+            else:
+                return {"success": False, "error": "Invalid API Key"}
+        except Exception as e:
+            return {"success": False, "error": str(e)}
 
     def build_python_exec_combinations_hook(self, payload_task: PayloadTask,
                                             client_definitions: List[SDKClient]) -> list:

@@ -7,7 +7,7 @@ from pydantic import Field
 
 from autobotAI_integrations import BaseSchema, SteampipeCreds, RestAPICreds, SDKCreds, CLICreds, \
     BaseService, ConnectionInterfaces, PayloadTask, SDKClient
-from github import Auth
+from github import Auth, Github
 
 
 class GithubIntegration(BaseSchema):
@@ -23,6 +23,18 @@ class GithubService(BaseService):
 
     def __init__(self, ctx, integration: GithubIntegration):
         super().__init__(ctx, integration)
+    
+    def _test_integration(self):
+        try:
+            if self.integration.base_url:
+                github = Github(self.integration.token, base_url=self.integration.base_url)
+            else:
+                github = Github(self.integration.token)
+            user = github.get_user()
+            print(f"Github Username: {user.login}")
+            return {"success": True}
+        except Exception as e:
+            return {"success": False, "error": str(e)}
 
     @staticmethod
     def get_forms():
@@ -66,9 +78,6 @@ class GithubService(BaseService):
             ConnectionInterfaces.PYTHON_SDK, 
             ConnectionInterfaces.STEAMPIPE
         ]
-
-    def _test_integration(self, integration: dict):
-        pass
 
     def build_python_exec_combinations_hook(self, payload_task: PayloadTask,
                                             client_definitions: List[SDKClient]) -> list:

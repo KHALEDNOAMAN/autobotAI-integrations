@@ -43,10 +43,19 @@ class AWSService(BaseService):
             integration = AWSIntegration(**integration)
         super().__init__(ctx, integration)
 
-    def _test_integration(self, integration: dict) -> dict:
+    def _test_integration(self) -> dict:
         try:
-            boto3_helper = Boto3Helper(self.ctx, integration=integration)
-            boto3_helper.get_client("ec2")
+            if self.integration.roleArn:
+                boto3_helper = Boto3Helper(self.ctx, integration=self.integration.dump_all_data())
+                boto3_helper.get_client("ec2")
+            else:
+                iam_client = boto3.client(
+                    "iam",
+                    aws_access_key_id=self.integration.access_key,
+                    aws_secret_access_key=self.integration.secret_key,
+                    aws_session_token=self.integration.session_token
+                )
+                response = iam_client.get_account_summary(max_items=10)
             return {'success': True}
         except ClientError as e:
             print(traceback.format_exc())

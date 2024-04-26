@@ -7,7 +7,7 @@ from pydantic import Field
 
 from autobotAI_integrations import BaseSchema, SteampipeCreds, RestAPICreds, SDKCreds, CLICreds, \
     BaseService, ConnectionInterfaces, PayloadTask, SDKClient
-
+from openai import OpenAI
 
 class OpenAIIntegration(BaseSchema):
     api_key: str = Field(default=None, exclude=True)
@@ -21,6 +21,23 @@ class OpenAIService(BaseService):
 
     def __init__(self, ctx, integration: OpenAIIntegration):
         super().__init__(ctx, integration)
+
+    def _test_integration(self):
+        try:
+            client = OpenAI(api_key=self.integration.api_key)
+            chat_completion = client.chat.completions.create(
+                messages=[
+                    {
+                        "role": "user",
+                        "content": "Say this is a test",
+                    }
+                ],
+                model="gpt-3.5-turbo",
+            )
+            print(chat_completion)
+            return {'success': True}
+        except BaseException as e:
+            return {'success': False, "error": str(e)}
 
     @staticmethod
     def get_forms():
@@ -56,15 +73,6 @@ class OpenAIService(BaseService):
             ConnectionInterfaces.PYTHON_SDK,
             ConnectionInterfaces.STEAMPIPE
         ]
-
-    def _test_integration(self, integration: dict):
-        creds = self.generate_rest_api_creds()
-        try:
-            response = BaseService.generic_rest_api_call(creds, "get", "/api/v4/user")
-            print(response)
-            return {'success': True}
-        except BaseException as e:
-            return {'success': False}
 
     def build_python_exec_combinations_hook(self, payload_task: PayloadTask,
                                             client_definitions: List[SDKClient]) -> list:

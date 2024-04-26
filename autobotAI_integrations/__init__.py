@@ -43,7 +43,7 @@ class BaseService:
         """
         raise NotImplementedError()
 
-    def _test_integration(self, integration: dict) -> dict:
+    def _test_integration(self) -> dict:
         """
         Returns a dictionary with the following keys:
         - success: bool
@@ -51,13 +51,13 @@ class BaseService:
         """
         raise NotImplementedError()
 
-    def is_active(self, integration):
-        result = self._test_integration(integration)
+    def is_active(self):
+        result = self._test_integration()
         if not result["success"]:
-            self.on_test_integration_failure(integration)
+            self.on_test_integration_failure()
         return result
 
-    def on_test_integration_failure(self, integration):
+    def on_test_integration_failure(self):
         pass
 
     @classmethod

@@ -11,6 +11,8 @@ from autobotAI_integrations.models import List
 from autobotAI_integrations import BaseSchema, SteampipeCreds, RestAPICreds, SDKCreds, CLICreds, \
     BaseService, ConnectionInterfaces, PayloadTask, SDKClient
 
+from google.cloud.resourcemanager import ProjectsClient, GetProjectRequest
+from google.oauth2.service_account import Credentials
 
 class GCPCredentials(BaseModel):
     model_config = ConfigDict(frozen=True)
@@ -52,8 +54,15 @@ class GCPService(BaseService):
             integration = GCPIntegration(**integration)
         super().__init__(ctx, integration)
 
-    def _test_integration(self, integration: dict) -> dict:
-        raise NotImplementedError()
+    def _test_integration(self) -> dict:
+        try:
+            gcp_creds = self.integration.credentials.model_dump()
+            credential = Credentials.from_service_account_info(gcp_creds)
+            client = ProjectsClient(credentials=credential)
+            client.common_project_path(project=gcp_creds['project_id'])
+            return {"success": True}
+        except Exception as e:
+            return {"success": False, "error":str(e)}
 
     @staticmethod
     def get_forms():

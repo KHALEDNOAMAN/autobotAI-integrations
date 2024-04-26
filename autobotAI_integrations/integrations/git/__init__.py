@@ -27,11 +27,12 @@ class GitService(BaseService):
             integration = GitIntegration(**integration)
         super().__init__(ctx, integration)
 
-    def _test_integration(self, integration: dict) -> dict:
-        try:
-            return {"success": True}
-        except:
-            return {"success": False}
+    def _test_integration(self) -> dict:
+        if not self._is_git_installed():
+            self._install_git_with_python()
+            if not self._is_git_installed():
+                return {"success": False, "error": str("git is not installed on machine")}
+        return {"success": True}
 
     @staticmethod
     def get_forms():

@@ -6,7 +6,7 @@ from pydantic import Field
 
 from autobotAI_integrations import BaseSchema, SteampipeCreds, RestAPICreds, SDKCreds, CLICreds, \
     BaseService, ConnectionInterfaces, PayloadTask, SDKClient
-
+from slack_sdk import WebClient
 
 class SlackIntegration(BaseSchema):
     workspace: Optional[str] = None
@@ -21,6 +21,14 @@ class SlackService(BaseService):
 
     def __init__(self, ctx, integration: SlackIntegration):
         super().__init__(ctx, integration)
+    
+    def _test_integration(self):
+        try:
+            client = WebClient(token=self.integration.bot_token)
+            client.usergroups_list()
+            return {"success": True}
+        except Exception as e:
+            return {"success": False, "error": str(e)}
 
     @staticmethod
     def get_forms():
@@ -62,9 +70,6 @@ class SlackService(BaseService):
             ConnectionInterfaces.PYTHON_SDK,
             ConnectionInterfaces.STEAMPIPE
         ]
-
-    def _test_integration(self, integration: dict):
-        pass
 
     def build_python_exec_combinations_hook(self, payload_task: PayloadTask,
                                             client_definitions: List[SDKClient]) -> list:

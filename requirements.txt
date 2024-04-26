@@ -39,3 +39,10 @@ PyGithub
 python-dotenv
 azure-identity
 kubernetes
+google-cloud-resource-manager
+pygitguardian
+azure-mgmt-resource
+python-gitlab
+openai
+slack-sdk
+pymsteams
