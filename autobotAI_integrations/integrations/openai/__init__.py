@@ -6,8 +6,9 @@ from typing import List
 from pydantic import Field
 
 from autobotAI_integrations import BaseSchema, SteampipeCreds, RestAPICreds, SDKCreds, CLICreds, \
-    BaseService, ConnectionInterfaces, PayloadTask, SDKClient
+    AIBaseService, ConnectionInterfaces, PayloadTask, SDKClient, list_of_unique_elements
 from openai import OpenAI
+
 
 class OpenAIIntegration(BaseSchema):
     api_key: str = Field(default=None, exclude=True)
@@ -17,9 +18,11 @@ class OpenAIIntegration(BaseSchema):
         super().__init__(**kwargs)
 
 
-class OpenAIService(BaseService):
+class OpenAIService(AIBaseService):
 
     def __init__(self, ctx, integration: OpenAIIntegration):
+        if isinstance(integration, dict):
+            integration = OpenAIIntegration(**integration)
         super().__init__(ctx, integration)
 
     def _test_integration(self):
@@ -38,6 +41,50 @@ class OpenAIService(BaseService):
             return {'success': True}
         except BaseException as e:
             return {'success': False, "error": str(e)}
+
+    @staticmethod
+    def ai_prompt_python_template():
+        return {
+            "param_definitions": [
+                {"name": "prompt",
+                 "type": "str",
+                 "description": "The prompt to use for the AI model",
+                 "required": True},
+                {"name": "model",
+                 "type": "str",
+                 "description": "The model to use for the AI model",
+                 "required": True},
+                {"name": "resources",
+                 "type": "list",
+                 "description": "The resources to use for the AI model",
+                 "required": True}
+            ],
+            "code": """import json
+def executor(context):
+    openai = context['clients']['openai']
+    prompt = context['params']['prompt']
+    model = context['params']['model']
+    resources = json.loads(json.dumps(context['params']['resources'], default=str))
+    prompts = [{
+        'role': 'user',
+        'content': f"For each Input dict provided, return a dict with attributes such as, 'name': str name of the resource, 'action_required': boolean that shows is the action advisable or not, 'probability_score': integer that shows the probability of the result being correct, 'confidence_score': integrer that shows the confidence in judgement, 'reason': string that mentions the reason for the judgement, 'fields_evaluated': list of fields that were evaluted for the judgement, the evaluation criterion given is {prompt}. The output should be valid parseable json, do not use any markup language at all, the returned message content should be json parsable. Wait till all data is provided before starting",
+    }]
+    for resource in resources:
+        prompts.append({
+            'role': 'user',
+            'content': json.dumps(resource, default=str),
+        })
+    prompts.append({
+        'role': 'user',
+        'content': "All resources are provided, return the result for each resource in the same order.",
+    })
+    chat_completion = openai.chat.completions.create(
+        messages=prompts,
+        model=model,
+    )
+    for idx, response in enumerate(json.loads(chat_completion.choices[0].message.content)):
+        resources[idx]["decision"] = response
+    return resources"""}
 
     @staticmethod
     def get_forms():

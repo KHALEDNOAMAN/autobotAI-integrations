@@ -48,7 +48,7 @@ class IntegrationServiceFactory:
         return cls(ctx, integration)
 
     @staticmethod
-    def _get_subclasses():
+    def _get_subclasses(serv: BaseService = BaseService):
         # get current working directory
         directory = os.path.dirname(os.path.abspath(__file__))
         # get folder names
@@ -69,10 +69,13 @@ class IntegrationServiceFactory:
         for filename in integrations_list:
             importlib.import_module(f"autobotAI_integrations.integrations.{filename}", package=None)
         result = []
-        for x in BaseService.__subclasses__():
+        for x in serv.__subclasses__():
             module_name = os.path.dirname(inspect.getfile(x)).split(sep)[-1]
-            subclass = x
-            result.append({"module_name": module_name, "subclass": subclass})
+            if module_name == 'autobotAI_integrations':
+                result.extend(IntegrationServiceFactory._get_subclasses(x))
+            else:
+                subclass = x
+                result.append({"module_name": module_name, "subclass": subclass})
         return result
 
 

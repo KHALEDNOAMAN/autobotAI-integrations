@@ -74,7 +74,7 @@ class BaseService:
     def get_steampipe_tables(cls) -> List[dict]:
         base_path = os.path.dirname(inspect.getfile(cls))
         integration_type = cls.get_integration_type()
-        with open(path.join(base_path,'inventory.json')) as f:
+        with open(path.join(base_path, 'inventory.json')) as f:
             clients_data = f.read()
             data = json.loads(clients_data)
         return data[integration_type]
@@ -163,7 +163,7 @@ class BaseService:
             client_details.append(SDKClient(**client_def))
         return client_details
 
-    def python_sdk_processor(self, payload_task: PayloadTask) -> (List[Dict[str, Any]], List[str]): # type: ignore
+    def python_sdk_processor(self, payload_task: PayloadTask) -> (List[Dict[str, Any]], List[str]):  # type: ignore
 
         if payload_task.creds and payload_task.creds.envs:
             for key, value in payload_task.creds.envs.items():
@@ -223,7 +223,6 @@ class BaseService:
         )
         return config_path
 
-
     def set_steampipe_spc_config(self, config_str):
         config_path = self._get_steampipe_config_path()
         with open(config_path, 'w') as f:
@@ -237,8 +236,7 @@ class BaseService:
         except FileNotFoundError:
             print("File Not Found on path {}".format(config_path))
 
-
-    def execute_steampipe_task(self, payload_task:PayloadTask):
+    def execute_steampipe_task(self, payload_task: PayloadTask):
         """
         Executes a Steampipe Task
         """
@@ -263,7 +261,7 @@ class BaseService:
 
         stdout = process.stdout.decode("utf-8")
         stderr = [{
-                "message": process.stderr.decode("utf-8")
+            "message": process.stderr.decode("utf-8")
         }]
 
         try:
@@ -279,3 +277,9 @@ class BaseService:
                 }
             }]
         return stdout, stderr
+
+
+class AIBaseService(BaseService):
+    @staticmethod
+    def ai_prompt_python_template():
+        raise NotImplementedError()
