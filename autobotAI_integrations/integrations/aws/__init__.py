@@ -1,6 +1,7 @@
 import traceback
 from typing import Type, Union
 
+import uuid
 import boto3
 import pydash
 from botocore.exceptions import ClientError
@@ -30,6 +31,7 @@ class AWSIntegration(BaseSchema):
     activeRegions: Optional[list] = None
 
     def __init__(self, **kwargs):
+        kwargs["accountId"] = str(uuid.uuid4().hex)
         super().__init__(**kwargs)
 
 
@@ -68,6 +70,19 @@ class AWSService(BaseService):
             "type": "form",
             "children": [
                 {
+                    "label": "IAM Role Integration",
+                    "type": "form",
+                    "children": [
+                        {
+                            "name": "roleArn",
+                            "type": "text",
+                            "label": "IAM Role ARN",
+                            "placeholder": "Enter IAM role ARN",
+                            "required": True
+                        }
+                    ]
+                },
+                {
                     "label": "AccessKey / SecretKey Integration",
                     "type": "form",
                     "children": [
@@ -83,19 +98,6 @@ class AWSService(BaseService):
                             "type": "text/password",
                             "label": "Secret Key",
                             "placeholder": "Enter your AWS secret key",
-                            "required": True
-                        }
-                    ]
-                },
-                {
-                    "label": "IAM Role Integration",
-                    "type": "form",
-                    "children": [
-                        {
-                            "name": "roleArn",
-                            "type": "text",
-                            "label": "IAM Role ARN",
-                            "placeholder": "Enter IAM role ARN",
                             "required": True
                         }
                     ]

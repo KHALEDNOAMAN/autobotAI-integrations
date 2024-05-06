@@ -36,7 +36,7 @@ class GitGuardianService(BaseService):
                     "children": [
                         {
                             "name": "token",
-                            "type": "password",
+                            "type": "text/password",
                             "label": "GitGuardian Token",
                             "placeholder": "Enter the GitGuardian token",
                             "required": True

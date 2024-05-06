@@ -48,7 +48,7 @@ class GithubService(BaseService):
                     "children": [
                         {
                             "name": "base_url",
-                            "type": "text",
+                            "type": "text/url",
                             "label": "Github Base URL",
                             "default_value": "https://<hostname/>/api/v3",
                             "description": "Github Base URL if Using Enterprise Version",
@@ -56,7 +56,7 @@ class GithubService(BaseService):
                         },
                         {
                             "name": "token",
-                            "type": "password",
+                            "type": "text/password",
                             "label": "Github Token",
                             "placeholder": "Enter the github token",
                             "required": True

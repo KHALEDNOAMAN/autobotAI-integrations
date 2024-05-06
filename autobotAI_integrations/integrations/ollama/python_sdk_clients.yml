@@ -1,0 +1,5 @@
+- name: ollama
+  import_library_names:
+    - ollama
+  pip_package_names:
+    - ollama

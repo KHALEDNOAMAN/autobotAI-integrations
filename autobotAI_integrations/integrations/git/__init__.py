@@ -37,7 +37,7 @@ class GitService(BaseService):
     @staticmethod
     def get_forms():
         return {
-            "label": "Linux Integration",
+            "label": "Git Integration",
             "type": "form",
             "children": [
             ]

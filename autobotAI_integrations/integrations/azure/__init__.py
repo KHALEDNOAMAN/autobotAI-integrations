@@ -78,9 +78,10 @@ class AzureService(BaseService):
                         },
                         {
                             "name": "client_secret",
-                            "type": "text",
+                            "type": "text/password",
                             "label": "Client Secret",
                             "placeholder": "Enter your Azure Application Client Seceret",
+                            "required": True
                         }
                     ]
                 }

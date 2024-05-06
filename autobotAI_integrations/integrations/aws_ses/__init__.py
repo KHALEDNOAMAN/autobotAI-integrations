@@ -38,20 +38,28 @@ class AwsSesService(BaseService):
             integration = AwsSesIntegration(**integration)
         super().__init__(ctx, integration)
 
-    def _test_integration(self, integration: dict) -> dict:
-        res = None
+    def _test_integration(self) -> dict:
         try:
-            boto3_helper = Boto3Helper(integration=integration)
-            boto3_helper.get_client("ses")
-            res = {'success': True}
+            if self.integration.roleArn:
+                boto3_helper = Boto3Helper(self.ctx, integration=self.integration.dump_all_data())
+                boto3_helper.get_client("ses")
+            else:
+                ses_client = boto3.client(
+                    "ses",
+                    aws_access_key_id=self.integration.access_key,
+                    aws_secret_access_key=self.integration.secret_key,
+                    aws_session_token=self.integration.session_token
+                )
+                response = ses_client.list_identities()
+            return {'success': True}
         except ClientError as e:
             print(traceback.format_exc())
-            if 'AccessDenied' in str(e):
-                res = {'success': False, 'error': repr(e)}
-        return res
+            return {'success': False, 'error': traceback.format_exc()}
+
 
     @staticmethod
     def get_forms():
+        # TODO: Add regions adn return themm in options variable containing two values value label
         return {
             "label": "AWS SES",
             "type": "form",

@@ -29,14 +29,7 @@ class KubernetesService(BaseService):
                 {
                     "label": "Cluster Connection",
                     "type": "form",
-                    "children": [
-                        {
-                            "name": "Agent Ids",
-                            "type": "select",
-                            "label": "Kubernetes Agent Ids",
-                            "placeholder": "",
-                        }
-                    ]
+                    "children": []
                 }
             ]
         }

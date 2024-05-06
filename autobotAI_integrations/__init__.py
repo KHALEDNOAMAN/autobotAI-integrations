@@ -15,7 +15,7 @@ from typing import Optional, Dict, Any, List, Callable
 import requests
 import yaml
 from pydantic import BaseModel
-from autobotAI_integrations.integration_schema import IntegrationSchema
+from autobotAI_integrations.integration_schema import IntegrationSchema, IntegrationStates
 from autobotAI_integrations.models import *
 from autobotAI_integrations.payload_schema import PayloadTask, Payload, Param
 from autobotAI_integrations.utils import list_of_unique_elements, load_mod_from_string, run_mod_func
@@ -53,7 +53,10 @@ class BaseService:
 
     def is_active(self):
         result = self._test_integration()
-        if not result["success"]:
+        if result["success"]:
+            self.integration.integrationState = IntegrationStates.ACTIVE
+        else:
+            self.integration.integrationState = IntegrationStates.INACTIVE
             self.on_test_integration_failure()
         return result
 
