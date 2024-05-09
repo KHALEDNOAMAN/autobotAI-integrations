@@ -24,7 +24,8 @@ setup(
         "azure-mgmt-resource",
         "python-gitlab",
         "openai",
-        "slack-sdk"
+        "slack-sdk",
+        "ollama"
     ],
     package_data={'': ['integrations/*/inventory.json', 'integrations/*/python_sdk_clients.yml']},
     classifiers=[

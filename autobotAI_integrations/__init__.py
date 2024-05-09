@@ -63,6 +63,9 @@ class BaseService:
     def on_test_integration_failure(self):
         pass
 
+    def get_integration_specific_details(self) -> dict:
+        raise NotImplementedError()
+
     @classmethod
     def get_integration_type(cls):
         system_os = platform.system()

@@ -6,10 +6,10 @@ from pydantic import Field
 from autobotAI_integrations import list_of_unique_elements, PayloadTask, Param, AIBaseService
 from autobotAI_integrations.models import *
 import importlib
+import ollama
 import requests
 
 from autobotAI_integrations.models import RestAPICreds
-
 
 class OllamaIntegration(BaseSchema):
     base_url: str = Field(default="http://127.0.0.1:11434", exclude=None)
@@ -36,6 +36,19 @@ class OllamaService(AIBaseService):
             return {"success": True}
         except Exception as e:
             return {"success": False, "error": str(e)}
+
+    def get_integration_specific_details(self) -> dict:
+        try:
+            client = ollama.Client(self.integration.base_url)
+            models = client.list()["models"]
+            return {
+                "integration_id": self.integration.accountId,
+                "models": models,
+            }
+        except Exception as e:
+            return {
+                "error": "Details can not be fetched"
+            }
 
     @staticmethod
     def get_forms():
@@ -129,7 +142,7 @@ def executor(context):
     def generate_python_sdk_creds(self, requested_clients=None) -> SDKCreds:
         creds = {}
         return SDKCreds(envs=creds)
-    
+
     def generate_rest_api_creds(self) -> RestAPICreds:
         pass
 
