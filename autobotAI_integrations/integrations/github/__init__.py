@@ -9,11 +9,17 @@ from autobotAI_integrations import BaseSchema, SteampipeCreds, RestAPICreds, SDK
     BaseService, ConnectionInterfaces, PayloadTask, SDKClient
 from github import Auth, Github
 
+from autobotAI_integrations.models import IntegrationCategory
+
 
 class GithubIntegration(BaseSchema):
     base_url: Optional[str] =  None# If enterprice version of gihub
     token: str = Field(default=None, exclude=True)
 
+    category: str = IntegrationCategory.CODE_REPOSITORY.value
+    description: str = (
+        "Popular version control platform for software development, known for its social coding features and large user base."
+    )
     def __init__(self, **kwargs):
         kwargs["accountId"] = str(uuid.uuid4().hex)
         super().__init__(**kwargs)
@@ -23,7 +29,7 @@ class GithubService(BaseService):
 
     def __init__(self, ctx, integration: GithubIntegration):
         super().__init__(ctx, integration)
-    
+
     def _test_integration(self):
         try:
             if self.integration.base_url:
@@ -50,20 +56,20 @@ class GithubService(BaseService):
                             "name": "base_url",
                             "type": "text/url",
                             "label": "Github Base URL",
-                            "default_value": "https://<hostname/>/api/v3",
+                            "placeholder": "Enter Base URL",
                             "description": "Github Base URL if Using Enterprise Version",
-                            "required": False
+                            "required": False,
                         },
                         {
                             "name": "token",
                             "type": "text/password",
                             "label": "Github Token",
                             "placeholder": "Enter the github token",
-                            "required": True
-                        }
-                    ]
+                            "required": True,
+                        },
+                    ],
                 }
-            ]
+            ],
         }
 
     @staticmethod
@@ -82,7 +88,7 @@ class GithubService(BaseService):
     def build_python_exec_combinations_hook(self, payload_task: PayloadTask,
                                             client_definitions: List[SDKClient]) -> list:
         github = importlib.import_module(client_definitions[0].import_library_names[0], package=None)
-        
+
         github_auth = Auth.Token(self.integration.token)
         if self.integration.base_url:
             github_client = github.Github(auth=github_auth, base_url=self.integration.base_url)

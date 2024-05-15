@@ -6,14 +6,19 @@ from pydantic import Field
 from autobotAI_integrations import list_of_unique_elements, PayloadTask, Param, AIBaseService
 from autobotAI_integrations.models import *
 import importlib
+import ollama
 import requests
 
 from autobotAI_integrations.models import RestAPICreds
 
-
 class OllamaIntegration(BaseSchema):
     base_url: str = Field(default="http://127.0.0.1:11434", exclude=None)
     timeout: Optional[str] = None
+
+    category: str = IntegrationCategory.AI.value
+    description: str = (
+        "A platform for running and integrating large language models, including compatibility with OpenAI's API."
+    )
 
     def __init__(self, **kwargs):
         kwargs["accountId"] = str(uuid.uuid4().hex)
@@ -37,6 +42,19 @@ class OllamaService(AIBaseService):
         except Exception as e:
             return {"success": False, "error": str(e)}
 
+    def get_integration_specific_details(self) -> dict:
+        try:
+            client = ollama.Client(self.integration.base_url)
+            models = client.list()["models"]
+            return {
+                "integration_id": self.integration.accountId,
+                "models": models,
+            }
+        except Exception as e:
+            return {
+                "error": "Details can not be fetched"
+            }
+
     @staticmethod
     def get_forms():
         return {
@@ -51,19 +69,20 @@ class OllamaService(AIBaseService):
                             "name": "base_url",
                             "type": "text/url",
                             "label": "Host Url",
+                            "placeholder": "Ollama Host Base Url",
                             "description": "Your Ollama Host Api Url",
-                            "required": True
+                            "required": True,
                         },
                         {
                             "name": "timeout",
                             "type": "number",
                             "label": "Request Timeout",
                             "placeholder": "Request timeout (Optional)",
-                            "required": False
-                        }
-                    ]
+                            "required": False,
+                        },
+                    ],
                 }
-            ]
+            ],
         }
 
     @staticmethod
@@ -129,7 +148,7 @@ def executor(context):
     def generate_python_sdk_creds(self, requested_clients=None) -> SDKCreds:
         creds = {}
         return SDKCreds(envs=creds)
-    
+
     def generate_rest_api_creds(self) -> RestAPICreds:
         pass
 

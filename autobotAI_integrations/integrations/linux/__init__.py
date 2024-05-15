@@ -14,7 +14,12 @@ from autobotAI_integrations.integration_schema import ConnectionTypes
 
 
 class LinuxIntegration(BaseSchema):
-    
+    connection_type: ConnectionTypes = ConnectionTypes.AGENT.value
+    category: str = IntegrationCategory.AGENT_BASED.value
+    description: str = (
+        "A free and open-source operating system widely used for servers, desktops, and embedded devices."
+    )
+
     def __init__(self, **kwargs):
         kwargs["accountId"] = str(uuid.uuid4().hex)
         super().__init__(**kwargs)

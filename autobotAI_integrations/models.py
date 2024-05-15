@@ -1,7 +1,8 @@
 from enum import Enum
 from typing import Optional, List, Any, Dict, ClassVar
 
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, Field
+import pathlib, os
 
 from autobotAI_integrations import IntegrationSchema
 
@@ -15,6 +16,18 @@ class ConnectionInterfaces(str, Enum):
     def __str__(self):
         return self.value
 
+class IntegrationCategory(Enum):
+    CLOUD_SERVICES_PROVIDERS = "cloud_services_providers"
+    CODE_REPOSITORY = "code_repository"
+    MONITORING_TOOLS = "monitoring_tools"
+    SECURITY_TOOLS = "security_tools"
+    AGENT_BASED = "agent_based"
+    NOTIFICATIONS_AND_COMMUNICATIONS = "notifications_and_communications"
+    AI = "ai"
+    OTHERS = "others"
+    
+    def __str__(self) -> str:
+        return self.value
 
 class BaseCreds(BaseModel):
     pass
@@ -68,4 +81,10 @@ class CLICreds(BaseCreds):
 class BaseSchema(IntegrationSchema):
     name: Optional[str] = None
     description: Optional[str] = None
-    logo: Optional[str] = None
+    logo: Optional[dict] = Field(
+        default={
+            "light-theme": "light.svg",
+            "dark-theme": "dark.svg",
+        }
+    )
+    category: Optional[IntegrationCategory] = None

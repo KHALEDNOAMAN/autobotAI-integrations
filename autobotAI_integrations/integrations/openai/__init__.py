@@ -9,9 +9,16 @@ from autobotAI_integrations import BaseSchema, SteampipeCreds, RestAPICreds, SDK
     AIBaseService, ConnectionInterfaces, PayloadTask, SDKClient, list_of_unique_elements
 from openai import OpenAI
 
+from autobotAI_integrations.models import IntegrationCategory
+
 
 class OpenAIIntegration(BaseSchema):
     api_key: str = Field(default=None, exclude=True)
+
+    category: str = IntegrationCategory.AI.value
+    description: str = (
+        "A research company developing and providing access to powerful large language models."
+    )
 
     def __init__(self, **kwargs):
         kwargs["accountId"] = str(uuid.uuid4().hex)

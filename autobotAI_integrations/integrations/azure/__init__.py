@@ -16,7 +16,12 @@ class AzureIntegration(BaseSchema):
     client_id: Optional[str] = Field(default=None, exclude=True)
     subscription_id: Optional[str] = Field(default=None, exclude=True)
     client_secret: Optional[str] = Field(default=None, exclude=True)
-    
+
+    category: str = IntegrationCategory.CLOUD_SERVICES_PROVIDERS.value
+    description: str = (
+        "Azure is a cloud computing platform developed by Microsoft that provides a wide range of services for building, deploying, and managing applications on a global scale."
+    )
+
     def __init__(self, **kwargs):
         kwargs["accountId"] = kwargs["subscription_id"]
         super().__init__(**kwargs)
@@ -80,7 +85,7 @@ class AzureService(BaseService):
                             "name": "client_secret",
                             "type": "text/password",
                             "label": "Client Secret",
-                            "placeholder": "Enter your Azure Application Client Seceret",
+                            "placeholder": "Enter your Azure Application Client Secret",
                             "required": True
                         }
                     ]

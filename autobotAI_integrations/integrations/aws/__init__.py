@@ -6,6 +6,7 @@ import boto3
 import pydash
 from botocore.exceptions import ClientError
 from pydantic import Field
+import os
 
 from autobotAI_integrations import BaseService, list_of_unique_elements, PayloadTask, Param
 from autobotAI_integrations.models import *
@@ -30,6 +31,10 @@ class AWSIntegration(BaseSchema):
     externalId: Optional[str] = None
     activeRegions: Optional[list] = None
 
+    category: str = IntegrationCategory.CLOUD_SERVICES_PROVIDERS.value 
+    description: str = (
+        """The world's most comprehensive and mature cloud computing platform, offering a vast range of on-demand compute, storage, database, networking, analytics, and machine learning services."""
+    )
     def __init__(self, **kwargs):
         kwargs["accountId"] = str(uuid.uuid4().hex)
         super().__init__(**kwargs)

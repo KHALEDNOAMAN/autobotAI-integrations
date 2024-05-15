@@ -6,9 +6,16 @@ from autobotAI_integrations.integration_schema import ConnectionTypes
 import importlib
 from kubernetes import config
 
+from autobotAI_integrations.models import IntegrationCategory
+
 class KubernetesIntegration(BaseSchema):
     agent_ids: list = []
     connection_type: ConnectionTypes = ConnectionTypes.AGENT.value
+
+    category: str = IntegrationCategory.AGENT_BASED.value
+    description: str = (
+        "An orchestration system for managing containerized applications. It automates deployment, scaling, and management of containerized workloads."
+    )
 
     def __init__(self, **kwargs):
         kwargs["accountId"] = str(uuid.uuid4().hex)
