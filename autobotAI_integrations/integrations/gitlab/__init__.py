@@ -9,10 +9,17 @@ from autobotAI_integrations import BaseSchema, SteampipeCreds, RestAPICreds, SDK
     BaseService, ConnectionInterfaces, PayloadTask, SDKClient
 from gitlab import Gitlab
 
+from autobotAI_integrations.models import IntegrationCategory
+
 
 class GitlabIntegration(BaseSchema):
     base_url: str = "https://gitlab.com/"
     token: str = Field(default=None, exclude=True)
+
+    category: str = IntegrationCategory.CODE_REPOSITORY.value
+    description: str = (
+        " Version control platform similar to GitHub, offering additional features like project management and CI/CD pipelines."
+    )
 
     def __init__(self, **kwargs):
         kwargs["accountId"] = str(uuid.uuid4().hex)
@@ -50,19 +57,20 @@ class GitlabService(BaseService):
                             "name": "base_url",
                             "type": "text/url",
                             "label": "Gitlab Base URL",
+                            "placeholder": "Enter the gitlab base url if using enterprise version",
                             "default_value": "https://gitlab.com/",
-                            "required": True
+                            "required": False,
                         },
                         {
                             "name": "token",
                             "type": "text/password",
                             "label": "Gitlab Token",
                             "placeholder": "Enter the Gitlab Token",
-                            "required": True
-                        }
-                    ]
+                            "required": True,
+                        },
+                    ],
                 }
-            ]
+            ],
         }
 
     @staticmethod

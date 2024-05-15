@@ -15,6 +15,11 @@ class OllamaIntegration(BaseSchema):
     base_url: str = Field(default="http://127.0.0.1:11434", exclude=None)
     timeout: Optional[str] = None
 
+    category: str = IntegrationCategory.AI.value
+    description: str = (
+        "A platform for running and integrating large language models, including compatibility with OpenAI's API."
+    )
+
     def __init__(self, **kwargs):
         kwargs["accountId"] = str(uuid.uuid4().hex)
         super().__init__(**kwargs)
@@ -64,19 +69,20 @@ class OllamaService(AIBaseService):
                             "name": "base_url",
                             "type": "text/url",
                             "label": "Host Url",
+                            "placeholder": "Ollama Host Base Url",
                             "description": "Your Ollama Host Api Url",
-                            "required": True
+                            "required": True,
                         },
                         {
                             "name": "timeout",
                             "type": "number",
                             "label": "Request Timeout",
                             "placeholder": "Request timeout (Optional)",
-                            "required": False
-                        }
-                    ]
+                            "required": False,
+                        },
+                    ],
                 }
-            ]
+            ],
         }
 
     @staticmethod

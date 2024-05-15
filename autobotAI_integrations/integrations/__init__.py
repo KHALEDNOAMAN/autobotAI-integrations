@@ -6,6 +6,7 @@ import os
 from pydantic import BaseModel
 
 from autobotAI_integrations import BaseService
+from autobotAI_integrations.integration_schema import IntegrationSchema
 
 
 class IntegrationServiceFactory:
@@ -26,10 +27,16 @@ class IntegrationServiceFactory:
     def get_service_details(self):
         details_list = []
         for integration_type in list(self._services.keys()):
-            int_s = integration_service_factory.get_service_cls(
+            srvic_cls = integration_service_factory.get_service_cls(
                 integration_type)
-            temp = int_s.get_details()
+            integration_schema = srvic_cls.get_schema()
+            temp = srvic_cls.get_details()
+
             temp["name"] = integration_type
+            temp["logo"] = integration_schema.model_fields.get("logo").default
+            temp["description"] = integration_schema.model_fields.get("description").default
+            temp["category"] = integration_schema.model_fields.get("category").default
+
             details_list.append(temp)
         return details_list
 
