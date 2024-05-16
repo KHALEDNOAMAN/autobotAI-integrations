@@ -49,6 +49,21 @@ class OpenAIService(AIBaseService):
         except BaseException as e:
             return {'success': False, "error": str(e)}
 
+    def get_integration_specific_details(self) -> dict:
+        try:
+            client = OpenAI(api_key=self.integration.api_key)
+            models = client.models.list().data
+            model_names = []
+            for model in models:
+                model_names.append(model.id)
+            return {
+                "integration_id": self.integration.accountId,
+                "models": model_names,
+            }
+        except Exception as e:
+            return {
+                "error": "Details can not be fetched"
+            }
     @staticmethod
     def ai_prompt_python_template():
         return {
