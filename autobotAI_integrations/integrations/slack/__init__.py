@@ -14,8 +14,8 @@ class SlackIntegration(BaseSchema):
     workspace: Optional[str] = None
     bot_token: str = Field(default=None, exclude=True)
 
-    category: str = IntegrationCategory.NOTIFICATIONS_AND_COMMUNICATIONS.value
-    description: str = (
+    category: Optional[str] = IntegrationCategory.NOTIFICATIONS_AND_COMMUNICATIONS.value
+    description: Optional[str] = (
         "A popular collaboration platform for teams, known for its ease of use, integrations with various services, and focus on real-time communication."
     )
 

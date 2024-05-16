@@ -41,8 +41,8 @@ class GCPIntegration(BaseSchema):
         default=None, exclude=True
     )
 
-    category: str = IntegrationCategory.CLOUD_SERVICES_PROVIDERS.value
-    description: str = (
+    category: Optional[str] = IntegrationCategory.CLOUD_SERVICES_PROVIDERS.value
+    description: Optional[str] = (
         "GCP is Google Cloud Platform, a suite of cloud computing services offered by Google."
     )
 
@@ -121,10 +121,11 @@ class GCPService(BaseService):
     @classmethod
     def get_details(cls):
         return {
-            "automation_supported": ["communication", "mutation"],
             "clients": list_of_unique_elements(cls.get_all_python_sdk_clients()),
             "supported_executor": "ecs",
-            "compliance_supported": False,
+            "compliance_supported": True,
+            "supported_interfaces": cls.supported_connection_interfaces(),
+            "python_code_sample": "print('hello world')",
         }
 
     def generate_steampipe_creds(self) -> SteampipeCreds:

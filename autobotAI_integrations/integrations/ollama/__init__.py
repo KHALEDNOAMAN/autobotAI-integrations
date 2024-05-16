@@ -15,8 +15,8 @@ class OllamaIntegration(BaseSchema):
     base_url: str = Field(default="http://127.0.0.1:11434", exclude=None)
     timeout: Optional[str] = None
 
-    category: str = IntegrationCategory.AI.value
-    description: str = (
+    category: Optional[str] = IntegrationCategory.AI.value
+    description: Optional[str] = (
         "A platform for running and integrating large language models, including compatibility with OpenAI's API."
     )
 

@@ -16,8 +16,8 @@ class GithubIntegration(BaseSchema):
     base_url: Optional[str] =  None# If enterprice version of gihub
     token: str = Field(default=None, exclude=True)
 
-    category: str = IntegrationCategory.CODE_REPOSITORY.value
-    description: str = (
+    category: Optional[str] = IntegrationCategory.CODE_REPOSITORY.value
+    description: Optional[str] = (
         "Popular version control platform for software development, known for its social coding features and large user base."
     )
     def __init__(self, **kwargs):
@@ -37,7 +37,6 @@ class GithubService(BaseService):
             else:
                 github = Github(self.integration.token)
             user = github.get_user()
-            print(f"Github Username: {user.login}")
             return {"success": True}
         except Exception as e:
             return {"success": False, "error": str(e)}

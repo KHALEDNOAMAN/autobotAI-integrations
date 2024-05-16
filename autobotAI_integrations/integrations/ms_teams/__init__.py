@@ -12,8 +12,8 @@ class MsTeamsIntegration(BaseSchema):
     webhook: str
     accountId: Optional[str] = None
 
-    category: str = IntegrationCategory.NOTIFICATIONS_AND_COMMUNICATIONS.value
-    description: str = (
+    category: Optional[str] = IntegrationCategory.NOTIFICATIONS_AND_COMMUNICATIONS.value
+    description: Optional[str] = (
         "A collaboration platform from Microsoft, enabling communication, file sharing, and video conferencing within teams."
     )
 
@@ -70,7 +70,6 @@ class MsTeamsService(BaseService):
             ]
         }
 
-
     @staticmethod
     def get_schema() -> Type[BaseSchema]:
         return MsTeamsIntegration
@@ -78,9 +77,6 @@ class MsTeamsService(BaseService):
     @classmethod
     def get_details(cls):
         return {
-            "fetcher_supported": [],
-            "listener_supported": False,
-            "automation_supported": ['communication'],
             "clients": list_of_unique_elements(cls.get_all_python_sdk_clients()),
             "supported_executor": "lambda",
             "approval_automation_details": {
@@ -95,35 +91,36 @@ class MsTeamsService(BaseService):
                         "type": "string",
                         "name": "automation_title",
                         "values": "sample automation",
-                        "description": "Title of the Automation being executed"
+                        "description": "Title of the Automation being executed",
                     },
                     {
                         "type": "string",
                         "name": "admin_email",
                         "values": "admin@email.com",
-                        "description": "Administrator's email"
+                        "description": "Administrator's email",
                     },
                     {
                         "type": "list",
                         "name": "links",
                         "values": [{"name": "button1", "link": "some.link"}],
-                        "description": "Links to show in the approval"
+                        "description": "Links to show in the approval",
                     },
                     {
                         "type": "list",
                         "name": "approvers",
                         "values": ["email1@yopmail.com"],
-                        "description": "List of approver emails"
+                        "description": "List of approver emails",
                     },
                     {
                         "type": "json",
                         "name": "bot",
                         "values": {},
-                        "description": "Bot details"
-                    }
+                        "description": "Bot details",
+                    },
                 ],
-                "code": ""
-            }
+            },
+            "supported_interfaces": cls.supported_connection_interfaces(),
+            "python_code_sample": "print('hello world')",
         }
 
     def build_python_exec_combinations_hook(self, payload_task: PayloadTask, client_definitions: List[SDKClient]) -> list:

@@ -1,5 +1,5 @@
 import uuid
-from typing import List
+from typing import List, Optional
 from autobotAI_integrations import BaseSchema, SteampipeCreds, RestAPICreds, SDKCreds, CLICreds, \
     BaseService, ConnectionInterfaces, PayloadTask, SDKClient, list_of_unique_elements
 from autobotAI_integrations.integration_schema import ConnectionTypes
@@ -12,8 +12,8 @@ class KubernetesIntegration(BaseSchema):
     agent_ids: list = []
     connection_type: ConnectionTypes = ConnectionTypes.AGENT.value
 
-    category: str = IntegrationCategory.AGENT_BASED.value
-    description: str = (
+    category: Optional[str] = IntegrationCategory.AGENT_BASED.value
+    description: Optional[str] = (
         "An orchestration system for managing containerized applications. It automates deployment, scaling, and management of containerized workloads."
     )
 
@@ -41,18 +41,18 @@ class KubernetesService(BaseService):
             ]
         }
 
-
     @staticmethod
     def get_schema():
         return KubernetesIntegration
-    
+
     @classmethod
     def get_details(cls):
         return {
-            "fetcher_supported": ["code"],
-            "listener_supported": False,
-            "automation_supported": ['mutation'],
             "clients": list_of_unique_elements(cls.get_all_python_sdk_clients()),
+            "supported_executor": "ecs",
+            "compliance_supported": True,
+            "supported_interfaces": cls.supported_connection_interfaces(),
+            "python_code_sample": "print('hello world')",
         }
 
     @staticmethod
@@ -105,7 +105,7 @@ class KubernetesService(BaseService):
     def generate_cli_creds(self) -> CLICreds:
         envs = self._temp_credentials()
         return CLICreds(envs=envs)
-    
+
     def _temp_credentials(self):
         return {
             "KUBECONFIG": "~/.kube/config"

@@ -11,8 +11,8 @@ from autobotAI_integrations import BaseSchema, SDKCreds, CLICreds, \
 
 
 class GitIntegration(BaseSchema):
-    category: str = IntegrationCategory.CODE_REPOSITORY.value
-    description: str = (
+    category: Optional[str] = IntegrationCategory.CODE_REPOSITORY.value
+    description: Optional[str] = (
         "Git is a free and open-source distributed version control system (DVCS) for tracking changes in computer code and other projects."
     )
 
@@ -54,11 +54,13 @@ class GitService(BaseService):
     @classmethod
     def get_details(cls):
         return {
-            "automation_supported": ["communication", "mutation"],
             "clients": list_of_unique_elements(cls.get_all_python_sdk_clients()),
             "supported_executor": "ecs",
+            "compliance_supported": False,
+            "supported_interfaces": cls.supported_connection_interfaces(),
+            "python_code_sample": "print('hello world')",
         }
-        
+
     def _is_git_installed(self):
         """Checks if Git is installed on the system."""
         try:

@@ -1,7 +1,7 @@
 import importlib
 import os
 import uuid
-from typing import List
+from typing import List, Optional
 
 from pydantic import Field
 
@@ -16,8 +16,8 @@ class GitlabIntegration(BaseSchema):
     base_url: str = "https://gitlab.com/"
     token: str = Field(default=None, exclude=True)
 
-    category: str = IntegrationCategory.CODE_REPOSITORY.value
-    description: str = (
+    category: Optional[str] = IntegrationCategory.CODE_REPOSITORY.value
+    description: Optional[str] = (
         " Version control platform similar to GitHub, offering additional features like project management and CI/CD pipelines."
     )
 

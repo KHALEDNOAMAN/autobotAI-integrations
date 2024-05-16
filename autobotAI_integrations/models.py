@@ -23,7 +23,7 @@ class IntegrationCategory(Enum):
     SECURITY_TOOLS = "security_tools"
     AGENT_BASED = "agent_based"
     NOTIFICATIONS_AND_COMMUNICATIONS = "notifications_and_communications"
-    AI = "ai"
+    AI = "ai_services"
     OTHERS = "others"
     
     def __str__(self) -> str:

@@ -1,7 +1,7 @@
 import importlib
 import os
 import uuid
-from typing import List
+from typing import List, Optional
 
 from pydantic import Field
 
@@ -15,8 +15,8 @@ from autobotAI_integrations.models import IntegrationCategory
 class OpenAIIntegration(BaseSchema):
     api_key: str = Field(default=None, exclude=True)
 
-    category: str = IntegrationCategory.AI.value
-    description: str = (
+    category: Optional[str] = IntegrationCategory.AI.value
+    description: Optional[str] = (
         "A research company developing and providing access to powerful large language models."
     )
 

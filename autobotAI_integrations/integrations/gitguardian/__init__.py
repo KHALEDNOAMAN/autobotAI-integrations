@@ -2,7 +2,7 @@ import importlib
 import os
 from typing_extensions import Literal
 import uuid
-from typing import List
+from typing import List, Optional
 
 from pydantic import Field
 
@@ -15,8 +15,8 @@ class GitGuardianIntegration(BaseSchema):
     base_url: str = "https://api.gitguardian.com/v1/"
     token: str = Field(default=None, exclude=True)
 
-    category: str = IntegrationCategory.SECURITY_TOOLS.value
-    description: str = (
+    category: Optional[str] = IntegrationCategory.SECURITY_TOOLS.value
+    description: Optional[str] = (
         "GitGuardian is a security platform specifically designed to protect code repositories. "
     )
 

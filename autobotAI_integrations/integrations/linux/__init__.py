@@ -15,8 +15,8 @@ from autobotAI_integrations.integration_schema import ConnectionTypes
 
 class LinuxIntegration(BaseSchema):
     connection_type: ConnectionTypes = ConnectionTypes.AGENT.value
-    category: str = IntegrationCategory.AGENT_BASED.value
-    description: str = (
+    category: Optional[str] = IntegrationCategory.AGENT_BASED.value
+    description: Optional[str] = (
         "A free and open-source operating system widely used for servers, desktops, and embedded devices."
     )
 
@@ -61,9 +61,11 @@ class LinuxService(BaseService):
     @classmethod
     def get_details(cls):
         return {
-            "automation_supported": ["communication", "mutation"],
             "clients": list_of_unique_elements(cls.get_all_python_sdk_clients()),
             "supported_executor": "ecs",
+            "compliance_supported": False,
+            "supported_interfaces": cls.supported_connection_interfaces(),
+            "python_code_sample": "print('hello world')",
         }
 
     def generate_steampipe_creds(self) -> SteampipeCreds:
