@@ -77,6 +77,34 @@ class BaseService:
         return integration_type
 
     @classmethod
+    def load_compliance_data(cls):
+        base_path = os.path.dirname(inspect.getfile(cls))
+        try:
+            clients_data = open(path.join(base_path, "compliance.json"))
+            data = json.loads(clients_data.read())
+            integration_type = cls.get_integration_type()
+            return data[integration_type]["benchmarks"]
+        except FileNotFoundError:
+            return []
+
+    @classmethod
+    def get_compliance_meta(cls, compliance_data):
+        benchmarks = cls.load_compliance_data()
+        compliance_details = []
+        for compliance in benchmarks:
+            if compliance["name"] in compliance_data:
+                compliance_details.append(compliance)
+        return compliance_details
+
+    @classmethod
+    def get_compliance_meta_names(cls):
+        benchmarks = cls.load_compliance_data()
+        compliance_names = []
+        for compliance in benchmarks:
+            compliance_names.append(compliance['name'])
+        return compliance_names
+
+    @classmethod
     def get_steampipe_tables(cls) -> List[dict]:
         base_path = os.path.dirname(inspect.getfile(cls))
         integration_type = cls.get_integration_type()

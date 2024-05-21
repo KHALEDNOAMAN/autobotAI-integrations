@@ -1,0 +1,26 @@
+{
+    "gcp": {
+        "benchmarks": [
+            {
+                "name": "cft_scorecard_v1",
+                "description": "The CFT Scorecard can be used to print a scorecard of your GCP environment, for resources and IAM policies in Cloud Asset Inventory (CAI) exports."
+            },
+            {
+                "name": "cis_v120",
+                "description": "The CIS Google Cloud Platform Foundations Security Benchmark covers foundational elements of Google Cloud Platform."
+            },
+            {
+                "name": "cis_v130",
+                "description": "The CIS Google Cloud Platform Foundations Security Benchmark covers foundational elements of Google Cloud Platform."
+            },
+            {
+                "name": "cis_v200",
+                "description": "The CIS Google Cloud Platform Foundations Security Benchmark covers foundational elements of Google Cloud Platform."
+            },
+            {
+                "name": "forseti_security_v226",
+                "description": "Forseti Security v2.26.0"
+            }
+        ]
+    }
+}

@@ -31,16 +31,16 @@ class MsTeamsService(BaseService):
             integration = MsTeamsIntegration(**integration)
         super().__init__(ctx, integration)
 
-    def _test_integration(self, integration: dict) -> dict:
+    def _test_integration(self) -> dict:
         res = None
         pattern = re.compile(
             "https:\\/\\/[\\w\\-\\.]+\\/webhookb2\\/[\\w\\d\\-\\@]+\\/IncomingWebhook\\/[\\w\\d\\-\\@]+\\/[\\w\\d\\-\\@]+")
-        result = pattern.match(integration["webhook"])
+        result = pattern.match(self.integration.webhook)
         if result is None:
             res = {'success': False, "error": "Webhook is not valid ms_teams webhook URL"}
         try:
             if not res:
-                client = pymsteams.connectorcard(integration["webhook"])
+                client = pymsteams.connectorcard(self.integration.webhook)
                 client.title("Teams Integration Test Title")
                 client.text("Teams Integration Test Body")
                 client.send()

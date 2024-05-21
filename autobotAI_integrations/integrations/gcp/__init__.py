@@ -12,7 +12,7 @@ from autobotAI_integrations.models import List
 from autobotAI_integrations import BaseSchema, SteampipeCreds, RestAPICreds, SDKCreds, CLICreds, \
     BaseService, ConnectionInterfaces, PayloadTask, SDKClient
 
-from google.cloud.resourcemanager import ProjectsClient, GetProjectRequest
+from google.cloud.storage import Client as StorageClient
 from google.oauth2.service_account import Credentials
 
 class GCPCredentials(BaseModel):
@@ -84,10 +84,12 @@ class GCPService(BaseService):
     def _test_integration(self) -> dict:
         try:
             gcp_creds = self.integration.credentials.model_dump()
-            credential = Credentials.from_service_account_info(gcp_creds)
-            client = ProjectsClient(credentials=credential)
-            res = client.common_project_path(project=gcp_creds['project_id'])
-            print(res)
+            credentials = Credentials.from_service_account_info(gcp_creds)
+            client = StorageClient(credentials=credentials)
+            buckets = client.list_buckets()
+            print("Buckets: ")
+            for bucket in buckets:
+                print(bucket.name)
             return {"success": True}
         except Exception as e:
             return {"success": False, "error":str(e)}
@@ -144,7 +146,7 @@ class GCPService(BaseService):
     def build_python_exec_combinations_hook(
             self, payload_task: PayloadTask, client_definitions: List[SDKClient]
     ) -> list:
-        
+
         clients_classes = dict()
         for client in client_definitions:
             try:
@@ -155,7 +157,7 @@ class GCPService(BaseService):
             except BaseException as e:
                 print(e)
                 continue
-        
+
         return [
             {
                 "clients": clients_classes,

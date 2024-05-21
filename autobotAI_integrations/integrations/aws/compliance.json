@@ -1,0 +1,102 @@
+{
+    "aws": {
+        "benchmarks": [
+            {
+                "name": "audit_manager_control_tower",
+                "description": "AWS Audit Manager Control Tower Guardrails"
+            },
+            {
+                "name": "cis_controls_v8_ig1",
+                "description": "CIS Controls v8 IG1"
+            },
+            {
+                "name": "cis_v120",
+                "description": "CIS v1.2.0"
+            },
+            {
+                "name": "cis_v130",
+                "description": "CIS v1.3.0"
+            },
+            {
+                "name": "cis_v140",
+                "description": "CIS v1.4.0"
+            },
+            {
+                "name": "cis_v150",
+                "description": "CIS v1.5.0"
+            },
+            {
+                "name": "cisa_cyber_essentials",
+                "description": "CISA Cyber Essentials"
+            },
+            {
+                "name": "fedramp_low_rev_4",
+                "description": "FedRAMP Low Revision 4"
+            },
+            {
+                "name": "fedramp_moderate_rev_4",
+                "description": "FedRAMP Moderate Revision 4"
+            },
+            {
+                "name": "ffiec",
+                "description": "Federal Financial Institutions Examination Council (FFIEC)"
+            },
+            {
+                "name": "foundational_security",
+                "description": "AWS Foundational Security Best Practices"
+            },
+            {
+                "name": "gdpr",
+                "description": "General Data Protection Regulation (GDPR)"
+            },
+            {
+                "name": "gxp_21_cfr_part_11",
+                "description": "GxP 21 CFR Part 11"
+            },
+            {
+                "name": "gxp_eu_annex_11",
+                "description": "GxP EU Annex 11"
+            },
+            {
+                "name": "hipaa_final_omnibus_security_rule_2013",
+                "description": "HIPAA Final Omnibus Security Rule 2013"
+            },
+            {
+                "name": "hipaa_security_rule_2003",
+                "description": "HIPAA Security Rule 2003"
+            },
+            {
+                "name": "nist_800_171_rev_2",
+                "description": "NIST 800-171 Revision 2"
+            },
+            {
+                "name": "nist_800_53_rev_4",
+                "description": "NIST 800-53 Revision 4"
+            },
+            {
+                "name": "nist_800_53_rev_5",
+                "description": "NIST 800-53 Revision 5"
+            },
+            {
+                "name": "nist_csf",
+                "description": "NIST Cybersecurity Framework (CSF) v1.1"
+            },
+            {
+                "name": "pci_dss_v321",
+                "description": "PCI DSS v3.2.1"
+            },
+            {
+                "name": "rbi_cyber_security",
+                "description": "RBI Cyber Security Framework"
+            },
+            {
+                "name": "soc_2",
+                "description": "System and Organization Controls (SOC) 2 is an auditing procedure that ensures a company's data is securely managed."
+            },
+            {
+                "name": "other",
+                "description": "Other Compliance Checks"
+            }
+        ]
+    }
+}

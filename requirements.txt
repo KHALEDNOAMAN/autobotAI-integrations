@@ -39,7 +39,7 @@ PyGithub
 python-dotenv
 azure-identity
 kubernetes
-google-cloud-resource-manager
+google-cloud-storage
 pygitguardian
 azure-mgmt-resource
 python-gitlab

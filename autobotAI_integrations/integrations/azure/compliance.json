@@ -1,0 +1,34 @@
+{
+    "azure": {
+        "benchmarks": [
+            {
+                "name": "cis_v130",
+                "description": "The CIS Microsoft Azure Foundations Security Benchmark provides prescriptive guidance for establishing a secure baseline configuration for Microsoft Azure."
+            },
+            {
+                "name": "cis_v140",
+                "description": "The CIS Microsoft Azure Foundations Security Benchmark provides prescriptive guidance for establishing a secure baseline configuration for Microsoft Azure."
+            },
+            {
+                "name": "cis_v150",
+                "description": "The CIS Microsoft Azure Foundations Security Benchmark provides prescriptive guidance for establishing a secure baseline configuration for Microsoft Azure."
+            },
+            {
+                "name": "cis_v200",
+                "description": "The CIS Microsoft Azure Foundations Security Benchmark provides prescriptive guidance for establishing a secure baseline configuration for Microsoft Azure."
+            },
+            {
+                "name": "hipaa_hitrust_v92",
+                "description": "The HIPAA HITRUST 9.2 provides a combined set of predefined compliance and security best-practice checks for Health Insurance Portability and Accountability Act."
+            },
+            {
+                "name": "nist_sp_800_53_rev_5",
+                "description": "NIST SP 800-53 Revision 5"
+            },
+            {
+                "name": "pci_dss_v321",
+                "description": "PCI DSS 3.2.1"
+            }
+        ]
+    }
+}
