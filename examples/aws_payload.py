@@ -3,6 +3,7 @@ from autobotAI_integrations.integrations import integration_service_factory
 from autobotAI_integrations import ConnectionInterfaces
 from autobotAI_integrations.integrations.aws import AWSIntegration
 from autobotAI_integrations.payload_schema import (
+    Param,
     Payload,
     PayloadTask,
     PayloadTaskContext,
@@ -85,7 +86,7 @@ def generate_aws_steampipe_payload(aws_json=aws_json) -> Payload:
         "task_id": uuid.uuid4().hex,
         "creds": creds,
         "connection_interface": ConnectionInterfaces.STEAMPIPE,
-        "executable": "select * from aws_s3_bucket",
+        "executable": "select name from aws_s3_bucket",
         "context": PayloadTaskContext(**context, **{"integration": aws_integration}),
     }
     payload_dict = {"job_id": uuid.uuid4().hex, "tasks": [PayloadTask(**aws_task_dict)]}
@@ -97,13 +98,19 @@ def generate_aws_python_payload(aws_json=aws_json):
     aws_integration = AWSIntegration(**aws_json)
     aws_service = integration_service_factory.get_service(None, aws_integration)
     creds = aws_service.generate_python_sdk_creds()
+    param = {
+        "type": "s3_buckets",
+        "name": "s3_buckets",
+        "values": [],
+        "filter_relevant_resources": True
+    }
     aws_python_task = {
         "task_id": uuid.uuid4().hex,
         "creds": creds,
         "connection_interface": ConnectionInterfaces.PYTHON_SDK,
-        "executable": '\ndef executor(context):\n    clients = context[\'clients\']\n    exec_details = context[\'execution_details\']\n    resources = context[\'resources\']\n    integration_details = context[\'integration\']  ### AccountId, ProjectName, SubscriptionId etc\n    s3_client = context[\'clients\']["s3"]\n    buckets = s3_client.list_buckets()["Buckets"]\n    for bucket in buckets:\n        bucket["name"] = bucket.pop("Name")\n        bucket["id"] = bucket["name"]\n    return buckets\n',
+        "executable": '\ndef executor(context):\n    clients = context[\'clients\']\n    exec_details = context[\'execution_details\']\n    integration_details = context[\'integration\']  ### AccountId, ProjectName, SubscriptionId etc\n    s3_client = context[\'clients\']["s3"]\n    buckets = s3_client.list_buckets()["Buckets"]\n    for bucket in buckets:\n        bucket["name"] = bucket.pop("Name")\n        bucket["id"] = bucket["name"]\n    return buckets\n',
         "clients": ["s3"],
-        "params": {},
+        "params": [Param(**param)],
         "node_details": {"filter_resources": False},
         "context": PayloadTaskContext(**context, **{"integration": aws_integration}),
     }
@@ -116,10 +123,10 @@ def generate_aws_python_payload(aws_json=aws_json):
 
 if __name__ == '__main__':
     # aws_steampipe_payload = generate_aws_steampipe_payload(aws_json)
-    # for task in steampipe_payload.tasks:
+    # for task in aws_steampipe_payload.tasks:
     #     integration = IntegrationSchema.model_validate(task.context.integration)
     #     service = integration_service_factory.get_service(None, integration)
-    #     output = service.execute_steampipe_task(task, job_type="query")
+    #     output = service.execute_steampipe_task(task)
     #     print(output)
 
     aws_python_payload = generate_aws_python_payload(aws_json)

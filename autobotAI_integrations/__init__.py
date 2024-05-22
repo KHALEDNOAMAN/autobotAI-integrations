@@ -240,7 +240,16 @@ class BaseService:
                 result = [result]
             for r in result:
                 if isinstance(r, dict):
-                    resources.append({**r, **combination.get("metadata", {})})
+                    resources.append(
+                        {
+                            **r, 
+                            **combination.get("metadata", {}),
+                            "integration_id": payload_task.context.integration.accountId,
+                            "integration_type":payload_task.context.integration.cspName,
+                            "user_id": payload_task.context.execution_details.caller.user_id,
+                            "root_user_id": payload_task.context.execution_details.caller.root_user_id
+                        }
+                    )
                 else:
                     resources.append({
                         "result": r,

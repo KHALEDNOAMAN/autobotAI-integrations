@@ -41,7 +41,7 @@ def handle_payload(
     if return_results:
         return {
             "success": True,
-            "results": resutls.model_dump_json(indent=2)
+            "results": resutls.model_dump()
         }
 
     return {"success": True}
