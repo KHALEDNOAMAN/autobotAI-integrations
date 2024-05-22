@@ -175,6 +175,8 @@ class AWSService(BaseService):
         for param in params:
             if not param.filter_relevant_resources or not param.values:
                 filtered_params.append(param)
+            elif not hasattr(param.values, '__iter__'):
+                filtered_params.append({"name": param.name, "values": param.values})
             else:
                 filtered_values = []
                 for value in param.values:
