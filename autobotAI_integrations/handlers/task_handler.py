@@ -5,7 +5,6 @@ from autobotAI_integrations.models import ConnectionInterfaces
 from autobotAI_integrations.payload_schema import TaskResult, PayloadTask, ResponseDebugInfo, ResponseError
 import json
 
-
 def handle_task(task: PayloadTask) -> TaskResult:
     if not isinstance(task, PayloadTask):
         raise Exception("Task must be of type PayloadTask")
@@ -41,9 +40,15 @@ def handle_task(task: PayloadTask) -> TaskResult:
     except TypeError as e:
         formated_result = json.dumps(output[0], default=str)
         formated_result = json.loads(formated_result)
-        result.resources = formated_result
+        result.resources = formated_result["rows"]
     else:
-        result.resources = formated_result
+        result.resources = formated_result["rows"]
+
+    for r in result.resources:
+        r["integration_id"] = task.context.integration.accountId
+        r["integration_type"] = task.context.integration.cspName
+        r["user_id"] = task.context.execution_details.caller.user_id
+        r["root_user_id"] = task.context.execution_details.caller.root_user_id
 
     result.errors = [ResponseError(**error) for error in output[1]]
 
