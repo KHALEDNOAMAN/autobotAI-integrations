@@ -40,15 +40,9 @@ def handle_task(task: PayloadTask) -> TaskResult:
     except TypeError as e:
         formated_result = json.dumps(output[0], default=str)
         formated_result = json.loads(formated_result)
-        result.resources = formated_result["rows"]
+        result.resources = formated_result
     else:
-        result.resources = formated_result["rows"]
-
-    for r in result.resources:
-        r["integration_id"] = task.context.integration.accountId
-        r["integration_type"] = task.context.integration.cspName
-        r["user_id"] = task.context.execution_details.caller.user_id
-        r["root_user_id"] = task.context.execution_details.caller.root_user_id
+        result.resources = formated_result
 
     result.errors = [ResponseError(**error) for error in output[1]]
 

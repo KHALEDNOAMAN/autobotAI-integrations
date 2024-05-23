@@ -319,6 +319,20 @@ class BaseService:
                     "non_json_output": stdout,
                 }
             }]
+        
+        # Transforming the output
+        if isinstance(stdout, dict) and stdout.get('rows'):
+            stdout = stdout['rows']
+            for row in stdout:
+                row["integration_id"] = payload_task.context.integration.accountId
+                row["integration_type"] = payload_task.context.integration.cspName
+                row["user_id"] = payload_task.context.execution_details.caller.user_id
+                row["root_user_id"] = payload_task.context.execution_details.caller.root_user_id
+        
+        # Covering Edge Cases
+        if not isinstance(stdout, list):
+            stdout = list(stdout)
+
         return stdout, stderr
 
 
