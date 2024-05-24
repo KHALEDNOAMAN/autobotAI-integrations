@@ -137,6 +137,7 @@ class AWSService(BaseService):
         conf_path = "~/.steampipe/config/aws.spc"
         config = """connection "aws" {
   plugin = "aws"
+  regions = ["*"]
   ignore_error_codes = ["AccessDenied", "AccessDeniedException", "NotAuthorized", "UnauthorizedOperation", "UnrecognizedClientException", "AuthorizationError"]
 }
 """
