@@ -157,17 +157,17 @@ class AWSService(BaseService):
         if global_clients:
             for client in global_clients:
                 built_clients["global"][client.name] = boto3.client(client.name)
-
-        active_regions = self.integration.activeRegions
-        if not active_regions:
-            active_regions = ["us-east-1"]
-        for region in active_regions:
-            built_clients["regional"].setdefault(region, {})
-            for client in regional_clients:
-                try:
-                    built_clients["regional"][region][client.name] = boto3.client(client.name, region_name=region)
-                except ImportError:
-                    print(f"Failed create client for {client['name']}")
+        if regional_clients:
+            active_regions = self.integration.activeRegions
+            if not active_regions:
+                active_regions = ["us-east-1"]
+            for region in active_regions:
+                built_clients["regional"].setdefault(region, {})
+                for client in regional_clients:
+                    try:
+                        built_clients["regional"][region][client.name] = boto3.client(client.name, region_name=region)
+                    except ImportError:
+                        print(f"Failed create client for {client['name']}")
         combinations = []
         if built_clients["regional"]:
             for region in built_clients["regional"]:
@@ -177,6 +177,13 @@ class AWSService(BaseService):
                     "params": self.prepare_params(self.filer_combo_params(payload_task.params, region)),
                     "context": payload_task.context}
                 combinations.append(combo)
+        else:
+            combo = {"metadata": {
+                "region": "global"
+            }, "clients": {**built_clients["global"]},
+                "params": self.prepare_params(self.filer_combo_params(payload_task.params, "global")),
+                "context": payload_task.context}
+            combinations.append(combo)
         return combinations
 
     def filer_combo_params(self, params: List[Param], region):
