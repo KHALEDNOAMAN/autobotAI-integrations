@@ -5,7 +5,7 @@ import uuid
 import boto3
 import pydash
 from botocore.exceptions import ClientError
-from pydantic import Field
+from pydantic import Field, model_validator
 import os
 
 from autobotAI_integrations import BaseService, list_of_unique_elements, PayloadTask, Param
@@ -36,8 +36,16 @@ class AWSIntegration(BaseSchema):
         """The world's most comprehensive and mature cloud computing platform, offering a vast range of on-demand compute, storage, database, networking, analytics, and machine learning services."""
     )
     def __init__(self, **kwargs):
-        kwargs["accountId"] = str(uuid.uuid4().hex)
+        if not kwargs["accountId"]:
+            kwargs["accountId"] = str(uuid.uuid4().hex)
         super().__init__(**kwargs)
+
+    @model_validator(mode="before")
+    @classmethod
+    def resource_type_validator(cls, values: Any) -> Any:
+        if values.get("accountId", None):
+            values["accountId"] = str(values["accountId"])
+        return values
 
 
 class AWSService(BaseService):
