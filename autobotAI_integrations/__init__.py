@@ -201,7 +201,8 @@ class BaseService:
 
         if payload_task.creds and payload_task.creds.envs:
             for key, value in payload_task.creds.envs.items():
-                os.environ[key] = value
+                if key and value:
+                    os.environ[key] = value
 
         results = []
         errors = []

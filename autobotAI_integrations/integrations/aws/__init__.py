@@ -200,7 +200,7 @@ class AWSService(BaseService):
             else:
                 filtered_values = []
                 for value in param.values:
-                    if isinstance(value, dict):
+                    if isinstance(value, dict) and "region" in value:
                         if value.get("region") == region:
                             filtered_values.append(value)
                     else:
