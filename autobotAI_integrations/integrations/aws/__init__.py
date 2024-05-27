@@ -195,10 +195,8 @@ class AWSService(BaseService):
     def filer_combo_params(self, params: List[Param], region):
         filtered_params = []
         for param in params:
-            if not param.filter_relevant_resources or not param.values:
+            if not param.filter_relevant_resources or not param.values or not isinstance(param.values, list):
                 filtered_params.append(param)
-            elif not hasattr(param.values, '__iter__'):
-                filtered_params.append({"name": param.name, "values": param.values})
             else:
                 filtered_values = []
                 for value in param.values:
