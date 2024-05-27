@@ -89,7 +89,7 @@ class GitlabService(BaseService):
         return [
             {
                 "clients": {
-                    "gitlab": gitlab.Gitlab(os.getenv('GITLAB_ADDR'), private_token=os.getenv('GITLAB_TOKEN'))
+                    "gitlab": gitlab.Gitlab(payload_task.creds.envs["GITLAB_ADDR"], private_token=payload_task.creds.envs["GITLAB_TOKEN"])
                 },
                 "params": self.prepare_params(payload_task.params),
                 "context": payload_task.context

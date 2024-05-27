@@ -31,10 +31,11 @@ class AWSIntegration(BaseSchema):
     externalId: Optional[str] = None
     activeRegions: Optional[list] = None
 
-    category: Optional[str] = IntegrationCategory.CLOUD_SERVICES_PROVIDERS.value 
+    category: Optional[str] = IntegrationCategory.CLOUD_SERVICES_PROVIDERS.value
     description: Optional[str] = (
         """The world's most comprehensive and mature cloud computing platform, offering a vast range of on-demand compute, storage, database, networking, analytics, and machine learning services."""
     )
+
     def __init__(self, **kwargs):
         if not kwargs["accountId"]:
             kwargs["accountId"] = str(uuid.uuid4().hex)
@@ -150,13 +151,18 @@ class AWSService(BaseService):
             "global": {},
             "regional": {
 
-                }
             }
+        }
         global_clients = pydash.filter_(client_definitions, lambda x: x.is_regional is False)
         regional_clients = pydash.filter_(client_definitions, lambda x: x.is_regional is True)
+        creds = {
+            "aws_access_key_id": payload_task.creds.envs["AWS_ACCESS_KEY_ID"],
+            "aws_secret_access_key": payload_task.creds.envs["AWS_SECRET_ACCESS_KEY"],
+            "aws_session_token": payload_task.creds.envs["AWS_SESSION_TOKEN"]
+        }
         if global_clients:
             for client in global_clients:
-                built_clients["global"][client.name] = boto3.client(client.name)
+                built_clients["global"][client.name] = boto3.client(client.name, **creds)
         if regional_clients:
             active_regions = self.integration.activeRegions
             if not active_regions:
@@ -165,7 +171,7 @@ class AWSService(BaseService):
                 built_clients["regional"].setdefault(region, {})
                 for client in regional_clients:
                     try:
-                        built_clients["regional"][region][client.name] = boto3.client(client.name, region_name=region)
+                        built_clients["regional"][region][client.name] = boto3.client(client.name, region_name=region, **creds)
                     except ImportError:
                         print(f"Failed create client for {client['name']}")
         combinations = []

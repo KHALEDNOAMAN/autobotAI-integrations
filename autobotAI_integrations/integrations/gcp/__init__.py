@@ -3,6 +3,8 @@ from typing import Dict, List, Type, Union
 import os
 import importlib
 import json
+
+from google.oauth2 import service_account
 from pydantic import Field, field_validator
 from functools import wraps
 
@@ -14,6 +16,7 @@ from autobotAI_integrations import BaseSchema, SteampipeCreds, RestAPICreds, SDK
 
 from google.cloud.storage import Client as StorageClient
 from google.oauth2.service_account import Credentials
+
 
 class GCPCredentials(BaseModel):
     model_config = ConfigDict(frozen=True)
@@ -71,6 +74,7 @@ class GCPIntegration(BaseSchema):
                 raise ValueError(f"Invalid JSON format in 'credentials': {e}")
         return credentials
 
+
 class GCPService(BaseService):
 
     def __init__(self, ctx: dict, integration: Union[GCPIntegration, dict]):
@@ -92,7 +96,7 @@ class GCPService(BaseService):
                 print(bucket.name)
             return {"success": True}
         except Exception as e:
-            return {"success": False, "error":str(e)}
+            return {"success": False, "error": str(e)}
 
     @staticmethod
     def get_forms():
@@ -148,12 +152,16 @@ class GCPService(BaseService):
     ) -> list:
 
         clients_classes = dict()
+        credentials = service_account.Credentials.from_service_account_info(payload_task.creds.envs["GOOGLE_APPLICATION_CREDENTIALS"])
         for client in client_definitions:
             try:
                 client_module = importlib.import_module(client.module, package=None)
                 if hasattr(client_module, client.class_name):
                     cls = getattr(client_module, client.class_name)
-                    clients_classes[client.name] = cls()
+                    clients_classes[client.name] = cls(
+                        project=payload_task.creds.envs["CLOUDSDK_CORE_PROJECT"],
+                        credentials=credentials
+                    )
             except BaseException as e:
                 print(e)
                 continue

@@ -108,13 +108,18 @@ class AwsSesService(BaseService):
 
     def build_python_exec_combinations_hook(self, payload_task: PayloadTask,
                                             client_definitions: List[SDKClient]) -> list:
+        creds = {
+            "aws_access_key_id": payload_task.creds.envs["AWS_ACCESS_KEY_ID"],
+            "aws_secret_access_key": payload_task.creds.envs["AWS_SECRET_ACCESS_KEY"],
+            "aws_session_token": payload_task.creds.envs["AWS_SESSION_TOKEN"]
+        }
         return [
             {
                 "metadata": {
                     "region": self.integration.region
                 },
                 "clients": {
-                    "ses": boto3.client("ses", region_name=self.integration.region)
+                    "ses": boto3.client("ses", region_name=self.integration.region, **creds)
                 },
                 "params": self.prepare_params(self.filer_combo_params(payload_task.params, self.integration.region)),
                 "context": payload_task.context
