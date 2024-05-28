@@ -67,7 +67,7 @@ class OpenAIService(AIBaseService):
     @staticmethod
     def ai_prompt_python_template():
         return {
-            "integration_type": "ollama",
+            "integration_type": "openai",
             "param_definitions": [
                 {"name": "prompt",
                  "type": "str",
