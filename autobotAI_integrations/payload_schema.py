@@ -47,6 +47,7 @@ class PayloadTaskContext(BaseModel):
 class Param(BaseModel):
     params_type: str = Field(alias="type")
     name: str
+    required: bool = False
     values: Optional[Any] = None
     filter_relevant_resources: bool = False
     
