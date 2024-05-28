@@ -11,6 +11,7 @@ import os
 from autobotAI_integrations import BaseService, list_of_unique_elements, PayloadTask, Param
 from autobotAI_integrations.models import *
 from autobotAI_integrations.utils.boto3_helper import Boto3Helper
+# from autobotAI_integrations.utils import get_account_id
 
 
 class Forms:
@@ -59,19 +60,24 @@ class AWSService(BaseService):
             integration = AWSIntegration(**integration)
         super().__init__(ctx, integration)
 
+    def _get_aws_client(self, aws_client_name: str):
+        if self.integration.roleArn:
+            boto3_helper = Boto3Helper(self.ctx, integration=self.integration.dump_all_data())
+            return boto3_helper.get_client(aws_client_name)
+        else:
+            return boto3.client(
+                aws_client_name,
+                aws_access_key_id=self.integration.access_key,
+                aws_secret_access_key=self.integration.secret_key,
+                aws_session_token=self.integration.session_token
+            )
+
     def _test_integration(self) -> dict:
         try:
-            if self.integration.roleArn:
-                boto3_helper = Boto3Helper(self.ctx, integration=self.integration.dump_all_data())
-                boto3_helper.get_client("ec2")
-            else:
-                iam_client = boto3.client(
-                    "iam",
-                    aws_access_key_id=self.integration.access_key,
-                    aws_secret_access_key=self.integration.secret_key,
-                    aws_session_token=self.integration.session_token
-                )
-                response = iam_client.get_account_summary(max_items=10)
+            sts_client = self._get_aws_client("sts")
+            identity_data = sts_client.get_caller_identity()
+            account_id = str(identity_data['Account'])
+            self.integration.account_id = account_id
             return {'success': True}
         except ClientError as e:
             print(traceback.format_exc())
@@ -118,6 +124,20 @@ class AWSService(BaseService):
                 }
             ]
         }
+    
+    def get_integration_specific_details(self) -> dict:
+        try:
+            account_client = self._get_aws_client('account')
+            regions = [region['RegionName'] for region in account_client.list_regions()['Regions'] if region['RegionOptStatus'] in ['ENABLED', 'ENABLED_BY_DEFAULT']]
+            # Fetching the model
+            return {
+                "integration_id": self.integration.accountId,
+                "available_regions": regions
+            }
+        except Exception as e:
+            return {
+                "error": "Details can not be fetched"
+            }
 
     @staticmethod
     def get_schema() -> Type[BaseSchema]:

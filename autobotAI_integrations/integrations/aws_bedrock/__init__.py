@@ -5,12 +5,11 @@ import boto3, uuid
 from botocore.exceptions import ClientError
 from pydantic import Field
 
-from autobotAI_integrations import BaseService, list_of_unique_elements, PayloadTask, Param
+from autobotAI_integrations import AIBaseService, BaseService, list_of_unique_elements, PayloadTask, Param
 from autobotAI_integrations.models import *
 from autobotAI_integrations.utils.boto3_helper import Boto3Helper
 
-
-class AwsSesIntegration(BaseSchema):
+class AWSBedrockIntegration(BaseSchema):
     region: str
     access_key: Optional[str] = Field(default=None, exclude=True)
     secret_key: Optional[str] = Field(default=None, exclude=True)
@@ -19,9 +18,9 @@ class AwsSesIntegration(BaseSchema):
     roleArn: Optional[str] = None
     externalId: Optional[str] = None
 
-    category: Optional[str] = IntegrationCategory.NOTIFICATIONS_AND_COMMUNICATIONS.value
+    category: Optional[str] = IntegrationCategory.AI.value
     description: Optional[str] = (
-        "Amazon Web Services Simple Email Service is a cost-effective and reliable platform for sending transactional and marketing emails at scale within the AWS cloud environment."
+        "AWS Bedrock is a service that lets you use powerful AI models from various companies for your applications, all through one place."
     )
 
     def __init__(self, **kwargs):
@@ -33,14 +32,13 @@ class AwsSesIntegration(BaseSchema):
         self.externalId = dependency["externalId"]
 
 
-class AwsSesService(BaseService):
-
-    def __init__(self, ctx: dict, integration: Union[AwsSesIntegration, dict]):
+class AWSBedrockService(AIBaseService):
+    def __init__(self, ctx: dict, integration: Union[AWSBedrockIntegration, dict]):
         """
         Integration should have all the data regarding the integration
         """
-        if not isinstance(integration, AwsSesIntegration):
-            integration = AwsSesIntegration(**integration)
+        if not isinstance(integration, AWSBedrockIntegration):
+            integration = AWSBedrockIntegration(**integration)
         super().__init__(ctx, integration)
 
     def _get_aws_client(self, aws_client_name: str):
@@ -57,9 +55,12 @@ class AwsSesService(BaseService):
 
     def _test_integration(self) -> dict:
         try:
-            ses_client = self._get_aws_client('ses')
-            response = ses_client.list_identities()
-            sts_client = self._get_aws_client('sts')
+            bedrock_client = self._get_aws_client('bedrock')
+            models = [
+                {**model, "name": model["modelId"]}
+                for model in bedrock_client.list_foundation_models()["modelSummaries"]
+            ]
+            sts_client = self._get_aws_client("sts")
             identity_data = sts_client.get_caller_identity()
             account_id = str(identity_data['Account'])
             self.integration.account_id = account_id
@@ -70,11 +71,14 @@ class AwsSesService(BaseService):
 
     def get_integration_specific_details(self) -> dict:
         try:
+            bedrock_client = self._get_aws_client("bedrock")
             account_client = self._get_aws_client('account')
             regions = [region['RegionName'] for region in account_client.list_regions()['Regions'] if region['RegionOptStatus'] in ['ENABLED', 'ENABLED_BY_DEFAULT']]
             # Fetching the model
+            models = [{**model, "name": model['modelId']} for model in bedrock_client.list_foundation_models()['modelSummaries']]
             return {
                 "integration_id": self.integration.accountId,
+                "models": models,
                 "available_regions": regions
             }
         except Exception as e:
@@ -85,7 +89,7 @@ class AwsSesService(BaseService):
     @staticmethod
     def get_forms():
         return {
-            "label": "AWS SES",
+            "label": "AWS Bedrock",
             "type": "form",
             "children": [
                 {
@@ -112,8 +116,12 @@ class AwsSesService(BaseService):
         }
 
     @staticmethod
+    def ai_prompt_python_template():
+        pass
+
+    @staticmethod
     def get_schema() -> Type[BaseSchema]:
-        return AwsSesIntegration
+        return AWSBedrockIntegration
 
     @classmethod
     def get_details(cls):
@@ -127,18 +135,14 @@ class AwsSesService(BaseService):
 
     def build_python_exec_combinations_hook(self, payload_task: PayloadTask,
                                             client_definitions: List[SDKClient]) -> list:
-        creds = {
-            "aws_access_key_id": payload_task.creds.envs["AWS_ACCESS_KEY_ID"],
-            "aws_secret_access_key": payload_task.creds.envs["AWS_SECRET_ACCESS_KEY"],
-            "aws_session_token": payload_task.creds.envs["AWS_SESSION_TOKEN"]
-        }
         return [
             {
                 "metadata": {
                     "region": self.integration.region
                 },
                 "clients": {
-                    "ses": boto3.client("ses", region_name=self.integration.region, **creds)
+                    "bedrock": boto3.client("bedrock", region_name=self.integration.region),
+                    "bedrock-runtime": boto3.client("bedrock-runtime", region_name=self.integration.region)
                 },
                 "params": self.prepare_params(self.filer_combo_params(payload_task.params, self.integration.region)),
                 "context": payload_task.context
@@ -148,12 +152,12 @@ class AwsSesService(BaseService):
     def filer_combo_params(self, params: List[Param], region):
         filtered_params = []
         for param in params:
-            if not param.filter_relevant_resources or not param.values or not isinstance(param.values, list):
+            if not param.filter_relevant_resources or not param.values:
                 filtered_params.append(param)
             else:
                 filtered_values = []
                 for value in param.values:
-                    if isinstance(value, dict) and "region" in value:
+                    if isinstance(value, dict):
                         if value.get("region") == region:
                             filtered_values.append(value)
                     else:
@@ -173,9 +177,16 @@ class AwsSesService(BaseService):
         raise NotImplementedError()
 
     def _temp_credentials(self):
-        boto3_helper = Boto3Helper(self.ctx, integration=self.integration.model_dump())
-        return {
-            "AWS_ACCESS_KEY_ID": boto3_helper.get_access_key(),
-            "AWS_SECRET_ACCESS_KEY": boto3_helper.get_secret_key(),
-            "AWS_SESSION_TOKEN": boto3_helper.get_session_token(),
-        }
+        if self.integration.roleArn:
+            boto3_helper = Boto3Helper(self.ctx, integration=self.integration.model_dump())
+            return {
+                "AWS_ACCESS_KEY_ID": boto3_helper.get_access_key(),
+                "AWS_SECRET_ACCESS_KEY": boto3_helper.get_secret_key(),
+                "AWS_SESSION_TOKEN": boto3_helper.get_session_token(),
+            }
+        else:
+            return {
+                "AWS_ACCESS_KEY_ID": self.integration.access_key,
+                "AWS_SECRET_ACCESS_KEY": self.integration.secret_key,
+                "AWS_SESSION_TOKEN": self.integration.session_token,
+            }

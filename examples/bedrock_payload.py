@@ -1,7 +1,7 @@
 from autobotAI_integrations import IntegrationSchema
 from autobotAI_integrations.integrations import integration_service_factory
 from autobotAI_integrations import ConnectionInterfaces
-from autobotAI_integrations.integrations.aws import AWSIntegration
+from autobotAI_integrations.integrations.aws_bedrock import AWSBedrockIntegration
 from autobotAI_integrations.payload_schema import (
     Param,
     Payload,
@@ -14,7 +14,6 @@ import os, uuid
 from autobotAI_integrations.handlers.payload_handler import handle_payload
 from autobotAI_integrations.handlers.task_handler import handle_task
 
-
 AWS_ACCESS_KEY_ID = ""
 AWS_SECRET_ACCESS_KEY = ""
 AWS_SESSION_TOKEN = ""
@@ -23,7 +22,8 @@ aws_json = {
     "userId": "amit@shunyeka.com*",
     "accountId": "175c0fa813244bc5a1aa6264e7ba20cc",
     "integrationState": "INACTIVE",
-    "cspName": "aws",
+    "cspName": "aws_bedrock",
+    "region": "ap-south-1",
     # don't commit your keys
     "access_key": AWS_ACCESS_KEY_ID,
     "secret_key": AWS_SECRET_ACCESS_KEY,
@@ -42,30 +42,6 @@ aws_json = {
     "activeRegions": ["us-east-1", "ap-south-1"],
 }
 
-aws_config_str = """
-connection "aws" {
-  plugin = "aws"
-
-  #regions = ["ap-south-1"]
-
-  #default_region = "us-east-1"
-
-  #profile = "myprofile"
-
-  #max_error_retry_attempts = 9
-
-  #min_error_retry_delay = 25
-
-  #ignore_error_codes = ["AccessDenied", "AccessDeniedException", "NotAuthorized", "UnauthorizedOperation", "UnrecognizedClientException", "AuthorizationError"]
-
-  #endpoint_url = "http://localhost:4566"
-
-  # Set to `true` to force S3 requests to use path-style addressing,
-  # i.e., `http://s3.amazonaws.com/BUCKET/KEY`. By default, the S3 client
-  # will use virtual hosted bucket addressing when possible (`http://BUCKET.s3.amazonaws.com/KEY`).
-  #s3_force_path_style = false
-}
-"""
 
 context = {
     "execution_details": {
@@ -76,43 +52,57 @@ context = {
         "caller": {"user_id": "amit@shunyeka.com", "root_user_id": "amit@shunyeka.com"},
     },
     "node_steps": {},
-    "global_variables": {"default_aws_region": "us-east-1"},
+    "global_variables": {"default_aws_region": "ap-south-1"},
 }
-
-
-def generate_aws_steampipe_payload(aws_json=aws_json) -> Payload:
-    aws_integration = AWSIntegration(**aws_json)
-    aws_service = integration_service_factory.get_service(None, aws_integration)
-    creds = aws_service.generate_steampipe_creds()
-    creds.config = aws_config_str
-    aws_task_dict = {
-        "task_id": uuid.uuid4().hex,
-        "creds": creds,
-        "connection_interface": ConnectionInterfaces.STEAMPIPE,
-        "executable": "select name from aws_s3_bucket",
-        "context": PayloadTaskContext(**context, **{"integration": aws_integration}),
+code = """
+import json
+def executor(context):
+    client = context["clients"]["bedrock-runtime"]
+    model_id = "meta.llama3-8b-instruct-v1:0"
+    user_message = "Describe the purpose of a 'hello world' program in one line."
+    prompt = f\"""
+    <|begin_of_text|>
+    <|start_header_id|>user<|end_header_id|>
+    {user_message}
+    <|eot_id|>
+    <|start_header_id|>assistant<|end_header_id|>
+    \"""
+    request = {
+        "prompt": prompt,
+        # Optional inference parameters:
+        "max_gen_len": 512,
+        "temperature": 0.5,
+        "top_p": 0.9,
     }
-    payload_dict = {"job_id": uuid.uuid4().hex, "tasks": [PayloadTask(**aws_task_dict)]}
-    payload = Payload(**payload_dict)
-    return payload
 
+    # Encode and send the request.
+    response = client.invoke_model(body=json.dumps(request), modelId=model_id)
+
+    # Decode the native response body.
+    model_response = json.loads(response["body"].read())
+    return [model_response]
+"""
 
 def generate_aws_python_payload(aws_json=aws_json):
-    aws_integration = AWSIntegration(**aws_json)
+    aws_integration = AWSBedrockIntegration(**aws_json)
     aws_service = integration_service_factory.get_service(None, aws_integration)
+    res = aws_service.is_active()
+    print(res)
+    if not res["success"]:
+        return
     creds = aws_service.generate_python_sdk_creds()
     param = {
         "type": "s3_buckets",
         "name": "s3_buckets",
         "values": [],
-        "filter_relevant_resources": True
+        "filter_relevant_resources": True,
     }
     aws_python_task = {
         "task_id": uuid.uuid4().hex,
         "creds": creds,
         "connection_interface": ConnectionInterfaces.PYTHON_SDK,
-        "executable": '\ndef executor(context):\n    clients = context[\'clients\']\n    exec_details = context[\'execution_details\']\n    integration_details = context[\'integration\']  ### AccountId, ProjectName, SubscriptionId etc\n    s3_client = context[\'clients\']["s3"]\n    buckets = s3_client.list_buckets()["Buckets"]\n    for bucket in buckets:\n        bucket["name"] = bucket.pop("Name")\n        bucket["id"] = bucket["name"]\n    return buckets\n',
-        "clients": ["s3"],
+        "executable": code,
+        "clients": ["bedrock", "bedrock-runtime"],
         "params": [Param(**param)],
         "node_details": {"filter_resources": False},
         "context": PayloadTaskContext(**context, **{"integration": aws_integration}),
@@ -124,11 +114,8 @@ def generate_aws_python_payload(aws_json=aws_json):
     payload = Payload(**payload_dict)
     return payload
 
-if __name__ == '__main__':
-    aws_steampipe_payload = generate_aws_steampipe_payload(aws_json)
-    aws_python_payload = generate_aws_python_payload(aws_json)
-    print(handle_task(aws_steampipe_payload.tasks[0]))
-    handle_payload(aws_steampipe_payload, print_output=True)
 
+if __name__ == "__main__":
+    aws_python_payload = generate_aws_python_payload(aws_json)
     print(handle_task(aws_python_payload.tasks[0]))
     handle_payload(aws_python_payload, print_output=True)

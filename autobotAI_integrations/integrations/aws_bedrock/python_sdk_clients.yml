@@ -1,0 +1,4 @@
+- is_regional: true
+  name: bedrock
+- is_regional: true
+  name: bedrock-runtime

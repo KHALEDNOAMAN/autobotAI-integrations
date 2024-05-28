@@ -5,6 +5,7 @@ import importlib.util
 import traceback
 import uuid
 from pathlib import Path
+import json
 
 
 def fromisoformat(strdate):
@@ -12,9 +13,6 @@ def fromisoformat(strdate):
         return datetime.strptime(strdate, "%Y-%m-%dT%H:%M:%S.%f")
     except:
         return datetime.strptime(strdate, "%Y-%m-%dT%H:%M:%S")
-
-
-import json
 
 
 def load_mod_from_string(code_string):
