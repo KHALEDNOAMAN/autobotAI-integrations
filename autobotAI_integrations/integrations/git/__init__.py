@@ -58,7 +58,7 @@ class GitService(BaseService):
             "supported_executor": "ecs",
             "compliance_supported": False,
             "supported_interfaces": cls.supported_connection_interfaces(),
-            "python_code_sample": "print('hello world')",
+            "python_code_sample": cls.get_code_sample(),
         }
 
     def _is_git_installed(self):

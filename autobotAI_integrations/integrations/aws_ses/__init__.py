@@ -61,7 +61,6 @@ class AwsSesService(BaseService):
             print(traceback.format_exc())
             return {'success': False, 'error': traceback.format_exc()}
 
-
     @staticmethod
     def get_forms():
         # TODO: Add regions adn return themm in options variable containing two values value label
@@ -103,7 +102,7 @@ class AwsSesService(BaseService):
             "supported_executor": "ecs",
             "compliance_supported": False,
             "supported_interfaces": cls.supported_connection_interfaces(),
-            "python_code_sample": "print('hello world')"
+            "python_code_sample": cls.get_code_sample(),
         }
 
     def build_python_exec_combinations_hook(self, payload_task: PayloadTask,
