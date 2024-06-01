@@ -1,0 +1,84 @@
+{
+    "abuseipdb": [
+        {
+            "name": "abuseipdb_category",
+            "all_columns": [
+                "id",
+                "title",
+                "description"
+            ],
+            "included": [],
+            "excluded": [],
+            "aliases": [],
+            "inventory_supported": false
+        },
+        {
+            "name": "abuseipdb_check_cidr",
+            "all_columns": [
+                "abuse_confidence_score",
+                "cidr",
+                "country_code",
+                "ip_address",
+                "last_reported_at",
+                "max_age_in_days",
+                "num_reports"
+            ],
+            "included": [],
+            "excluded": [],
+            "aliases": [],
+            "inventory_supported": false
+        },
+        {
+            "name": "abuseipdb_check_cidr",
+            "all_columns": [
+                "abuse_confidence_score",
+                "cidr",
+                "country_code",
+                "ip_address",
+                "last_reported_at",
+                "max_age_in_days",
+                "num_reports"
+            ],
+            "included": [],
+            "excluded": [],
+            "aliases": [],
+            "inventory_supported": false
+        },
+        {
+            "name": "abuseipdb_check_ip",
+            "all_columns": [
+                "abuse_confidence_score",
+                "country_code",
+                "domain",
+                "ip_address",
+                "ip_version",
+                "is_public",
+                "is_whitelisted",
+                "isp",
+                "last_reported_at",
+                "max_age_in_days",
+                "num_distinct_users",
+                "reports",
+                "total_reports",
+                "usage_type"
+            ],
+            "included": [],
+            "excluded": [],
+            "aliases": [],
+            "inventory_supported": false
+        },
+        {
+            "name": "abuseipdb_deny",
+            "all_columns": [
+                "abuse_confidence_score",
+                "confidence_minimum",
+                "ip_address",
+                "last_reported_at"
+            ],
+            "included": [],
+            "excluded": [],
+            "aliases": [],
+            "inventory_supported": false
+        }
+    ]
+}
