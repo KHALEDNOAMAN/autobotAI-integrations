@@ -4,25 +4,29 @@ from autobotAI_integrations.integrations.kubernetes import KubernetesIntegration
 from autobotAI_integrations.payload_schema import (
     Payload,
     PayloadTask,
-    PayloadTaskContext
+    PayloadTaskContext,
 )
 from autobotAI_integrations.integration_schema import IntegrationSchema
 import os, uuid
+import traceback
+from autobotAI_integrations.payload_schema import (
+    TaskResult,
+    PayloadTask,
+    ResponseDebugInfo,
+    ResponseError,
+    JobResult,
+)
+from autobotAI_integrations.handlers import handle_payload
 
 agent_json = {
-    "userId": "amit@shunyeka.com*",
-    "accountId": "175c0fa813244bc5a1aa6264e7ba20cc",
+    "userId": "user@email.com*",
     "integrationState": "INACTIVE",
     "cspName": "kubernetes",
     "alias": "test-gcp-integrationsv2",
     "groups": ["gcp", "shunyeka", "integrations-v2"],
     "agent_ids": ["some_id1", "some_id2"],
-    "accessToken": "",
     "createdAt": "2024-02-26T13:38:59.978056",
     "updatedAt": "2024-02-26T13:38:59.978056",
-    "indexFailures": 0,
-    "isUnauthorized": False,
-    "lastUsed": None,
     "resource_type": "integration",
 }
 
@@ -63,7 +67,7 @@ context = {
         "bot_id": "660274d5fa724e7537a4c0c5",
         "bot_name": "K8s Worker",
         "node_name": "Python-Code-Executor",
-        "caller": {"user_id": "amit@shunyeka.com", "root_user_id": "amit@shunyeka.com"},
+        "caller": {"user_id": "user@email.com", "root_user_id": "user@email.com"},
     },
     "node_steps": {},
 }
@@ -78,12 +82,13 @@ def generate_k8s_steampipe_payload(agent_json=agent_json) -> Payload:
         "task_id": uuid.uuid4().hex,
         "creds": creds,
         "connection_interface": ConnectionInterfaces.STEAMPIPE,
-        # "executable": "kubernetes_compliance.benchmark.nsa_cisa_v1",
-        "executable": "select name, namespace, phase, creation_timestamp, pod_ip from kubernetes_pod",
+        "executable": "kubernetes_compliance.benchmark.cis_v170",
+        # "executable": "select name, namespace, phase, creation_timestamp, pod_ip from kubernetes_pod",
         "context": PayloadTaskContext(**context, **{"integration": k8s_integration}),
     }
     payload_dict = {"job_id": uuid.uuid4().hex, "tasks": [PayloadTask(**aws_task_dict)]}
     payload = Payload(**payload_dict)
+    # print(payload.model_dump_json(indent=2))
     return payload
 
 
@@ -91,7 +96,7 @@ def generate_k8s_python_payload(agent_json=agent_json):
     k8s_integration = KubernetesIntegration(**agent_json)
     k8s_service = integration_service_factory.get_service(None, k8s_integration)
     creds = k8s_service.generate_python_sdk_creds()
-    
+
     # Add code executable for python
     k8s_python_task = {
         "task_id": uuid.uuid4().hex,
@@ -111,54 +116,7 @@ def generate_k8s_python_payload(agent_json=agent_json):
     payload = Payload(**payload_dict)
     return payload
 
-if __name__ == '__main__':
-    # k8s_steampipe_payload = generate_k8s_steampipe_payload(agent_json)
-    # for task in k8s_steampipe_payload.tasks:
-    #     integration = IntegrationSchema.model_validate(task.context.integration)
-    #     service = integration_service_factory.get_service(None, integration)
-    #     output = service.execute_steampipe_task(task, job_type="query")
-    #     print(output)
 
-    k8s_python_payload = generate_k8s_python_payload(agent_json)
-    for task in k8s_python_payload.tasks:
-        integration = IntegrationSchema.model_validate(task.context.integration)
-        service = integration_service_factory.get_service(None, integration)
-        output = service.python_sdk_processor(payload_task=task)
-        print(output)
-
-
-
-# Kubernetes deployment in local
-# Define a deployment object
-# try:
-#     deployment = kbs_client.AppsV1Api().create_nam    espaced_deployment(
-#     body = {
-#             'apiVersion': 'apps/v1',
-#             'kind': 'Deployment',
-#             'metadata': {
-#             'name': 'my-app',
-#             },
-#             'spec': {
-#             'replicas': 3,
-#             'selector': {
-#                 'matchLabels': {
-#                 'app': 'my-app'
-#                 }
-#             },
-#             'template': {
-#                 'metadata': {
-#                 'labels': {
-#                     'app': 'my-app'
-#                 }
-#                 },
-#                 'spec': {
-#                 'containers': [{
-#                     'name': 'my-app',
-#                     'image': 'nginx:latest'
-#                 }]
-#                 }
-#             }
-#             }
-#         },
-#         namespace='default'
-#     )
+if __name__ == "__main__":
+    k8s_steampipe_payload = generate_k8s_steampipe_payload(agent_json)
+    handle_payload(k8s_steampipe_payload, print_output=True)

@@ -72,8 +72,8 @@ class AWSBedrockService(AIBaseService):
     def get_integration_specific_details(self) -> dict:
         try:
             bedrock_client = self._get_aws_client("bedrock")
-            account_client = self._get_aws_client('account')
-            regions = [region['RegionName'] for region in account_client.list_regions()['Regions'] if region['RegionOptStatus'] in ['ENABLED', 'ENABLED_BY_DEFAULT']]
+            ec2_client = self._get_aws_client('ec2')
+            regions = [region['RegionName'] for region in  ec2_client.describe_regions()["Regions"]]
             # Fetching the model
             models = [{**model, "name": model['modelId']} for model in bedrock_client.list_foundation_models()['modelSummaries']]
             return {

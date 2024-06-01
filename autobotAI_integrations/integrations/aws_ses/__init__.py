@@ -70,8 +70,11 @@ class AwsSesService(BaseService):
 
     def get_integration_specific_details(self) -> dict:
         try:
-            account_client = self._get_aws_client('account')
-            regions = [region['RegionName'] for region in account_client.list_regions()['Regions'] if region['RegionOptStatus'] in ['ENABLED', 'ENABLED_BY_DEFAULT']]
+            ec2_client = self._get_aws_client("ec2")
+            regions = [
+                region["RegionName"]
+                for region in ec2_client.describe_regions()["Regions"]
+            ]
             # Fetching the model
             return {
                 "integration_id": self.integration.accountId,

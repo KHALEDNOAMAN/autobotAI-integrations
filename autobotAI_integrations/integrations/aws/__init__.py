@@ -124,12 +124,11 @@ class AWSService(BaseService):
                 }
             ]
         }
-    
+
     def get_integration_specific_details(self) -> dict:
         try:
-            account_client = self._get_aws_client('account')
-            regions = [region['RegionName'] for region in account_client.list_regions()['Regions'] if region['RegionOptStatus'] in ['ENABLED', 'ENABLED_BY_DEFAULT']]
-            # Fetching the model
+            ec2_client = self._get_aws_client('ec2')
+            regions = [region['RegionName'] for region in  ec2_client.describe_regions()["Regions"]]
             return {
                 "integration_id": self.integration.accountId,
                 "available_regions": regions
@@ -154,7 +153,7 @@ class AWSService(BaseService):
         }
 
     def generate_steampipe_creds(self) -> SteampipeCreds:
-        creds = self._temp_credentials()
+        creds = {k: v for k,v in self._temp_credentials().items() if v}
         conf_path = "~/.steampipe/config/aws.spc"
         config = """connection "aws" {
   plugin = "aws"
@@ -186,7 +185,8 @@ class AWSService(BaseService):
         if regional_clients:
             active_regions = self.integration.activeRegions
             if not active_regions:
-                active_regions = ["us-east-1"]
+                active_regions = self.get_integration_specific_details()["available_regions"]
+                print(active_regions)
             for region in active_regions:
                 built_clients["regional"].setdefault(region, {})
                 for client in regional_clients:

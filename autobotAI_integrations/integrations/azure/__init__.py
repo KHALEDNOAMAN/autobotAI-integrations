@@ -121,7 +121,7 @@ class AzureService(BaseService):
     def build_python_exec_combinations_hook(self, payload_task: PayloadTask, client_definitions: List[SDKClient]) -> list:
         clients_classes = dict()
         credential = ClientSecretCredential(
-            tenant=self.integration.tenant_id,
+            tenant_id=self.integration.tenant_id,
             client_id=self.integration.client_id,
             client_secret=self.integration.client_secret
         )

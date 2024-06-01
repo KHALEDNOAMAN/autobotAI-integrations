@@ -18,8 +18,15 @@ from pydantic import BaseModel
 from autobotAI_integrations.integration_schema import IntegrationSchema, IntegrationStates
 from autobotAI_integrations.models import *
 from autobotAI_integrations.payload_schema import PayloadTask, Payload, Param
-from autobotAI_integrations.utils import list_of_unique_elements, load_mod_from_string, run_mod_func
-
+from autobotAI_integrations.utils import (
+    list_of_unique_elements,
+    load_mod_from_string,
+    run_mod_func,
+    oscf_based_steampipe_json,
+    transform_steampipe_compliance_resources,
+    change_keys,
+    transform_inventory_resources
+)
 
 class BaseService:
 
@@ -77,6 +84,27 @@ class BaseService:
         return integration_type
 
     @classmethod
+    def get_code_sample(cls):
+        base_path = os.path.dirname(inspect.getfile(cls))
+        try:
+            code_file = open(path.join(base_path, "code_sample.py"))
+            code = code_file.read()
+        except FileNotFoundError:
+            code = """# import your modules here...
+# Don't import client related modules
+
+def executor(context):
+    params = context["params"]    
+    clients = context["clients"]
+    
+    # <> Your Code goes here.
+    
+    # Always return a list
+    return []
+"""
+        return code
+
+    @classmethod
     def load_compliance_data(cls):
         base_path = os.path.dirname(inspect.getfile(cls))
         try:
@@ -103,28 +131,6 @@ class BaseService:
         for compliance in benchmarks:
             compliance_names.append(compliance['name'])
         return compliance_names
-
-    @classmethod
-    def get_code_sample(cls):
-        base_path = os.path.dirname(inspect.getfile(cls))
-        try:
-            code_file = open(path.join(base_path, "code_sample.py"))
-            sample_code = code_file.read()
-            return sample_code
-        except FileNotFoundError:
-            code = """# import your modules here...
-# Don't import client related modules
-
-def executor(context):
-    params = context["params"]    
-    clients = context["clients"]
-    
-    # <> Your Code goes here.
-    
-    # Always return a list
-    return []
-"""
-            return code
 
     @classmethod
     def get_steampipe_tables(cls) -> List[dict]:
@@ -278,6 +284,7 @@ def executor(context):
                         "result": r,
                         **combination.get("metadata", {})
                     })
+        resources = change_keys(resources)
         return resources
 
     def _get_steampipe_config_path(self):
@@ -302,26 +309,95 @@ def executor(context):
         except FileNotFoundError:
             print("File Not Found on path {}".format(config_path))
 
-    def execute_steampipe_task(self, payload_task: PayloadTask):
-        """
-        Executes a Steampipe Task
-        """
-        subprocess.run(
-            ["steampipe", "plugin", "install", payload_task.creds.plugin_name]
-        )
+    def _execute_steampipe_compliance(self, payload_task:PayloadTask):
+        mods_dir = "/tmp/mods/compliances"
+        if not os.path.exists(mods_dir):
+            os.makedirs(mods_dir)
 
-        # Save the configuration in the creds.config_path with value creds.config
-        self.set_steampipe_spc_config(
-            config_str=payload_task.creds.config,
+        path = os.path.join(
+            mods_dir,
+            "steampipe-mod-{}-compliance".format(payload_task.creds.plugin_name),
         )
+        if os.path.exists(path):
+            print("Mod already exists, Trying to fetch latest version.")
+            subprocess.run(
+                ["git", "pull"],
+                cwd=path
+            )
+        else:  
+            subprocess.run(
+                [
+                    "git",
+                    "clone",
+                    "--depth",
+                    "1",
+                    f"https://github.com/turbot/steampipe-mod-{payload_task.creds.plugin_name}-compliance.git",
+                ],
+                cwd=mods_dir,
+            )
 
         process = subprocess.run(
-            ["steampipe", "query", "{}".format(payload_task.executable), "--output", "json"],
+            ["powerpipe", "benchmark", "run", "{}".format(payload_task.executable), "--output", "json"],
+            cwd=path,
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
             env={**os.environ, **payload_task.creds.envs}
         )
 
+        return process
+
+    def execute_steampipe_task(self, payload_task:PayloadTask):
+        # Save the configuration in the creds.config_path with value creds.config
+        self.set_steampipe_spc_config(
+            config_str=payload_task.creds.config,
+        )
+
+        subprocess.run(
+            ["steampipe", "plugin", "install", payload_task.creds.plugin_name],
+            shell=True,
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL,
+        )
+        subprocess.run(
+            ["steampipe", "plugin", "update", payload_task.creds.plugin_name],
+            shell=True,
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL,
+        )
+        subprocess.run(
+            ["steampipe service start"],
+            shell=True,
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL,
+        )
+
+        execution_mode = None
+        if payload_task.executable.startswith(f"{payload_task.creds.plugin_name}_compliance"):
+            execution_mode = "compliance"
+        elif payload_task.executable.startswith("select"):
+            execution_mode = "query"
+        else:
+            raise ValueError("Execution mode is not supported.")
+
+        if execution_mode == "compliance":
+            print(f"Running compliance benchmark: '{payload_task.executable}'")
+            process = self._execute_steampipe_compliance(payload_task)
+
+        else:
+            print(f"Running query: '{payload_task.executable}'")
+            process = subprocess.run(
+                ["powerpipe", "query", "run", "{}".format(payload_task.executable), "--output", "json"],
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+                env={**os.environ, **payload_task.creds.envs}
+            )
+
+        subprocess.run(
+            ["steampipe service stop"],
+            shell=True,
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL,
+        )
         # clear config file
         self.clear_steampipe_spc_config()
 
@@ -343,14 +419,18 @@ def executor(context):
                 }
             }]
 
+        if execution_mode == "compliance":
+            stdout = transform_steampipe_compliance_resources(stdout)
+            stdout = change_keys(stdout)
+            stdout = oscf_based_steampipe_json(
+                stdout,
+                integration_type=payload_task.creds.connection_name,
+                integration_id=payload_task.context.integration.accountId,
+                query=payload_task.executable,
+            )
         # Transforming the output
-        if isinstance(stdout, dict) and stdout.get('rows'):
-            stdout = stdout['rows']
-            for row in stdout:
-                row["integration_id"] = payload_task.context.integration.accountId
-                row["integration_type"] = payload_task.context.integration.cspName
-                row["user_id"] = payload_task.context.execution_details.caller.user_id
-                row["root_user_id"] = payload_task.context.execution_details.caller.root_user_id
+        elif isinstance(stdout, dict) and stdout.get("rows"):
+            stdout = transform_inventory_resources(stdout, payload_task)
 
         # Covering Edge Cases
         if not isinstance(stdout, list):
