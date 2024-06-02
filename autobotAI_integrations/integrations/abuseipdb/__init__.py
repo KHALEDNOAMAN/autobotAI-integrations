@@ -78,7 +78,7 @@ class AbuseIPDBService(BaseService):
     @classmethod
     def get_details(cls):
         return {
-            "clients": list_of_unique_elements(cls.get_all_python_sdk_clients()),
+            "clients": [],
             "supported_executor": "ecs",
             "compliance_supported": False,
             "supported_interfaces": cls.supported_connection_interfaces(),
