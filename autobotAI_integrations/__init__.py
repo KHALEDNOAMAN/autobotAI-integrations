@@ -385,7 +385,7 @@ def executor(context):
         else:
             print(f"Running query: '{payload_task.executable}'")
             process = subprocess.run(
-                ["powerpipe", "query", "run", "{}".format(payload_task.executable), "--output", "json"],
+                ["steampipe", "query", "{}".format(payload_task.executable), "--output", "json"],
                 stdout=subprocess.PIPE,
                 stderr=subprocess.PIPE,
                 env={**os.environ, **payload_task.creds.envs}
