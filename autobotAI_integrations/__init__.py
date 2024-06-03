@@ -350,18 +350,15 @@ def executor(context):
         print("running execute steampipe task")
 
         subprocess.run(
-            ["steampipe", "plugin", "install", payload_task.creds.plugin_name],
-            shell=True
+            ["steampipe", "plugin", "install", payload_task.creds.plugin_name]
         )
         print("after installing the plugin")
         subprocess.run(
-            ["steampipe", "plugin", "update", payload_task.creds.plugin_name],
-            shell=True,
+            ["steampipe", "plugin", "update", payload_task.creds.plugin_name]
         )
         print("after installing the updating the plugin")
         subprocess.run(
-            ["steampipe service start"],
-            shell=True
+            ["steampipe service start"]
         )
         print("after starting the server")
         # Save the configuration in the creds.config_path with value creds.config
@@ -383,15 +380,14 @@ def executor(context):
         else:
             print(f"Running query: '{payload_task.executable}'")
             process = subprocess.run(
-                ["steampipe", "query", "{}".format(payload_task.executable), "--output", "json"],
+                ["/usr/local/bin/powerpipe", "query", "run", "{}".format(payload_task.executable), "--output", "json"],
                 stdout=subprocess.PIPE,
                 stderr=subprocess.PIPE,
                 env={**os.environ, **payload_task.creds.envs}
             )
 
         subprocess.run(
-            ["steampipe service stop"],
-            shell=True
+            ["steampipe service stop"]
         )
         print("after stopping the server")
         # clear config file
