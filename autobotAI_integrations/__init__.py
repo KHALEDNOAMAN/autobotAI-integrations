@@ -347,10 +347,6 @@ def executor(context):
         return process
 
     def execute_steampipe_task(self, payload_task:PayloadTask):
-        # Save the configuration in the creds.config_path with value creds.config
-        self.set_steampipe_spc_config(
-            config_str=payload_task.creds.config,
-        )
 
         subprocess.run(
             ["steampipe", "plugin", "install", payload_task.creds.plugin_name],
@@ -370,7 +366,10 @@ def executor(context):
             stdout=subprocess.DEVNULL,
             stderr=subprocess.DEVNULL,
         )
-
+        # Save the configuration in the creds.config_path with value creds.config
+        self.set_steampipe_spc_config(
+            config_str=payload_task.creds.config,
+        )
         execution_mode = None
         if payload_task.executable.startswith(f"{payload_task.creds.plugin_name}_compliance"):
             execution_mode = "compliance"
