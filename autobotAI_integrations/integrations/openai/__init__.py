@@ -101,12 +101,21 @@ def executor(context):
         'role': 'user',
         'content': "All resources are provided, return the result for each resource in the same order.",
     })
-    chat_completion = openai.chat.completions.create(
-        messages=prompts,
-        model=model,
-    )
-    for idx, response in enumerate(json.loads(chat_completion.choices[0].message.content)):
-        resources[idx]["decision"] = response
+    counter = 0
+    while True:
+        chat_completion = openai.chat.completions.create(
+            messages=prompts,
+            model=model,
+        )
+        try:
+            if chat_completion.choices[0].message.content and len(json.loads(chat_completion.choices[0].message.content)) == len(resources):
+                for idx, response in enumerate(json.loads(chat_completion.choices[0].message.content)):
+                    resources[idx]["decision"] = response
+                break
+        except:
+            pass
+        counter = counter + 1
+    print("Completed Evaluation with ", counter, "retries.")
     return resources"""}
 
     @staticmethod
