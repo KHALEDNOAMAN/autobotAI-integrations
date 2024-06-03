@@ -347,25 +347,23 @@ def executor(context):
         return process
 
     def execute_steampipe_task(self, payload_task:PayloadTask):
+        print("running execute steampipe task")
 
         subprocess.run(
             ["steampipe", "plugin", "install", payload_task.creds.plugin_name],
-            shell=True,
-            stdout=subprocess.DEVNULL,
-            stderr=subprocess.DEVNULL,
+            shell=True
         )
+        print("after installing the plugin")
         subprocess.run(
             ["steampipe", "plugin", "update", payload_task.creds.plugin_name],
             shell=True,
-            stdout=subprocess.DEVNULL,
-            stderr=subprocess.DEVNULL,
         )
+        print("after installing the updating the plugin")
         subprocess.run(
             ["steampipe service start"],
-            shell=True,
-            stdout=subprocess.DEVNULL,
-            stderr=subprocess.DEVNULL,
+            shell=True
         )
+        print("after starting the server")
         # Save the configuration in the creds.config_path with value creds.config
         self.set_steampipe_spc_config(
             config_str=payload_task.creds.config,
@@ -393,10 +391,9 @@ def executor(context):
 
         subprocess.run(
             ["steampipe service stop"],
-            shell=True,
-            stdout=subprocess.DEVNULL,
-            stderr=subprocess.DEVNULL,
+            shell=True
         )
+        print("after stopping the server")
         # clear config file
         self.clear_steampipe_spc_config()
 
