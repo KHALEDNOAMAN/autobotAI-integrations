@@ -28,6 +28,7 @@ from autobotAI_integrations.utils import (
     transform_inventory_resources
 )
 
+
 class BaseService:
 
     def __init__(self, ctx: dict, integration: BaseSchema):
@@ -265,18 +266,26 @@ def executor(context):
         result = run_mod_func(mod.executor, context=context)
         resources = []
         if result:
+            default_data = {
+                "user_id": payload_task.context.execution_details.caller.user_id,
+                "root_user_id": payload_task.context.execution_details.caller.root_user_id
+            }
+            ai_sublasses = []
+            for subclass in AIBaseService.__subclasses__():
+                dir_name = os.path.dirname(inspect.getfile(subclass)).split('/')[-1]
+                ai_sublasses.append(dir_name)
+            if payload_task.context.integration.cspName not in ai_sublasses:
+                default_data["integration_id"] = payload_task.context.integration.accountId
+                default_data["integration_type"] = payload_task.context.integration.cspName
             if not isinstance(result, list):
                 result = [result]
             for r in result:
                 if isinstance(r, dict):
                     resources.append(
                         {
-                            **r, 
+                            **r,
                             **combination.get("metadata", {}),
-                            "integration_id": payload_task.context.integration.accountId,
-                            "integration_type":payload_task.context.integration.cspName,
-                            "user_id": payload_task.context.execution_details.caller.user_id,
-                            "root_user_id": payload_task.context.execution_details.caller.root_user_id
+                            **default_data
                         }
                     )
                 else:
@@ -309,7 +318,7 @@ def executor(context):
         except FileNotFoundError:
             print("File Not Found on path {}".format(config_path))
 
-    def _execute_steampipe_compliance(self, payload_task:PayloadTask):
+    def _execute_steampipe_compliance(self, payload_task: PayloadTask):
         mods_dir = "/tmp/mods/compliances"
         if not os.path.exists(mods_dir):
             os.makedirs(mods_dir)
@@ -324,7 +333,7 @@ def executor(context):
                 ["git", "pull"],
                 cwd=path
             )
-        else:  
+        else:
             subprocess.run(
                 [
                     "git",
@@ -346,7 +355,7 @@ def executor(context):
 
         return process
 
-    def execute_steampipe_task(self, payload_task:PayloadTask):
+    def execute_steampipe_task(self, payload_task: PayloadTask):
         print("running execute steampipe task")
 
         subprocess.run(
