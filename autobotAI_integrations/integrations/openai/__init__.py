@@ -2,7 +2,6 @@ import importlib
 import os
 import uuid
 from typing import List, Optional
-
 from pydantic import Field
 
 from autobotAI_integrations import BaseSchema, SteampipeCreds, RestAPICreds, SDKCreds, CLICreds, \
@@ -64,6 +63,7 @@ class OpenAIService(AIBaseService):
             return {
                 "error": "Details can not be fetched"
             }
+
     @staticmethod
     def ai_prompt_python_template():
         return {
@@ -102,7 +102,8 @@ def executor(context):
         'content': "All resources are provided, return the result for each resource in the same order.",
     })
     counter = 0
-    while True:
+    while counter < 5:  # 4 Retries
+        counter = counter + 1
         chat_completion = openai.chat.completions.create(
             messages=prompts,
             model=model,
@@ -113,9 +114,8 @@ def executor(context):
                     resources[idx]["decision"] = response
                 break
         except:
-            pass
-        counter = counter + 1
-    print("Completed Evaluation with ", counter, "retries.")
+            print(len(json.loads(chat_completion.choices[0].message.content)), len(resources))
+    print("Completed Evaluation with ", counter, "tries.")
     return resources"""}
 
     @staticmethod
@@ -193,3 +193,15 @@ def executor(context):
 
     def generate_cli_creds(self) -> CLICreds:
         pass
+
+    def prompt_executor(self, model, prompt):
+        client = OpenAI(api_key=self.integration.api_key)
+        result = client.chat.completions.create(messages=[
+            {
+                "role": "user",
+                "content": prompt,
+            }
+        ],
+            model=model
+        )
+        return result.choices[0].message.content
