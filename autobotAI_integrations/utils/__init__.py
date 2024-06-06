@@ -75,7 +75,7 @@ def transform_inventory_resources(stdout: dict, payload_task: PayloadTask):
     results = []
     stdout = stdout["rows"]
     for row in stdout:
-        row["id"] = row.get("id", (row.get("akas") or [str(uuid.uuid4().hex)][0]))
+        row["id"] = row.get("id", (row.get("akas") or [str(uuid.uuid4().hex)])[0])
         row["integration_id"] = payload_task.context.integration.accountId
         row["integration_type"] = payload_task.context.integration.cspName
         row["user_id"] = payload_task.context.execution_details.caller.user_id
