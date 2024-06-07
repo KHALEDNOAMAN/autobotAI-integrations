@@ -11,6 +11,8 @@ import os
 from autobotAI_integrations import BaseService, list_of_unique_elements, PayloadTask, Param
 from autobotAI_integrations.models import *
 from autobotAI_integrations.utils.boto3_helper import Boto3Helper
+
+
 # from autobotAI_integrations.utils import get_account_id
 
 
@@ -75,9 +77,12 @@ class AWSService(BaseService):
     def _test_integration(self) -> dict:
         try:
             sts_client = self._get_aws_client("sts")
+            ec2_client = self._get_aws_client("ec2")
             identity_data = sts_client.get_caller_identity()
             account_id = str(identity_data['Account'])
             self.integration.account_id = account_id
+            self.integration.activeRegions = [region['RegionName'] for region in
+                                               ec2_client.describe_regions()["Regions"]]
             return {'success': True}
         except ClientError as e:
             print(traceback.format_exc())
@@ -128,7 +133,7 @@ class AWSService(BaseService):
     def get_integration_specific_details(self) -> dict:
         try:
             ec2_client = self._get_aws_client('ec2')
-            regions = [region['RegionName'] for region in  ec2_client.describe_regions()["Regions"]]
+            regions = [region['RegionName'] for region in ec2_client.describe_regions()["Regions"]]
             return {
                 "integration_id": self.integration.accountId,
                 "available_regions": regions
@@ -153,7 +158,7 @@ class AWSService(BaseService):
         }
 
     def generate_steampipe_creds(self) -> SteampipeCreds:
-        creds = {k: v for k,v in self._temp_credentials().items() if v}
+        creds = {k: v for k, v in self._temp_credentials().items() if v}
         conf_path = "~/.steampipe/config/aws.spc"
         config = """connection "aws" {
   plugin = "aws"
@@ -191,7 +196,8 @@ class AWSService(BaseService):
                 built_clients["regional"].setdefault(region, {})
                 for client in regional_clients:
                     try:
-                        built_clients["regional"][region][client.name] = boto3.client(client.name, region_name=region, **creds)
+                        built_clients["regional"][region][client.name] = boto3.client(client.name, region_name=region,
+                                                                                      **creds)
                     except ImportError:
                         print(f"Failed create client for {client['name']}")
         combinations = []
