@@ -119,16 +119,26 @@ class Boto3Helper:
             return self.credentials["AccessKeyId"]
 
     def refresh_sts_creds(self):
-        arn = self.csp['roleArn']
+        arn = self.csp.get('roleArn', None)
+        if arn:
+            sts_client = self.ctx.autobot_aws_context.boto3_helper.get_client('sts')
+            assumerole = sts_client.assume_role(
+                RoleArn=self.csp['roleArn'],
+                RoleSessionName=arn[13:25] + arn[31:],
+                ExternalId=self.csp['externalId'],
+                DurationSeconds=3600
+            )
 
-        sts_client = self.ctx.autobot_aws_context.boto3_helper.get_client('sts')
-        assumerole = sts_client.assume_role(
-            RoleArn=self.csp['roleArn'],
-            RoleSessionName=arn[13:25] + arn[31:],
-            ExternalId=self.csp['externalId'],
-            DurationSeconds=3600
-        )
+        else:
+            sts_client = boto3.client(
+                'sts',
+                aws_access_key_id=self.csp['access_key'],
+                aws_secret_access_key=self.csp['secret_key'],
+                aws_session_token=self.csp["session_token"] or None
+            )
 
+            # Get temporary credentials
+            assumerole = sts_client.get_session_token()
         self.credentials = assumerole['Credentials']
         self.credentials["stsCredsGeneratedOn"] = datetime.now().isoformat()
 
@@ -149,4 +159,3 @@ class Boto3Helper:
     def get_all_regions(self):
         client = self.get_client("ec2")
         return [region['RegionName'] for region in client.describe_regions()['Regions']]
-

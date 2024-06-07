@@ -30,6 +30,9 @@ class AwsSesIntegration(BaseSchema):
 
     def use_dependency(self, dependency):
         self.roleArn = dependency["roleArn"]
+        self.access_key: dependency["access_key"]
+        self.secret_key: dependency["secret_key"]
+        self.session_token: dependency["session_token"]
         self.externalId = dependency["externalId"]
 
 
