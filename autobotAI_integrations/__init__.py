@@ -444,5 +444,5 @@ class AIBaseService(BaseService):
     def ai_prompt_python_template():
         raise NotImplementedError()
 
-    def prompt_executor(self, model, prompt):
+    def prompt_executor(self, model=None, prompt=None, options: dict = {}):
         raise NotImplementedError()

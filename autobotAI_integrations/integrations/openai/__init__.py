@@ -205,14 +205,39 @@ def executor(context):
     def generate_cli_creds(self) -> CLICreds:
         pass
 
-    def prompt_executor(self, model, prompt):
+    def prompt_executor(self, model = None, prompt="", options: dict = {}):
         client = OpenAI(api_key=self.integration.api_key)
-        result = client.chat.completions.create(messages=[
-            {
-                "role": "user",
-                "content": prompt,
-            }
-        ],
-            model=model
+        if model:
+            result = client.chat.completions.create(messages=[
+                {
+                    "role": "user",
+                    "content": prompt,
+                }
+            ],
+                model=model
+            )
+            return result.choices[0].message.content
+        
+        if "thread_id" not in options or "assistant_id" not in options:
+            raise Exception("thread_id and assistant_id are required if model is not provided")
+
+        message = client.beta.threads.messages.create(
+            thread_id=options.get("thread_id"),
+            role="user",
+            content=prompt,
         )
-        return result.choices[0].message.content
+        print("Message is ", message)
+        run = client.beta.threads.runs.create(
+            thread_id=options.get("thread_id"),
+            assistant_id=options.get("assistant_id"),
+            extra_headers={"OpenAI-Beta": "assistants=v2"},
+        )
+        print("RUN is ", run)
+        while run.status != "completed":
+            run = client.beta.threads.runs.retrieve(
+                thread_id=options.get("thread_id"), run_id=run.id
+            )
+
+        messages = client.beta.threads.messages.list(thread_id=options.get("thread_id"))
+        new_message = messages.data[0].content[0].text.value
+        return new_message
