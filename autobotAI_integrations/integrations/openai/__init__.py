@@ -83,6 +83,7 @@ class OpenAIService(AIBaseService):
                  "required": True}
             ],
             "code": """import json
+import traceback
 def executor(context):
     openai = context['clients']['openai']
     prompt = context['params']['prompt']
@@ -109,12 +110,22 @@ def executor(context):
             model=model,
         )
         try:
-            if chat_completion.choices[0].message.content and len(json.loads(chat_completion.choices[0].message.content)) == len(resources):
-                for idx, response in enumerate(json.loads(chat_completion.choices[0].message.content)):
-                    resources[idx]["decision"] = response
-                break
+            message_content = chat_completion.choices[0].message.content
+            if message_content:
+                if "```json" in message_content:
+                    message_content = message_content.split("```json")[1].split("```")[0]
+                if len(json.loads(message_content)) == len(resources):
+                    for idx, response in enumerate(json.loads(message_content)):
+                        if response["name"] == resources[idx]["name"]:
+                            resources[idx]["decision"] = response
+                        else:
+                            for resource in resources:
+                                if response["name"] == resource["name"]:
+                                    resource["decision"] = response
+                    break
         except:
-            print(len(json.loads(chat_completion.choices[0].message.content)), len(resources))
+            print(type(chat_completion.choices[0].message.content), chat_completion.choices[0].message.content)
+            traceback.print_exc()
     print("Completed Evaluation with ", counter, "tries.")
     return resources"""}
 
