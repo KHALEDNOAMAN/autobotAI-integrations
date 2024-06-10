@@ -270,11 +270,11 @@ def executor(context):
                 "user_id": payload_task.context.execution_details.caller.user_id,
                 "root_user_id": payload_task.context.execution_details.caller.root_user_id
             }
-            ai_sublasses = []
+            ai_subclasses = []
             for subclass in AIBaseService.__subclasses__():
                 dir_name = os.path.dirname(inspect.getfile(subclass)).split('/')[-1]
-                ai_sublasses.append(dir_name)
-            if payload_task.context.integration.cspName not in ai_sublasses:
+                ai_subclasses.append(dir_name)
+            if payload_task.context.integration.cspName not in ai_subclasses:
                 default_data["integration_id"] = payload_task.context.integration.accountId
                 default_data["integration_type"] = payload_task.context.integration.cspName
             if not isinstance(result, list):
@@ -296,22 +296,20 @@ def executor(context):
         resources = change_keys(resources)
         return resources
 
-    def _get_steampipe_config_path(self):
+    def _get_steampipe_config_path(self, plugin_name):
         home_dir = Path.home()
         config_path = os.path.join(
-            home_dir,
-            ".steampipe/config/",
-            "{}.spc".format(self.integration.cspName)
+            home_dir, ".steampipe/config/", "{}.spc".format(plugin_name)
         )
         return config_path
 
-    def set_steampipe_spc_config(self, config_str):
-        config_path = self._get_steampipe_config_path()
+    def set_steampipe_spc_config(self, config_str, plugin_name):
+        config_path = self._get_steampipe_config_path(plugin_name)
         with open(config_path, 'w') as f:
             f.write(config_str)
 
-    def clear_steampipe_spc_config(self):
-        config_path = self._get_steampipe_config_path()
+    def clear_steampipe_spc_config(self, plugin_name):
+        config_path = self._get_steampipe_config_path(plugin_name)
         try:
             os.remove(config_path)
             print("file removed successfully!")
@@ -373,6 +371,7 @@ def executor(context):
         # Save the configuration in the creds.config_path with value creds.config
         self.set_steampipe_spc_config(
             config_str=payload_task.creds.config,
+            plugin_name=payload_task.creds.plugin_name
         )
         execution_mode = None
         if payload_task.executable.startswith(f"{payload_task.creds.plugin_name}_compliance"):
@@ -400,7 +399,7 @@ def executor(context):
         # )
         # print("after stopping the server")
         # clear config file
-        self.clear_steampipe_spc_config()
+        self.clear_steampipe_spc_config(plugin_name=payload_task.creds.plugin_name)
 
         stdout = process.stdout.decode("utf-8")
         stderr = [{

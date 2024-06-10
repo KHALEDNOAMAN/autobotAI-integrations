@@ -1,0 +1,5 @@
+- name: virustotal
+  import_library_names:
+    - vt
+  pip_package_names:
+    - vt-py
