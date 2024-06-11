@@ -82,7 +82,7 @@ class AWSService(BaseService):
             account_id = str(identity_data['Account'])
             self.integration.account_id = account_id
             self.integration.activeRegions = [region['RegionName'] for region in
-                                               ec2_client.describe_regions()["Regions"]]
+                                              ec2_client.describe_regions()["Regions"]]
             return {'success': True}
         except ClientError as e:
             print(traceback.format_exc())

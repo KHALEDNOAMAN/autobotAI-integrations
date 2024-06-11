@@ -205,19 +205,26 @@ def executor(context):
     def generate_cli_creds(self) -> CLICreds:
         pass
 
-    def prompt_executor(self, model = None, prompt="", options: dict = {}):
+    def prompt_executor(self, model=None, prompt="", options: dict = {}):
         client = OpenAI(api_key=self.integration.api_key)
         if model:
-            result = client.chat.completions.create(messages=[
-                {
-                    "role": "user",
-                    "content": prompt,
-                }
-            ],
-                model=model
-            )
-            return result.choices[0].message.content
-
+            counter = 0
+            while counter < 5:
+                counter += 1
+                try:
+                    result = client.chat.completions.create(messages=[
+                            {
+                                "role": "user",
+                                "content": prompt,
+                            }
+                        ],
+                        model=model
+                    )
+                    if result.choices[0].message.content:
+                        return result.choices[0].message.content
+                except:
+                    continue
+            return "AI-Execution Failed to Generate Result"
         if "assistant_id" not in options:
             raise Exception("assistant_id is required if model is not provided")
 
