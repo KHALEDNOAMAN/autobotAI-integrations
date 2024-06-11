@@ -40,6 +40,7 @@ class IntegrationSchema(BaseModel):
 
     class Config:
         extra = "allow"
+        coerce_numbers_to_str = True
 
     @model_validator(mode="before")
     @classmethod
