@@ -217,27 +217,30 @@ def executor(context):
                 model=model
             )
             return result.choices[0].message.content
-        
-        if "thread_id" not in options or "assistant_id" not in options:
-            raise Exception("thread_id and assistant_id are required if model is not provided")
+
+        if "assistant_id" not in options:
+            raise Exception("assistant_id is required if model is not provided")
+
+        thread_id = options.get("thread_id", None)
+        if not thread_id:
+            thread = client.beta.threads.create()
+            thread_id = thread.id
 
         message = client.beta.threads.messages.create(
-            thread_id=options.get("thread_id"),
+            thread_id=thread_id,
             role="user",
             content=prompt,
         )
         print("Message is ", message)
         run = client.beta.threads.runs.create(
-            thread_id=options.get("thread_id"),
+            thread_id=thread_id,
             assistant_id=options.get("assistant_id"),
             extra_headers={"OpenAI-Beta": "assistants=v2"},
         )
         print("RUN is ", run)
         while run.status != "completed":
-            run = client.beta.threads.runs.retrieve(
-                thread_id=options.get("thread_id"), run_id=run.id
-            )
+            run = client.beta.threads.runs.retrieve(thread_id=thread_id, run_id=run.id)
 
-        messages = client.beta.threads.messages.list(thread_id=options.get("thread_id"))
+        messages = client.beta.threads.messages.list(thread_id=thread_id)
         new_message = messages.data[0].content[0].text.value
         return new_message

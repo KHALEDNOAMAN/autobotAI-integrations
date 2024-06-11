@@ -47,3 +47,4 @@ openai
 slack-sdk
 pymsteams
 ollama
+jira

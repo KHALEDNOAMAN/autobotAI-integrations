@@ -1,0 +1,381 @@
+{
+    "jira": [
+        {
+            "name": "jira_advanced_setting",
+            "all_columns": [
+                "allowed_values",
+                "description",
+                "id",
+                "key",
+                "name",
+                "title",
+                "type",
+                "value"
+            ],
+            "included": [],
+            "excluded": [],
+            "aliases": [],
+            "inventory_supported": false
+        },
+        {
+            "name": "jira_backlog_issue",
+            "all_columns": [
+                "assignee_account_id",
+                "assignee_display_name",
+                "board_id",
+                "board_name",
+                "components",
+                "created",
+                "creator_account_id",
+                "creator_display_name",
+                "description",
+                "due_date",
+                "epic_key",
+                "fields",
+                "id",
+                "key",
+                "labels",
+                "priority",
+                "project_id",
+                "project_key",
+                "project_name",
+                "reporter_account_id",
+                "reporter_display_name",
+                "self",
+                "status",
+                "summary",
+                "tags",
+                "title",
+                "type",
+                "updated"
+            ],
+            "included": [],
+            "excluded": [],
+            "aliases": [],
+            "inventory_supported": false
+        },
+        {
+            "name": "jira_board",
+            "all_columns": [
+                "filter_id",
+                "id",
+                "name",
+                "self",
+                "sub_query",
+                "title",
+                "type"
+            ],
+            "included": [],
+            "excluded": [],
+            "aliases": [],
+            "inventory_supported": false
+        },
+        {
+            "name": "jira_component",
+            "all_columns": [
+                "assignee_account_id",
+                "assignee_display_name",
+                "assignee_type",
+                "description",
+                "id",
+                "is_assignee_type_valid",
+                "issue_count",
+                "lead_account_id",
+                "lead_display_name",
+                "name",
+                "project",
+                "project_id",
+                "real_assignee_account_id",
+                "real_assignee_display_name",
+                "real_assignee_type",
+                "self",
+                "title"
+            ],
+            "included": [],
+            "excluded": [],
+            "aliases": [],
+            "inventory_supported": false
+        },
+        {
+            "name": "jira_dashboard",
+            "all_columns": [
+                "edit_permissions",
+                "id",
+                "is_favourite",
+                "name",
+                "owner_account_id",
+                "owner_display_name",
+                "popularity",
+                "rank",
+                "self",
+                "share_permissions",
+                "title",
+                "view"
+            ],
+            "included": [],
+            "excluded": [],
+            "aliases": [],
+            "inventory_supported": false
+        },
+        {
+            "name": "jira_epic",
+            "all_columns": [
+                "_ctx",
+                "color",
+                "done",
+                "id",
+                "key",
+                "name",
+                "self",
+                "summary",
+                "title"
+            ],
+            "included": [],
+            "excluded": [],
+            "aliases": [],
+            "inventory_supported": false
+        },
+        {
+            "name": "jira_global_setting",
+            "all_columns": [
+                "_ctx",
+                "attachments_enabled",
+                "issue_linking_enabled",
+                "sub_tasks_enabled",
+                "time_tracking_configuration",
+                "time_tracking_enabled",
+                "unassigned_issues_allowed",
+                "voting_enabled",
+                "watching_enabled"
+            ],
+            "included": [],
+            "excluded": [],
+            "aliases": [],
+            "inventory_supported": false
+        },
+        {
+            "name": "jira_group",
+            "all_columns": [
+                "_ctx",
+                "id",
+                "member_ids",
+                "member_names",
+                "name",
+                "title"
+            ],
+            "included": [],
+            "excluded": [],
+            "aliases": [],
+            "inventory_supported": false
+        },
+        {
+            "name": "jira_issue",
+            "all_columns": [
+                "_ctx",
+                "assignee_account_id",
+                "assignee_display_name",
+                "components",
+                "created",
+                "creator_account_id",
+                "creator_display_name",
+                "description",
+                "duedate",
+                "epic_key",
+                "fields",
+                "id",
+                "key",
+                "labels",
+                "priority",
+                "project_id",
+                "project_key",
+                "project_name",
+                "reporter_account_id",
+                "reporter_display_name",
+                "resolution_date",
+                "self",
+                "sprint_ids",
+                "sprint_names",
+                "status",
+                "status_category",
+                "summary",
+                "tags",
+                "title",
+                "type",
+                "updated"
+            ],
+            "included": [],
+            "excluded": [],
+            "aliases": [],
+            "inventory_supported": false
+        },
+        {
+            "name": "jira_issue_comment",
+            "columns": [
+                "_ctx",
+                "author",
+                "body",
+                "created",
+                "id",
+                "issue_id",
+                "jsd_public",
+                "self",
+                "title",
+                "update_author",
+                "updated"
+            ],
+            "description": "Schema for jira_issue_comment",
+            "table_aliases": [],
+            "view": false
+        },
+        {
+            "name": "jira_issue_type",
+            "columns": [
+                "_ctx",
+                "avatar_id",
+                "description",
+                "entity_id",
+                "hierarchy_level",
+                "icon_url",
+                "id",
+                "name",
+                "scope",
+                "self",
+                "subtask",
+                "title"
+            ],
+            "description": "Schema for jira_issue_type",
+            "table_aliases": [],
+            "view": false
+        },
+        {
+            "name": "jira_issue_worklog",
+            "columns": [
+                "_ctx",
+                "author",
+                "comment",
+                "created",
+                "id",
+                "issue_id",
+                "properties",
+                "self",
+                "started",
+                "time_spent",
+                "time_spent_seconds",
+                "title",
+                "update_author",
+                "updated"
+            ],
+            "description": "Schema for jira_issue_worklog",
+            "table_aliases": [],
+            "view": false
+        },
+        {
+            "name": "jira_workflow",
+            "columns": [
+                "_ctx",
+                "description",
+                "entity_id",
+                "is_default",
+                "name",
+                "statuses",
+                "title",
+                "transitions"
+            ],
+            "description": "Schema for jira_workflow",
+            "table_aliases": [],
+            "view": false
+        },
+        {
+            "name": "jira_user",
+            "columns": [
+                "_ctx",
+                "account_id",
+                "account_type",
+                "active",
+                "avatar_urls",
+                "display_name",
+                "email_address",
+                "group_names",
+                "self",
+                "title"
+            ],
+            "description": "Schema for jira_user",
+            "table_aliases": [],
+            "view": false
+        },
+        {
+            "name": "jira_sprint",
+            "columns": [
+                "_ctx",
+                "board_id",
+                "complete_date",
+                "end_date",
+                "id",
+                "name",
+                "self",
+                "start_date",
+                "state",
+                "title"
+            ],
+            "description": "Schema for jira_sprint",
+            "table_aliases": [],
+            "view": false
+        },
+        {
+            "name": "jira_project_role",
+            "columns": [
+                "_ctx",
+                "actor_account_ids",
+                "actor_names",
+                "description",
+                "id",
+                "name",
+                "self",
+                "title"
+            ],
+            "description": "Schema for jira_project_role",
+            "table_aliases": [],
+            "view": false
+        },
+        {
+            "name": "jira_project",
+            "columns": [
+                "_ctx",
+                "component_ids",
+                "description",
+                "email",
+                "id",
+                "issue_types",
+                "key",
+                "lead_account_id",
+                "lead_display_name",
+                "name",
+                "project_category",
+                "project_type_key",
+                "properties",
+                "self",
+                "title",
+                "url"
+            ],
+            "description": "Schema for jira_project",
+            "table_aliases": [],
+            "view": false
+        },
+        {
+            "name": "jira_priority",
+            "columns": [
+                "_ctx",
+                "description",
+                "icon_url",
+                "id",
+                "name",
+                "self",
+                "status_color",
+                "title"
+            ],
+            "description": "Schema for jira_priority",
+            "table_aliases": [],
+            "view": false
+        }
+    ]
+}

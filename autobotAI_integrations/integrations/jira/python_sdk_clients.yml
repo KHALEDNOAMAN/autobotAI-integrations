@@ -1,0 +1,5 @@
+- name: jira
+  import_library_names:
+    - jira
+  pip_package_names:
+    - jira

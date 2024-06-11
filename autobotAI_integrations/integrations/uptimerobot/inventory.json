@@ -1,0 +1,82 @@
+{
+    "uptimerobot": [
+        {
+            "name": "uptimerobot_account",
+            "all_columns": [
+                "down_monitors",
+                "email",
+                "first_name",
+                "monitor_interval",
+                "monitor_limit",
+                "paused_monitors",
+                "sms_credits",
+                "total_monitors_count",
+                "up_monitors",
+                "user_id"
+            ],
+            "included": [],
+            "excluded": [],
+            "aliases": [],
+            "inventory_supported": false
+        },
+        {
+            "name": "uptimerobot_alert_contact",
+            "all_columns": [
+                "friendly_name",
+                "id",
+                "status",
+                "type",
+                "value"
+            ],
+            "included": [],
+            "excluded": [],
+            "aliases": [],
+            "inventory_supported": false
+        },
+        {
+            "name": "uptimerobot_maintenance_window",
+            "all_columns": [
+                "duration",
+                "friendly_name",
+                "id",
+                "start_time",
+                "status",
+                "type",
+                "user",
+                "value"
+            ],
+            "included": [],
+            "excluded": [],
+            "aliases": [],
+            "inventory_supported": false
+        },
+        {
+            "name": "uptimerobot_monitor",
+            "all_columns": [
+                "alert_contacts",
+                "create_date_time",
+                "friendly_name",
+                "http_password",
+                "http_username",
+                "id",
+                "interval",
+                "is_group_main",
+                "keyword_case_type",
+                "keyword_type",
+                "keyword_value",
+                "logs",
+                "monitor_group",
+                "ssl",
+                "status",
+                "sub_type",
+                "timeout",
+                "type",
+                "url"
+            ],
+            "included": [],
+            "excluded": [],
+            "aliases": [],
+            "inventory_supported": false
+        }
+    ]
+}
