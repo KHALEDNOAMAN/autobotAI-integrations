@@ -1,6 +1,7 @@
 from enum import Enum
 from typing import Optional
-from pydantic import BaseModel
+from typing import Optional, Any, get_origin, get_args, Union
+from pydantic import BaseModel, ConfigDict, ValidationError, Field, validator, model_validator
 
 
 class ConnectionTypes(str, Enum):
@@ -39,6 +40,16 @@ class IntegrationSchema(BaseModel):
 
     class Config:
         extra = "allow"
+
+    @model_validator(mode="before")
+    @classmethod
+    def coerce_to_str(cls, values: Any) -> Any:
+        for field in cls.model_fields:
+            annotation = cls.model_fields[field].annotation
+            if annotation == str or (get_origin(annotation) is {Optional, Union} and get_args(annotation) == (str,)):
+                if field in values:
+                    values[field] = str(values[field])
+        return values
 
     @classmethod
     def encryption_exclusions(self):
