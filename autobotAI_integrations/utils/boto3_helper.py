@@ -120,7 +120,7 @@ class Boto3Helper:
 
     def refresh_sts_creds(self):
         arn = self.csp.get('roleArn', None)
-        if arn:
+        if arn and arn != 'None':
             sts_client = self.ctx.autobot_aws_context.boto3_helper.get_client('sts')
             assumerole = sts_client.assume_role(
                 RoleArn=self.csp['roleArn'],
