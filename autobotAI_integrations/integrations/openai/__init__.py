@@ -208,16 +208,19 @@ def executor(context):
     def prompt_executor(self, model=None, prompt="", options: dict = {}):
         client = OpenAI(api_key=self.integration.api_key)
         if model:
+            message = {
+                "role": "user",
+                "content": prompt,
+            }
+            if "temperature" in options:
+                message["temperature"] = options["temperature"]
+            if "max_tokens" in options:
+                message["temperature"] = options["max_tokens"]
             counter = 0
             while counter < 5:
                 counter += 1
                 try:
-                    result = client.chat.completions.create(messages=[
-                            {
-                                "role": "user",
-                                "content": prompt,
-                            }
-                        ],
+                    result = client.chat.completions.create(messages=[message],
                         model=model
                     )
                     if result.choices[0].message.content:
