@@ -40,14 +40,13 @@ class IntegrationSchema(BaseModel):
 
     class Config:
         extra = "allow"
-        coerce_numbers_to_str = True
 
     @model_validator(mode="before")
     @classmethod
     def coerce_to_str(cls, values: Any) -> Any:
         for field in cls.model_fields:
-            annotation = cls.model_fields[field].annotation
-            if annotation == str or (get_origin(annotation) is {Optional, Union} and get_args(annotation) == (str,)):
+            annotation = cls.model_fields[field].annotation                        
+            if annotation == str or (get_origin(annotation) in [Optional, Union] and str in get_args(annotation)):
                 if field in values:
                     values[field] = str(values[field])
         return values
