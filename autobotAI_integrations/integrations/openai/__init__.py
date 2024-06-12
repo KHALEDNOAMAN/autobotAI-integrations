@@ -116,7 +116,7 @@ def executor(context):
                     message_content = message_content.split("```json")[1].split("```")[0]
                 if len(json.loads(message_content)) == len(resources):
                     for idx, response in enumerate(json.loads(message_content)):
-                        if response["name"] == resources[idx]["name"]:
+                        if not resources[idx].get("name") or (resources[idx].get("name") and response["name"] == resources[idx]["name"]):
                             resources[idx]["decision"] = response
                         else:
                             for resource in resources:
