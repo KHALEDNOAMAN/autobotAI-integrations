@@ -18,6 +18,7 @@ from pydantic import BaseModel
 from autobotAI_integrations.integration_schema import IntegrationSchema, IntegrationStates
 from autobotAI_integrations.models import *
 from autobotAI_integrations.payload_schema import PayloadTask, Payload, Param
+from autobotAI_integrations.utils.logging_config import logger
 from autobotAI_integrations.utils import (
     list_of_unique_elements,
     load_mod_from_string,
@@ -66,6 +67,7 @@ class BaseService:
         else:
             self.integration.integrationState = IntegrationStates.INACTIVE
             self.on_test_integration_failure()
+        logger.info(f"Integration accountId: {self.integration.accountId} And State: {self.integration.integrationState}")
         return result
 
     def on_test_integration_failure(self):
@@ -154,16 +156,20 @@ def executor(context):
 
     @classmethod
     def get_details(cls):
-        return {
-            "python_code_sample": cls.get_code_sample(),
-            "fetcher_supported": ["code", "no_code"],
-            "listener_supported": False,
-            "supported_interfaces": cls.supported_connection_interfaces(),
-            "supported_execution_types": cls.supported_connection_interfaces(),
-            "clients": list_of_unique_elements(cls.get_all_python_sdk_clients()),
-            "supported_executor": "ecs",
-            "compliance_supported": False
-        }
+        try:
+            return {
+                "python_code_sample": cls.get_code_sample(),
+                "fetcher_supported": ["code", "no_code"],
+                "listener_supported": False,
+                "supported_interfaces": cls.supported_connection_interfaces(),
+                "supported_execution_types": cls.supported_connection_interfaces(),
+                "clients": list_of_unique_elements(cls.get_all_python_sdk_clients()),
+                "supported_executor": "ecs",
+                "compliance_supported": False
+            }
+        except Exception as e:
+            logger.exception(f"Error occurred while fetching details for {cls.__name__}: {e}")
+            return {}
 
     @staticmethod
     def generic_rest_api_call(api_creds: RestAPICreds, method: str, endpoint: str, data=None):
@@ -188,7 +194,7 @@ def executor(context):
             return response.json()
 
         except requests.RequestException as e:
-            print(f"Error occurred during {method} request to {url}: {e}")
+            logger.exception(f"Error occurred during {method} request to {url}: {e}")
             return None
 
     def generate_steampipe_creds(self) -> SteampipeCreds:
@@ -211,6 +217,7 @@ def executor(context):
         client_definitions = self.find_client_definitions(payload_task.clients)
         for client in client_definitions:
             if client.pip_package_names:
+                logger.info(f"Installing {client.pip_package_names}")
                 try:
                     subprocess.check_output(['pip', 'show', " ".join(client.pip_package_names)])
                 except subprocess.CalledProcessError:
@@ -305,6 +312,7 @@ def executor(context):
 
     def set_steampipe_spc_config(self, config_str, plugin_name):
         config_path = self._get_steampipe_config_path(plugin_name)
+        logger.info(f"Setting {plugin_name}.spc file to PATH: {config_path}")
         with open(config_path, 'w') as f:
             f.write(config_str)
 
@@ -312,9 +320,9 @@ def executor(context):
         config_path = self._get_steampipe_config_path(plugin_name)
         try:
             os.remove(config_path)
-            print("file removed successfully!")
+            logger.info("file removed successfully!")
         except FileNotFoundError:
-            print("File Not Found on path {}".format(config_path))
+            logger.info("File Not Found on path {}".format(config_path))
 
     def _execute_steampipe_compliance(self, payload_task: PayloadTask):
         mods_dir = "/tmp/mods/compliances"
@@ -326,7 +334,7 @@ def executor(context):
             "steampipe-mod-{}-compliance".format(payload_task.creds.plugin_name),
         )
         if os.path.exists(path):
-            print("Mod already exists, Trying to fetch latest version.")
+            logger.info("Mod already exists, Trying to fetch latest version.")
             subprocess.run(
                 ["git", "pull"],
                 cwd=path
@@ -354,26 +362,24 @@ def executor(context):
         return process
 
     def execute_steampipe_task(self, payload_task: PayloadTask):
-        print("running execute steampipe task")
+        logger.info("Running Steampipe Task")
 
+        logger.info(f"Installing the plugin {payload_task.creds.plugin_name}")
         subprocess.run(
             ["steampipe", "plugin", "install", payload_task.creds.plugin_name]
         )
-        print("after installing the plugin")
+        
+        logger.info(f"Updating the plugin {payload_task.creds.plugin_name}")
         subprocess.run(
             ["steampipe", "plugin", "update", payload_task.creds.plugin_name]
         )
-        # print("after installing the updating the plugin")
-        # subprocess.run(
-        #     ["steampipe service start"]
-        # )
-        # print("after starting the server")
-        # Save the configuration in the creds.config_path with value creds.config
         self.set_steampipe_spc_config(
             config_str=payload_task.creds.config,
             plugin_name=payload_task.creds.plugin_name
         )
         execution_mode = None
+
+        logger.debug("Checking for Query type")
         if payload_task.executable.startswith(f"{payload_task.creds.plugin_name}_compliance"):
             execution_mode = "compliance"
         elif payload_task.executable.startswith("select"):
@@ -382,11 +388,12 @@ def executor(context):
             raise ValueError("Execution mode is not supported.")
 
         if execution_mode == "compliance":
-            print(f"Running compliance benchmark: '{payload_task.executable}'")
+            logger.info(f"Running compliance benchmark: '{payload_task.executable}'")
             process = self._execute_steampipe_compliance(payload_task)
 
         else:
-            print(f"Running query: '{payload_task.executable}'")
+            logger.info(f"Running query: '{payload_task.executable}'")
+            logger.debug(f"Environment variables: {payload_task.creds.envs}")
             process = subprocess.run(
                 ["/usr/local/bin/steampipe", "query", "{}".format(payload_task.executable), "--output", "json"],
                 stdout=subprocess.PIPE,
@@ -394,11 +401,6 @@ def executor(context):
                 env={**os.environ, **payload_task.creds.envs}
             )
 
-        # subprocess.run(
-        #     ["steampipe service stop"]
-        # )
-        # print("after stopping the server")
-        # clear config file
         self.clear_steampipe_spc_config(plugin_name=payload_task.creds.plugin_name)
 
         stdout = process.stdout.decode("utf-8")
@@ -419,6 +421,8 @@ def executor(context):
                 }
             }]
 
+        logger.info(f"Transforming Output for {execution_mode}")
+        logger.debug(f"Stdout: {stdout}")
         if execution_mode == "compliance":
             stdout = transform_steampipe_compliance_resources(stdout)
             stdout = change_keys(stdout)
@@ -436,6 +440,7 @@ def executor(context):
         if not isinstance(stdout, list):
             stdout = list(stdout)
 
+        logger.debug(f"Transformed Output: {stdout}")
         return stdout, stderr
 
 

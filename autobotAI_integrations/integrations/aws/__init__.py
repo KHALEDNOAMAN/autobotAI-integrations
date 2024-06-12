@@ -13,9 +13,6 @@ from autobotAI_integrations.models import *
 from autobotAI_integrations.utils.boto3_helper import Boto3Helper
 
 
-# from autobotAI_integrations.utils import get_account_id
-
-
 class Forms:
     pass
 
