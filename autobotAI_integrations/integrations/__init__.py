@@ -37,9 +37,11 @@ class IntegrationServiceFactory:
                 "description"
             ).default
             temp["category"] = integration_schema.model_fields.get("category").default
-            if not q or not q.get("category") or q.get("category") == temp["category"]:
-                details_list.append(temp)
             details_list.append(temp)
+        if q and q.get("category"):
+            details_list = [
+                detail for detail in details_list if detail["category"] == q.get("category")
+            ]
         return details_list
 
     def get_service(self, ctx, integration):
