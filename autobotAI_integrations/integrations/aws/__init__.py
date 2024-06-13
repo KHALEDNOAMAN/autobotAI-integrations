@@ -11,6 +11,7 @@ import os
 from autobotAI_integrations import BaseService, list_of_unique_elements, PayloadTask, Param
 from autobotAI_integrations.models import *
 from autobotAI_integrations.utils.boto3_helper import Boto3Helper
+from autobotAI_integrations.utils.logging_config import logger
 
 
 class Forms:
@@ -37,7 +38,7 @@ class AWSIntegration(BaseSchema):
     )
 
     def __init__(self, **kwargs):
-        if not kwargs["accountId"]:
+        if not kwargs.get("accountId"):
             kwargs["accountId"] = str(uuid.uuid4().hex)
         super().__init__(**kwargs)
 
@@ -76,14 +77,18 @@ class AWSService(BaseService):
             sts_client = self._get_aws_client("sts")
             ec2_client = self._get_aws_client("ec2")
             identity_data = sts_client.get_caller_identity()
-            account_id = str(identity_data['Account'])
+            account_id = str(identity_data["Account"])
             self.integration.account_id = account_id
-            self.integration.activeRegions = [region['RegionName'] for region in
-                                              ec2_client.describe_regions()["Regions"]]
-            return {'success': True}
+            self.integration.activeRegions = [
+                region["RegionName"]
+                for region in ec2_client.describe_regions()["Regions"]
+            ]
+            return {"success": True}
         except ClientError as e:
-            print(traceback.format_exc())
-            return {'success': False, 'error': traceback.format_exc()}
+            logger.error(e)
+            logger.debug(e.response)
+            logger.debug(traceback.format_exc())
+            return {"success": False, "error": str(e)}
 
     @staticmethod
     def get_forms():
