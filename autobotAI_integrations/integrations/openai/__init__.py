@@ -4,11 +4,22 @@ import uuid
 from typing import List, Optional
 from pydantic import Field
 
-from autobotAI_integrations import BaseSchema, SteampipeCreds, RestAPICreds, SDKCreds, CLICreds, \
-    AIBaseService, ConnectionInterfaces, PayloadTask, SDKClient, list_of_unique_elements
+from autobotAI_integrations import (
+    BaseSchema,
+    SteampipeCreds,
+    RestAPICreds,
+    SDKCreds,
+    CLICreds,
+    AIBaseService,
+    ConnectionInterfaces,
+    PayloadTask,
+    SDKClient,
+    list_of_unique_elements,
+)
 from openai import OpenAI
 
 from autobotAI_integrations.models import IntegrationCategory
+from autobotAI_integrations.utils.logging_config import logger
 
 
 class OpenAIIntegration(BaseSchema):
@@ -44,9 +55,9 @@ class OpenAIService(AIBaseService):
                 model="gpt-3.5-turbo",
             )
             print(chat_completion)
-            return {'success': True}
+            return {"success": True}
         except BaseException as e:
-            return {'success': False, "error": str(e)}
+            return {"success": False, "error": str(e)}
 
     def get_integration_specific_details(self) -> dict:
         try:
@@ -60,27 +71,31 @@ class OpenAIService(AIBaseService):
                 "models": model_names,
             }
         except Exception as e:
-            return {
-                "error": "Details can not be fetched"
-            }
+            return {"error": "Details can not be fetched"}
 
     @staticmethod
     def ai_prompt_python_template():
         return {
             "integration_type": "openai",
             "param_definitions": [
-                {"name": "prompt",
-                 "type": "str",
-                 "description": "The prompt to use for the AI model",
-                 "required": True},
-                {"name": "model",
-                 "type": "str",
-                 "description": "The model to use for the AI model",
-                 "required": True},
-                {"name": "resources",
-                 "type": "list",
-                 "description": "The resources to use for the AI model",
-                 "required": True}
+                {
+                    "name": "prompt",
+                    "type": "str",
+                    "description": "The prompt to use for the AI model",
+                    "required": True,
+                },
+                {
+                    "name": "model",
+                    "type": "str",
+                    "description": "The model to use for the AI model",
+                    "required": True,
+                },
+                {
+                    "name": "resources",
+                    "type": "list",
+                    "description": "The resources to use for the AI model",
+                    "required": True,
+                },
             ],
             "code": """import json
 import traceback
@@ -127,7 +142,8 @@ def executor(context):
             print(type(chat_completion.choices[0].message.content), chat_completion.choices[0].message.content)
             traceback.print_exc()
     print("Completed Evaluation with ", counter, "tries.")
-    return resources"""}
+    return resources""",
+        }
 
     @staticmethod
     def get_forms():
@@ -144,11 +160,11 @@ def executor(context):
                             "type": "text/password",
                             "label": "OpenAI api_key",
                             "placeholder": "Enter the OpenAI API Key",
-                            "required": True
+                            "required": True,
                         }
-                    ]
+                    ],
                 }
-            ]
+            ],
         }
 
     @staticmethod
@@ -161,20 +177,21 @@ def executor(context):
             ConnectionInterfaces.REST_API,
             ConnectionInterfaces.CLI,
             ConnectionInterfaces.PYTHON_SDK,
-            ConnectionInterfaces.STEAMPIPE
+            ConnectionInterfaces.STEAMPIPE,
         ]
 
-    def build_python_exec_combinations_hook(self, payload_task: PayloadTask,
-                                            client_definitions: List[SDKClient]) -> list:
-        openai = importlib.import_module(client_definitions[0].import_library_names[0], package=None)
+    def build_python_exec_combinations_hook(
+        self, payload_task: PayloadTask, client_definitions: List[SDKClient]
+    ) -> list:
+        openai = importlib.import_module(
+            client_definitions[0].import_library_names[0], package=None
+        )
 
         return [
             {
-                "clients": {
-                    "openai": openai.OpenAI(api_key=self.integration.api_key)
-                },
+                "clients": {"openai": openai.OpenAI(api_key=self.integration.api_key)},
                 "params": self.prepare_params(payload_task.params),
-                "context": payload_task.context
+                "context": payload_task.context,
             }
         ]
 
@@ -187,13 +204,16 @@ def executor(context):
   plugin = "openai"
 }
 """
-        return SteampipeCreds(envs=envs, plugin_name="openai", connection_name="openai",
-                              conf_path=conf_path, config=config_str)
+        return SteampipeCreds(
+            envs=envs,
+            plugin_name="openai",
+            connection_name="openai",
+            conf_path=conf_path,
+            config=config_str,
+        )
 
     def generate_rest_api_creds(self) -> RestAPICreds:
-        headers = {
-            "Authorization": f"Bearer {self.integration.api_key}"
-        }
+        headers = {"Authorization": f"Bearer {self.integration.api_key}"}
         return RestAPICreds(api_key=self.integration.api_key, headers=headers)
 
     def generate_python_sdk_creds(self) -> SDKCreds:
@@ -206,6 +226,7 @@ def executor(context):
         pass
 
     def prompt_executor(self, model=None, prompt="", options: dict = {}):
+        logger.info(f"Executing prompt: {prompt}")
         client = OpenAI(api_key=self.integration.api_key)
         if model:
             message = {
@@ -220,8 +241,8 @@ def executor(context):
             while counter < 5:
                 counter += 1
                 try:
-                    result = client.chat.completions.create(messages=[message],
-                        model=model
+                    result = client.chat.completions.create(
+                        messages=[message], model=model
                     )
                     if result.choices[0].message.content:
                         return result.choices[0].message.content
@@ -236,21 +257,25 @@ def executor(context):
             thread = client.beta.threads.create()
             thread_id = thread.id
 
-        message = client.beta.threads.messages.create(
-            thread_id=thread_id,
-            role="user",
-            content=prompt,
-        )
-        print("Message is ", message)
-        run = client.beta.threads.runs.create(
-            thread_id=thread_id,
-            assistant_id=options.get("assistant_id"),
-            extra_headers={"OpenAI-Beta": "assistants=v2"},
-        )
-        print("RUN is ", run)
-        while run.status != "completed":
-            run = client.beta.threads.runs.retrieve(thread_id=thread_id, run_id=run.id)
+            message = client.beta.threads.messages.create(
+                thread_id=thread_id,
+                role="user",
+                content=prompt,
+            )
 
-        messages = client.beta.threads.messages.list(thread_id=thread_id)
-        new_message = messages.data[0].content[0].text.value
-        return new_message
+        run_id = options.get("run_id", None)
+        if not run_id:
+            run = client.beta.threads.runs.create(
+                thread_id=thread_id,
+                assistant_id=options.get("assistant_id"),
+                extra_headers={"OpenAI-Beta": "assistants=v2"},
+            )
+            run_id = run.id
+        run = client.beta.threads.runs.retrieve(thread_id=thread_id, run_id=run_id)
+        if run.status != "completed":
+            return {"thread_id": thread_id, "run_id": run.id, "status": run.status}
+        else:
+            messages = client.beta.threads.messages.list(thread_id=thread_id)
+            new_message = messages.data[0].content[0].text.value
+            print("new meessage is ", new_message)
+            return {"status": run.status, "response": new_message}
