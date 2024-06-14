@@ -313,6 +313,7 @@ def executor(context):
     def set_steampipe_spc_config(self, config_str, plugin_name):
         config_path = self._get_steampipe_config_path(plugin_name)
         logger.info(f"Setting {plugin_name}.spc file to PATH: {config_path}")
+        logger.info(f"SPC Config {plugin_name}.spc file is: {config_str}")
         with open(config_path, 'w') as f:
             f.write(config_str)
 
