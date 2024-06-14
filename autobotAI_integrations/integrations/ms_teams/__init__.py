@@ -47,6 +47,7 @@ class MsTeamsService(BaseService):
                 res = {'success': True}
         except:
             res = {'success': False, "error": "Unable to send message to Webhook"}
+        return res
 
     @staticmethod
     def get_forms():
