@@ -404,9 +404,8 @@ def executor(context):
         self.clear_steampipe_spc_config(plugin_name=payload_task.creds.plugin_name)
 
         stdout = process.stdout.decode("utf-8")
-        stderr = [{
-            "message": process.stderr.decode("utf-8")
-        }]
+        error_str = process.stderr.decode("utf-8")        
+        logger.error(f"Possible error running the steampipe query: {error_str}")
 
         try:
             stdout = json.loads(stdout)
@@ -418,6 +417,7 @@ def executor(context):
                 "message": traceback.format_exc(),
                 "other_details": {
                     "non_json_output": stdout,
+                    "stderr": error_str
                 }
             }]
 
