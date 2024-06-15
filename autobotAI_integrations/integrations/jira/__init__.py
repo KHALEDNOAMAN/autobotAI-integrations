@@ -167,7 +167,7 @@ class JiraService(BaseService):
             "JIRA_URL" : self.integration.base_url,
             "JIRA_USER": self.integration.username,
         }
-        if self.integration.token:
+        if self.integration.token not in [None, "None"]:
             envs["JIRA_TOKEN"] = self.integration.token
         else:
             envs["JIRA_PERSONAL_ACCESS_TOKEN"] = self.integration.personal_access_token

@@ -61,15 +61,21 @@ class AWSService(BaseService):
         super().__init__(ctx, integration)
 
     def _get_aws_client(self, aws_client_name: str):
-        if self.integration.roleArn:
-            boto3_helper = Boto3Helper(self.ctx, integration=self.integration.dump_all_data())
+        if self.integration.roleArn not in ["None", None]:
+            boto3_helper = Boto3Helper(
+                self.ctx, integration=self.integration.dump_all_data()
+            )
             return boto3_helper.get_client(aws_client_name)
         else:
             return boto3.client(
                 aws_client_name,
-                aws_access_key_id=self.integration.access_key,
-                aws_secret_access_key=self.integration.secret_key,
-                aws_session_token=self.integration.session_token
+                aws_access_key_id=str(self.integration.access_key),
+                aws_secret_access_key=str(self.integration.secret_key),
+                aws_session_token=(
+                    str(self.integration.session_token)
+                    if self.integration.session_token not in [None, "None"]
+                    else None
+                ),
             )
 
     def _test_integration(self) -> dict:
@@ -252,15 +258,19 @@ class AWSService(BaseService):
 
     def _temp_credentials(self):
         if self.integration.roleArn:
-            boto3_helper = Boto3Helper(self.ctx, integration=self.integration.model_dump())
+            boto3_helper = Boto3Helper(
+                self.ctx, integration=self.integration.model_dump()
+            )
             return {
                 "AWS_ACCESS_KEY_ID": boto3_helper.get_access_key(),
                 "AWS_SECRET_ACCESS_KEY": boto3_helper.get_secret_key(),
                 "AWS_SESSION_TOKEN": boto3_helper.get_session_token(),
             }
         else:
-            return {
-                "AWS_ACCESS_KEY_ID": self.integration.access_key,
-                "AWS_SECRET_ACCESS_KEY": self.integration.secret_key,
-                "AWS_SESSION_TOKEN": self.integration.session_token,
+            creds = {
+                "AWS_ACCESS_KEY_ID": str(self.integration.access_key),
+                "AWS_SECRET_ACCESS_KEY": str(self.integration.secret_key),
             }
+            if self.integration.session_token not in [None, "None"]:
+                creds["AWS_SESSION_TOKEN"] = str(self.integration.session_token)
+            return creds
