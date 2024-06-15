@@ -369,7 +369,7 @@ def executor(context):
         subprocess.run(
             ["steampipe", "plugin", "install", payload_task.creds.plugin_name]
         )
-        
+
         logger.info(f"Updating the plugin {payload_task.creds.plugin_name}")
         subprocess.run(
             ["steampipe", "plugin", "update", payload_task.creds.plugin_name]
@@ -434,11 +434,12 @@ def executor(context):
                 query=payload_task.executable,
             )
         # Transforming the output
-        elif isinstance(stdout, dict) and stdout.get("rows"):
+        elif isinstance(stdout, dict) and "rows" in stdout:
             stdout = transform_inventory_resources(stdout, payload_task)
 
         # Covering Edge Cases
         if not isinstance(stdout, list):
+            logger.error(f"Failed Output as List: {stdout}")
             stdout = list(stdout)
 
         logger.debug(f"Transformed Output: {stdout}")

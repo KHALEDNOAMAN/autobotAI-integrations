@@ -141,6 +141,8 @@ class AWSService(BaseService):
                 "available_regions": regions
             }
         except Exception as e:
+            logger.error(e)
+            logger.debug(traceback.format_exc())
             return {
                 "error": "Details can not be fetched"
             }

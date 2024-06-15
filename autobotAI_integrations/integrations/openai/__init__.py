@@ -250,6 +250,9 @@ def executor(context):
                     continue
             return "AI-Execution Failed to Generate Result"
         if "assistant_id" not in options:
+            logger.error(
+                "assistant_id is required if model is not provided, and no default assistant was defined"
+            )
             raise Exception("assistant_id is required if model is not provided")
 
         thread_id = options.get("thread_id", None)
@@ -277,5 +280,5 @@ def executor(context):
         else:
             messages = client.beta.threads.messages.list(thread_id=thread_id)
             new_message = messages.data[0].content[0].text.value
-            print("new meessage is ", new_message)
+            logger.info("new message is ", new_message)
             return {"status": run.status, "response": new_message}
