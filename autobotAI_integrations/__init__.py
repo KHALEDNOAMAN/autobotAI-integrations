@@ -407,6 +407,7 @@ def executor(context):
         stdout = process.stdout.decode("utf-8")
         error_str = process.stderr.decode("utf-8")        
         logger.error(f"Possible error running the steampipe query: {error_str}")
+        stderr = []
 
         try:
             stdout = json.loads(stdout)
