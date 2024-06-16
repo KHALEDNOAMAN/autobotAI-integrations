@@ -141,9 +141,10 @@ class AwsSesService(BaseService):
                                             client_definitions: List[SDKClient]) -> list:
         creds = {
             "aws_access_key_id": payload_task.creds.envs["AWS_ACCESS_KEY_ID"],
-            "aws_secret_access_key": payload_task.creds.envs["AWS_SECRET_ACCESS_KEY"],
-            "aws_session_token": payload_task.creds.envs["AWS_SESSION_TOKEN"]
+            "aws_secret_access_key": payload_task.creds.envs["AWS_SECRET_ACCESS_KEY"],            
         }
+        if payload_task.creds.envs.get("AWS_SESSION_TOKEN"):
+            creds["aws_session_token"] = payload_task.creds.envs.get("AWS_SESSION_TOKEN")
         return [
             {
                 "metadata": {

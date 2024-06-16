@@ -18,20 +18,16 @@ def fromisoformat(strdate):
 
 
 def load_mod_from_string(code_string):
-    try:
-        Path("/tmp/mods/").mkdir(parents=True, exist_ok=True)
-        file_path = "/tmp/mods/" + str(uuid.uuid4()) + ".py"
-        f = open(file_path, "w")
-        f.write(code_string)
-        f.close()
-        loader = importlib.machinery.SourceFileLoader("fetcher", file_path)
-        spec = importlib.util.spec_from_loader(loader.name, loader)
-        mod = importlib.util.module_from_spec(spec)
-        loader.exec_module(mod)
-        return mod
-    except:
-        traceback.print_exc()
-        raise Exception("Unable to load function.")
+    Path("/tmp/mods/").mkdir(parents=True, exist_ok=True)
+    file_path = "/tmp/mods/" + str(uuid.uuid4()) + ".py"
+    f = open(file_path, "w")
+    f.write(code_string)
+    f.close()
+    loader = importlib.machinery.SourceFileLoader("fetcher", file_path)
+    spec = importlib.util.spec_from_loader(loader.name, loader)
+    mod = importlib.util.module_from_spec(spec)
+    loader.exec_module(mod)
+    return mod
 
 
 def run_mod_func(fn, **kwargs):
@@ -53,9 +49,11 @@ def list_of_unique_elements(list_to_verify: list) -> list:
 
     return unique_list
 
+
 # Inventory Utils
 
-def change_keys(obj, convert=lambda key: key.replace('.', '_').replace('$', '-')):
+
+def change_keys(obj, convert=lambda key: key.replace(".", "_").replace("$", "-")):
     """
     Recursively goes through the dictionary obj and replaces keys with the convert function.
     """
@@ -71,18 +69,21 @@ def change_keys(obj, convert=lambda key: key.replace('.', '_').replace('$', '-')
         return obj
     return new
 
+
 def transform_inventory_resources(stdout: dict, payload_task: PayloadTask):
     results = []
     stdout = stdout["rows"]
     for row in stdout:
-        row["id"] = row.get("id", row.get("Id", (row.get("akas") or [str(uuid.uuid4().hex)])[0]))
-        row["name"] = row.get("name", row.get("Name", (row.get("akas") or [str(uuid.uuid4().hex)])[0]))
+        row["id"] = row.get(
+            "id", row.get("Id", (row.get("akas") or [str(uuid.uuid4().hex)])[0])
+        )
+        row["name"] = row.get(
+            "name", row.get("Name", (row.get("akas") or [str(uuid.uuid4().hex)])[0])
+        )
         row["integration_id"] = payload_task.context.integration.accountId
         row["integration_type"] = payload_task.context.integration.cspName
         row["user_id"] = payload_task.context.execution_details.caller.user_id
-        row["root_user_id"] = (
-            payload_task.context.execution_details.caller.root_user_id
-        )
+        row["root_user_id"] = payload_task.context.execution_details.caller.root_user_id
         if payload_task.context.integration.agent_ids:
             row["agent_id"] = payload_task.context.integration.agent_ids
         results.append(change_keys(row))
@@ -90,6 +91,7 @@ def transform_inventory_resources(stdout: dict, payload_task: PayloadTask):
 
 
 # transform steampipe compliance data
+
 
 def transform_steampipe_compliance_resources(data):
     result = []

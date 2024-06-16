@@ -191,9 +191,10 @@ class AWSService(BaseService):
         regional_clients = pydash.filter_(client_definitions, lambda x: x.is_regional is True)
         creds = {
             "aws_access_key_id": payload_task.creds.envs["AWS_ACCESS_KEY_ID"],
-            "aws_secret_access_key": payload_task.creds.envs["AWS_SECRET_ACCESS_KEY"],
-            "aws_session_token": payload_task.creds.envs["AWS_SESSION_TOKEN"]
+            "aws_secret_access_key": payload_task.creds.envs["AWS_SECRET_ACCESS_KEY"],            
         }
+        if payload_task.creds.envs.get("AWS_SESSION_TOKEN"):
+            creds["aws_session_token"] = payload_task.creds.envs.get("AWS_SESSION_TOKEN")
         if global_clients:
             for client in global_clients:
                 built_clients["global"][client.name] = boto3.client(client.name, **creds)
