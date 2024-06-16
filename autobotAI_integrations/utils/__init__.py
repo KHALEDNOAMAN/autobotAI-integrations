@@ -17,6 +17,23 @@ def fromisoformat(strdate):
         return datetime.strptime(strdate, "%Y-%m-%dT%H:%M:%S")
 
 
+def filter_stacktrace(stacktrace, start_path="/tmp/mods"):
+    # Split the stack trace into lines
+    stacktrace_lines = stacktrace.split("\n")
+
+    # Initialize a flag to indicate when to start collecting lines
+    collect_lines = False
+    filtered_lines = []
+
+    for line in stacktrace_lines:
+        if start_path in line:
+            collect_lines = True
+        if collect_lines:
+            filtered_lines.append(line)
+
+    return "\n".join(filtered_lines)
+
+
 def load_mod_from_string(code_string):
     Path("/tmp/mods/").mkdir(parents=True, exist_ok=True)
     file_path = "/tmp/mods/" + str(uuid.uuid4()) + ".py"

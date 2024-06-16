@@ -95,7 +95,7 @@ class KubernetesService(BaseService):
   config_path    = "~/.kube/config"
 }"""
         return SteampipeCreds(
-            envs=envs, plugin_name="kubernetes", connection_name="kubernetes", conf_path=conf_path
+            envs=envs, plugin_name="kubernetes", connection_name="kubernetes", conf_path=conf_path, config=config
         )
 
     def generate_python_sdk_creds(self) -> SDKCreds:
