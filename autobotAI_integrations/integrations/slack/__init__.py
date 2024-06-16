@@ -1,5 +1,5 @@
 import importlib
-import uuid
+import uuid, re
 from typing import List, Optional
 
 from pydantic import Field
@@ -7,10 +7,12 @@ from pydantic import Field
 from autobotAI_integrations import BaseSchema, SteampipeCreds, RestAPICreds, SDKCreds, CLICreds, \
     BaseService, ConnectionInterfaces, PayloadTask, SDKClient
 from slack_sdk import WebClient
+from slack_sdk.webhook import WebhookClient
 
 from autobotAI_integrations.models import IntegrationCategory
 
 class SlackIntegration(BaseSchema):
+    webhook: str = Field(default=None, exclude=True)
     workspace: Optional[str] = None
     bot_token: str = Field(default=None, exclude=True)
 
@@ -28,11 +30,18 @@ class SlackService(BaseService):
 
     def __init__(self, ctx, integration: SlackIntegration):
         super().__init__(ctx, integration)
-    
+
     def _test_integration(self):
         try:
-            client = WebClient(token=self.integration.bot_token)
-            client.usergroups_list()
+            if self.integration.webhook not in [None, "None"]:
+                webhook = WebhookClient(self.integration.webhook)
+                response = webhook.send(text="Hello, Integration Tested Successfully!")
+                assert response.status_code == 200
+                assert response.body == "ok"
+                return {"success": True}
+            else:
+                client = WebClient(token=self.integration.bot_token)
+                client.usergroups_list()
             return {"success": True}
         except Exception as e:
             return {"success": False, "error": str(e)}
@@ -43,6 +52,19 @@ class SlackService(BaseService):
             "label": "Slack",
             "type": "form",
             "children": [
+                {
+                    "label": "Webhook Integration",
+                    "type": "form",
+                    "children": [
+                        {
+                            "name": "webhook",
+                            "type": "text/url",
+                            "label": "Webhook URL",
+                            "placeholder": "Enter your Webhook URL",
+                            "required": True,
+                        }
+                    ],
+                },
                 {
                     "label": "Bot Token Integration",
                     "type": "form",
@@ -59,11 +81,12 @@ class SlackService(BaseService):
                             "type": "text",
                             "label": "Slack Bot Token",
                             "placeholder": "Enter the Slack Token",
-                            "required": True
-                        }
-                    ]
-                }
-            ]
+                            "description": "Make sure to have 'usergroups:read' scope in your Oauth token",
+                            "required": True,
+                        },
+                    ],
+                },
+            ],
         }
 
     @staticmethod
@@ -80,13 +103,15 @@ class SlackService(BaseService):
 
     def build_python_exec_combinations_hook(self, payload_task: PayloadTask,
                                             client_definitions: List[SDKClient]) -> list:
-        slack = importlib.import_module(client_definitions[0].import_library_names[0], package=None)
-
+        clients = {}
+        if self.integration.webhook not in [None, "None"]:
+            webhook = WebhookClient(self.integration.webhook)
+            clients["WebhookClient"] = webhook
+        else:
+            clients["WebClient"] = WebClient(token=self.integration.bot_token)
         return [
             {
-                "clients": {
-                    "WebClient": slack.WebClient(token=self.integration.bot_token)
-                },
+                "clients": clients,
                 "params": self.prepare_params(payload_task.params),
                 "context": payload_task.context
             }
@@ -108,7 +133,7 @@ class SlackService(BaseService):
         pass
 
     def generate_python_sdk_creds(self) -> SDKCreds:
-        envs = {
-            "SLACK_BOT_TOKEN": self.integration.bot_token,
-        }
+        envs = {}
+        if self.integration.bot_token not in [None, "None"]:
+            envs["SLACK_BOT_TOKEN"] = self.integration.bot_token
         return SDKCreds(envs=envs)

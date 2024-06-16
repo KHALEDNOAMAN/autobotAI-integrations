@@ -98,7 +98,7 @@ class AWSBedrockService(AIBaseService):
             return {
                 "integration_id": self.integration.accountId,
                 "models": models,
-                "available_regions": [self.integration.region, *regions]
+                "available_regions": list(set(self.integration.region, *regions))
             }
         except Exception as e:
             logger.error(e)

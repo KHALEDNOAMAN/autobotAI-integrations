@@ -22,7 +22,10 @@ def executor(context):
     clients = context["clients"]
 
     # Placeholder for retrieving the integration-specific client if needed
-    client = clients["WebClient"]  # Supports only one client
+    # Supports client
+    # WebhookClient
+    # WebClient
+    # client = clients["<client_name>"]
 
     # User's Python code execution logic goes here
     # (Replace this comment with the your actual code)

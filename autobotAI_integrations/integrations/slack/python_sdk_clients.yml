@@ -3,3 +3,8 @@
     - slack_sdk
   pip_package_names:
     - slack-sdk
+- name: WebhookClient
+  import_library_names:
+    - slack_sdk.webhook
+  pip_package_names:
+    - slack-sdk
