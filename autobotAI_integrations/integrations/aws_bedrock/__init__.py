@@ -280,7 +280,7 @@ def executor(context):
         raise NotImplementedError()
 
     def _temp_credentials(self):
-        if self.integration.roleArn:
+        if self.integration.roleArn not in ["None", None]:
             boto3_helper = Boto3Helper(
                 self.ctx, integration=self.integration.model_dump()
             )
