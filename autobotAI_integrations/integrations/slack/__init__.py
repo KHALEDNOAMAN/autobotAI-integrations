@@ -11,10 +11,11 @@ from slack_sdk.webhook import WebhookClient
 
 from autobotAI_integrations.models import IntegrationCategory
 
+
 class SlackIntegration(BaseSchema):
-    webhook: str = Field(default=None, exclude=True)
+    webhook: Optional[str] = None
     workspace: Optional[str] = None
-    bot_token: str = Field(default=None, exclude=True)
+    bot_token: Optional[str] = Field(default=None, exclude=True)
 
     category: Optional[str] = IntegrationCategory.NOTIFICATIONS_AND_COMMUNICATIONS.value
     description: Optional[str] = (
@@ -29,6 +30,8 @@ class SlackIntegration(BaseSchema):
 class SlackService(BaseService):
 
     def __init__(self, ctx, integration: SlackIntegration):
+        if not isinstance(integration, SlackIntegration):
+            integration = SlackIntegration(**integration)
         super().__init__(ctx, integration)
 
     def _test_integration(self):
