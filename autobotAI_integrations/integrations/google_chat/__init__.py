@@ -33,7 +33,7 @@ class GoogleChatService(BaseService):
             integration = GoogleChatIntegration(**integration)
         super().__init__(ctx, integration)
 
-    def test_integration(self):
+    def _test_integration(self):
         pattern = re.compile(
             "https://chat.googleapis.com/v1/spaces/[a-zA-Z0-9].*?/messages?.*"
         )
