@@ -10,6 +10,7 @@ from slack_sdk import WebClient
 from slack_sdk.webhook import WebhookClient
 
 from autobotAI_integrations.models import IntegrationCategory
+from autobotAI_integrations.utils import list_of_unique_elements
 
 
 class SlackIntegration(BaseSchema):
@@ -49,6 +50,14 @@ class SlackService(BaseService):
         except Exception as e:
             return {"success": False, "error": str(e)}
 
+    @classmethod
+    def get_details(cls):
+        return {
+            "clients": list_of_unique_elements(cls.get_all_python_sdk_clients()),
+            "supported_executor": "lambda",            
+            "supported_interfaces": cls.supported_connection_interfaces(),
+            "python_code_sample": cls.get_code_sample(),
+        }
     @staticmethod
     def get_forms():
         return {
