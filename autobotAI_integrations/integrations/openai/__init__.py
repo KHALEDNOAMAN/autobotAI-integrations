@@ -280,5 +280,4 @@ def executor(context):
         else:
             messages = client.beta.threads.messages.list(thread_id=thread_id)
             new_message = messages.data[0].content[0].text.value
-            logger.info("new message is ", new_message)
             return {"status": run.status, "response": new_message}
