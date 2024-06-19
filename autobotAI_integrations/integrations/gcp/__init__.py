@@ -50,10 +50,11 @@ class GCPIntegration(BaseSchema):
     )
 
     def __init__(self, **kwargs):
-        creds = kwargs.get("credentials")
-        if isinstance(kwargs.get('credentials'), str):
-            creds = json.loads(creds)
-        kwargs["accountId"] = str(creds.get("project_id"))
+        if kwargs.get("credentials"):
+            creds = kwargs.get("credentials")
+            if isinstance(kwargs.get('credentials'), str):
+                creds = json.loads(creds)
+            kwargs["accountId"] = str(creds.get("project_id"))
         super().__init__(**kwargs)
 
     @property
