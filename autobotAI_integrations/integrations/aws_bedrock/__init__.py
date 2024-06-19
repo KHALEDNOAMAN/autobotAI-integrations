@@ -170,36 +170,24 @@ def executor(context):
     model = context['params']['model']
     resources = json.loads(json.dumps(context['params']['resources'], default=str))
     prompts = [
-        f\"""<|start_header_id|>user<|end_header_id|>
-        For each Input dict provided, return a dict with attributes such as, 'name': str name of the resource, 'action_required': boolean that shows is the action advisable or not, 'probability_score': integer that shows the probability of the result being correct, 'confidence_score': integrer that shows the confidence in judgement, 'reason': string that mentions the reason for the judgement, 'fields_evaluated': list of fields that were evaluted for the judgement, the evaluation criterion given is {prompt}. The output should be valid parseable json, do not use any markup language at all, the returned message content should be json parsable. Wait till all data is provided before starting
-        \"""
+        f"<|start_header_id|>user<|end_header_id|>For each Input dict provided, return a dict with attributes such as, 'name': str name of the resource, 'action_required': boolean that shows is the action advisable or not, 'probability_score': integer that shows the probability of the result being correct, 'confidence_score': integrer that shows the confidence in judgement, 'reason': string that mentions the reason for the judgement, 'fields_evaluated': list of fields that were evaluted for the judgement, the evaluation criterion given is {prompt}. The output should be valid parseable json, do not use any markup language at all, the returned message content should be json parsable. Wait till all data is provided before starting"
     ]
     for resource in resources:
         prompts.append(
-            \"""<|start_header_id|>user<|end_header_id|>
-            json.dumps(resource, default=str)
-            \"""
+            f"<|start_header_id|>user<|end_header_id|>\n{json.dumps(resource, default=str)}"
         )
     prompts.append(
-        \"""<|start_header_id|>user<|end_header_id|>
-        All resources are provided, return the result for each resource in the same order.
-        \"""
+        "<|start_header_id|>user<|end_header_id|>All resources are provided, return the result for each resource in the same order."
     )
-    formatted_prompt = f\"""
-<|begin_of_text|>
-{"\n".join(prompts)}
-<|eot_id|>
-<|start_header_id|>assistant<|end_header_id|>
-\"""
+    formatted_prompt = f"<|begin_of_text|>\n{"\n".join(prompts)}\n<|eot_id|>\n<|start_header_id|>assistant<|end_header_id|>"
     native_request = {
         "prompt": formatted_prompt,
-        "temperature": 0.5,
     }
     request = json.dumps(native_request)
     counter = 0
     while counter < 5:  # 4 Retries
         counter = counter + 1
-        response = client.invoke_model(modelId=model_id, body=request)
+        response = client.invoke_model(modelId="meta.llama3-8b-instruct-v1:0", body=request)
         model_response = json.loads(response["body"].read())
         try:
             message_content =  model_response["generation"]

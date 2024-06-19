@@ -48,3 +48,5 @@ slack-sdk
 pymsteams
 ollama
 jira
+GitPython
+vt-py

@@ -1,7 +1,7 @@
 import importlib
 import os
 import uuid
-from typing import List, Optional
+from typing import List, Optional, Union
 
 from pydantic import Field
 
@@ -27,7 +27,12 @@ class GithubIntegration(BaseSchema):
 
 class GithubService(BaseService):
 
-    def __init__(self, ctx, integration: GithubIntegration):
+    def __init__(self, ctx: dict, integration: Union[GithubIntegration, dict]):
+        """
+        Integration should have all the data regarding the integration
+        """
+        if not isinstance(integration, GithubIntegration):
+            integration = GithubIntegration(**integration)
         super().__init__(ctx, integration)
 
     def _test_integration(self):
