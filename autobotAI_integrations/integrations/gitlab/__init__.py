@@ -1,7 +1,7 @@
 import importlib
 import os
 import uuid
-from typing import List, Optional
+from typing import List, Optional, Union
 
 from pydantic import Field
 
@@ -28,7 +28,12 @@ class GitlabIntegration(BaseSchema):
 
 class GitlabService(BaseService):
 
-    def __init__(self, ctx, integration: GitlabIntegration):
+    def __init__(self, ctx: dict, integration: Union[GitlabIntegration, dict]):
+        """
+        Integration should have all the data regarding the integration
+        """
+        if not isinstance(integration, GitlabIntegration):
+            integration = GitlabIntegration(**integration)
         super().__init__(ctx, integration)
 
     def _test_integration(self):

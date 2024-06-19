@@ -2,7 +2,7 @@ import importlib
 import os
 from typing_extensions import Literal
 import uuid
-from typing import List, Optional
+from typing import List, Optional, Union
 
 from pydantic import Field
 
@@ -27,7 +27,12 @@ class GitGuardianIntegration(BaseSchema):
 
 class GitGuardianService(BaseService):
 
-    def __init__(self, ctx, integration: GitGuardianIntegration):
+    def __init__(self, ctx: dict, integration: Union[GitGuardianIntegration, dict]):
+        """
+        Integration should have all the data regarding the integration
+        """
+        if not isinstance(integration, GitGuardianIntegration):
+            integration = GitGuardianIntegration(**integration)
         super().__init__(ctx, integration)
 
     @staticmethod
