@@ -221,7 +221,10 @@ def executor(context):
                 try:
                     subprocess.check_output(['pip', 'show', " ".join(client.pip_package_names)])
                 except subprocess.CalledProcessError:
-                    subprocess.check_call([sys.executable, '-m', 'pip', 'install', " ".join(client.pip_package_names)])
+                    subprocess.check_call(
+                        [sys.executable, '-m', 'pip', 'install', " ".join(client.pip_package_names), "-t", "/tmp/",
+                         "--no-cache-dir"])
+                    sys.path.insert(1, '/tmp/')
 
         return self.build_python_exec_combinations_hook(payload_task, client_definitions)
 
