@@ -237,10 +237,6 @@ def executor(context):
         return client_details
 
     def python_sdk_processor(self, payload_task: PayloadTask) -> (List[Dict[str, Any]], List[str]):  # type: ignore                
-        try:
-            load_mod_from_string(payload_task.executable)
-        except BaseException as e:
-            return [], [traceback.format_exc()]
         if payload_task.creds and payload_task.creds.envs:
             for key, value in payload_task.creds.envs.items():
                 if key and value:
