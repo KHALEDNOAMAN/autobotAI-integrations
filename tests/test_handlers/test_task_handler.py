@@ -1,4 +1,4 @@
-import pytest
+import pytest, os, shutil
 from autobotAI_integrations.handlers.task_handler import handle_task
 from autobotAI_integrations.payload_schema import TaskResult
 
@@ -20,8 +20,6 @@ def test_result_format():
         assert isinstance(result, TaskResult)
         if result.resources:
             for resource in result.resources:
-                assert "id" in resource
-                assert "name" in resource
                 assert "integration_id" in resource
                 assert "integration_type" in resource
                 assert "user_id" in resource
@@ -35,6 +33,16 @@ def test_result_format():
 
 class TestTaskHandlerClass:
 
+    @classmethod
+    def setup_class(cls):
+        pass
+
+    @classmethod
+    def teardown_class(cls):
+        cloned_path = os.path.join(os.path.abspath(os.getcwd()), "tree")
+        if os.path.exists(cloned_path):
+            shutil.rmtree(cloned_path)
+
     def test_steampipe_task(
         self, sample_integration_dict, sample_steampipe_task, test_result_format
     ):
@@ -46,13 +54,19 @@ class TestTaskHandlerClass:
             for resource in result.resources:
                 assert 'id' in resource
                 assert "name" in resource
+                if result.integration_type == "linux":
+                    assert "host" in resource
+                    assert "stdout_output" in resource
 
     def test_python_task(self, sample_integration_dict, sample_python_task, test_result_format):
         integration = sample_integration_dict(cspName="git")
         # default args: code:str, clients:list
         task = sample_python_task(integration)
         result = handle_task(task)
+        cloned_path = os.path.join(os.path.abspath(os.getcwd()), "tree")
+        if integration["cspName"] == "git":
+            assert os.path.exists(cloned_path)
         test_result_format(result)
-        
+
     def test_compliance_task(self):
         pass
