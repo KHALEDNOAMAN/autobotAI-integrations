@@ -77,6 +77,7 @@ class OpenAIService(AIBaseService):
     def ai_prompt_python_template():
         return {
             "integration_type": "openai",
+            "ai_client": "openai",
             "param_definitions": [
                 {
                     "name": "prompt",

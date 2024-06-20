@@ -140,6 +140,7 @@ class AWSBedrockService(AIBaseService):
     def ai_prompt_python_template():
         return {
             "integration_type": "aws_bedrock",
+            "ai_client": "bedrock-runtime",
             "param_definitions": [
                 {
                     "name": "prompt",
