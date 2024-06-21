@@ -308,7 +308,7 @@ def executor(context):
     def _get_steampipe_config_path(self, plugin_name):
         home_dir = Path.home()
         config_path = os.path.join(
-            home_dir, ".steampipe/config/", "{}.spc".format(plugin_name)
+            home_dir, ".steampipe/config/", "{}.spc".format(plugin_name.split("/")[-1])
         )
         return config_path
 
