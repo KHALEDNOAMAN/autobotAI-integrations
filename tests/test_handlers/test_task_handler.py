@@ -12,25 +12,6 @@ from autobotAI_integrations.payload_schema import TaskResult
 # if resource: task result should be in list format
 # task result format: check if contains necessary keys
 
-@pytest.fixture
-def test_result_format():
-    def _test_result_format(result):
-        assert isinstance(result.resources, list)
-        assert isinstance(result.errors, list)
-        assert isinstance(result, TaskResult)
-        if result.resources:
-            for resource in result.resources:
-                assert "integration_id" in resource
-                assert "integration_type" in resource
-                assert "user_id" in resource
-                assert "root_user_id" in resource
-        assert hasattr(result, "task_id")
-        assert hasattr(result, "integration_id")
-        assert hasattr(result, "integration_type")
-        assert hasattr(result, "debug_info")
-    return _test_result_format
-
-
 class TestTaskHandlerClass:
 
     @classmethod

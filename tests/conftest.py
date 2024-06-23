@@ -1,9 +1,11 @@
+from typing import Union
 import uuid
 import pytest
 from dotenv import dotenv_values
 from autobotAI_integrations.integrations import integration_service_factory
 from autobotAI_integrations.models import ConnectionInterfaces
-from autobotAI_integrations.payload_schema import PayloadTask, PayloadTaskContext
+from autobotAI_integrations.payload_schema import Payload, PayloadTask, PayloadTaskContext, TaskResult
+import json
 
 @pytest.fixture
 def keys():
@@ -92,3 +94,38 @@ def sample_steampipe_task(sample_context_data):
         }
         return PayloadTask(**task_dict)
     return _sample_steampipe_task
+
+
+@pytest.fixture
+def test_result_format():
+    def _test_result_format(result):
+        if not isinstance(result, dict):
+            result = result.model_dump()
+        assert isinstance(result.get("resources"), list)
+        assert isinstance(result.get("errors"), list)
+        if result.get("resources"):
+            for resource in result.get("resources"):
+                assert "integration_id" in resource
+                assert "integration_type" in resource
+                assert "user_id" in resource
+                assert "root_user_id" in resource
+        assert "task_id" in result
+        assert "integration_id" in result
+        assert "integration_type" in result
+        assert "debug_info" in result
+
+    return _test_result_format
+
+
+@pytest.fixture
+def sample_payload():
+    def _sample_payload(task: PayloadTask):
+        payload = {
+            "job_id": str(uuid.uuid4().hex),
+            "tasks": [task],
+        }
+        payload = Payload(**payload).model_dump()
+        json_payload = json.dumps(payload)
+        payload = json.loads(json_payload)
+        return payload
+    return _sample_payload
