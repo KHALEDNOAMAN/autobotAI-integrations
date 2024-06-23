@@ -8,9 +8,10 @@ from autobotAI_integrations.utils.logging_config import logger
 def handle_payload(
     payload: Payload, return_results: bool = False, print_output: bool = False
 ):
-    logger.info(f"Started handle_payload with Payload Id: {payload.job_id}")
     if isinstance(payload, dict):
         payload = Payload(**payload)
+
+    logger.info(f"Started handle_payload with Payload Id: {payload.job_id}")
 
     if not isinstance(payload, Payload):
         raise Exception("Payload must be of type Payload or dict")
@@ -20,7 +21,7 @@ def handle_payload(
     for task in payload.tasks:
         logger.debug("Running Task: {}".format(task.task_id))
         results.task_results.append(handle_task(task))
-    
+
     logger.info("All tasks completed!")
 
     if payload.output_url is not None:
