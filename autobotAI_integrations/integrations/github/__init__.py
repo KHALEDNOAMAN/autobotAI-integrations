@@ -1,7 +1,7 @@
 import importlib
 import os
 import uuid
-from typing import List, Optional
+from typing import List, Optional, Union
 
 from pydantic import Field
 
@@ -27,15 +27,22 @@ class GithubIntegration(BaseSchema):
 
 class GithubService(BaseService):
 
-    def __init__(self, ctx, integration: GithubIntegration):
+    def __init__(self, ctx: dict, integration: Union[GithubIntegration, dict]):
+        """
+        Integration should have all the data regarding the integration
+        """
+        if not isinstance(integration, GithubIntegration):
+            integration = GithubIntegration(**integration)
         super().__init__(ctx, integration)
 
     def _test_integration(self):
         try:
-            if self.integration.base_url:
-                github = Github(self.integration.token, base_url=self.integration.base_url)
+            if self.integration.base_url not in ["None", None]:
+                github = Github(
+                    str(self.integration.token), base_url=self.integration.base_url
+                )
             else:
-                github = Github(self.integration.token)
+                github = Github(str(self.integration.token))
             user = github.get_user()
             print(f"Github Username: {user.login}")
             return {"success": True}
@@ -89,11 +96,12 @@ class GithubService(BaseService):
                                             client_definitions: List[SDKClient]) -> list:
         github = importlib.import_module(client_definitions[0].import_library_names[0], package=None)
 
-        github_auth = Auth.Token(self.integration.token)
-        if self.integration.base_url:
-            github_client = github.Github(auth=github_auth, base_url=self.integration.base_url)
+        if self.integration.base_url not in ["None", None]:
+            github_client = github.Github(
+                str(self.integration.token), base_url=str(self.integration.base_url)
+            )
         else:
-            github_client = github.Github(auth=github_auth)
+            github_client = github.Github(str(self.integration.token))
         return [
             {
                 "clients": {
@@ -106,8 +114,8 @@ class GithubService(BaseService):
 
     def generate_steampipe_creds(self) -> SteampipeCreds:
         envs = {
-            "GITHUB_BASE_URL": self.integration.base_url if self.integration.base_url else "",
-            "GITHUB_TOKEN": self.integration.token,
+            "GITHUB_BASE_URL": self.integration.base_url if self.integration.base_url not in ["None", None] else "",
+            "GITHUB_TOKEN": str(self.integration.token),
         }
         conf_path = "~/.steampipe/config/github.spc"
         config = """connection "github" {
@@ -121,7 +129,11 @@ class GithubService(BaseService):
 
     def generate_python_sdk_creds(self) -> SDKCreds:
         envs = {
-            "GITHUB_BASE_URL": self.integration.base_url if self.integration.base_url else "",
+            "GITHUB_BASE_URL": (
+                self.integration.base_url
+                if self.integration.base_url not in ["None", None]
+                else ""
+            ),
             "GITHUB_TOKEN": self.integration.token,
         }
         return SDKCreds(envs=envs)

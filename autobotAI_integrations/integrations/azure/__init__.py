@@ -23,7 +23,8 @@ class AzureIntegration(BaseSchema):
     )
 
     def __init__(self, **kwargs):
-        kwargs["accountId"] = kwargs["subscription_id"]
+        if kwargs.get("subscription_id"):
+            kwargs["accountId"] = kwargs["subscription_id"]
         super().__init__(**kwargs)
 
 

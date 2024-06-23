@@ -77,6 +77,7 @@ class OpenAIService(AIBaseService):
     def ai_prompt_python_template():
         return {
             "integration_type": "openai",
+            "ai_client": "openai",
             "param_definitions": [
                 {
                     "name": "prompt",
@@ -236,7 +237,7 @@ def executor(context):
             if "temperature" in options:
                 message["temperature"] = options["temperature"]
             if "max_tokens" in options:
-                message["temperature"] = options["max_tokens"]
+                message["max_tokens"] = options["max_tokens"]
             counter = 0
             while counter < 5:
                 counter += 1

@@ -26,7 +26,9 @@ setup(
         "openai",
         "slack-sdk",
         "ollama",
-        "jira"
+        "jira",
+        "GitPython",
+        "vt-py",
     ],
     package_data={
         "": ["integrations/*/inventory.json", "integrations/*/python_sdk_clients.yml"]

@@ -221,7 +221,10 @@ def executor(context):
                 try:
                     subprocess.check_output(['pip', 'show', " ".join(client.pip_package_names)])
                 except subprocess.CalledProcessError:
-                    subprocess.check_call([sys.executable, '-m', 'pip', 'install', " ".join(client.pip_package_names)])
+                    subprocess.check_call(
+                        [sys.executable, '-m', 'pip', 'install', " ".join(client.pip_package_names), "-t", "/tmp/",
+                         "--no-cache-dir"])
+                    sys.path.insert(1, '/tmp/')
 
         return self.build_python_exec_combinations_hook(payload_task, client_definitions)
 
@@ -234,10 +237,6 @@ def executor(context):
         return client_details
 
     def python_sdk_processor(self, payload_task: PayloadTask) -> (List[Dict[str, Any]], List[str]):  # type: ignore                
-        try:
-            load_mod_from_string(payload_task.executable)
-        except BaseException as e:
-            return [], [traceback.format_exc()]
         if payload_task.creds and payload_task.creds.envs:
             for key, value in payload_task.creds.envs.items():
                 if key and value:
@@ -309,7 +308,7 @@ def executor(context):
     def _get_steampipe_config_path(self, plugin_name):
         home_dir = Path.home()
         config_path = os.path.join(
-            home_dir, ".steampipe/config/", "{}.spc".format(plugin_name)
+            home_dir, ".steampipe/config/", "{}.spc".format(plugin_name.split("/")[-1])
         )
         return config_path
 

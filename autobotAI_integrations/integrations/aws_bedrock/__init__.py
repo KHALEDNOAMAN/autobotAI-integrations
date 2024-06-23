@@ -140,6 +140,7 @@ class AWSBedrockService(AIBaseService):
     def ai_prompt_python_template():
         return {
             "integration_type": "aws_bedrock",
+            "ai_client": "bedrock-runtime",
             "param_definitions": [
                 {
                     "name": "prompt",
@@ -162,52 +163,40 @@ class AWSBedrockService(AIBaseService):
             ],
             "code": """import json
 import traceback
+
+
 def executor(context):
-    bedrock = context['clients']['bedrock-runtime']
-    prompt = context['params']['prompt']
-    # Using "meta.llama3-8b-instruct-v1:0" here, 
-    # template may vary based on model
-    model = context['params']['model']
-    resources = json.loads(json.dumps(context['params']['resources'], default=str))
+    client = context["clients"]["bedrock-runtime"]
+    prompt = context["params"]["prompt"]
+    # model = context["params"]["model"]
+    model = "meta.llama3-8b-instruct-v1:0"
+    resources = json.loads(json.dumps(context["params"]["resources"], default=str))
     prompts = [
-        f\"""<|start_header_id|>user<|end_header_id|>
-        For each Input dict provided, return a dict with attributes such as, 'name': str name of the resource, 'action_required': boolean that shows is the action advisable or not, 'probability_score': integer that shows the probability of the result being correct, 'confidence_score': integrer that shows the confidence in judgement, 'reason': string that mentions the reason for the judgement, 'fields_evaluated': list of fields that were evaluted for the judgement, the evaluation criterion given is {prompt}. The output should be valid parseable json, do not use any markup language at all, the returned message content should be json parsable. Wait till all data is provided before starting
-        \"""
+        f"<|start_header_id|>user<|end_header_id|>For each Input dict provided, return a dict with attributes such as, 'name': str name of the resource, 'action_required': boolean that shows is the action advisable or not, 'probability_score': integer that shows the probability of the result being correct, 'confidence_score': integrer that shows the confidence in judgement, 'reason': string that mentions the reason for the judgement, 'fields_evaluated': list of fields that were evaluted for the judgement, the evaluation criterion given is {prompt}. The output should be valid parseable json, do not use any markup language at all, the returned message content should be json parsable. Wait till all data is provided before starting"
     ]
     for resource in resources:
         prompts.append(
-            \"""<|start_header_id|>user<|end_header_id|>
-            json.dumps(resource, default=str)
-            \"""
+            f"<|start_header_id|>user<|end_header_id|>{json.dumps(resource, default=str)}"
         )
     prompts.append(
-        \"""<|start_header_id|>user<|end_header_id|>
-        All resources are provided, return the result for each resource in the same order.
-        \"""
+        "<|start_header_id|>user<|end_header_id|>All resources are provided, return the result for each resource in the same order. don't give any explaination and retun only the output json."
     )
-    formatted_prompt = f\"""
-<|begin_of_text|>
-{"\n".join(prompts)}
-<|eot_id|>
-<|start_header_id|>assistant<|end_header_id|>
-\"""
+    formatted_prompt = f"<|begin_of_text|>{''.join(prompts)}<|eot_id|><|start_header_id|>assistant<|end_header_id|>"
     native_request = {
         "prompt": formatted_prompt,
-        "temperature": 0.5,
+        "max_gen_len": 2048,
     }
     request = json.dumps(native_request)
     counter = 0
     while counter < 5:  # 4 Retries
         counter = counter + 1
-        response = client.invoke_model(modelId=model_id, body=request)
+        response = client.invoke_model(modelId=model, body=request)
         model_response = json.loads(response["body"].read())
         try:
-            message_content =  model_response["generation"]
+            message_content =  json.loads(model_response["generation"])
             if message_content:
-                if "```json" in message_content:
-                    message_content = message_content.split("```json")[1].split("```")[0]
-                if len(json.loads(message_content)) == len(resources):
-                    for idx, response in enumerate(json.loads(message_content)):
+                if len(message_content) == len(resources):
+                    for idx, response in enumerate(message_content):
                         if not resources[idx].get("name") or (resources[idx].get("name") and response["name"] == resources[idx]["name"]):
                             resources[idx]["decision"] = response
                         else:
@@ -219,7 +208,8 @@ def executor(context):
             print(type(model_response["generation"]), model_response["generation"])
             traceback.print_exc()
     print("Completed Evaluation with ", counter, "tries.")
-    return resources""",
+    return resources
+""",
         }
 
     @staticmethod
