@@ -123,15 +123,15 @@ class JiraService(BaseService):
         jira = importlib.import_module(
             client_definitions[0].import_library_names[0], package=None
         )
-        jira_cloud_options = {"server": self.integration.base_url}
+        jira_cloud_options = {"server": payload_task.creds.envs["JIRA_URL"]}
         return [
             {
                 "clients": {
                     "jira": jira.JIRA(
                         options=jira_cloud_options,
                         basic_auth=(
-                            self.integration.username,
-                            self.integration.token or self.integration.personal_access_token,
+                            payload_task.creds.envs["JIRA_USER"],
+                            payload_task.creds.envs["JIRA_TOKEN"] or payload_task.creds.envs["JIRA_PERSONAL_ACCESS_TOKEN"],
                         ),
                     )
                 },
