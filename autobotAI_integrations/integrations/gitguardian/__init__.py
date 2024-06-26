@@ -86,10 +86,12 @@ class GitGuardianService(BaseService):
         return [
             {
                 "clients": {
-                    "gitguardian": gitguardian.GGClient(api_key=str(self.integration.token))
+                    "gitguardian": gitguardian.GGClient(
+                        api_key=payload_task.creds.envs.get("GITGUARDIAN_API_KEY")
+                    )
                 },
                 "params": self.prepare_params(payload_task.params),
-                "context": payload_task.context
+                "context": payload_task.context,
             }
         ]
 
