@@ -122,16 +122,19 @@ class AzureService(BaseService):
     def build_python_exec_combinations_hook(self, payload_task: PayloadTask, client_definitions: List[SDKClient]) -> list:
         clients_classes = dict()
         credential = ClientSecretCredential(
-            tenant_id=self.integration.tenant_id,
-            client_id=self.integration.client_id,
-            client_secret=self.integration.client_secret
+            tenant_id=payload_task.creds.envs.get("AZURE_TENANT_ID"),
+            client_id=payload_task.creds.envs.get("AZURE_CLIENT_ID"),
+            client_secret=payload_task.creds.envs.get("AZURE_CLIENT_SECRET"),
         )
         for client in client_definitions:
             try:
                 client_module = importlib.import_module(client.module, package=None)
                 if hasattr(client_module, client.class_name):
                     cls = getattr(client_module, client.class_name)
-                    clients_classes[client.class_name] = cls(credential=credential, subscription_id=self.integration.subscription_id)
+                    clients_classes[client.class_name] = cls(
+                        credential=credential,
+                        subscription_id=payload_task.creds.envs.get("AZURE_SUBSCRIPTION_ID"),
+                    )
             except BaseException as e:
                 print(e)
                 continue

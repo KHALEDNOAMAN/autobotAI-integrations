@@ -26,10 +26,15 @@ def executor(context):
     # User's Python code execution logic goes here
     # (Replace this comment with the your actual code)
 
-    # Example: Retrieve the list of resource groups (for illustration purposes only)
+    # Example: Retrieve the list of subscriptions (for illustration purposes only)
 
-    # resource_client = clients['ResourceManagementClient']
-    # resource_group_response = resource_client.resource_groups.list()
-    # # resources=[]
-    # # ... (Logic to Retrieve the list of resources for each resource group)
+    # clients = context["clients"]
+    # resource_client = clients["SubscriptionClient"]
+    # print(resource_client.subscriptions.list())
+    # resources = []
+    # for subs in resource_client.subscriptions.list():
+    #     resources.append(
+    #         {"subscription_id": subs.subscription_id, "display_name": subs.display_name}
+    #     )
+    # return resources
     # return resources # Replace with your actual return logic
