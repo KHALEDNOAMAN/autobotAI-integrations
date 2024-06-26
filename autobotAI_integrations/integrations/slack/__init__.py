@@ -116,11 +116,11 @@ class SlackService(BaseService):
     def build_python_exec_combinations_hook(self, payload_task: PayloadTask,
                                             client_definitions: List[SDKClient]) -> list:
         clients = {}
-        if self.integration.webhook not in [None, "None"]:
-            webhook = WebhookClient(self.integration.webhook)
+        if payload_task.creds.envs.get("SLACK_WEBHOOK"):
+            webhook = WebhookClient(payload_task.creds.envs.get("SLACK_WEBHOOK"))
             clients["WebhookClient"] = webhook
         else:
-            clients["WebClient"] = WebClient(token=self.integration.bot_token)
+            clients["WebClient"] = WebClient(payload_task.creds.envs.get("SLACK_BOT_TOKEN"))
         return [
             {
                 "clients": clients,
@@ -145,7 +145,9 @@ class SlackService(BaseService):
         pass
 
     def generate_python_sdk_creds(self) -> SDKCreds:
-        envs = {}
+        envs = {
+            "SLACK_WEBHOOK": self.integration.webhook,
+        }
         if self.integration.bot_token not in [None, "None"]:
             envs["SLACK_BOT_TOKEN"] = self.integration.bot_token
         return SDKCreds(envs=envs)

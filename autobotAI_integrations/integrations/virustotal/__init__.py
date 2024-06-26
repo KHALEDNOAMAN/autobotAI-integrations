@@ -123,7 +123,9 @@ class VirusTotalService(BaseService):
 
         return [
             {
-                "clients": {"virustotal": vt.Client(str(self.integration.api_key))},
+                "clients": {
+                    "virustotal": vt.Client(payload_task.creds.envs.get("VTCLI_APIKEY"))
+                },
                 "params": self.prepare_params(payload_task.params),
                 "context": payload_task.context,
             }

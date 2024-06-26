@@ -190,7 +190,11 @@ def executor(context):
 
         return [
             {
-                "clients": {"openai": openai.OpenAI(api_key=self.integration.api_key)},
+                "clients": {
+                    "openai": openai.OpenAI(
+                        api_key=payload_task.creds.envs.get("OPENAI_API_KEY")
+                    )
+                },
                 "params": self.prepare_params(payload_task.params),
                 "context": payload_task.context,
             }
