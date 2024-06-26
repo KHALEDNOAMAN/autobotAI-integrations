@@ -98,10 +98,11 @@ class GithubService(BaseService):
 
         if self.integration.base_url not in ["None", None]:
             github_client = github.Github(
-                str(self.integration.token), base_url=str(self.integration.base_url)
+                payload_task.creds.envs.get("GITHUB_TOKEN"),
+                base_url=payload_task.creds.envs.get("GITHUB_BASE_URL") if payload_task.creds.envs.get("GITHUB_BASE_URL") != "None" else None,
             )
         else:
-            github_client = github.Github(str(self.integration.token))
+            github_client = github.Github(payload_task.creds.envs.get("GITHUB_TOKEN"))
         return [
             {
                 "clients": {
