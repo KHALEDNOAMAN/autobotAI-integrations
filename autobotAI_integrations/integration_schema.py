@@ -42,7 +42,7 @@ class IntegrationSchema(BaseModel):
         if not kwargs.get("accountId"):
             kwargs["accountId"] = str(uuid.uuid4().hex)
         super().__init__(**kwargs)
-    
+
     class Config:
         extra = "allow"
 
@@ -64,5 +64,8 @@ class IntegrationSchema(BaseModel):
         excluded =[key for key, val in  self.__class__.model_fields.items() if val.exclude]
         raw_dict =  self.model_dump()
         for key in excluded:
-            raw_dict[key] = getattr(self, key)
+            value = getattr(self, key)
+            if isinstance(value, BaseModel):
+                value = value.model_dump()
+            raw_dict[key] = value
         return raw_dict

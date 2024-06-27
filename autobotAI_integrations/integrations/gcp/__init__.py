@@ -1,6 +1,7 @@
 import uuid
 from typing import Dict, List, Type, Union
 import importlib
+from pathlib import Path
 import json
 
 from google.oauth2 import service_account
@@ -21,7 +22,7 @@ import os
 class GCPCredentials(BaseModel):
     model_config = ConfigDict(frozen=True)
 
-    type_: str = Field(alias="type")
+    type_: str = Field(alias="type", serialization_alias="type")
     project_id: str
     private_key_id: str
     private_key: str
@@ -32,17 +33,17 @@ class GCPCredentials(BaseModel):
     auth_provider_x509_cert_url: str
     client_x509_cert_url: str
 
-    def model_dump_json(self, *args, **kwargs) -> str:
-        kwargs["by_alias"] = True
-        return super().model_dump_json(*args, **kwargs)
+    def model_dump(self, **kwargs):
+        return super().model_dump(by_alias=True, **kwargs)
+
+    def model_dump_json(self, **kwargs):
+        return super().model_dump_json(by_alias=True, **kwargs)
 
 
 class GCPIntegration(BaseSchema):
     # TODO: Integration Credential Field Optimization,
     account_id: Optional[str] = uuid.uuid4().hex
-    credentials: GCPCredentials = Field(
-        default=None, exclude=True
-    )
+    credentials: Optional[GCPCredentials] = Field(default=None, exclude=True)
 
     category: Optional[str] = IntegrationCategory.CLOUD_SERVICES_PROVIDERS.value
     description: Optional[str] = (
@@ -54,20 +55,17 @@ class GCPIntegration(BaseSchema):
             creds = kwargs.get("credentials")
             if isinstance(kwargs.get('credentials'), str):
                 creds = json.loads(creds)
+            kwargs["credentials"] = GCPCredentials(**creds)
+        if not kwargs.get("accountId"):
             kwargs["accountId"] = str(creds.get("project_id"))
         super().__init__(**kwargs)
 
-    @property
-    def credentials(self) -> dict:
-        return self.credentials.model_dump(by_alias=True)
-
-    def model_dump(self, *args, **kwargs) -> str:
-        kwargs["by_alias"] = True
-        return super().model_dump(*args, **kwargs)
 
     @field_validator('credentials', mode='before')
     @classmethod
     def validate_credentials(cls, credentials) -> GCPCredentials:
+        if isinstance(credentials, dict):
+            return GCPCredentials(**credentials)
         if isinstance(credentials, str):
             try:
                 return GCPCredentials(**json.loads(credentials))  # Parse JSON string
@@ -198,7 +196,7 @@ class GCPService(BaseService):
     def _temp_credentials(self):
         return {
             "CLOUDSDK_CORE_PROJECT": self.integration.credentials.project_id,
-            "GOOGLE_APPLICATION_CREDENTIALS": json.dumps(self.integration.credentials.model_dump_json(by_alias=True))
+            "GOOGLE_APPLICATION_CREDENTIALS": json.dumps(self.integration.credentials.model_dump_json())
         }
 
     @staticmethod
@@ -206,21 +204,24 @@ class GCPService(BaseService):
         @wraps(func)
         def wrapper(self, payload_task: PayloadTask, *args, **kwargs):
             try:
+                home_dir = Path.home()
                 credentials_dict = GCPCredentials.model_validate_json(
                     json.loads(payload_task.creds.envs["GOOGLE_APPLICATION_CREDENTIALS"])
-                ).model_dump(by_alias=True)
-
-                file_path = f"gcp_credentials_{str(uuid.uuid4().hex)}.json"
+                ).model_dump()
+                file_path = os.path.join(home_dir, f"gcp_credentials_{str(uuid.uuid4().hex)}.json")
                 with open(file_path, "w") as f:
                     f.write(json.dumps(credentials_dict))
 
                 payload_task.creds.envs["GOOGLE_APPLICATION_CREDENTIALS"] = file_path
                 result = func(self, payload_task, *args, **kwargs)  # Call the original function
             finally:
-                os.remove(file_path)
+                try:
+                    os.remove(file_path)
+                except BaseException as e:
+                    print(e)
             return result
         return wrapper
-    
+
     @manage_creds_path
     def execute_steampipe_task(self, payload_task: PayloadTask):
         return super().execute_steampipe_task(payload_task)
