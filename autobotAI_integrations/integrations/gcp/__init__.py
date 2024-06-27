@@ -153,7 +153,7 @@ class GCPService(BaseService):
         clients_classes = dict()
         credentials_dict = GCPCredentials.model_validate_json(
             json.loads(payload_task.creds.envs["GOOGLE_APPLICATION_CREDENTIALS"])
-        ).model_dump(by_alias=True)
+        ).model_dump()
 
         credentials = service_account.Credentials.from_service_account_info(credentials_dict)
         for client in client_definitions:
