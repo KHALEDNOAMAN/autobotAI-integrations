@@ -19,10 +19,6 @@ class VirusTotalIntegration(BaseSchema):
         "VirusTotal is a free online service that analyzes files and URLs for malicious content using multiple antivirus engines and threat intelligence sources"
     )
 
-    def __init__(self, **kwargs):
-        kwargs["accountId"] = str(uuid.uuid4().hex)
-        super().__init__(**kwargs)
-
 
 class VirusTotalService(BaseService):
 

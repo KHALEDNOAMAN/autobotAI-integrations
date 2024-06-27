@@ -23,10 +23,6 @@ class SlackIntegration(BaseSchema):
         "A popular collaboration platform for teams, known for its ease of use, integrations with various services, and focus on real-time communication."
     )
 
-    def __init__(self, **kwargs):
-        kwargs["accountId"] = str(uuid.uuid4().hex)
-        super().__init__(**kwargs)
-
 
 class SlackService(BaseService):
 

@@ -20,10 +20,6 @@ class GitGuardianIntegration(BaseSchema):
         "GitGuardian is a security platform specifically designed to protect code repositories. "
     )
 
-    def __init__(self, **kwargs):
-        kwargs["accountId"] = str(uuid.uuid4().hex)
-        super().__init__(**kwargs)
-
 
 class GitGuardianService(BaseService):
 

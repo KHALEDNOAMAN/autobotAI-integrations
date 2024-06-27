@@ -25,7 +25,6 @@ class AWSBedrockIntegration(BaseSchema):
     )
 
     def __init__(self, **kwargs):
-        kwargs["accountId"] = str(uuid.uuid4().hex)
         kwargs["activeRegions"] = [kwargs['region']]
         super().__init__(**kwargs)
 

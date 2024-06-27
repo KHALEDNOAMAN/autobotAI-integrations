@@ -17,10 +17,6 @@ class KubernetesIntegration(BaseSchema):
         "An orchestration system for managing containerized applications. It automates deployment, scaling, and management of containerized workloads."
     )
 
-    def __init__(self, **kwargs):
-        kwargs["accountId"] = str(uuid.uuid4().hex)
-        super().__init__(**kwargs)
-
 
 class KubernetesService(BaseService):
     def __init__(self, ctx, integration: KubernetesIntegration):

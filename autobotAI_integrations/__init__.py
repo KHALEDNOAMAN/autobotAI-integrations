@@ -279,11 +279,7 @@ def executor(context):
                 "user_id": payload_task.context.execution_details.caller.user_id,
                 "root_user_id": payload_task.context.execution_details.caller.root_user_id
             }
-            ai_subclasses = []
-            for subclass in AIBaseService.__subclasses__():
-                dir_name = os.path.dirname(inspect.getfile(subclass)).split('/')[-1]
-                ai_subclasses.append(dir_name)
-            if payload_task.context.integration.cspName not in ai_subclasses:
+            if payload_task.context.integration.category != IntegrationCategory.AI.value:
                 default_data["integration_id"] = payload_task.context.integration.accountId
                 default_data["integration_type"] = payload_task.context.integration.cspName
             if not isinstance(result, list):
@@ -298,10 +294,9 @@ def executor(context):
                         }
                     )
                 else:
-                    resources.append({
-                        "result": r,
-                        **combination.get("metadata", {})
-                    })
+                    resources.append(
+                        {"result": r, **combination.get("metadata", {}), **default_data}
+                    )
         resources = change_keys(resources)
         return resources
 

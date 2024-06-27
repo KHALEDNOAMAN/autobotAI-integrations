@@ -20,9 +20,6 @@ class GithubIntegration(BaseSchema):
     description: Optional[str] = (
         "Popular version control platform for software development, known for its social coding features and large user base."
     )
-    def __init__(self, **kwargs):
-        kwargs["accountId"] = str(uuid.uuid4().hex)
-        super().__init__(**kwargs)
 
 
 class GithubService(BaseService):
@@ -123,7 +120,7 @@ class GithubService(BaseService):
   plugin = "github"
 }"""
         return SteampipeCreds(envs=envs, plugin_name="github", connection_name="github",
-                              conf_path=conf_path)
+                              conf_path=conf_path, config=config)
 
     def generate_rest_api_creds(self) -> RestAPICreds:
         pass

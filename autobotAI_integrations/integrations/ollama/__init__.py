@@ -21,10 +21,6 @@ class OllamaIntegration(BaseSchema):
         "A platform for running and integrating large language models, including compatibility with OpenAI's API."
     )
 
-    def __init__(self, **kwargs):
-        kwargs["accountId"] = str(uuid.uuid4().hex)
-        super().__init__(**kwargs)
-
 
 class OllamaService(AIBaseService):
     def __init__(self, ctx: dict, integration: Union[OllamaIntegration, dict]):

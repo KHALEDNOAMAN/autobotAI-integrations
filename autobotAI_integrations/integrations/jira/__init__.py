@@ -31,10 +31,6 @@ class JiraIntegration(BaseSchema):
         "Jira is a versatile project management and issue tracking tool designed to help teams plan, track, and manage agile software development projects."
     )
 
-    def __init__(self, **kwargs):
-        kwargs["accountId"] = str(uuid.uuid4().hex)
-        super().__init__(**kwargs)
-
 
 class JiraService(BaseService):
 

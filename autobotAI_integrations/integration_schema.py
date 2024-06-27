@@ -2,7 +2,7 @@ from enum import Enum
 from typing import Optional
 from typing import Optional, Any, get_origin, get_args, Union
 from pydantic import BaseModel, ConfigDict, ValidationError, Field, validator, model_validator
-
+import uuid
 
 class ConnectionTypes(str, Enum):
     DIRECT = "DIRECT"
@@ -38,6 +38,11 @@ class IntegrationSchema(BaseModel):
     lastUsed: Optional[str] = None
     resource_type: str = 'integration'
 
+    def __init__(self, **kwargs: Any):
+        if not kwargs.get("accountId"):
+            kwargs["accountId"] = str(uuid.uuid4().hex)
+        super().__init__(**kwargs)
+    
     class Config:
         extra = "allow"
 
@@ -54,7 +59,7 @@ class IntegrationSchema(BaseModel):
     @classmethod
     def encryption_exclusions(self):
         return ["agent_ids"]
-    
+
     def dump_all_data(self):
         excluded =[key for key, val in  self.__class__.model_fields.items() if val.exclude]
         raw_dict =  self.model_dump()

@@ -30,10 +30,6 @@ class OpenAIIntegration(BaseSchema):
         "A research company developing and providing access to powerful large language models."
     )
 
-    def __init__(self, **kwargs):
-        kwargs["accountId"] = str(uuid.uuid4().hex)
-        super().__init__(**kwargs)
-
 
 class OpenAIService(AIBaseService):
 

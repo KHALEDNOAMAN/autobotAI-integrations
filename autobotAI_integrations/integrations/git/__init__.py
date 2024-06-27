@@ -16,10 +16,6 @@ class GitIntegration(BaseSchema):
         "Git is a free and open-source distributed version control system (DVCS) for tracking changes in computer code and other projects."
     )
 
-    def __init__(self, **kwargs):
-        kwargs["accountId"] = str(uuid.uuid4().hex)
-        super().__init__(**kwargs)
-
 
 class GitService(BaseService):
 

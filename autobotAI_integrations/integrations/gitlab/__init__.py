@@ -21,10 +21,6 @@ class GitlabIntegration(BaseSchema):
         " Version control platform similar to GitHub, offering additional features like project management and CI/CD pipelines."
     )
 
-    def __init__(self, **kwargs):
-        kwargs["accountId"] = str(uuid.uuid4().hex)
-        super().__init__(**kwargs)
-
 
 class GitlabService(BaseService):
 
