@@ -322,6 +322,7 @@ def executor(context):
         except FileNotFoundError:
             logger.info("File Not Found on path {}".format(config_path))
 
+    # Handle Compliance Executions
     def _execute_steampipe_compliance(self, payload_task: PayloadTask):
         mods_dir = "/tmp/mods/compliances"
         if not os.path.exists(mods_dir):
@@ -348,7 +349,11 @@ def executor(context):
                 ],
                 cwd=mods_dir,
             )
+            
+        logger.info("Starting Steampipe Service...")    
+        subprocess.run(["steampipe", "service", "start"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 
+        logger.info(f"Running Benchmark...") 
         process = subprocess.run(
             ["powerpipe", "benchmark", "run", "{}".format(payload_task.executable), "--output", "json"],
             cwd=path,
@@ -356,6 +361,9 @@ def executor(context):
             stderr=subprocess.PIPE,
             env={**os.environ, **payload_task.creds.envs}
         )
+
+        logger.info("Stopping Steampipe Service...")  
+        subprocess.run(["steampipe", "service", "stop"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 
         return process
 
