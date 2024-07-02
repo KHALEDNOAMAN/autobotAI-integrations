@@ -103,6 +103,10 @@ def transform_inventory_resources(stdout: dict, payload_task: PayloadTask):
         row["root_user_id"] = payload_task.context.execution_details.caller.root_user_id
         if payload_task.context.integration.agent_ids:
             row["agent_id"] = payload_task.context.integration.agent_ids
+
+        if payload_task.tables:
+            row["resource_type"] = payload_task.tables
+
         results.append(change_keys(row))
     return results
 
