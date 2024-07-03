@@ -52,7 +52,7 @@
             "included": [],
             "excluded": [],
             "aliases": [],
-            "inventory_supported": false
+            "inventory_supported": true
         },
         {
             "name": "jira_board",
@@ -68,7 +68,7 @@
             "included": [],
             "excluded": [],
             "aliases": [],
-            "inventory_supported": false
+            "inventory_supported": true
         },
         {
             "name": "jira_component",
@@ -94,7 +94,7 @@
             "included": [],
             "excluded": [],
             "aliases": [],
-            "inventory_supported": false
+            "inventory_supported": true
         },
         {
             "name": "jira_dashboard",
@@ -115,7 +115,7 @@
             "included": [],
             "excluded": [],
             "aliases": [],
-            "inventory_supported": false
+            "inventory_supported": true
         },
         {
             "name": "jira_epic",
@@ -133,7 +133,7 @@
             "included": [],
             "excluded": [],
             "aliases": [],
-            "inventory_supported": false
+            "inventory_supported": true
         },
         {
             "name": "jira_global_setting",
@@ -166,7 +166,7 @@
             "included": [],
             "excluded": [],
             "aliases": [],
-            "inventory_supported": false
+            "inventory_supported": true
         },
         {
             "name": "jira_issue",
@@ -206,11 +206,11 @@
             "included": [],
             "excluded": [],
             "aliases": [],
-            "inventory_supported": false
+            "inventory_supported": true
         },
         {
             "name": "jira_issue_comment",
-            "columns": [
+            "all_columns": [
                 "_ctx",
                 "author",
                 "body",
@@ -225,11 +225,11 @@
             ],
             "description": "Schema for jira_issue_comment",
             "table_aliases": [],
-            "view": false
+            "inventory_supported": true
         },
         {
             "name": "jira_issue_type",
-            "columns": [
+            "all_columns": [
                 "_ctx",
                 "avatar_id",
                 "description",
@@ -244,12 +244,11 @@
                 "title"
             ],
             "description": "Schema for jira_issue_type",
-            "table_aliases": [],
-            "view": false
+            "inventory_supported": true
         },
         {
             "name": "jira_issue_worklog",
-            "columns": [
+            "all_columns": [
                 "_ctx",
                 "author",
                 "comment",
@@ -266,12 +265,11 @@
                 "updated"
             ],
             "description": "Schema for jira_issue_worklog",
-            "table_aliases": [],
-            "view": false
+            "inventory_supported": true
         },
         {
             "name": "jira_workflow",
-            "columns": [
+            "all_columns": [
                 "_ctx",
                 "description",
                 "entity_id",
@@ -282,12 +280,11 @@
                 "transitions"
             ],
             "description": "Schema for jira_workflow",
-            "table_aliases": [],
-            "view": false
+            "inventory_supported": true
         },
         {
             "name": "jira_user",
-            "columns": [
+            "all_columns": [
                 "_ctx",
                 "account_id",
                 "account_type",
@@ -300,12 +297,11 @@
                 "title"
             ],
             "description": "Schema for jira_user",
-            "table_aliases": [],
-            "view": false
+            "inventory_supported": true
         },
         {
             "name": "jira_sprint",
-            "columns": [
+            "all_columns": [
                 "_ctx",
                 "board_id",
                 "complete_date",
@@ -318,12 +314,11 @@
                 "title"
             ],
             "description": "Schema for jira_sprint",
-            "table_aliases": [],
-            "view": false
+            "inventory_supported": true
         },
         {
             "name": "jira_project_role",
-            "columns": [
+            "all_columns": [
                 "_ctx",
                 "actor_account_ids",
                 "actor_names",
@@ -334,12 +329,11 @@
                 "title"
             ],
             "description": "Schema for jira_project_role",
-            "table_aliases": [],
-            "view": false
+            "inventory_supported": true
         },
         {
             "name": "jira_project",
-            "columns": [
+            "all_columns": [
                 "_ctx",
                 "component_ids",
                 "description",
@@ -358,12 +352,11 @@
                 "url"
             ],
             "description": "Schema for jira_project",
-            "table_aliases": [],
-            "view": false
+            "inventory_supported": true
         },
         {
             "name": "jira_priority",
-            "columns": [
+            "all_columns": [
                 "_ctx",
                 "description",
                 "icon_url",
@@ -374,8 +367,7 @@
                 "title"
             ],
             "description": "Schema for jira_priority",
-            "table_aliases": [],
-            "view": false
+            "inventory_supported": true
         }
     ]
 }

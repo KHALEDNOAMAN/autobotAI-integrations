@@ -71,6 +71,7 @@ class PayloadTask(BaseModel):
     creds: SerializeAsAny[BaseCreds]
     connection_interface: ConnectionInterfaces
     executable: str
+    tables: Optional[List[str]] = None
     clients: Optional[List[str]] = None
     params: Optional[List[Param]] = []
     node_details: Optional[Any] = None

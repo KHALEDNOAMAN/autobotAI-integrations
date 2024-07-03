@@ -17,10 +17,6 @@ class GoogleChatIntegration(BaseSchema):
         "Google Chat integrates with various apps and services to enhance communication and collaboration."
     )
 
-    def __init__(self, **kwargs):
-        kwargs["accountId"] = str(uuid.uuid4().hex)
-        super().__init__(**kwargs)
-
 
 class GoogleChatService(BaseService):
     # TODO: This Service Can be Much More Better by Adding actual google.cloud.apis

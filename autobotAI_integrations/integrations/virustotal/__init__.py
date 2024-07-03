@@ -19,10 +19,6 @@ class VirusTotalIntegration(BaseSchema):
         "VirusTotal is a free online service that analyzes files and URLs for malicious content using multiple antivirus engines and threat intelligence sources"
     )
 
-    def __init__(self, **kwargs):
-        kwargs["accountId"] = str(uuid.uuid4().hex)
-        super().__init__(**kwargs)
-
 
 class VirusTotalService(BaseService):
 
@@ -40,7 +36,7 @@ class VirusTotalService(BaseService):
         api_url = f"https://www.virustotal.com/api/v3/urls/{url_id}"
         headers = {
             "accept": "application/json",
-            "x-apikey": self.integration.api_key,
+            "x-apikey": str(self.integration.api_key),
         }
 
         try:
@@ -99,7 +95,7 @@ class VirusTotalService(BaseService):
 
     def generate_steampipe_creds(self) -> SteampipeCreds:
         envs = {
-            "VTCLI_APIKEY": self.integration.api_key,
+            "VTCLI_APIKEY": str(self.integration.api_key),
         }
         conf_path = "~/.steampipe/config/virustotal.spc"
         config = """connection "virustotal" {
@@ -123,7 +119,9 @@ class VirusTotalService(BaseService):
 
         return [
             {
-                "clients": {"virustotal": vt.Client(self.integration.api_key)},
+                "clients": {
+                    "virustotal": vt.Client(payload_task.creds.envs.get("VTCLI_APIKEY"))
+                },
                 "params": self.prepare_params(payload_task.params),
                 "context": payload_task.context,
             }
@@ -131,6 +129,6 @@ class VirusTotalService(BaseService):
 
     def generate_python_sdk_creds(self, requested_clients=None) -> SDKCreds:
         creds = {
-            "VTCLI_APIKEY": self.integration.api_key,
+            "VTCLI_APIKEY": str(self.integration.api_key),
         }
         return SDKCreds(envs=creds)

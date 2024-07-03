@@ -21,10 +21,6 @@ class AbuseIPDBIntegration(BaseSchema):
         "AbuseIPDB is a project dedicated to helping combat the spread of hackers, spammers, and abusive activity on the internet."
     )
 
-    def __init__(self, **kwargs):
-        kwargs["accountId"] = str(uuid.uuid4().hex)
-        super().__init__(**kwargs)
-
 
 class AbuseIPDBService(BaseService):
 

@@ -25,7 +25,6 @@ class AwsSesIntegration(BaseSchema):
     )
 
     def __init__(self, **kwargs):
-        kwargs["accountId"] = str(uuid.uuid4().hex)
         super().__init__(**kwargs)
 
     def use_dependency(self, dependency):

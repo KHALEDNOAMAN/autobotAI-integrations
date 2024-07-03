@@ -279,11 +279,7 @@ def executor(context):
                 "user_id": payload_task.context.execution_details.caller.user_id,
                 "root_user_id": payload_task.context.execution_details.caller.root_user_id
             }
-            ai_subclasses = []
-            for subclass in AIBaseService.__subclasses__():
-                dir_name = os.path.dirname(inspect.getfile(subclass)).split('/')[-1]
-                ai_subclasses.append(dir_name)
-            if payload_task.context.integration.cspName not in ai_subclasses:
+            if payload_task.context.integration.category != IntegrationCategory.AI.value:
                 default_data["integration_id"] = payload_task.context.integration.accountId
                 default_data["integration_type"] = payload_task.context.integration.cspName
             if not isinstance(result, list):
@@ -298,17 +294,16 @@ def executor(context):
                         }
                     )
                 else:
-                    resources.append({
-                        "result": r,
-                        **combination.get("metadata", {})
-                    })
+                    resources.append(
+                        {"result": r, **combination.get("metadata", {}), **default_data}
+                    )
         resources = change_keys(resources)
         return resources
 
     def _get_steampipe_config_path(self, plugin_name):
         home_dir = Path.home()
         config_path = os.path.join(
-            home_dir, ".steampipe/config/", "{}.spc".format(plugin_name)
+            home_dir, ".steampipe/config/", "{}.spc".format(plugin_name.split("/")[-1])
         )
         return config_path
 
@@ -327,6 +322,7 @@ def executor(context):
         except FileNotFoundError:
             logger.info("File Not Found on path {}".format(config_path))
 
+    # Handle Compliance Executions
     def _execute_steampipe_compliance(self, payload_task: PayloadTask):
         mods_dir = "/tmp/mods/compliances"
         if not os.path.exists(mods_dir):
@@ -353,7 +349,11 @@ def executor(context):
                 ],
                 cwd=mods_dir,
             )
+            
+        logger.info("Starting Steampipe Service...")    
+        subprocess.run(["steampipe", "service", "start"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 
+        logger.info(f"Running Benchmark...") 
         process = subprocess.run(
             ["powerpipe", "benchmark", "run", "{}".format(payload_task.executable), "--output", "json"],
             cwd=path,
@@ -361,6 +361,9 @@ def executor(context):
             stderr=subprocess.PIPE,
             env={**os.environ, **payload_task.creds.envs}
         )
+
+        logger.info("Stopping Steampipe Service...")  
+        subprocess.run(["steampipe", "service", "stop"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 
         return process
 

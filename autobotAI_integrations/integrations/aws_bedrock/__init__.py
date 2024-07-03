@@ -25,7 +25,6 @@ class AWSBedrockIntegration(BaseSchema):
     )
 
     def __init__(self, **kwargs):
-        kwargs["accountId"] = str(uuid.uuid4().hex)
         kwargs["activeRegions"] = [kwargs['region']]
         super().__init__(**kwargs)
 
@@ -140,6 +139,7 @@ class AWSBedrockService(AIBaseService):
     def ai_prompt_python_template():
         return {
             "integration_type": "aws_bedrock",
+            "ai_client": "bedrock-runtime",
             "param_definitions": [
                 {
                     "name": "prompt",
@@ -180,7 +180,7 @@ def executor(context):
     prompts.append(
         "<|start_header_id|>user<|end_header_id|>All resources are provided, return the result for each resource in the same order. don't give any explaination and retun only the output json."
     )
-    formatted_prompt = f"<|begin_of_text|>{"".join(prompts)}<|eot_id|><|start_header_id|>assistant<|end_header_id|>"
+    formatted_prompt = f"<|begin_of_text|>{''.join(prompts)}<|eot_id|><|start_header_id|>assistant<|end_header_id|>"
     native_request = {
         "prompt": formatted_prompt,
         "max_gen_len": 2048,

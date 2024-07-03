@@ -45,30 +45,23 @@ os.environ['API_SECRET'] = 'your_api_secret'
 
 ### Code Examples
 
-#### Example 1: Basic Integration
+#### Example 1: Run payload file
 
 ```python
-from autobotAI_integrations.integrations.example_integration import ExampleIntegration
+from autobotAI_integrations.handlers.payload_handler import handle_payload
+from autobotAI_integrations.payload_schema import Payload
+import json
 
-# Initialize the integration
-example = ExampleIntegration(api_key='your_api_key')
+payload_filename = "<payload_file_path>"
 
-# Connect to the service
-response = example.connect()
-print(response)
-```
+with open(payload_filename) as f:
+    payload = json.load(f)
 
-#### Example 2: Using Steampipe Integration
+payload = Payload(**payload)
 
-```python
-from autobotAI_integrations.integrations.steampipe_integration import SteampipeIntegration
 
-# Initialize Steampipe integration
-steampipe = SteampipeIntegration(config='path_to_steampipe_config')
+handle_payload(payload=payload, print_output=True)
 
-# Execute a query
-result = steampipe.query('SELECT * FROM some_table')
-print(result)
 ```
 
 ## Features
@@ -91,7 +84,7 @@ print(result)
 ### Utilities
 
 - **`utils.some_utility`**: Description of this utility function.
-
+-->
 ## Testing
 
 To run tests, you can use `pytest`. First, ensure you have `pytest` installed:
@@ -105,7 +98,7 @@ Run the tests with:
 ```sh
 pytest
 ```
-
+<!--
 ### Test Configuration
 
 If there are any specific configurations or environment setups needed for testing, provide the details here.

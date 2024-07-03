@@ -20,10 +20,6 @@ class GitGuardianIntegration(BaseSchema):
         "GitGuardian is a security platform specifically designed to protect code repositories. "
     )
 
-    def __init__(self, **kwargs):
-        kwargs["accountId"] = str(uuid.uuid4().hex)
-        super().__init__(**kwargs)
-
 
 class GitGuardianService(BaseService):
 
@@ -86,16 +82,18 @@ class GitGuardianService(BaseService):
         return [
             {
                 "clients": {
-                    "gitguardian": gitguardian.GGClient(api_key=self.integration.token)
+                    "gitguardian": gitguardian.GGClient(
+                        api_key=payload_task.creds.envs.get("GITGUARDIAN_API_KEY")
+                    )
                 },
                 "params": self.prepare_params(payload_task.params),
-                "context": payload_task.context
+                "context": payload_task.context,
             }
         ]
 
     def generate_steampipe_creds(self) -> SteampipeCreds:
         envs = {
-            "GITGUARDIAN_TOKEN": self.integration.token,
+            "GITGUARDIAN_TOKEN": str(self.integration.token),
         }
         conf_path = "~/.steampipe/config/gitguardian.spc"
         config = """connection "gitguardian" {
@@ -107,13 +105,13 @@ class GitGuardianService(BaseService):
 
     def generate_rest_api_creds(self) -> RestAPICreds:
         headers = {
-            "Authorization": f"Token {self.integration.token}"
+            "Authorization": f"Token {str(self.integration.token)}"
         }
-        return RestAPICreds(api_url=self.integration.base_url, token=self.integration.token, headers=headers)
+        return RestAPICreds(api_url=self.integration.base_url, token=str(self.integration.token), headers=headers)
 
     def generate_python_sdk_creds(self) -> SDKCreds:
         envs = {
-            "GITGUARDIAN_API_KEY": self.integration.token,
+            "GITGUARDIAN_API_KEY": str(self.integration.token),
         }
         return SDKCreds(envs=envs)
 

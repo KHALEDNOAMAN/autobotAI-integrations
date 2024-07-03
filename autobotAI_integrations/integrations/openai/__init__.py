@@ -30,10 +30,6 @@ class OpenAIIntegration(BaseSchema):
         "A research company developing and providing access to powerful large language models."
     )
 
-    def __init__(self, **kwargs):
-        kwargs["accountId"] = str(uuid.uuid4().hex)
-        super().__init__(**kwargs)
-
 
 class OpenAIService(AIBaseService):
 
@@ -77,6 +73,7 @@ class OpenAIService(AIBaseService):
     def ai_prompt_python_template():
         return {
             "integration_type": "openai",
+            "ai_client": "openai",
             "param_definitions": [
                 {
                     "name": "prompt",
@@ -189,7 +186,11 @@ def executor(context):
 
         return [
             {
-                "clients": {"openai": openai.OpenAI(api_key=self.integration.api_key)},
+                "clients": {
+                    "openai": openai.OpenAI(
+                        api_key=payload_task.creds.envs.get("OPENAI_API_KEY")
+                    )
+                },
                 "params": self.prepare_params(payload_task.params),
                 "context": payload_task.context,
             }
@@ -236,7 +237,7 @@ def executor(context):
             if "temperature" in options:
                 message["temperature"] = options["temperature"]
             if "max_tokens" in options:
-                message["temperature"] = options["max_tokens"]
+                message["max_tokens"] = options["max_tokens"]
             counter = 0
             while counter < 5:
                 counter += 1

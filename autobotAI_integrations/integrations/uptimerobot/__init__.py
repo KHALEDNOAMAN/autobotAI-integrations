@@ -22,10 +22,6 @@ class UptimeRobotIntegrations(BaseSchema):
         "UptimeRobot is a monitoring service that tracks the uptime and performance of websites, servers, and other online services."
     )
 
-    def __init__(self, **kwargs):
-        kwargs["accountId"] = str(uuid.uuid4().hex)
-        super().__init__(**kwargs)
-
 
 class UptimeRobotService(BaseService):
 

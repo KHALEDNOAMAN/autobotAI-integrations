@@ -20,9 +20,6 @@ class GithubIntegration(BaseSchema):
     description: Optional[str] = (
         "Popular version control platform for software development, known for its social coding features and large user base."
     )
-    def __init__(self, **kwargs):
-        kwargs["accountId"] = str(uuid.uuid4().hex)
-        super().__init__(**kwargs)
 
 
 class GithubService(BaseService):
@@ -37,10 +34,12 @@ class GithubService(BaseService):
 
     def _test_integration(self):
         try:
-            if self.integration.base_url:
-                github = Github(self.integration.token, base_url=self.integration.base_url)
+            if self.integration.base_url not in ["None", None]:
+                github = Github(
+                    str(self.integration.token), base_url=self.integration.base_url
+                )
             else:
-                github = Github(self.integration.token)
+                github = Github(str(self.integration.token))
             user = github.get_user()
             print(f"Github Username: {user.login}")
             return {"success": True}
@@ -94,11 +93,13 @@ class GithubService(BaseService):
                                             client_definitions: List[SDKClient]) -> list:
         github = importlib.import_module(client_definitions[0].import_library_names[0], package=None)
 
-        github_auth = Auth.Token(self.integration.token)
-        if self.integration.base_url:
-            github_client = github.Github(auth=github_auth, base_url=self.integration.base_url)
+        if self.integration.base_url not in ["None", None]:
+            github_client = github.Github(
+                payload_task.creds.envs.get("GITHUB_TOKEN"),
+                base_url=payload_task.creds.envs.get("GITHUB_BASE_URL") if payload_task.creds.envs.get("GITHUB_BASE_URL") != "None" else None,
+            )
         else:
-            github_client = github.Github(auth=github_auth)
+            github_client = github.Github(payload_task.creds.envs.get("GITHUB_TOKEN"))
         return [
             {
                 "clients": {
@@ -111,22 +112,26 @@ class GithubService(BaseService):
 
     def generate_steampipe_creds(self) -> SteampipeCreds:
         envs = {
-            "GITHUB_BASE_URL": self.integration.base_url if self.integration.base_url else "",
-            "GITHUB_TOKEN": self.integration.token,
+            "GITHUB_BASE_URL": self.integration.base_url if self.integration.base_url not in ["None", None] else "",
+            "GITHUB_TOKEN": str(self.integration.token),
         }
         conf_path = "~/.steampipe/config/github.spc"
         config = """connection "github" {
   plugin = "github"
 }"""
         return SteampipeCreds(envs=envs, plugin_name="github", connection_name="github",
-                              conf_path=conf_path)
+                              conf_path=conf_path, config=config)
 
     def generate_rest_api_creds(self) -> RestAPICreds:
         pass
 
     def generate_python_sdk_creds(self) -> SDKCreds:
         envs = {
-            "GITHUB_BASE_URL": self.integration.base_url if self.integration.base_url else "",
+            "GITHUB_BASE_URL": (
+                self.integration.base_url
+                if self.integration.base_url not in ["None", None]
+                else ""
+            ),
             "GITHUB_TOKEN": self.integration.token,
         }
         return SDKCreds(envs=envs)

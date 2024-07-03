@@ -31,7 +31,11 @@ setup(
         "vt-py",
     ],
     package_data={
-        "": ["integrations/*/inventory.json", "integrations/*/python_sdk_clients.yml"]
+        "": [
+            "integrations/*/inventory.json",
+            "integrations/*/python_sdk_clients.yml",
+            "integrations/*/compliance.json",
+        ]
     },
     classifiers=[
         "License :: Other/Proprietary License" "Operating System :: OS Independent",
