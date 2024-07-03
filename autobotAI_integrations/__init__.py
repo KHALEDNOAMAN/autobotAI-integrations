@@ -349,6 +349,12 @@ def executor(context):
                 ],
                 cwd=mods_dir,
             )
+
+        # Set Env Variables for creds.
+        if payload_task.creds and payload_task.creds.envs:
+            for key, value in payload_task.creds.envs.items():
+                if key and value:
+                    os.environ[key] = value    
             
         logger.info("Starting Steampipe Service...")    
         subprocess.run(["steampipe", "service", "start"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
@@ -359,7 +365,7 @@ def executor(context):
             cwd=path,
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
-            env={**os.environ, **payload_task.creds.envs}
+            env={**os.environ}
         )
 
         logger.info("Stopping Steampipe Service...")  
