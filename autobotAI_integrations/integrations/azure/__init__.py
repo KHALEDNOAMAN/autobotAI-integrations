@@ -103,7 +103,7 @@ class AzureService(BaseService):
         return {
             "clients": list_of_unique_elements(cls.get_all_python_sdk_clients()),
             "supported_executor": "ecs",
-            "compliance_supported": False,
+            "compliance_supported": True,
             "supported_interfaces": cls.supported_connection_interfaces(),
             "python_code_sample": cls.get_code_sample(),
         }
