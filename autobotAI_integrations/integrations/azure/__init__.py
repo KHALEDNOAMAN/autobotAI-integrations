@@ -39,13 +39,13 @@ class AzureService(BaseService):
         super().__init__(ctx, integration)
 
     def _test_integration(self) -> dict:
-        credentials = ClientSecretCredential(
-            tenant_id=self.integration.tenant_id,
-            client_id=self.integration.client_id,
-            client_secret=self.integration.client_secret
-        )
-        client = ResourceManagementClient(credential=credentials, subscription_id=self.integration.subscription_id)
         try:
+            credentials = ClientSecretCredential(
+                tenant_id=self.integration.tenant_id,
+                client_id=self.integration.client_id,
+                client_secret=self.integration.client_secret
+            )
+            client = ResourceManagementClient(credential=credentials, subscription_id=self.integration.subscription_id)
             resources = list(client.resources.list())
             return {"success": True}
         except Exception as e:
