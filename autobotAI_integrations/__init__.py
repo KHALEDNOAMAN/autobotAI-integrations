@@ -357,7 +357,7 @@ def executor(context):
                     os.environ[key] = value    
             
         logger.info("Starting Steampipe Service...")    
-        subprocess.run(["steampipe", "service", "start"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        subprocess.run(["steampipe", "service", "start"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, env={**os.environ})
 
         logger.info(f"Running Benchmark...") 
         process = subprocess.run(
@@ -369,7 +369,7 @@ def executor(context):
         )
 
         logger.info("Stopping Steampipe Service...")  
-        subprocess.run(["steampipe", "service", "stop"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        subprocess.run(["steampipe", "service", "stop"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, env={**os.environ})
 
         return process
 
