@@ -1,0 +1,5 @@
+- name: shodan
+  import_library_names:
+    - shodan
+  pip_package_names:
+    - shodan

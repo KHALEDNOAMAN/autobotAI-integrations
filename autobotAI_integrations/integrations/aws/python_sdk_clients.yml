@@ -628,3 +628,5 @@
   name: workspaces-web
 - is_regional: true
   name: xray
+- is_regional: true
+  name: securitylake

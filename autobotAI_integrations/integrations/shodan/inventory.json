@@ -1,0 +1,273 @@
+{
+    "shodan": [
+        {
+            "name": "shodan_account_profile",
+            "all_columns": [
+                "created",
+                "credits",
+                "display_name",
+                "member"
+            ],
+            "included": [],
+            "excluded": [],
+            "inventory_supported": true
+        },
+        {
+            "name": "shodan_api_info",
+            "all_columns": [
+                "https",
+                "monitored_ips",
+                "plan",
+                "query_credits",
+                "scan_credits",
+                "telnet",
+                "unlocked",
+                "unlocked_left",
+                "usage_limits"
+            ],
+            "included": [],
+            "excluded": [],
+            "inventory_supported": true
+        },
+        {
+            "name": "shodan_dns_reverse",
+            "all_columns": [
+                "host",
+                "ip"
+            ],
+            "included": [],
+            "excluded": [],
+            "inventory_supported": true
+        },
+        {
+            "name": "shodan_domain",
+            "all_columns": [
+                "domain",
+                "last_seen",
+                "subdomain",
+                "type",
+                "value"
+            ],
+            "included": [],
+            "excluded": [],
+            "inventory_supported": true
+        },
+        {
+            "name": "shodan_exploit",
+            "all_columns": [
+                "alias",
+                "arch",
+                "author",
+                "bid",
+                "code",
+                "cve",
+                "date",
+                "description",
+                "id",
+                "msb",
+                "osvdb",
+                "platform",
+                "port",
+                "privileged",
+                "query",
+                "rank",
+                "source",
+                "title",
+                "type",
+                "version"
+            ],
+            "included": [],
+            "excluded": [],
+            "inventory_supported": true
+        },
+        {
+            "name": "shodan_host",
+            "all_columns": [
+                "area_code",
+                "asn",
+                "city",
+                "country_code",
+                "country_code_3",
+                "country_name",
+                "dma_code",
+                "hostnames",
+                "ip",
+                "isp",
+                "last_update",
+                "latitude",
+                "longitude",
+                "org",
+                "os",
+                "ports",
+                "postal_code",
+                "region_code",
+                "tags",
+                "vulns"
+            ],
+            "included": [],
+            "excluded": [],
+            "inventory_supported": true
+        },
+        {
+            "name": "shodan_host_service",
+            "all_columns": [
+                "banners",
+                "cassandra",
+                "coap",
+                "cpe",
+                "db2",
+                "devicetype",
+                "dns",
+                "docker",
+                "domains",
+                "elastic",
+                "etcd",
+                "ethernet_ip",
+                "ftp",
+                "hash",
+                "hive",
+                "http",
+                "influxdb",
+                "info",
+                "ip",
+                "ipv6",
+                "isakmp",
+                "lantronix",
+                "link",
+                "minecraft",
+                "monero",
+                "mongodb",
+                "mqtt",
+                "netbios",
+                "ntp",
+                "opts",
+                "port",
+                "product",
+                "redis",
+                "rip",
+                "rsync",
+                "shodan",
+                "smb",
+                "snmp",
+                "ssh",
+                "ssl",
+                "timestamp",
+                "title",
+                "transport",
+                "uptime",
+                "version",
+                "vertx",
+                "vulns"
+            ],
+            "included": [],
+            "excluded": [],
+            "inventory_supported": true
+        },
+        {
+            "name": "shodan_port",
+            "all_columns": [
+                "port"
+            ],
+            "included": [],
+            "excluded": [],
+            "inventory_supported": true
+        },
+        {
+            "name": "shodan_protocol",
+            "all_columns": [
+                "description",
+                "name"
+            ],
+            "included": [],
+            "excluded": [],
+            "inventory_supported": true
+        },
+        {
+            "name": "shodan_scan",
+            "all_columns": [
+                "created",
+                "credits_left",
+                "id",
+                "size",
+                "status",
+                "status_check"
+            ],
+            "included": [],
+            "excluded": [],
+            "inventory_supported": true
+        },
+        {
+            "name": "shodan_search",
+            "all_columns": [
+                "asn",
+                "banners",
+                "cassandra",
+                "coap",
+                "cpe",
+                "db2",
+                "devicetype",
+                "dns",
+                "docker",
+                "domains",
+                "elastic",
+                "etcd",
+                "ethernet_ip",
+                "ftp",
+                "hash",
+                "hive",
+                "hostnames",
+                "http",
+                "influxdb",
+                "info",
+                "ip",
+                "ipv6",
+                "isakmp",
+                "isp",
+                "lantronix",
+                "link",
+                "location",
+                "minecraft",
+                "monero",
+                "mongodb",
+                "mqtt",
+                "netbios",
+                "ntp",
+                "org",
+                "os",
+                "port",
+                "ports",
+                "product",
+                "query",
+                "redis",
+                "rip",
+                "rsync",
+                "shodan",
+                "smb",
+                "snmp",
+                "ssh",
+                "ssl",
+                "tags",
+                "timestamp",
+                "title",
+                "transport",
+                "uptime",
+                "version",
+                "vertx",
+                "vulns"
+            ],
+            "included": [],
+            "excluded": [],
+            "inventory_supported": true
+        },
+        {
+            "name": "shodan_service",
+            "all_columns": [
+                "name",
+                "port"
+            ],
+            "included": [],
+            "excluded": [],
+            "inventory_supported": true
+        }
+    ]
+}

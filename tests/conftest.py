@@ -1,4 +1,4 @@
-from typing import Union
+from typing import List
 import uuid
 import pytest
 from dotenv import dotenv_values
@@ -8,7 +8,7 @@ from autobotAI_integrations.payload_schema import Payload, PayloadTask, PayloadT
 import json
 
 @pytest.fixture
-def keys():
+def get_keys():
     keys = dotenv_values(".env")
     return keys
 
@@ -18,7 +18,6 @@ def sample_integration_dict():
     def _sample_integration_dict(cspName: str="linux", tokens: dict = {}):
         return {
             "userId": "test@pytest.com*",
-            "accountId": uuid.uuid4().hex,
             "cspName": cspName.lower(),
             "alias": f"test-{cspName}-integration",
             **tokens,
@@ -69,6 +68,8 @@ def executor(context):
                 **{"integration": service.integration},
             ),
         }
+        task_dump = PayloadTask(**task_dict).model_dump_json()
+        task_dict = json.loads(task_dump)
         return PayloadTask(**task_dict)
 
     return _sample_python_task
@@ -76,22 +77,26 @@ def executor(context):
 
 @pytest.fixture
 def sample_steampipe_task(sample_context_data):
-    def _sample_steampipe_task(integration: dict, config_str: str = ""):
+    def _sample_steampipe_task(integration: dict, config_str: str = "", query=""):
         service = integration_service_factory.get_service(None, integration)
-        integration = service.integration
         creds = service.generate_steampipe_creds()
         if config_str != "":
             creds.config = config_str
+        executable = "select _ctx ->> 'connection_name' as host, stdout_output from exec_command where command = 'ls -la';"
+        if query:
+            executable = query
         task_dict = {
             "task_id": uuid.uuid4().hex,
             "creds": creds,
             "connection_interface": ConnectionInterfaces.STEAMPIPE,
-            "executable": "select _ctx ->> 'connection_name' as host, stdout_output from exec_command where command = 'ls -la';",
+            "executable": executable,
             "context": PayloadTaskContext(
                 **sample_context_data,
-                **{"integration": service.integration},
+                **{"integration": service.integration.model_dump()},
             ),
         }
+        task_dump = PayloadTask(**task_dict).model_dump_json()
+        task_dict = json.loads(task_dump)
         return PayloadTask(**task_dict)
     return _sample_steampipe_task
 
@@ -103,6 +108,7 @@ def test_result_format():
             result = result.model_dump()
         assert isinstance(result.get("resources"), list)
         assert isinstance(result.get("errors"), list)
+        assert len(result.get("resources")) > 0 or len(result.get("errors")) > 0
         if result.get("resources"):
             for resource in result.get("resources"):
                 assert "integration_id" in resource
@@ -119,10 +125,10 @@ def test_result_format():
 
 @pytest.fixture
 def sample_payload():
-    def _sample_payload(task: PayloadTask):
+    def _sample_payload(tasks: List[PayloadTask]):
         payload = {
             "job_id": str(uuid.uuid4().hex),
-            "tasks": [task],
+            "tasks": [task for task in tasks],
         }
         payload = Payload(**payload).model_dump()
         json_payload = json.dumps(payload)
