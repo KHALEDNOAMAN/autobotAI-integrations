@@ -33,7 +33,7 @@ class ShodanService(BaseService):
         super().__init__(ctx, integration)
 
     def _test_integration(self) -> dict:
-        url = "https://api.shodan.io/shodan/host/search/filters??key={}".format(
+        url = "https://api.shodan.io/account/profile?key={}".format(
             self.integration.api_key
         )
         response = requests.get(url)
