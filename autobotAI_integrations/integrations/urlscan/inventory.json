@@ -1,0 +1,292 @@
+{
+    "urlscan": [
+        {
+            "name": "urlscan_app",
+            "all_columns": [
+                "app",
+                "categories",
+                "confidence",
+                "confidence_total",
+                "icon",
+                "scan",
+                "website"
+            ],
+            "included": [],
+            "excluded": [],
+            "inventory_supported": true
+        },
+        {
+            "name": "urlscan_asn",
+            "all_columns": [
+                "asn",
+                "country",
+                "date",
+                "description",
+                "ip",
+                "name",
+                "registrar",
+                "route",
+                "scan"
+            ],
+            "included": [],
+            "excluded": [],
+            "inventory_supported": true
+        },
+        {
+            "name": "urlscan_certificate",
+            "all_columns": [
+                "issuer",
+                "scan",
+                "subject_name",
+                "valid_from",
+                "valid_to"
+            ],
+            "included": [],
+            "excluded": [],
+            "inventory_supported": true
+        },
+        {
+            "name": "urlscan_console",
+            "all_columns": [
+                "column",
+                "level",
+                "line",
+                "rank",
+                "scan",
+                "source",
+                "text",
+                "url"
+            ],
+            "included": [],
+            "excluded": [],
+            "inventory_supported": true
+        },
+        {
+            "name": "urlscan_cookie",
+            "all_columns": [
+                "domain",
+                "expires",
+                "http_only",
+                "name",
+                "path",
+                "scan",
+                "secure",
+                "session",
+                "size",
+                "value"
+            ],
+            "included": [],
+            "excluded": [],
+            "inventory_supported": true
+        },
+        {
+            "name": "urlscan_document_type",
+            "all_columns": [
+                "compression",
+                "count",
+                "countries",
+                "encoded_size",
+                "ips",
+                "percentage",
+                "scan",
+                "size",
+                "type"
+            ],
+            "included": [],
+            "excluded": [],
+            "inventory_supported": true
+        },
+        {
+            "name": "urlscan_domain",
+            "all_columns": [
+                "count",
+                "countries",
+                "domain",
+                "encoded_size",
+                "initiators",
+                "ips",
+                "redirects",
+                "scan",
+                "size"
+            ],
+            "included": [],
+            "excluded": [],
+            "inventory_supported": true
+        },
+        {
+            "name": "urlscan_global",
+            "all_columns": [
+                "property",
+                "scan",
+                "type"
+            ],
+            "included": [],
+            "excluded": [],
+            "inventory_supported": true
+        },
+        {
+            "name": "urlscan_ip",
+            "all_columns": [
+                "asn",
+                "count",
+                "countries",
+                "dns",
+                "domains",
+                "encoded_size",
+                "geolocation",
+                "ip",
+                "ipv6",
+                "redirects",
+                "reverse_dns",
+                "scan",
+                "size"
+            ],
+            "included": [],
+            "excluded": [],
+            "inventory_supported": true
+        },
+        {
+            "name": "urlscan_link",
+            "all_columns": [
+                "href",
+                "scan",
+                "text"
+            ],
+            "included": [],
+            "excluded": [],
+            "inventory_supported": true
+        },
+        {
+            "name": "urlscan_protocol",
+            "all_columns": [
+                "count",
+                "countries",
+                "encoded_size",
+                "ips",
+                "protocol",
+                "scan",
+                "size"
+            ],
+            "included": [],
+            "excluded": [],
+            "inventory_supported": true
+        },
+        {
+            "name": "urlscan_request",
+            "all_columns": [
+                "document_type",
+                "document_url",
+                "frame_id",
+                "has_post_data",
+                "has_user_gesture",
+                "headers",
+                "id",
+                "initial_priority",
+                "initiator",
+                "loader_id",
+                "method",
+                "mixed_content_type",
+                "post_data",
+                "referrer_policy",
+                "response_abp",
+                "response_asn",
+                "response_data_length",
+                "response_document_type",
+                "response_encoded_data_length",
+                "response_geolocation",
+                "response_hash",
+                "response_hash_matches",
+                "response_headers",
+                "response_mime_type",
+                "response_protocol",
+                "response_remote_ip_address",
+                "response_remote_port",
+                "response_reverse_dns",
+                "response_security_details",
+                "response_security_headers",
+                "response_security_state",
+                "response_size",
+                "response_status",
+                "response_status_text",
+                "response_timing",
+                "scan",
+                "timestamp",
+                "url",
+                "wall_time"
+            ],
+            "included": [],
+            "excluded": [],
+            "inventory_supported": true
+        },
+        {
+            "name": "urlscan_search",
+            "all_columns": [
+                "id",
+                "page",
+                "page_domain",
+                "page_ip",
+                "page_url",
+                "query",
+                "result",
+                "stats",
+                "task",
+                "task_time",
+                "task_url",
+                "task_visibility"
+            ],
+            "included": [],
+            "excluded": [],
+            "inventory_supported": true
+        },
+        {
+            "name": "urlscan_server",
+            "all_columns": [
+                "count",
+                "countries",
+                "encoded_size",
+                "ips",
+                "scan",
+                "server",
+                "size"
+            ],
+            "included": [],
+            "excluded": [],
+            "inventory_supported": true
+        },
+        {
+            "name": "urlscan_task",
+            "all_columns": [
+                "dom_url",
+                "method",
+                "report_url",
+                "scan",
+                "screenshot_url",
+                "source",
+                "time",
+                "url",
+                "user_agent",
+                "uuid",
+                "visibility"
+            ],
+            "included": [],
+            "excluded": [],
+            "inventory_supported": true
+        },
+        {
+            "name": "urlscan_tls",
+            "all_columns": [
+                "count",
+                "countries",
+                "encoded_size",
+                "ips",
+                "protocols",
+                "scan",
+                "security_state",
+                "size"
+            ],
+            "included": [],
+            "excluded": [],
+            "inventory_supported": true
+        }
+    ]
+}
