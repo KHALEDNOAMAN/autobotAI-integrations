@@ -10,6 +10,11 @@ class Forms:
 
 
 class PythonIntegration(BaseSchema):
+
+    category: Optional[str] = IntegrationCategory.OTHERS.value
+    description: Optional[str] = (
+        "Python is a programming language that lets you work more quickly and integrate your systems more effectively."
+    )
     def __init__(self, **kwargs):
         if not kwargs.get("accountId"):
             kwargs["accountId"] = str(uuid.uuid4().hex)
@@ -57,7 +62,7 @@ class PythonService(BaseService):
     @classmethod
     def get_details(cls):
         return {
-            "clients": [list_of_unique_elements(cls.get_all_python_sdk_clients())],
+            "clients": [],
             "supported_executor": "lambda",
             "compliance_supported": True,
             "supported_interfaces": cls.supported_connection_interfaces(),
