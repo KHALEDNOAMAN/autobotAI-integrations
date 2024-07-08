@@ -16,7 +16,8 @@ class ConnectionInterfaces(str, Enum):
     def __str__(self):
         return self.value
 
-class IntegrationCategory(Enum):
+
+class IntegrationCategory(str, Enum):
     CLOUD_SERVICES_PROVIDERS = "cloud_services_providers"
     CODE_REPOSITORY = "code_repository"
     MONITORING_TOOLS = "monitoring_tools"
@@ -25,9 +26,10 @@ class IntegrationCategory(Enum):
     NOTIFICATIONS_AND_COMMUNICATIONS = "notifications_and_communications"
     AI = "ai_services"
     OTHERS = "others"
-    
+
     def __str__(self) -> str:
         return self.value
+
 
 class BaseCreds(BaseModel):
     pass
