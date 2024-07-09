@@ -39,8 +39,7 @@ class GitService(BaseService):
         return {
             "label": "Git Integration",
             "type": "form",
-            "children": [
-            ]
+            "children": []
         }
 
     @staticmethod

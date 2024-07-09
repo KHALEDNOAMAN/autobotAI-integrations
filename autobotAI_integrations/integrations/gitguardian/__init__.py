@@ -38,19 +38,13 @@ class GitGuardianService(BaseService):
             "type": "form",
             "children": [
                 {
-                    "label": "Token Integration",
-                    "type": "form",
-                    "children": [
-                        {
-                            "name": "token",
-                            "type": "text/password",
-                            "label": "GitGuardian Token",
-                            "placeholder": "Enter the GitGuardian token",
-                            "required": True
-                        }
-                    ]
+                    "name": "token",
+                    "type": "text/password",
+                    "label": "GitGuardian Token",
+                    "placeholder": "Enter the GitGuardian token",
+                    "required": True,
                 }
-            ]
+            ],
         }
 
     @staticmethod

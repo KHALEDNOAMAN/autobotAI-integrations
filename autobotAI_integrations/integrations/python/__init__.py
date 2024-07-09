@@ -64,7 +64,7 @@ class PythonService(BaseService):
         return {
             "clients": [],
             "supported_executor": "lambda",
-            "compliance_supported": True,
+            "compliance_supported": False,
             "supported_interfaces": cls.supported_connection_interfaces(),
             "python_code_sample": cls.get_code_sample()
         }

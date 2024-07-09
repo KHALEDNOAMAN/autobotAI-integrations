@@ -28,13 +28,7 @@ class KubernetesService(BaseService):
         return  {
             "label": "Kubernetes",
             "type": "form",
-            "children": [
-                {
-                    "label": "Cluster Connection",
-                    "type": "form",
-                    "children": []
-                }
-            ]
+            "children": []
         }
 
     @staticmethod
