@@ -56,17 +56,11 @@ class VirusTotalService(BaseService):
             "type": "form",
             "children": [
                 {
-                    "label": "API Key Integration",
-                    "type": "form",
-                    "children": [
-                        {
-                            "name": "api_key",
-                            "type": "text/password",
-                            "label": "API Key",
-                            "placeholder": "Enter the VirusTotal API Key",
-                            "required": True,
-                        }
-                    ],
+                    "name": "api_key",
+                    "type": "text/password",
+                    "label": "API Key",
+                    "placeholder": "Enter the VirusTotal API Key",
+                    "required": True,
                 }
             ],
         }

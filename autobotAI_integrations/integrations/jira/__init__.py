@@ -64,40 +64,34 @@ class JiraService(BaseService):
             "type": "form",
             "children": [
                 {
-                    "label": "Jira Cloud",
-                    "type": "form",
-                    "children": [
-                        {
-                            "name": "base_url",
-                            "type": "text",
-                            "label": "Jira URL",
-                            "placeholder": "https://jira.atlassian.com",
-                            "description": "The URL of the Jira instance to connect to.",
-                            "required": True
-                        },
-                        {
-                            "name": "username",
-                            "type": "text",
-                            "label": "Jira Username",
-                            "placeholder": "Enter Jira Username",
-                            "required": True,
-                        },
-                        {
-                            "name": "token",
-                            "type": "text/password",
-                            "label": "Access Token",
-                            "placeholder": "Enter Token",
-                            "description": "The access token to use to authenticate with Jira cloud.",
-                        },
-                        {
-                            "name": "personal_access_token",
-                            "type": "text/password",
-                            "label": "Personal Access Token",
-                            "placeholder": "Enter Personal Access Token",
-                            "description": "The personal access token to use to authenticate with self hosted Jira.",
-                        },
-                    ],
+                    "name": "base_url",
+                    "type": "text",
+                    "label": "Jira URL",
+                    "placeholder": "https://jira.atlassian.com",
+                    "description": "The URL of the Jira instance to connect to.",
+                    "required": True,
                 },
+                {
+                    "name": "username",
+                    "type": "text",
+                    "label": "Jira Username",
+                    "placeholder": "Enter Jira Username",
+                    "required": True,
+                },
+                {
+                    "name": "token",
+                    "type": "text/password",
+                    "label": "Access Token",
+                    "placeholder": "Enter Token",
+                    "description": "The access token to use to authenticate with Jira cloud.",
+                },
+                {
+                    "name": "personal_access_token",
+                    "type": "text/password",
+                    "label": "Personal Access Token",
+                    "placeholder": "Enter Personal Access Token",
+                    "description": "The personal access token to use to authenticate with self hosted Jira.",
+                }
             ],
         }
 

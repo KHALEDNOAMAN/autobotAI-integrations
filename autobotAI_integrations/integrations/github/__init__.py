@@ -53,26 +53,20 @@ class GithubService(BaseService):
             "type": "form",
             "children": [
                 {
-                    "label": "Token Integration",
-                    "type": "form",
-                    "children": [
-                        {
-                            "name": "base_url",
-                            "type": "text/url",
-                            "label": "Github Base URL",
-                            "placeholder": "Enter Base URL",
-                            "description": "Github Base URL if Using Enterprise Version",
-                            "required": False,
-                        },
-                        {
-                            "name": "token",
-                            "type": "text/password",
-                            "label": "Github Token",
-                            "placeholder": "Enter the github token",
-                            "required": True,
-                        },
-                    ],
-                }
+                    "name": "base_url",
+                    "type": "text/url",
+                    "label": "Github Base URL",
+                    "placeholder": "Enter Base URL",
+                    "description": "Github Base URL if Using Enterprise Version",
+                    "required": False,
+                },
+                {
+                    "name": "token",
+                    "type": "text/password",
+                    "label": "Github Token",
+                    "placeholder": "Enter the github token",
+                    "required": True,
+                },
             ],
         }
 

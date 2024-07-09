@@ -104,19 +104,13 @@ class GCPService(BaseService):
             "type": "form",
             "children": [
                 {
-                    "label": "Service Account Integration",
-                    "type": "form",
-                    "children": [
-                        {
-                            "name": "credentials",
-                            "type": "json",
-                            "label": "Credentials JSON",
-                            "placeholder": "Enter the Credentials In JSON Format",
-                            "required": True,
-                        }
-                    ]
+                    "name": "credentials",
+                    "type": "json",
+                    "label": "Credentials JSON",
+                    "placeholder": "Enter the Credentials In JSON Format",
+                    "required": True,
                 }
-            ]
+            ],
         }
 
     @staticmethod

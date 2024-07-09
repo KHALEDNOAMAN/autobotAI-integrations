@@ -113,25 +113,19 @@ class AWSBedrockService(AIBaseService):
             "type": "form",
             "children": [
                 {
-                    "label": "IAM Role Integration",
-                    "type": "form",
-                    "children": [
-                        {
-                            "name": "roleArn",
-                            "type": "text",
-                            "label": "IAM Role ARN",
-                            "placeholder": "Enter IAM role ARN",
-                            "required": True,
-                        },
-                        {
-                            "name": "region",
-                            "type": "select",
-                            "label": "Region",
-                            "placeholder": "Select Region",
-                            "required": True,
-                        },
-                    ],
-                }
+                    "name": "roleArn",
+                    "type": "text",
+                    "label": "IAM Role ARN",
+                    "placeholder": "Enter IAM role ARN",
+                    "required": True,
+                },
+                {
+                    "name": "region",
+                    "type": "select",
+                    "label": "Region",
+                    "placeholder": "Select Region",
+                    "required": True,
+                },
             ],
         }
 

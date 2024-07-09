@@ -149,17 +149,11 @@ def executor(context):
             "type": "form",
             "children": [
                 {
-                    "label": "API Key Integration",
-                    "type": "form",
-                    "children": [
-                        {
-                            "name": "api_key",
-                            "type": "text/password",
-                            "label": "OpenAI api_key",
-                            "placeholder": "Enter the OpenAI API Key",
-                            "required": True,
-                        }
-                    ],
+                    "name": "api_key",
+                    "type": "text/password",
+                    "label": "OpenAI api_key",
+                    "placeholder": "Enter the OpenAI API Key",
+                    "required": True,
                 }
             ],
         }

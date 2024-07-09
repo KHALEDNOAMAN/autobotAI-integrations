@@ -52,17 +52,11 @@ class AbuseIPDBService(BaseService):
             "type": "form",
             "children": [
                 {
-                    "label": "API Key Integration",
-                    "type": "form",
-                    "children": [
-                        {
-                            "name": "api_key",
-                            "type": "text/password",
-                            "label": "API Key",
-                            "placeholder": "Enter the AbuseIPDB API Key",
-                            "required": True,
-                        }
-                    ],
+                    "name": "api_key",
+                    "type": "text/password",
+                    "label": "API Key",
+                    "placeholder": "Enter the AbuseIPDB API Key",
+                    "required": True,
                 }
             ],
         }
@@ -103,4 +97,3 @@ class AbuseIPDBService(BaseService):
             conf_path=conf_path,
             config=config,
         )
-
