@@ -50,9 +50,12 @@ def sample_python_task(sample_context_data):
         creds = service.generate_python_sdk_creds()
         executable = """
 def executor(context):
-    git = context["clients"]["git"]
-    repo_url = "https://github.com/gitpython-developers/QuickStartTutorialFiles.git"
-    repo = git.Repo.clone_from(repo_url, "tree")
+    try:
+        git = context["clients"]["git"]
+        repo_url = "https://github.com/gitpython-developers/QuickStartTutorialFiles.git"
+        repo = git.Repo.clone_from(repo_url, "tree")
+    except Exception as e:
+        return [{"result": False, "error": str(e)}]
     return [{"result": True}]
 """
         if code != "":
@@ -108,7 +111,8 @@ def test_result_format():
             result = result.model_dump()
         assert isinstance(result.get("resources"), list)
         assert isinstance(result.get("errors"), list)
-        assert len(result.get("resources")) > 0 or len(result.get("errors")) > 0
+        assert len(result.get("resources")) > 0
+        assert len(result.get("errors")) == 0
         if result.get("resources"):
             for resource in result.get("resources"):
                 assert "integration_id" in resource
