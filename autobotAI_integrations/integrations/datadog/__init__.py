@@ -41,21 +41,24 @@ class DATADOGService(BaseService):
         super().__init__(ctx, integration)
 
     def _test_integration(self):
-        headers = {
-            "Accept": "application/json",
-            "DD-API-KEY": str(self.integration.api_key),
-        }
-
-        # Make the API request
-        url = f"{self.integration.api_url + "" if str(self.integration.api_url).endswith("/") else "/"}api/v1/validate"
-        response = requests.get(url, headers=headers)
-        if response.status_code == 200:
-            return {"success": True}
-        else:
-            return {
-                "success": False,
-                "error": f"Error: API request failed. Status code: {response.status_code}",
+        try:
+            headers = {
+                "Accept": "application/json",
+                "DD-API-KEY": str(self.integration.api_key),
             }
+
+            # Make the API request
+            url = self.integration.api_url + "" if str(self.integration.api_url).endswith("/") else "/"
+            response = requests.get(f"{url}api/v1/validate", headers=headers)
+            if response.status_code == 200:
+                return {"success": True}
+            else:
+                return {
+                    "success": False,
+                    "error": f"Error: API request failed. Status code: {response.status_code}",
+                }
+        except Exception as e:
+            return {"success": False, "error": str(e)}
 
     @staticmethod
     def get_forms():

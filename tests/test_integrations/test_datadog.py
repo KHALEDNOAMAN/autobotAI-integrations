@@ -47,7 +47,6 @@ class TestClassDatadog:
         result = handle_task(task)
         print(result.model_dump_json(indent=2))
         test_result_format(result)
-        assert 1 == 2
 
     def test_datadog_python_task(
         self, get_keys, sample_integration_dict, sample_python_task, test_result_format
@@ -64,7 +63,6 @@ class TestClassDatadog:
         result = handle_task(task)
         print(result.model_dump_json(indent=2))
         test_result_format(result)
-        assert 1 == 2
 
     def test_integration_active(self, get_keys, sample_integration_dict):
         tokens = {
