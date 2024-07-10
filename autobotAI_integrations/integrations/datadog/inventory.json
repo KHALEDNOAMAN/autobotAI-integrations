@@ -1,0 +1,234 @@
+{
+    "datadog": [
+        {
+            "name": "datadog_dashboard",
+            "all_columns": [
+                "author_handle",
+                "created_at",
+                "description",
+                "id",
+                "is_read_only",
+                "layout_type",
+                "modified_at",
+                "reflow_type",
+                "restricted_roles",
+                "template_variable_presets",
+                "template_variables",
+                "title",
+                "url",
+                "widgets"
+            ],
+            "included": [],
+            "excluded": [],
+            "inventory_supported": true
+        },
+        {
+            "name": "datadog_host",
+            "all_columns": [
+                "aliases",
+                "apps",
+                "aws_name",
+                "id",
+                "is_muted",
+                "last_reported_time",
+                "meta",
+                "metrics",
+                "mute_timeout",
+                "name",
+                "sources",
+                "tags_by_source",
+                "up"
+            ],
+            "included": [],
+            "excluded": [],
+            "inventory_supported": true
+        },
+        {
+            "name": "datadog_integration_aws",
+            "all_columns": [
+                "access_key_id",
+                "account_id",
+                "account_specific_namespace_rules",
+                "cspm_resource_collection_enabled",
+                "excluded_regions",
+                "filter_tags",
+                "host_tags",
+                "metrics_collection_enabled",
+                "resource_collection_enabled",
+                "role_name",
+                "secret_access_key"
+            ],
+            "included": [],
+            "excluded": [],
+            "inventory_supported": true
+        },
+        {
+            "name": "datadog_log_event",
+            "all_columns": [
+                "attributes",
+                "host",
+                "id",
+                "message",
+                "query",
+                "service",
+                "status",
+                "tags",
+                "timestamp"
+            ],
+            "included": [],
+            "excluded": [],
+            "inventory_supported": true
+        },
+        {
+            "name": "datadog_logs_metric",
+            "all_columns": [
+                "compute_aggregation_type",
+                "compute_path",
+                "filter_query",
+                "group_by",
+                "id"
+            ],
+            "included": [],
+            "excluded": [],
+            "inventory_supported": true
+        },
+        {
+            "name": "datadog_monitor",
+            "all_columns": [
+                "created_at",
+                "creator_email",
+                "group_states",
+                "id",
+                "message",
+                "modified_at",
+                "multi",
+                "name",
+                "options",
+                "overall_state",
+                "priority",
+                "query",
+                "restricted_roles",
+                "tags",
+                "type"
+            ],
+            "included": [],
+            "excluded": [],
+            "inventory_supported": true
+        },
+        {
+            "name": "datadog_permission",
+            "all_columns": [
+                "created_at",
+                "description",
+                "display_name",
+                "display_type",
+                "group_name",
+                "id",
+                "name",
+                "restricted"
+            ],
+            "included": [],
+            "excluded": [],
+            "inventory_supported": true
+        },
+        {
+            "name": "datadog_role",
+            "all_columns": [
+                "created_at",
+                "id",
+                "modified_at",
+                "name",
+                "permissions",
+                "user_count",
+                "users"
+            ],
+            "included": [],
+            "excluded": [],
+            "inventory_supported": true
+        },
+        {
+            "name": "datadog_security_monitoring_rule",
+            "all_columns": [
+                "cases",
+                "created_at",
+                "creation_author_id",
+                "filters",
+                "has_extended_title",
+                "id",
+                "is_default",
+                "is_deleted",
+                "is_enabled",
+                "message",
+                "name",
+                "options",
+                "queries",
+                "tags",
+                "type",
+                "update_author_id",
+                "version"
+            ],
+            "included": [],
+            "excluded": [],
+            "inventory_supported": true
+        },
+        {
+            "name": "datadog_security_monitoring_signal",
+            "all_columns": [
+                "attributes",
+                "filter_query",
+                "id",
+                "message",
+                "tags",
+                "timestamp",
+                "title"
+            ],
+            "included": [],
+            "excluded": [],
+            "inventory_supported": true
+        },
+        {
+            "name": "datadog_service_level_objective",
+            "all_columns": [
+                "configured_alert_ids",
+                "created_at",
+                "creator_email",
+                "description",
+                "groups",
+                "id",
+                "modified_at",
+                "monitor_ids",
+                "monitor_tags",
+                "name",
+                "query",
+                "tags",
+                "thresholds",
+                "type"
+            ],
+            "included": [],
+            "excluded": [],
+            "inventory_supported": true
+        },
+        {
+            "name": "datadog_user",
+            "all_columns": [
+                "created_at",
+                "disabled",
+                "email",
+                "handle",
+                "icon",
+                "id",
+                "modified_at",
+                "name",
+                "relationships",
+                "role_ids",
+                "service_account",
+                "status",
+                "title",
+                "verified"
+            ],
+            "included": [],
+            "excluded": [],
+            "inventory_supported": true
+        }
+    ]
+}
