@@ -53,7 +53,7 @@ class TestClassIMAP:
             "username": get_keys["IMAP_USERNAME"],
             "password": get_keys["IMAP_PASSWORD"]
         }
-        integration = sample_integration_dict("imap", tokens)
+        integration = sample_integration_dict("email", tokens)
         imap_query = "select * from imap_message where mailbox='INBOX' and  timestamp > current_timestamp - interval '2 days'"
         task = sample_steampipe_task(integration, query=imap_query)
         result = handle_task(task)
@@ -68,7 +68,7 @@ class TestClassIMAP:
             "username": get_keys["IMAP_USERNAME"],
             "password": get_keys["IMAP_PASSWORD"],
         }
-        integration = sample_integration_dict("imap", tokens)
+        integration = sample_integration_dict("email", tokens)
         task = sample_python_task(
             integration, code=imap_python_code, clients=["imap_ssl_connection"]
         )
@@ -82,7 +82,7 @@ class TestClassIMAP:
             "username": get_keys["IMAP_USERNAME"],
             "password": get_keys["IMAP_PASSWORD"],
         }
-        integration = sample_integration_dict("imap", tokens)
+        integration = sample_integration_dict("email", tokens)
         service = integration_service_factory.get_service(None, integration)
         res = service.is_active()
         assert res["success"]
@@ -91,7 +91,7 @@ class TestClassIMAP:
             "username": get_keys["IMAP_USERNAME"],
             "password": get_keys["IMAP_PASSWORD"][:-2],
         }
-        integration = sample_integration_dict("imap", tokens)
+        integration = sample_integration_dict("email", tokens)
         service = integration_service_factory.get_service(None, integration)
         res = service.is_active()
         assert not res["success"]

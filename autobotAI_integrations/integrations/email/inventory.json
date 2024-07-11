@@ -1,0 +1,49 @@
+{
+    "email": [
+        {
+            "name": "imap_mailbox",
+            "all_columns": [
+                "attributes",
+                "delimiter",
+                "flags",
+                "messages",
+                "name",
+                "permanent_flags",
+                "read_only",
+                "recent",
+                "unseen"
+            ],
+            "included": [],
+            "excluded": [],
+            "inventory_supported": true
+        },
+        {
+            "name": "imap_message",
+            "all_columns": [
+                "attachments",
+                "bcc_addresses",
+                "body_html",
+                "body_text",
+                "cc_addresses",
+                "embedded_files",
+                "errors",
+                "flags",
+                "from_addresses",
+                "from_email",
+                "headers",
+                "in_reply_to",
+                "mailbox",
+                "message_id",
+                "query",
+                "seq_num",
+                "size",
+                "subject",
+                "timestamp",
+                "to_addresses"
+            ],
+            "included": [],
+            "excluded": [],
+            "inventory_supported": true
+        }
+    ]
+}
