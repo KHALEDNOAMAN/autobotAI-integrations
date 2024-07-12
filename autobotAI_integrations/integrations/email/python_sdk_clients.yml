@@ -1,1 +1,2 @@
 - name: "imap_ssl_connection"
+- name: "smtp_client"

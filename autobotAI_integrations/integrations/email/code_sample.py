@@ -1,6 +1,4 @@
 # Import your modules here
-import email, html
-from datetime import datetime, timedelta
 
 # **Security Note:** Client-related modules should not be directly imported here.
 # Instead, they are passed as arguments and retrieved from a secure configuration.
@@ -23,7 +21,7 @@ def executor(context):
     clients = context["clients"]
 
     # Placeholder for retrieving the integration-specific client if needed
-    client = clients["imap_ssl_connection"]  # Supports only one client
+    # client = clients["imap_ssl_connection"]
 
     # User's Python code execution logic goes here
     # (Replace this comment with the your actual code)
@@ -48,3 +46,43 @@ def executor(context):
     #     return res
     # except BaseException as e:
     #     return [{"result": str(e)}]
+
+
+# from email.mime.text import MIMEText
+# from email.mime.multipart import MIMEMultipart
+
+# def executor(context):
+#     params = context["params"]
+#     clients = context["clients"]
+#     try:
+#         client = clients["smtp_client"]
+#         # Example: Code to Send email (for illustration purposes only)
+#         message = MIMEMultipart("alternative")
+#         message["Subject"] = "Automated generated Email"
+#         message["From"] = params.get("sender")
+#         message["To"] = params.get("receiver")
+
+#         # Create the plain-text and HTML version of your message
+#         html = """<html>
+#         <body>
+#             <p>Hi,<br>
+#             How are you?<br>
+#             <a href="http://www.realpython.com">Real Python</a> 
+#             has many great tutorials.
+#             </p>
+#         </body>
+#         </html>"""
+
+#         message.attach(MIMEText(html, "html"))
+#         client.sendmail(params.get("sender"), params.get("receiver"), message.as_string())
+#         # terminating the session
+#         client.quit()
+#         return {
+#             "success": True,
+#             "message": "Email sent successfully"
+#         }
+#     except BaseException as e:
+#         return {
+#             "success": False,
+#             "message": str(e)
+#         }

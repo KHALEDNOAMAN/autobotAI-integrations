@@ -44,7 +44,7 @@ def sample_context_data():
 
 @pytest.fixture
 def sample_python_task(sample_context_data):
-    def _sample_python_task(integration: dict, code= "", clients = ["git"]):
+    def _sample_python_task(integration: dict, code= "", clients = ["git"], params = []):
         service = integration_service_factory.get_service(None, integration)
         integration = service.integration
         creds = service.generate_python_sdk_creds()
@@ -66,6 +66,7 @@ def executor(context):
             "connection_interface": ConnectionInterfaces.PYTHON_SDK,
             "executable": executable,
             "clients": clients,
+            "params": params,
             "context": PayloadTaskContext(
                 **sample_context_data,
                 **{"integration": service.integration},

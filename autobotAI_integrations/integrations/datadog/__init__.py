@@ -78,6 +78,7 @@ class DATADOGService(BaseService):
                     "type": "text/password",
                     "label":"Datadog Application Key",
                     "placeholder": "Enter Application Key",
+                    "description": "Application key is required for some endpoints. You can get it from your Datadog account settings.",
                     "required": True,
                 },
                 {
@@ -86,7 +87,7 @@ class DATADOGService(BaseService):
                     "label":"API URL",
                     "placeholder": "Enter HOST URL",
                     "description": "All Datadog API clients are configured by default to consume Datadog US site APIs. If you are on the Datadog EU site use 'https://api.datadoghq.eu' and free trial accounts works only on 'https://us5.datadoghq.com/'",
-                    "required": False,
+                    "required": True,
                 }
             ],
         }
