@@ -87,7 +87,7 @@ class IMAPService(BaseService):
                     "name": "smtp_host",
                     "type": "text",
                     "label": "SMTP Host",
-                    "description": "SMTP Host to connect to. This is optional and required only if you wish to use smtp client",
+                    "description": "SMTP (SSL) Host to connect to. This is optional and required only if you wish to use smtp client",
                     "placeholder": "smtp.example.com",
                     "required": False,
                 },
@@ -124,9 +124,7 @@ class IMAPService(BaseService):
                 if payload_task.creds.envs.get("SMTP_HOST")
                 else payload_task.creds.envs["IMAP_HOST"].replace("imap", "smtp")
             )
-            smtp_client = smtplib.SMTP(smtp_host, 587)
-            # start TLS for security
-            smtp_client.starttls()
+            smtp_client = smtplib.SMTP_SSL(smtp_host, 465)
             smtp_client.login(
                 payload_task.creds.envs["IMAP_USERNAME"], payload_task.creds.envs["IMAP_PASSWORD"]
             )
