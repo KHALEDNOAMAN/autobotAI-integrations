@@ -279,7 +279,7 @@ def executor(context):
                 "user_id": payload_task.context.execution_details.caller.user_id,
                 "root_user_id": payload_task.context.execution_details.caller.root_user_id
             }
-            if payload_task.context.integration.category != IntegrationCategory.AI.value:
+            if payload_task.context.integration.category not in [IntegrationCategory.AI.value] and payload_task.context.integration.cspName not in ["python"]:
                 default_data["integration_id"] = payload_task.context.integration.accountId
                 default_data["integration_type"] = payload_task.context.integration.cspName
             if not isinstance(result, list):
@@ -349,9 +349,16 @@ def executor(context):
                 ],
                 cwd=mods_dir,
             )
+
+        # Set Env Variables for creds.
+        env = os.environ.copy()
+        if payload_task.creds and payload_task.creds.envs:
+            for key, value in payload_task.creds.envs.items():
+                if key and value:
+                    env[key] = value    
             
         logger.info("Starting Steampipe Service...")    
-        subprocess.run(["steampipe", "service", "start"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        subprocess.run(["steampipe", "service", "start"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, env=env)
 
         logger.info(f"Running Benchmark...") 
         process = subprocess.run(
@@ -359,11 +366,11 @@ def executor(context):
             cwd=path,
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
-            env={**os.environ, **payload_task.creds.envs}
+            env=env
         )
 
         logger.info("Stopping Steampipe Service...")  
-        subprocess.run(["steampipe", "service", "stop"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        subprocess.run(["steampipe", "service", "stop"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, env=env)
 
         return process
 

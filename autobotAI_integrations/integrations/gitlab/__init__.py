@@ -51,26 +51,20 @@ class GitlabService(BaseService):
             "type": "form",
             "children": [
                 {
-                    "label": "Token Integration",
-                    "type": "form",
-                    "children": [
-                        {
-                            "name": "base_url",
-                            "type": "text/url",
-                            "label": "Gitlab Base URL",
-                            "placeholder": "Enter the gitlab base url if using enterprise version",
-                            "default_value": "https://gitlab.com/",
-                            "required": False,
-                        },
-                        {
-                            "name": "token",
-                            "type": "text/password",
-                            "label": "Gitlab Token",
-                            "placeholder": "Enter the Gitlab Token",
-                            "required": True,
-                        },
-                    ],
-                }
+                    "name": "base_url",
+                    "type": "text/url",
+                    "label": "Gitlab Base URL",
+                    "placeholder": "Enter the gitlab base url if using enterprise version",
+                    "default_value": "https://gitlab.com/",
+                    "required": False,
+                },
+                {
+                    "name": "token",
+                    "type": "text/password",
+                    "label": "Gitlab Token",
+                    "placeholder": "Enter the Gitlab Token",
+                    "required": True,
+                },
             ],
         }
 

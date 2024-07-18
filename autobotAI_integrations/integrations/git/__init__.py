@@ -39,8 +39,7 @@ class GitService(BaseService):
         return {
             "label": "Git Integration",
             "type": "form",
-            "children": [
-            ]
+            "children": []
         }
 
     @staticmethod
@@ -71,7 +70,7 @@ class GitService(BaseService):
         os_name = platform.system()
         if os_name == "Linux":
             package_manager = subprocess.check_output(
-                "which apt-get || which yum",
+                "which apt-get || which yum || which dnf",
                 shell=True
             ).decode("utf-8").strip()
             if package_manager:

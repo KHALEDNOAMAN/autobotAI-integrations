@@ -39,13 +39,13 @@ class AzureService(BaseService):
         super().__init__(ctx, integration)
 
     def _test_integration(self) -> dict:
-        credentials = ClientSecretCredential(
-            tenant_id=self.integration.tenant_id,
-            client_id=self.integration.client_id,
-            client_secret=self.integration.client_secret
-        )
-        client = ResourceManagementClient(credential=credentials, subscription_id=self.integration.subscription_id)
         try:
+            credentials = ClientSecretCredential(
+                tenant_id=self.integration.tenant_id,
+                client_id=self.integration.client_id,
+                client_secret=self.integration.client_secret
+            )
+            client = ResourceManagementClient(credential=credentials, subscription_id=self.integration.subscription_id)
             resources = list(client.resources.list())
             return {"success": True}
         except Exception as e:
@@ -58,40 +58,34 @@ class AzureService(BaseService):
             "type": "form",
             "children": [
                 {
-                    "label": "Service Principal Credentials",
-                    "type": "form",
-                    "children": [
-                        {
-                            "name": "tenant_id",
-                            "type": "text",
-                            "label": "Tenant ID",
-                            "placeholder": "Enter your Azure tenant ID",
-                            "required": True
-                        },
-                        {
-                            "name": "client_id",
-                            "type": "text",
-                            "label": "Client ID",
-                            "placeholder": "Enter your Azure application client ID",
-                            "required": True
-                        },
-                        {
-                            "name": "subscription_id",
-                            "type": "text",
-                            "label": "Subscription ID",
-                            "placeholder": "Enter your Azure subscription ID",
-                            "required": True
-                        },
-                        {
-                            "name": "client_secret",
-                            "type": "text/password",
-                            "label": "Client Secret",
-                            "placeholder": "Enter your Azure Application Client Secret",
-                            "required": True
-                        }
-                    ]
-                }
-            ]
+                    "name": "tenant_id",
+                    "type": "text",
+                    "label": "Tenant ID",
+                    "placeholder": "Enter your Azure tenant ID",
+                    "required": True,
+                },
+                {
+                    "name": "client_id",
+                    "type": "text",
+                    "label": "Client ID",
+                    "placeholder": "Enter your Azure application client ID",
+                    "required": True,
+                },
+                {
+                    "name": "subscription_id",
+                    "type": "text",
+                    "label": "Subscription ID",
+                    "placeholder": "Enter your Azure subscription ID",
+                    "required": True,
+                },
+                {
+                    "name": "client_secret",
+                    "type": "text/password",
+                    "label": "Client Secret",
+                    "placeholder": "Enter your Azure Application Client Secret",
+                    "required": True,
+                },
+            ],
         }
 
     @staticmethod

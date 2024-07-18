@@ -1,0 +1,107 @@
+{
+    "prometheus": [
+        {
+            "name": "prometheus_alert",
+            "all_columns": [
+                "active_at",
+                "annotations",
+                "labels",
+                "state",
+                "value"
+            ],
+            "included": [],
+            "excluded": [],
+            "inventory_supported": true
+        },
+        {
+            "name": "prometheus_label",
+            "all_columns": [
+                "name",
+                "query",
+                "timestamp",
+                "values"
+            ],
+            "included": [],
+            "excluded": [],
+            "inventory_supported": true
+        },
+        {
+            "name": "prometheus_metric",
+            "all_columns": [
+                "labels",
+                "name",
+                "query",
+                "step_seconds",
+                "timestamp",
+                "value"
+            ],
+            "included": [],
+            "excluded": [],
+            "inventory_supported": true
+        },
+        {
+            "name": "prometheus_rule",
+            "all_columns": [
+                "alerts",
+                "annotations",
+                "duration",
+                "evaluation_time",
+                "group_file",
+                "group_interval",
+                "group_name",
+                "group_rule_num",
+                "health",
+                "labels",
+                "last_error",
+                "last_evaluation",
+                "name",
+                "query",
+                "state"
+            ],
+            "included": [],
+            "excluded": [],
+            "inventory_supported": true
+        },
+        {
+            "name": "prometheus_rule_group",
+            "all_columns": [
+                "file",
+                "interval",
+                "name"
+            ],
+            "included": [],
+            "excluded": [],
+            "inventory_supported": true
+        },
+        {
+            "name": "prometheus_series",
+            "all_columns": [
+                "metric",
+                "name",
+                "query",
+                "timestamp"
+            ],
+            "included": [],
+            "excluded": [],
+            "inventory_supported": true
+        },
+        {
+            "name": "prometheus_target",
+            "all_columns": [
+                "discovered_labels",
+                "global_url",
+                "health",
+                "labels",
+                "last_error",
+                "last_scrape",
+                "last_scrape_duration",
+                "scrape_pool",
+                "scrape_url",
+                "state"
+            ],
+            "included": [],
+            "excluded": [],
+            "inventory_supported": true
+        }
+    ]
+}

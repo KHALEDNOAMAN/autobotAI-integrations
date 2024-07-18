@@ -17,7 +17,7 @@ class TestPayloadHandlerClass:
         integration = sample_integration_dict(cspName="git")
         # default args: code:str, clients:list
         task = sample_python_task(integration)
-        payload = sample_payload(task)
+        payload = sample_payload([task])
         results = handle_payload(payload, return_results = True)
         assert results is not None
         assert isinstance(results, dict)
@@ -40,7 +40,7 @@ class TestPayloadHandlerClass:
         integration = sample_integration_dict()
         # default args: code:str, clients:list
         task = sample_steampipe_task(integration)
-        payload = sample_payload(task)
+        payload = sample_payload([task])
         results = handle_payload(payload, return_results=True)
         assert results is not None
         assert isinstance(results, dict)

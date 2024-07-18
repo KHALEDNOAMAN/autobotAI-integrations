@@ -52,19 +52,13 @@ class MsTeamsService(BaseService):
             "type": "form",
             "children": [
                 {
-                    "label": "Channel Webhook Integration",
-                    "type": "form",
-                    "children": [
-                        {
-                            "name": "webhook",
-                            "type": "text/url",
-                            "label": "Webhook URL",
-                            "placeholder": "Enter your Webhook URL",
-                            "required": True
-                        }
-                    ]
+                    "name": "webhook",
+                    "type": "text/url",
+                    "label": "Webhook URL",
+                    "placeholder": "Enter your Webhook URL",
+                    "required": True,
                 }
-            ]
+            ],
         }
 
     @staticmethod

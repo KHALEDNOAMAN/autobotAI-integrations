@@ -1,0 +1,5 @@
+- name: prometheus_api_client
+  import_library_names:
+    - prometheus_api_client
+  pip_package_names:
+    - prometheus-api-client

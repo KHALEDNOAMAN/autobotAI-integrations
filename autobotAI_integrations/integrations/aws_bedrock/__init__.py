@@ -113,25 +113,19 @@ class AWSBedrockService(AIBaseService):
             "type": "form",
             "children": [
                 {
-                    "label": "IAM Role Integration",
-                    "type": "form",
-                    "children": [
-                        {
-                            "name": "roleArn",
-                            "type": "text",
-                            "label": "IAM Role ARN",
-                            "placeholder": "Enter IAM role ARN",
-                            "required": True,
-                        },
-                        {
-                            "name": "region",
-                            "type": "select",
-                            "label": "Region",
-                            "placeholder": "Select Region",
-                            "required": True,
-                        },
-                    ],
-                }
+                    "name": "roleArn",
+                    "type": "text",
+                    "label": "IAM Role ARN",
+                    "placeholder": "Enter IAM role ARN",
+                    "required": True,
+                },
+                {
+                    "name": "region",
+                    "type": "select",
+                    "label": "Region",
+                    "placeholder": "Select Region",
+                    "required": True,
+                },
             ],
         }
 
@@ -287,7 +281,7 @@ def executor(context):
                 creds["AWS_SESSION_TOKEN"] = str(self.integration.session_token)
             return creds
 
-    def _get_bedrock_model_request(self, model: str, prompt: str, max_tokens=512, temperature=0.5, *args, **kwargs):
+    def _get_bedrock_model_request(self, model: str, prompt: str, max_tokens=512, temperature=0.1, *args, **kwargs):
         if model.startswith("amazon.titan-text"):
             native_request = {
                 "inputText": prompt,
@@ -298,30 +292,14 @@ def executor(context):
             }
             request = json.dumps(native_request)
             return request
-        elif model.startswith("meta.llama3"):
-            formatted_prompt = f"""
-<|begin_of_text|>
-{prompt}
-<|eot_id|>
-<|start_header_id|>assistant<|end_header_id|>"""
-            native_request = {
-                "prompt": formatted_prompt,
-                "max_gen_len": int(max_tokens),
-                "temperature": float(temperature),
-            }
-            request = json.dumps(native_request)
-            return request
-        elif model.startswith("mistral.mistral") or model.startswith("meta.llama2"):
-            formatted_prompt = f"<s>[INST] {prompt} [/INST]"
-            native_request = {
-                "prompt": formatted_prompt,
-                "max_gen_len": int(max_tokens),
-                "temperature": float(temperature),
-            }
-            request = json.dumps(native_request)
-            return request
         else:
-            raise Exception(f"Model {model} not found in generate request")
+            native_request = {
+                "prompt": prompt,
+                "max_gen_len": int(max_tokens),
+                "temperature": float(temperature),
+            }
+            request = json.dumps(native_request)
+            return request
 
     def prompt_executor(self, model=None, prompt=None, options: dict = {}):
         if not model or not prompt:

@@ -57,17 +57,11 @@ class UptimeRobotService(BaseService):
             "type": "form",
             "children": [
                 {
-                    "label": "API Key Integration",
-                    "type": "form",
-                    "children": [
-                        {
-                            "name": "api_key",
-                            "type": "text/password",
-                            "label": "API Key",
-                            "placeholder": "Enter the UptimeRobot API Key",
-                            "required": True,
-                        }
-                    ],
+                    "name": "api_key",
+                    "type": "text/password",
+                    "label": "API Key",
+                    "placeholder": "Enter the UptimeRobot API Key",
+                    "required": True,
                 }
             ],
         }
