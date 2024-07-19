@@ -1,0 +1,5 @@
+- name: splunk
+  import_library_names:
+    - splunklib.client
+  pip_package_names:
+    - splunk-sdk

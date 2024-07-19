@@ -1,6 +1,6 @@
 # autobotAI-integrations
 
-**autobotAI-Integrations** enables seamless connections between diverse workspaces, cloud AI platforms, and various tools to integrate with your code effortlessly. Currently, we support implementations in Python and Steampipe, boasting **25 integrations**, including major cloud providers such as AWS, GCP, and Azure. Additionally, we are continuously adding more integrations to expand our capabilities and better serve your needs.
+**autobotAI-Integrations** enables seamless connections between diverse workspaces, cloud AI platforms, and various tools to integrate with your code effortlessly. Currently, we support implementations in Python and Steampipe, boasting **29 integrations**, including major cloud providers such as AWS, GCP, and Azure. Additionally, we are continuously adding more integrations to expand our capabilities and better serve your needs.
 
 ## Installation
 
