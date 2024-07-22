@@ -82,7 +82,7 @@ class MicrosoftService(BaseService):
                     "type": "text",
                     "label": "Subscription ID",
                     "placeholder": "Enter your Microsoft subscription ID",
-                    "required": True,
+                    "required": False,
                 },
                 {
                     "name": "client_secret",
@@ -164,6 +164,5 @@ class MicrosoftService(BaseService):
         return {
             "AZURE_TENANT_ID": self.integration.tenant_id,
             "AZURE_CLIENT_ID": self.integration.client_id,
-            "AZURE_CLIENT_SECRET": self.integration.client_secret,
-            "AZURE_SUBSCRIPTION_ID": self.integration.subscription_id,
+            "AZURE_CLIENT_SECRET": self.integration.client_secret
         }
