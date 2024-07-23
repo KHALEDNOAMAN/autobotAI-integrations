@@ -29,8 +29,19 @@ def executor(context):
 
     # Example: Code to search for events (for illustration purposes only)
     # try:
-    #     search_query = "search index=main | head 10"
-    #     result = client.search(search_query)
-    #     return [result]  # Replace with your actual return logic
+    #     query = "search index=_internal earliest=-15m"
+    #     job = client.jobs.create(query)
+
+    #     # Wait for the search to complete
+    #     while not job.is_done():
+    #         pass
+
+    #     # Fetch the results as a raw string
+    #     results_stream = job.results(output_mode="json")
+
+    #     # Read the results
+    #     results_json = results_stream.read()
+
+    #     return json.loads(results_json)
     # except Exception as e:
     #     return {"error": e, "clients": context["clients"]}

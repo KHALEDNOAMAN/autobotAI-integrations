@@ -61,10 +61,20 @@ class NewrelicService(BaseService):
                 },
                 {
                     "name": "region",
-                    "type": "text",
+                    "type": "select",
                     "label": "Region",
+                    "options": [
+                        {
+                            "label": "US",
+                            "value": "us"
+                        },
+                        {
+                            "label": "EU",
+                            "value": "eu"
+                        }
+                    ],
                     "placeholder": "'us' or 'eu',default:'us'",
-                    "required": True,
+                    "required": False,
                 },
             ],
         }
