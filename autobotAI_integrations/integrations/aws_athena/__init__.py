@@ -188,7 +188,7 @@ class AwsAthenaService(BaseService):
         conf_path = "~/.steampipe/config/aws.spc"
         config = f"""connection "aws" {{
   plugin = "aws"
-  regions = ["*"]
+  regions = ["{self.integration.region}"]
   ignore_error_codes = ["AccessDenied", "AccessDeniedException", "NotAuthorized", "UnauthorizedOperation", "UnrecognizedClientException", "AuthorizationError"]
 }}
 """

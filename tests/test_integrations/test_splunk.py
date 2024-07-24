@@ -14,19 +14,13 @@ import json
 def executor(context):
     params = context["params"]
     clients = context["clients"]
-    try:
-        # Placeholder for retrieving the integration-specific client if needed
-        client = clients["splunk"]  # Supports only one client
+    # Placeholder for retrieving the integration-specific client if needed
+    client = clients["splunk"]  # Supports only one client
 
-        # Example: Code to search for events (for illustration purposes only)
-        search_query = "search index=main | head 10"
-        result = client.search(search_query)
-        return [result] # Replace with your actual return logic
-    except Exception as e: 
-        return {
-            "error": e,
-            "clients": context["clients"]
-        }
+    # Example: Code to search for events (for illustration purposes only)
+    search_query = "search index=main | head 10"
+    result = client.search(search_query)
+    return [result] # Replace with your actual return logic
 """
 
 class TestClassSplunk:

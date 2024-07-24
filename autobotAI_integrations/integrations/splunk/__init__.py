@@ -53,7 +53,10 @@ class SplunkService(BaseService):
                 'User-Agent': "apicalls_httplib.py/1.0",
                 'Accept': "*/*"
             }
-            connection.request("POST", "/services/auth/login", body, headers)
+            try:
+                connection.request("POST", "/services/auth/login", body, headers)
+            except ConnectionRefusedError:
+                return {"success": False, "error": "Connection failed"}
             response = connection.getresponse()
             if response.status == 200:
                 return {"success": True}
@@ -136,10 +139,20 @@ class SplunkService(BaseService):
             client_definitions[0].import_library_names[0], package=None
         )
         HOST, PORT = self._get_host_and_port()
+        try:
+            splunk = client.connect(
+                host=HOST,
+                port=PORT,
+                token=payload_task.creds.envs.get("SPLUNK_AUTH_TOKEN"),
+                autologin=True,
+            )
+        except Exception as e:
+            logger.exception(f"Failed to connect to Splunk with error {str(e)}")
+            splunk = None
         return [
             {
                 "clients": {
-                    "splunk": client.connect(host=HOST, port=PORT, token=payload_task.creds.envs.get("SPLUNK_AUTH_TOKEN"), autologin=True)
+                    "splunk": splunk
                 },
                 "params": self.prepare_params(payload_task.params),
                 "context": payload_task.context,
@@ -168,10 +181,12 @@ class SplunkService(BaseService):
             if response.status != 200:
                 connection.close()
                 logger.exception(f"{response.status} ({response.reason})")
-            body = response.read()
-            sessionKey = ElementTree.XML(body).findtext("./sessionKey")
-        except Exception as e:
-            logger.ERROR(f"Cannot Generate credentials for this task, Failed with error {e}")
+            else:
+                body = response.read()
+                sessionKey = ElementTree.XML(body).findtext("./sessionKey")
+        except BaseException as e:
+            logger.error(f"Cannot Generate credentials for this task, Failed with error {str(e)}")
+            return {}
         return {
             "SPLUNK_URL": self.integration.host_url,
             "SPLUNK_AUTH_TOKEN": sessionKey
