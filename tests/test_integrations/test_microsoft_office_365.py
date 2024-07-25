@@ -3,7 +3,7 @@ import pytest
 from autobotAI_integrations.handlers.task_handler import handle_task
 from autobotAI_integrations.integrations import integration_service_factory
 
-microsoft_python_code = """
+microsoft_office_365_python_code = """
 # Import your modules here
 import json
 import asyncio
@@ -24,20 +24,14 @@ def executor(context):
                     "userPrincipalName": user.user_principal_name
                 })
         return res
-    try:
-        clients = context["clients"]
-        client = clients["msgraph"]
-        return asyncio.run(me(client))
-    except Exception as e: 
-        return {
-            "error": e,
-            "clients": context["clients"]
-        }
+    clients = context["clients"]
+    client = clients["msgraph"]
+    return asyncio.run(me(client))
 """
 
 
-class TestClassMicrosoft:
-    def test_microsoft_steampipe_task(
+class TestClassMicrosoft_office_365:
+    def test_microsoft_office_365_steampipe_task(
         self,
         get_keys,
         sample_integration_dict,
@@ -48,41 +42,40 @@ class TestClassMicrosoft:
             "tenant_id": get_keys["AZURE_TENANT_ID"],
             "client_id": get_keys["AZURE_CLIENT_ID"],
             "client_secret": get_keys["AZURE_CLIENT_SECRET"],
-            "subscription_id": get_keys["AZURE_SUBSCRIPTION_ID"],
+            "user_id": get_keys["AZURE_USER_ID"],
         }
-        integration = sample_integration_dict("microsoft", tokens)
-        microsoft_query = "select * from microsoft365_contact"
-        task = sample_steampipe_task(integration, query=microsoft_query)
+        integration = sample_integration_dict("microsoft_office_365", tokens)
+        microsoft_office_365_query = "select * from microsoft365_organization_contact"
+        task = sample_steampipe_task(integration, query=microsoft_office_365_query)
         result = handle_task(task)
         test_result_format(result)
         print(result.model_dump_json(indent=2))
 
-    def test_microsoft_python_task(
+    def test_microsoft_office_365_python_task(
         self, get_keys, sample_integration_dict, sample_python_task, test_result_format
     ):
         tokens = {
             "tenant_id": get_keys["AZURE_TENANT_ID"],
             "client_id": get_keys["AZURE_CLIENT_ID"],
             "client_secret": get_keys["AZURE_CLIENT_SECRET"],
-            "subscription_id": get_keys["AZURE_SUBSCRIPTION_ID"],
+            "user_id": get_keys["AZURE_USER_ID"],
         }
-        integration = sample_integration_dict("microsoft", tokens)
+        integration = sample_integration_dict("microsoft_office_365", tokens)
         task = sample_python_task(
-            integration, code=microsoft_python_code, clients=["msgraph"]
+            integration, code=microsoft_office_365_python_code, clients=["msgraph"]
         )
         result = handle_task(task)
         test_result_format(result)
         print(result.model_dump_json(indent=2))
-
 
     def test_integration_active(self, get_keys, sample_integration_dict):
         tokens = {
             "tenant_id": get_keys["AZURE_TENANT_ID"],
             "client_id": get_keys["AZURE_CLIENT_ID"],
             "client_secret": get_keys["AZURE_CLIENT_SECRET"],
-            "subscription_id": get_keys["AZURE_SUBSCRIPTION_ID"],
+            "user_id": get_keys["AZURE_USER_ID"],
         }
-        integration = sample_integration_dict("microsoft", tokens)
+        integration = sample_integration_dict("microsoft_office_365", tokens)
         service = integration_service_factory.get_service(None, integration)
         res = service.is_active()
         print(res)
@@ -90,11 +83,10 @@ class TestClassMicrosoft:
         tokens = {
             "tenant_id": get_keys["AZURE_TENANT_ID"],
             "client_id": get_keys["AZURE_CLIENT_ID"],
-            # Invalid secret
-            "client_secret": get_keys["AZURE_CLIENT_SECRET"][:-2],
-            "subscription_id": get_keys["AZURE_SUBSCRIPTION_ID"],
+            "client_secret": get_keys["AZURE_CLIENT_SECRET"],
+            "user_id": get_keys["AZURE_USER_ID"],
         }
-        integration = sample_integration_dict("microsoft", tokens)
+        integration = sample_integration_dict("microsoft_office_365", tokens)
         service = integration_service_factory.get_service(None, integration)
         res = service.is_active()
         assert not res["success"]

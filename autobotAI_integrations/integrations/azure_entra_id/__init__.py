@@ -8,7 +8,7 @@ import importlib, requests
 from azure.identity import ClientSecretCredential
 
 
-class MicrosoftIntegration(BaseSchema):
+class AzureEntraIdIntegration(BaseSchema):
     tenant_id: Optional[str] = Field(default=None, exclude=True)
     client_id: Optional[str] = Field(default=None, exclude=True)
     subscription_id: Optional[str] = Field(default=None, exclude=True)
@@ -16,23 +16,23 @@ class MicrosoftIntegration(BaseSchema):
 
     category: Optional[str] = IntegrationCategory.CLOUD_SERVICES_PROVIDERS.value
     description: Optional[str] = (
-        "Microsoft 365 is a suite of cloud-based productivity and collaboration applications that integrates all Microsoft's existing online applications (Outlook, People etc.)."
+        "Azure Active Directory is Microsoft's cloud-based identity and access management service, which helps your employees sign in and access resources"
     )
 
     def __init__(self, **kwargs):
         if kwargs.get("subscription_id"):
-            kwargs["accountId"] = kwargs["subscription_id"] + "_microsoft365"
+            kwargs["accountId"] = kwargs["subscription_id"] + "_azure_entra_id"
         super().__init__(**kwargs)
 
 
-class MicrosoftService(BaseService):
+class AzureEntraIdService(BaseService):
 
-    def __init__(self, ctx: dict, integration: Union[MicrosoftIntegration, dict]):
+    def __init__(self, ctx: dict, integration: Union[AzureEntraIdIntegration, dict]):
         """
         Integration should have all the data regarding the integration
         """
-        if not isinstance(integration, MicrosoftIntegration):
-            integration = MicrosoftIntegration(**integration)
+        if not isinstance(integration, AzureEntraIdIntegration):
+            integration = AzureEntraIdIntegration(**integration)
         super().__init__(ctx, integration)
 
     def _test_integration(self) -> dict:
@@ -60,35 +60,35 @@ class MicrosoftService(BaseService):
     @staticmethod
     def get_forms():
         return {
-            "label": "Microsoft",
+            "label": "Azure Entra Id",
             "type": "form",
             "children": [
                 {
                     "name": "tenant_id",
                     "type": "text",
                     "label": "Tenant ID",
-                    "placeholder": "Enter your Microsoft tenant ID",
+                    "placeholder": "Enter your Azure tenant ID",
                     "required": True,
                 },
                 {
                     "name": "client_id",
                     "type": "text",
                     "label": "Client ID",
-                    "placeholder": "Enter your Microsoft application client ID",
+                    "placeholder": "Enter your Azure application client ID",
                     "required": True,
                 },
                 {
                     "name": "subscription_id",
                     "type": "text",
                     "label": "Subscription ID",
-                    "placeholder": "Enter your Microsoft subscription ID",
+                    "placeholder": "Enter your Azure subscription ID",
                     "required": False,
                 },
                 {
                     "name": "client_secret",
                     "type": "text/password",
                     "label": "Client Secret",
-                    "placeholder": "Enter your Microsoft Application Client Secret",
+                    "placeholder": "Enter your Azure Application Client Secret",
                     "required": True,
                 },
             ],
@@ -96,7 +96,7 @@ class MicrosoftService(BaseService):
 
     @staticmethod
     def get_schema() -> Type[BaseSchema]:
-        return MicrosoftIntegration
+        return AzureEntraIdIntegration
 
     @classmethod
     def get_details(cls):
@@ -110,14 +110,14 @@ class MicrosoftService(BaseService):
 
     def generate_steampipe_creds(self) -> SteampipeCreds:
         creds = self._temp_credentials()
-        conf_path = "~/.steampipe/config/microsoft365.spc"
-        config = """connection "microsoft365" {
-  plugin = "microsoft365"
+        conf_path = "~/.steampipe/config/azuread.spc"
+        config = """connection "azuread" {
+  plugin = "azuread"
 }"""
         return SteampipeCreds(
             envs=creds,
-            plugin_name="microsoft365",
-            connection_name="microsoft365",
+            plugin_name="azuread",
+            connection_name="azuread",
             conf_path=conf_path,
             config=config,
         )
