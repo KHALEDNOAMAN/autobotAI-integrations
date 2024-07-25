@@ -281,7 +281,7 @@ def executor(context):
                 creds["AWS_SESSION_TOKEN"] = str(self.integration.session_token)
             return creds
 
-    def _get_bedrock_model_request(self, model: str, prompt: str, max_tokens=512, temperature=0.1, *args, **kwargs):
+    def _get_bedrock_model_request(self, model: str, prompt: str, max_tokens=2048, temperature=0.1, *args, **kwargs):
         if model.startswith("amazon.titan-text"):
             native_request = {
                 "inputText": prompt,
