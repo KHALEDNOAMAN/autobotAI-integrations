@@ -1,0 +1,264 @@
+{
+    "wiz": [
+        {
+            "name": "wiz_cloud_config_rule",
+            "all_columns": [
+                "built_in",
+                "cloud_provider",
+                "control",
+                "created_at",
+                "created_by",
+                "description",
+                "enabled",
+                "function_as_role",
+                "has_auto_remediation",
+                "id",
+                "name",
+                "remediation_instructions",
+                "scoped_accounts",
+                "service_type",
+                "severity",
+                "short_id",
+                "supports_nrt",
+                "target_native_types",
+                "updated_at"
+            ],
+            "included": [],
+            "excluded": [],
+            "inventory_supported": true
+        },
+        {
+            "name": "wiz_cloud_configuration_finding",
+            "all_columns": [
+                "analyzed_at",
+                "id",
+                "remediation",
+                "resolution_reason",
+                "resource",
+                "result",
+                "rule_id",
+                "severity",
+                "status",
+                "subscription",
+                "title"
+            ],
+            "included": [],
+            "excluded": [],
+            "inventory_supported": true
+        },
+        {
+            "name": "wiz_control",
+            "all_columns": [
+                "created_at",
+                "created_by",
+                "description",
+                "enabled",
+                "enabled_for_hbi",
+                "enabled_for_lbi",
+                "enabled_for_mbi",
+                "enabled_for_unattributed",
+                "framework_category_id",
+                "has_auto_remediation",
+                "id",
+                "last_run_at",
+                "last_run_error",
+                "last_successful_run_at",
+                "name",
+                "project_id",
+                "query",
+                "resolution_recommendation",
+                "severity",
+                "source_cloud_configuration_rule",
+                "supports_nrt",
+                "tags",
+                "type"
+            ],
+            "included": [],
+            "excluded": [],
+            "inventory_supported": true
+        },
+        {
+            "name": "wiz_issue",
+            "all_columns": [
+                "control_id",
+                "created_at",
+                "description",
+                "due_at",
+                "entity",
+                "framework_category_id",
+                "id",
+                "notes",
+                "projects",
+                "rejection_expired_at",
+                "resolution_reason",
+                "resolved_at",
+                "service_tickets",
+                "severity",
+                "status",
+                "status_changed_at",
+                "updated_at"
+            ],
+            "included": [],
+            "excluded": [],
+            "inventory_supported": true
+        },
+        {
+            "name": "wiz_project",
+            "all_columns": [
+                "archived",
+                "business_unit",
+                "cloud_account_count",
+                "cloud_organization_count",
+                "description",
+                "entity_count",
+                "id",
+                "identifiers",
+                "kubernetes_cluster_count",
+                "name",
+                "profile_completion",
+                "project_owners",
+                "repository_count",
+                "resource_tag_links",
+                "risk_profile",
+                "security_score",
+                "slug",
+                "team_member_count",
+                "technology_count",
+                "workload_count"
+            ],
+            "included": [],
+            "excluded": [],
+            "inventory_supported": true
+        },
+        {
+            "name": "wiz_security_category",
+            "all_columns": [
+                "description",
+                "framework_id",
+                "id",
+                "name",
+                "sub_categories"
+            ],
+            "included": [],
+            "excluded": [],
+            "inventory_supported": true
+        },
+        {
+            "name": "wiz_security_framework",
+            "all_columns": [
+                "built_in",
+                "categories",
+                "description",
+                "enabled",
+                "id",
+                "name",
+                "policy_types"
+            ],
+            "included": [],
+            "excluded": [],
+            "inventory_supported": true
+        },
+        {
+            "name": "wiz_service_account",
+            "all_columns": [
+                "assigned_projects",
+                "authentication_source",
+                "client_id",
+                "created_at",
+                "id",
+                "last_rotated_at",
+                "name",
+                "scopes",
+                "type"
+            ],
+            "included": [],
+            "excluded": [],
+            "inventory_supported": true
+        },
+        {
+            "name": "wiz_subscription",
+            "all_columns": [
+                "cloud_provider",
+                "container_count",
+                "external_id",
+                "id",
+                "last_scanned_at",
+                "linked_projects",
+                "name",
+                "resource_count",
+                "status",
+                "virtual_machine_count"
+            ],
+            "included": [],
+            "excluded": [],
+            "inventory_supported": true
+        },
+        {
+            "name": "wiz_user",
+            "all_columns": [
+                "created_at",
+                "effective_assigned_projects",
+                "email",
+                "id",
+                "identity_provider_type",
+                "ip_address",
+                "is_analytics_enabled",
+                "is_suspended",
+                "last_login_at",
+                "name",
+                "role",
+                "tenant_id"
+            ],
+            "included": [],
+            "excluded": [],
+            "inventory_supported": true
+        },
+        {
+            "name": "wiz_user_role",
+            "all_columns": [
+                "description",
+                "id",
+                "is_project_scoped",
+                "name",
+                "scopes"
+            ],
+            "included": [],
+            "excluded": [],
+            "inventory_supported": true
+        },
+        {
+            "name": "wiz_vulnerability_finding",
+            "all_columns": [
+                "cve_description",
+                "cvss_severity",
+                "description",
+                "detailed_name",
+                "detection_method",
+                "exploitability_score",
+                "first_detected_at",
+                "fixed_version",
+                "has_cisa_kev_exploit",
+                "has_exploit",
+                "id",
+                "impact_score",
+                "last_detected_at",
+                "link",
+                "location_path",
+                "name",
+                "portal_url",
+                "remediation",
+                "resolution_reason",
+                "resolved_at",
+                "score",
+                "severity",
+                "status",
+                "version",
+                "vulnerability_external_id",
+                "vulnerable_asset"
+            ],
+            "included": [],
+            "excluded": [],
+            "inventory_supported": true
+        }
+    ]
+}

@@ -1,0 +1,140 @@
+{
+    "grafana": [
+        {
+            "name": "grafana_dashboard",
+            "all_columns": [
+                "dashboard_type",
+                "folder_id",
+                "folder_title",
+                "folder_uid",
+                "folder_url",
+                "id",
+                "is_starred",
+                "model",
+                "slug",
+                "tags",
+                "title",
+                "uid",
+                "uri",
+                "url"
+            ],
+            "included": [],
+            "excluded": [],
+            "inventory_supported": true
+        },
+        {
+            "name": "grafana_datasource",
+            "all_columns": [
+                "access",
+                "basic_auth",
+                "basic_auth_user",
+                "database",
+                "datasource_type",
+                "id",
+                "is_default",
+                "json_data",
+                "name",
+                "org_id",
+                "secure_json_data",
+                "url",
+                "user"
+            ],
+            "included": [],
+            "excluded": [],
+            "inventory_supported": true
+        },
+        {
+            "name": "grafana_folder",
+            "all_columns": [
+                "id",
+                "title",
+                "uid"
+            ],
+            "included": [],
+            "excluded": [],
+            "inventory_supported": true
+        },
+        {
+            "name": "grafana_folder_permission",
+            "all_columns": [
+                "dashboard_id",
+                "folder_id",
+                "folder_uid",
+                "is_folder",
+                "permission",
+                "permission_name",
+                "role",
+                "team_id",
+                "user_id"
+            ],
+            "included": [],
+            "excluded": [],
+            "inventory_supported": true
+        },
+        {
+            "name": "grafana_org",
+            "all_columns": [
+                "id",
+                "name"
+            ],
+            "included": [],
+            "excluded": [],
+            "inventory_supported": true
+        },
+        {
+            "name": "grafana_team",
+            "all_columns": [
+                "avatar_url",
+                "email",
+                "home_dashboard_id",
+                "id",
+                "member_count",
+                "name",
+                "org_id",
+                "query",
+                "theme",
+                "timezone"
+            ],
+            "included": [],
+            "excluded": [],
+            "inventory_supported": true
+        },
+        {
+            "name": "grafana_team_member",
+            "all_columns": [
+                "avatar_url",
+                "email",
+                "login",
+                "org_id",
+                "team_id",
+                "user_id"
+            ],
+            "included": [],
+            "excluded": [],
+            "inventory_supported": true
+        },
+        {
+            "name": "grafana_user",
+            "all_columns": [
+                "auth_labels",
+                "avatar_url",
+                "created_at",
+                "email",
+                "id",
+                "is_admin",
+                "is_disabled",
+                "is_external",
+                "last_seen_at",
+                "last_seen_at_age",
+                "login",
+                "name",
+                "org_id",
+                "theme",
+                "updated_at"
+            ],
+            "included": [],
+            "excluded": [],
+            "inventory_supported": true
+        }
+    ]
+}
