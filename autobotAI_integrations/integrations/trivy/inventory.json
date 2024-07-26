@@ -111,12 +111,10 @@
                 "package_path",
                 "primary_url",
                 "published_date",
-                "references",
                 "severity",
                 "severity_source",
                 "target",
                 "title",
-                "type",
                 "vendor_ids",
                 "vendor_severity",
                 "vulnerability_id"
@@ -134,7 +132,6 @@
                 "last_modified_date",
                 "name",
                 "published_date",
-                "references",
                 "severity",
                 "title",
                 "vendor_severity"
