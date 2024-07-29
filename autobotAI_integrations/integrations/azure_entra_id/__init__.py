@@ -11,18 +11,12 @@ from azure.identity import ClientSecretCredential
 class AzureEntraIdIntegration(BaseSchema):
     tenant_id: Optional[str] = Field(default=None, exclude=True)
     client_id: Optional[str] = Field(default=None, exclude=True)
-    subscription_id: Optional[str] = Field(default=None, exclude=True)
     client_secret: Optional[str] = Field(default=None, exclude=True)
 
     category: Optional[str] = IntegrationCategory.CLOUD_SERVICES_PROVIDERS.value
     description: Optional[str] = (
         "Azure Active Directory is Microsoft's cloud-based identity and access management service, which helps your employees sign in and access resources"
     )
-
-    def __init__(self, **kwargs):
-        if kwargs.get("subscription_id"):
-            kwargs["accountId"] = kwargs["subscription_id"] + "_azure_entra_id"
-        super().__init__(**kwargs)
 
 
 class AzureEntraIdService(BaseService):
@@ -76,13 +70,6 @@ class AzureEntraIdService(BaseService):
                     "label": "Client ID",
                     "placeholder": "Enter your Azure application client ID",
                     "required": True,
-                },
-                {
-                    "name": "subscription_id",
-                    "type": "text",
-                    "label": "Subscription ID",
-                    "placeholder": "Enter your Azure subscription ID",
-                    "required": False,
                 },
                 {
                     "name": "client_secret",
