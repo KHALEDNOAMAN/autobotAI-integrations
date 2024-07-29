@@ -42,7 +42,7 @@ class MicrosoftService(BaseService):
             headers = {"Content-Type": "application/x-www-form-urlencoded"}
             data = {
                 "client_id": self.integration.client_id,
-                "scope": "3db474b9-6a0c-4840-96ac-1fceb342124f/.default",
+                "scope": "https://graph.microsoft.com/.default",
                 "client_secret": self.integration.client_secret,
                 "grant_type": "client_credentials",
             }
