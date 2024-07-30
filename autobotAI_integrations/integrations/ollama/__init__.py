@@ -42,7 +42,7 @@ class OllamaService(AIBaseService):
     def get_integration_specific_details(self) -> dict:
         try:
             client = ollama.Client(self.integration.base_url)
-            models = client.list()["models"]
+            models = [model.get('model') for model in client.list()["models"]]
             return {
                 "integration_id": self.integration.accountId,
                 "models": models,
