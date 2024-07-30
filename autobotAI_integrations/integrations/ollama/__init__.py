@@ -52,6 +52,17 @@ class OllamaService(AIBaseService):
                 "error": "Details can not be fetched"
             }
 
+    @classmethod
+    def get_details(cls):
+        return {
+            "python_code_sample": cls.get_code_sample(),
+            "supported_interfaces": cls.supported_connection_interfaces(),
+            "clients": list_of_unique_elements(cls.get_all_python_sdk_clients()),
+            "supported_executor": "ecs",
+            "compliance_supported": False,
+            "preview": True
+        }
+
     @staticmethod
     def get_forms():
         return {
