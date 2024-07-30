@@ -74,8 +74,8 @@ class CloudflareService(BaseService):
                         {
                             "name": "token",
                             "type": "text/password",
-                            "label": "API Key",
-                            "placeholder": "Global API Key",
+                            "label": "Token API Key",
+                            "placeholder": "Token API Key",
                             "description": "Read scope is required (write is not)",
                             "required": True,
                         }
