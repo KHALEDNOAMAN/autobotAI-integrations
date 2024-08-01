@@ -74,7 +74,7 @@ class BaseService:
         pass
 
     def get_integration_specific_details(self) -> dict:
-        raise NotImplementedError()
+        return {}
 
     @classmethod
     def get_integration_type(cls):

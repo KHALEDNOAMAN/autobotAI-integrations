@@ -1,5 +1,3 @@
-import importlib
-import uuid, re
 from typing import List, Optional
 
 from pydantic import Field
@@ -41,7 +39,7 @@ class SlackService(BaseService):
                 return {"success": True}
             else:
                 client = WebClient(token=self.integration.bot_token)
-                client.usergroups_list()
+                response = client.conversations_list()
             return {"success": True}
         except Exception as e:
             return {"success": False, "error": str(e)}
@@ -50,10 +48,24 @@ class SlackService(BaseService):
     def get_details(cls):
         return {
             "clients": list_of_unique_elements(cls.get_all_python_sdk_clients()),
-            "supported_executor": "lambda",            
+            "supported_executor": "lambda", 
             "supported_interfaces": cls.supported_connection_interfaces(),
             "python_code_sample": cls.get_code_sample(),
         }
+
+    def get_integration_specific_details(self):
+        try:
+            details = {}
+            details["integration_id"] = self.integration.accountId
+            if self.integration.webhook in [None, "None"]:
+                client = WebClient(token=self.integration.bot_token)
+                response = client.conversations_list()
+                if response.get("ok"):
+                    details["channels"] = response.get("channels")
+            return details
+        except Exception as e:
+            return {"error": "Details can not be fetched"}
+
     @staticmethod
     def get_forms():
         return {
@@ -89,7 +101,7 @@ class SlackService(BaseService):
                             "type": "text",
                             "label": "Slack Bot Token",
                             "placeholder": "Enter the Slack Token",
-                            "description": "Make sure to have 'usergroups:read' scope in your Oauth token",
+                            "description": "Scopes needed: channels:read, chat:write.customize, chat:write, chat:write.public, groups:read",
                             "required": True,
                         },
                     ],
