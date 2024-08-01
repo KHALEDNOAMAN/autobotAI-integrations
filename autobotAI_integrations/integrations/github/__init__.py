@@ -16,6 +16,7 @@ class GithubIntegration(BaseSchema):
     base_url: Optional[str] =  None# If enterprise version of github
     token: str = Field(default=None, exclude=True)
 
+    name: Optional[str] = "GitHub"
     category: Optional[str] = IntegrationCategory.CODE_REPOSITORY.value
     description: Optional[str] = (
         "Popular version control platform for software development, known for its social coding features and large user base."

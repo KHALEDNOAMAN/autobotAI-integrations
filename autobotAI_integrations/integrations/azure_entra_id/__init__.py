@@ -13,6 +13,7 @@ class AzureEntraIdIntegration(BaseSchema):
     client_id: Optional[str] = Field(default=None, exclude=True)
     client_secret: Optional[str] = Field(default=None, exclude=True)
 
+    name: Optional[str] = "Azure Entra ID"
     category: Optional[str] = IntegrationCategory.CLOUD_SERVICES_PROVIDERS.value
     description: Optional[str] = (
         "Azure Active Directory is Microsoft's cloud-based identity and access management service, which helps your employees sign in and access resources"
@@ -46,7 +47,7 @@ class AzureEntraIdService(BaseService):
             else:
                 return {
                     "success": False,
-                    "error": f"Error: API request failed. Status code: {response.status_code}",
+                    "error": f"Request failed with status code: {response.status_code}",
                 }
         except Exception as e:
             return {"success": False, "error": str(e)}

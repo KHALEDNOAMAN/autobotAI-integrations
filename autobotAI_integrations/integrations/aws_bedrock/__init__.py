@@ -19,6 +19,7 @@ class AWSBedrockIntegration(BaseSchema):
     roleArn: Optional[str] = None
     externalId: Optional[str] = None
 
+    name: Optional[str] = "AWS Bedrock"
     category: Optional[str] = IntegrationCategory.AI.value
     description: Optional[str] = (
         "AWS Bedrock is a service that lets you use powerful AI models from various companies for your applications, all through one place."

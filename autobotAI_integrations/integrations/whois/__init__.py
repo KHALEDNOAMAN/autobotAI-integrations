@@ -10,6 +10,7 @@ import requests
 
 
 class WhoisIntegrations(BaseSchema):
+    name: Optional[str] = "WHOIS"
     category: Optional[str] = IntegrationCategory.SECURITY_TOOLS.value
     description: Optional[str] = (
         "WHOIS is a widely used Internet record listing that identifies who owns a domain and how to get in contact with them"

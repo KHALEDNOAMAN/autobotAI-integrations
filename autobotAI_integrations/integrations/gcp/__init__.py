@@ -45,6 +45,7 @@ class GCPIntegration(BaseSchema):
     account_id: Optional[str] = uuid.uuid4().hex
     credentials: Optional[GCPCredentials] = Field(default=None, exclude=True)
 
+    name: Optional[str] = "GCP"
     category: Optional[str] = IntegrationCategory.CLOUD_SERVICES_PROVIDERS.value
     description: Optional[str] = (
         "GCP is Google Cloud Platform, a suite of cloud computing services offered by Google."

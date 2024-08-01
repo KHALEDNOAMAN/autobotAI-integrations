@@ -64,6 +64,8 @@ class SplunkService(BaseService):
                 return {"success": False, "error": response.reason}
         except requests.exceptions.ConnectionError:
             return {"success": False, "error": "Connection is unreachable"}
+        except Exception as e:
+            return {"success": False, "error": str(e)}
 
     @staticmethod
     def get_forms():

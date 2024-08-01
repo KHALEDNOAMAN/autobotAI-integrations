@@ -33,7 +33,7 @@ class SlackService(BaseService):
         try:
             if self.integration.webhook not in [None, "None"]:
                 webhook = WebhookClient(self.integration.webhook)
-                response = webhook.send(text="Hello, Integration Tested Successfully!")
+                response = webhook.send(text="Integration State: Active")
                 assert response.status_code == 200
                 assert response.body == "ok"
                 return {"success": True}
@@ -129,6 +129,7 @@ class SlackService(BaseService):
             clients["WebhookClient"] = webhook
         else:
             clients["WebClient"] = WebClient(payload_task.creds.envs.get("SLACK_BOT_TOKEN"))
+        
         return [
             {
                 "clients": clients,

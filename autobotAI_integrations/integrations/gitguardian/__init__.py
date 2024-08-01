@@ -15,6 +15,7 @@ class GitGuardianIntegration(BaseSchema):
     base_url: str = "https://api.gitguardian.com/v1/"
     token: str = Field(default=None, exclude=True)
 
+    name: Optional[str] = "GitGuardian"
     category: Optional[str] = IntegrationCategory.SECURITY_TOOLS.value
     description: Optional[str] = (
         "GitGuardian is a security platform specifically designed to protect code repositories. "

@@ -24,6 +24,7 @@ class AwsSecurityLakeIntegration(BaseSchema):
     roleArn: Optional[str] = None
     externalId: Optional[str] = None
 
+    name: Optional[str] = "AWS Security Lake"
     category: Optional[str] = IntegrationCategory.SECURITY_TOOLS.value
     description: Optional[str] = "AWS Security Lake centralizes security data from across AWS accounts, AWS services, and on-premises."
 
