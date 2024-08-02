@@ -232,7 +232,7 @@ def executor(context):
         return self.build_python_exec_combinations_hook(payload_task, client_definitions)
 
     def find_client_definitions(self, client_name_list,integration_type=None) -> List[SDKClient]:
-        all_clients = self.get_all_python_sdk_clients(client_name_list[0],integration_type)
+        all_clients = self.get_all_python_sdk_clients(integration_type)
         client_details = []
         for client in client_name_list:
             client_def = next(item for item in all_clients if item["name"] == client)
