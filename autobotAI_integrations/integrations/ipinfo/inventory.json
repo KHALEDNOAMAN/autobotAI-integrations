@@ -1,0 +1,53 @@
+{
+    "ipinfo" : [
+        {
+            "name": "ipinfo_asn",
+            "all_columns": [
+                "allocated",
+                "asn",
+                "country",
+                "country_name",
+                "domain",
+                "downstreams",
+                "name",
+                "num_ips",
+                "peers",
+                "prefixes",
+                "prefixes6",
+                "registry",
+                "type",
+                "upstreams"
+            ],
+            "included": [],
+            "excluded": [],
+            "inventory_supported": true
+        },
+        {
+            "name": "ipinfo_ip",
+            "all_columns": [
+                "abuse",
+                "anycast",
+                "asn",
+                "bogon",
+                "carrier",
+                "city",
+                "company",
+                "country",
+                "country_name",
+                "domains",
+                "hostname",
+                "ip",
+                "is_eu",
+                "location",
+                "org",
+                "postal",
+                "privacy",
+                "region",
+                "timezone"
+            ],
+            "included": [],
+            "excluded": [],
+            "inventory_supported": true
+        }
+    ]
+}
