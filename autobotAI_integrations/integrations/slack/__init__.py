@@ -9,6 +9,7 @@ from slack_sdk.webhook import WebhookClient
 
 from autobotAI_integrations.models import IntegrationCategory
 from autobotAI_integrations.utils import list_of_unique_elements
+from autobotAI_integrations.utils.logging_config import logger
 
 
 class SlackIntegration(BaseSchema):
@@ -42,6 +43,7 @@ class SlackService(BaseService):
                 response = client.conversations_list()
             return {"success": True}
         except Exception as e:
+            logger.error(e)
             return {"success": False, "error": str(e)}
 
     @classmethod
@@ -64,6 +66,7 @@ class SlackService(BaseService):
                     details["channels"] = [channel.get('name') for channel in response.get("channels")]
             return details
         except Exception as e:
+            logger.error(e)
             return {"error": "Details can not be fetched"}
 
     @staticmethod
