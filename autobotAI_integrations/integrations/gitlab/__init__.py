@@ -16,6 +16,7 @@ class GitlabIntegration(BaseSchema):
     base_url: str = "https://gitlab.com/"
     token: str = Field(default=None, exclude=True)
 
+    name: Optional[str] = "GitLab"
     category: Optional[str] = IntegrationCategory.CODE_REPOSITORY.value
     description: Optional[str] = (
         " Version control platform similar to GitHub, offering additional features like project management and CI/CD pipelines."

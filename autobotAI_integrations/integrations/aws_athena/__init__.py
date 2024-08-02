@@ -24,6 +24,7 @@ class AwsAthenaIntegration(BaseSchema):
     roleArn: Optional[str] = None
     externalId: Optional[str] = None
 
+    name: Optional[str] = "AWS Athena"
     category: Optional[str] = IntegrationCategory.OTHERS.value
     description: Optional[str] = "AWS Athena is a serverless interactive query service that makes it easy to analyze data directly in Amazon S3 using standard SQL."
 

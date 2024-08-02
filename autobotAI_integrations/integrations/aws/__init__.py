@@ -32,6 +32,7 @@ class AWSIntegration(BaseSchema):
     externalId: Optional[str] = None
     activeRegions: Optional[list] = None
 
+    name: Optional[str] = "AWS"
     category: Optional[str] = IntegrationCategory.CLOUD_SERVICES_PROVIDERS.value
     description: Optional[str] = (
         """The world's most comprehensive and mature cloud computing platform, offering a vast range of on-demand compute, storage, database, networking, analytics, and machine learning services."""

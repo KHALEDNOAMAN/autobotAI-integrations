@@ -46,10 +46,12 @@ class PrometheusService(BaseService):
             else:
                 return {
                     "success": False,
-                    "error": f"Error: API request failed. Status code: {response.status_code}",
+                    "error": f"Request failed with status code: {response.status_code}",
                 }
         except requests.exceptions.ConnectionError as e:
             return {"success": False, "error": "Connection is Unreachable"}
+        except Exception as e:
+            return {"success": False, "error": str(e)}
 
     @staticmethod
     def get_forms():

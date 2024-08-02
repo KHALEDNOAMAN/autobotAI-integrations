@@ -14,6 +14,7 @@ class CrowdstrikeIntegrations(BaseSchema):
     client_secret: Optional[str] = Field(default=None, exclude=True)
     client_cloud: Optional[str] = Field(default="us-2", exclude=True)
 
+    name: Optional[str] = "CrowdStrike"
     category: Optional[str] = IntegrationCategory.SECURITY_TOOLS.value
     description: Optional[str] = (
         "CrowdStrike provides cloud workload and endpoint security, threat intelligence, and cyberattack response services."

@@ -25,6 +25,7 @@ from autobotAI_integrations.utils.logging_config import logger
 class OpenAIIntegration(BaseSchema):
     api_key: str = Field(default=None, exclude=True)
 
+    name: Optional[str] = "OpenAI"
     category: Optional[str] = IntegrationCategory.AI.value
     description: Optional[str] = (
         "A research company developing and providing access to powerful large language models."

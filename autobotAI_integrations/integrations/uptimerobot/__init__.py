@@ -1,4 +1,3 @@
-import uuid
 from typing import List, Type, Union
 
 from autobotAI_integrations import list_of_unique_elements
@@ -34,20 +33,26 @@ class UptimeRobotService(BaseService):
         super().__init__(ctx, integration)
 
     def _test_integration(self) -> dict:
-        url = "https://api.uptimerobot.com/v2/getAccountDetails"
-        payload = "api_key={}&format=json".format(self.integration.api_key)
-        headers = {
-            "cache-control": "no-cache",
-            "content-type": "application/x-www-form-urlencoded",
-        }
-        response = requests.request("POST", url, data=payload, headers=headers)
-        result = json.loads(response.text)
-        if response.status_code == 200 and result.get('stat') == 'ok':
-            return {"success": True}
-        else:
+        try:
+            url = "https://api.uptimerobot.com/v2/getAccountDetails"
+            payload = "api_key={}&format=json".format(self.integration.api_key)
+            headers = {
+                "cache-control": "no-cache",
+                "content-type": "application/x-www-form-urlencoded",
+            }
+            response = requests.request("POST", url, data=payload, headers=headers)
+            result = json.loads(response.text)
+            if response.status_code == 200 and result.get('stat') == 'ok':
+                return {"success": True}
+            else:
+                return {
+                    "success": False,
+                    "error": result.get('error'),
+                }
+        except Exception as e:
             return {
                 "success": False,
-                "error": result.get('error'),
+                "error": f"Request failed. {e}",
             }
 
     @staticmethod
