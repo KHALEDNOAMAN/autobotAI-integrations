@@ -50,7 +50,8 @@ class AzureService(BaseService):
             resources = list(client.resources.list())
             return {"success": True}
         except Exception as e:
-            return {"success": False, "error": str(e)}
+            # Custom one line error message
+            return {"success": False, "error": str(e).split(".")[0]}
 
     @staticmethod
     def get_forms():

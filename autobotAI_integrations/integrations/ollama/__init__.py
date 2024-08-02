@@ -33,11 +33,13 @@ class OllamaService(AIBaseService):
 
     def _test_integration(self) -> dict:
         try:
-            response = requests.get(self.integration.base_url)
-            assert response.ok
-            return {"success": True}
+            response = requests.get(self.integration.base_url + "/api/tags")
+            if response.status_code == 200:
+                return {"success": True}
+            else:
+                return {"success": False, "error": f"Request Failed: Cannot stablish connection, Status code {response.status_code}"}
         except Exception as e:
-            return {"success": False, "error": str(e)}
+            return {"success": False, "error": "Request Failed with Connection Error"}
 
     def get_integration_specific_details(self) -> dict:
         try:

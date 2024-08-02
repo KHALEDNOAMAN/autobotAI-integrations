@@ -17,6 +17,7 @@ from autobotAI_integrations import BaseSchema, SteampipeCreds, RestAPICreds, SDK
 from google.cloud.storage import Client as StorageClient
 from google.oauth2.service_account import Credentials
 import os
+import pydantic
 
 
 class GCPCredentials(BaseModel):
@@ -56,11 +57,15 @@ class GCPIntegration(BaseSchema):
             creds = kwargs.get("credentials")
             if isinstance(kwargs.get('credentials'), str):
                 creds = json.loads(creds)
-            kwargs["credentials"] = GCPCredentials(**creds)
+            try:
+                kwargs["credentials"] = GCPCredentials(**creds)
+            except pydantic.ValidationError as e:
+                # generating custom error message
+                errors = [err_str for err_str in str(e).split("\n") if not err_str.startswith(' ')]
+                raise ValueError("Validation error for fields: {}".format(errors[1:]))
         if not kwargs.get("accountId"):
             kwargs["accountId"] = str(creds.get("project_id"))
         super().__init__(**kwargs)
-
 
     @field_validator('credentials', mode='before')
     @classmethod
