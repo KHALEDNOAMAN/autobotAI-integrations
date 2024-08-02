@@ -356,7 +356,7 @@ def executor(context):
             for key, value in payload_task.creds.envs.items():
                 if key and value:
                     env[key] = value    
-            
+
         logger.info("Starting Steampipe Service...")    
         subprocess.run(["steampipe", "service", "start"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, env=env)
 
@@ -420,6 +420,19 @@ def executor(context):
         error_str = process.stderr.decode("utf-8")        
         logger.error(f"Possible error running the steampipe query: {error_str}")
         stderr = []
+        # Get the Error if query fails
+        if error_str:
+            try:
+                stderr.append(
+                    {
+                        "message": str(error_str),
+                        "other_details": {
+                            "execution_details": payload_task.context.execution_details
+                        },
+                    }
+                )
+            except BaseException as e:
+                logger.exception(e)
 
         try:
             stdout = json.loads(stdout)

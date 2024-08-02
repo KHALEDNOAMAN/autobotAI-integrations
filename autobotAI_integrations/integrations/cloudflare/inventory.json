@@ -383,8 +383,7 @@
                 "old_value",
                 "old_value_json",
                 "owner_id",
-                "resource",
-                "when"
+                "resource"
             ],
             "included": [],
             "excluded": [],
