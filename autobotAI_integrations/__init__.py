@@ -145,10 +145,11 @@ def executor(context):
         return data[integration_type]
 
     @classmethod
-    def get_all_python_sdk_clients(cls,client_name=None,integration_type=None):
+    def get_all_python_sdk_clients(cls,integration_type=None):
         base_path = os.path.dirname(inspect.getfile(cls))
         if integration_type!=None:
-            base_path = base_path + f'\integrations\{integration_type}'
+            base_path = base_path + f'/integrations/{integration_type}'
+            print("base path is ",base_path)
         with open(path.join(base_path, ".", 'python_sdk_clients.yml')) as f:
             return yaml.safe_load(f)
 
