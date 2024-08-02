@@ -72,13 +72,16 @@ class IPinfoService(BaseService):
         ]
 
     def generate_steampipe_creds(self) -> SteampipeCreds:
+        creds = {}
+        if self.integration.token not in [None, "None"]:
+            creds["IPINFO_TOKEN"] = self.integration.token
         conf_path = "~/.steampipe/config/ipinfo.spc"
         config = """connection "ipinfo" {
   plugin = "ipinfo"
 }
 """
         return SteampipeCreds(
-            envs={"IPINFO_TOKEN": self.integration.token},
+            envs=creds,
             plugin_name="ipinfo",
             connection_name="ipinfo",
             conf_path=conf_path,
