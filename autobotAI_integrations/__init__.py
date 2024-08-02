@@ -145,8 +145,10 @@ def executor(context):
         return data[integration_type]
 
     @classmethod
-    def get_all_python_sdk_clients(cls):
+    def get_all_python_sdk_clients(cls,client_name=None,integration_type=None):
         base_path = os.path.dirname(inspect.getfile(cls))
+        if integration_type!=None:
+            base_path = base_path + f'\integrations\{integration_type}'
         with open(path.join(base_path, ".", 'python_sdk_clients.yml')) as f:
             return yaml.safe_load(f)
 
@@ -228,8 +230,8 @@ def executor(context):
 
         return self.build_python_exec_combinations_hook(payload_task, client_definitions)
 
-    def find_client_definitions(self, client_name_list) -> List[SDKClient]:
-        all_clients = self.get_all_python_sdk_clients()
+    def find_client_definitions(self, client_name_list,integration_type=None) -> List[SDKClient]:
+        all_clients = self.get_all_python_sdk_clients(client_name_list[0],integration_type)
         client_details = []
         for client in client_name_list:
             client_def = next(item for item in all_clients if item["name"] == client)
