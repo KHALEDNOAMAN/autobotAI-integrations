@@ -61,7 +61,7 @@ class SlackService(BaseService):
                 client = WebClient(token=self.integration.bot_token)
                 response = client.conversations_list()
                 if response.get("ok"):
-                    details["channels"] = response.get("channels")
+                    details["channels"] = [channel.get('name') for channel in response.get("channels")]
             return details
         except Exception as e:
             return {"error": "Details can not be fetched"}
