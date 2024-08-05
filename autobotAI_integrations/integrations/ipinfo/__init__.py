@@ -53,8 +53,9 @@ class IPinfoService(BaseService):
             "children": [
                 {
                     "label": "API Key",
-                    "type": "text",
+                    "type": "text/password",
                     "name": "token",
+                    "description": "No token is needed for basic info requests. For higher limits and more data a token is required.",
                     "required": False,
                 }
             ],
