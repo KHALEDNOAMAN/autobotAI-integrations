@@ -157,9 +157,9 @@ class SlackService(BaseService):
         pass
 
     def generate_python_sdk_creds(self) -> SDKCreds:
-        envs = {
-            "SLACK_WEBHOOK": self.integration.webhook,
-        }
+        envs = {}
+        if self.integration.webhook not in [None, "None"]:
+            envs["SLACK_WEBHOOK"] = self.integration.webhook
         if self.integration.bot_token not in [None, "None"]:
             envs["SLACK_BOT_TOKEN"] = self.integration.bot_token
         return SDKCreds(envs=envs)

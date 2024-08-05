@@ -32,7 +32,7 @@ class IPinfoService(BaseService):
     def _test_integration(self) -> dict:
         try:
             response = requests.get("https://ipinfo.io/8.8.8.8/json", params={
-                "token": self.integration.token
+                "token": self.integration.token if self.integration.token not in [None, 'None'] else None
             })
             if response.status_code == 200:
                 return {"success": True}
