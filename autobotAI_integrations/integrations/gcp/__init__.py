@@ -16,6 +16,8 @@ from autobotAI_integrations import BaseSchema, SteampipeCreds, RestAPICreds, SDK
 
 from google.cloud.storage import Client as StorageClient
 from google.oauth2.service_account import Credentials
+from google.api_core.exceptions import Forbidden, BadRequest
+from google.auth.exceptions import RefreshError
 import os
 import pydantic
 
@@ -93,15 +95,38 @@ class GCPService(BaseService):
     def _test_integration(self) -> dict:
         try:
             gcp_creds = self.integration.credentials.model_dump()
-            credentials = Credentials.from_service_account_info(gcp_creds)
+            scopes = ["https://www.googleapis.com/auth/cloud-platform"]
+            try:
+                credentials = Credentials.from_service_account_info(gcp_creds, scopes=scopes)
+            except:
+                return {
+                    "success": False,
+                    "error": "Invalid credentials provided. Please check your service account keys and try again.",
+                }
             client = StorageClient(credentials=credentials)
-            buckets = client.list_buckets()
-            print("Buckets: ")
-            for bucket in buckets:
-                print(bucket.name)
-            return {"success": True}
+            try:
+                buckets = client.list_buckets()
+                print("Buckets: ")
+                for bucket in buckets:
+                    print(bucket.name)
+                return {"success": True}
+            except BadRequest as e:
+                return {
+                    "success": False,
+                    "error": f"Bad request: Please check the project ID and request parameters.",
+                }
+            except Forbidden:
+                return {
+                    "success": False,
+                    "error": "Permission denied. Please ensure the service account has the storage.buckets.list permission.",
+                }
+            except RefreshError:
+                return {
+                    "success": False,
+                    "error": "Invalid or expired credentials. Please check your service account keys (client email)  and try again.",
+                }
         except Exception as e:
-            return {"success": False, "error": str(e)}
+            return {"success": False, "error": f"Unexpected Error: {str(e)}"}
 
     @staticmethod
     def get_forms():
