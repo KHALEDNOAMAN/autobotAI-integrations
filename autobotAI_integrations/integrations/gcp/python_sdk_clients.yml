@@ -403,6 +403,11 @@
   name: NetworksClient
   pip_package_names:
     - google-cloud-compute
+- class_name: SubnetworksClient
+  module: google.cloud.compute
+  name: SubnetworksClient
+  pip_package_names:
+    - google-cloud-compute
 - class_name: Client
   module: google.cloud.texttospeech
   name: Texttospeech
