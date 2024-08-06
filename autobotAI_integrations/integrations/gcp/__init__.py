@@ -186,14 +186,18 @@ class GCPService(BaseService):
                 client_module = importlib.import_module(client.module, package=None)
                 if hasattr(client_module, client.class_name):
                     cls = getattr(client_module, client.class_name)
-                    clients_classes[client.name] = cls(
-                        project=payload_task.creds.envs["CLOUDSDK_CORE_PROJECT"],
-                        credentials=credentials
-                    )
+                    try:
+                        clients_classes[client.name] = cls(
+                            project=payload_task.creds.envs["CLOUDSDK_CORE_PROJECT"],
+                            credentials=credentials
+                        )
+                    except TypeError:
+                        clients_classes[client.name] = cls(
+                            credentials=credentials,
+                        )
             except BaseException as e:
                 print(e)
                 continue
-
         return [
             {
                 "clients": clients_classes,

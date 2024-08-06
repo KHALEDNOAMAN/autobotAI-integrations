@@ -398,9 +398,9 @@
   name: Container
   pip_package_names:
     - google-cloud-container
-- class_name: Client
+- class_name: NetworksClient
   module: google.cloud.compute
-  name: Compute
+  name: NetworksClient
   pip_package_names:
     - google-cloud-compute
 - class_name: Client
