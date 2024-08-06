@@ -223,6 +223,7 @@ def executor(context):
                 logger.info(f"Installing {client.pip_package_names}")
                 try:
                     subprocess.check_output(['pip', 'show', " ".join(client.pip_package_names)])
+                    logger.info(f"Requirements already installed for {client.pip_package_names}")
                 except subprocess.CalledProcessError:
                     subprocess.check_call(
                         [sys.executable, '-m', 'pip', 'install', " ".join(client.pip_package_names), "-t", "/tmp/",
