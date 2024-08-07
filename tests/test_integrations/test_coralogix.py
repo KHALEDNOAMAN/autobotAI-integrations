@@ -20,17 +20,17 @@ def executor(context):
     # visit: https://coralogix.com/docs/direct-query-http-api/
 
     data = client.run_query(**{
-    #     "query": "source logs | limit 1",
-    #     "metadata": {
-    #         "tier": "TIER_FREQUENT_SEARCH",
-    #         "syntax": "QUERY_SYNTAX_DATAPRIME",
-    #         "startDate": "2024-08-05T11:20:00.00Z",
-    #         "endDate": "2024-08-07T11:30:00.00Z",
-    #         "defaultSource": "logs",
-    #     },
-    # })
-    # # Your logic to proccess data
-    # return data
+        "query": "source logs | limit 1000",
+        "metadata": {
+            "tier": "TIER_FREQUENT_SEARCH",
+            "syntax": "QUERY_SYNTAX_DATAPRIME",
+            "startDate": "2024-08-05T11:20:00.00Z",
+            "endDate": "2024-08-07T11:30:00.00Z",
+            "defaultSource": "logs",
+        },
+    })
+    # Your logic to proccess data
+    return data
 """
 
 
