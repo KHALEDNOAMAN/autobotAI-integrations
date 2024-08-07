@@ -1,5 +1,5 @@
 # Import your modules here
-import asyncio
+import json
 
 # **Security Note:** Client-related modules should not be directly imported here.
 # Instead, they are passed as arguments and retrieved from a secure configuration.
@@ -40,5 +40,3 @@ def executor(context):
 
     # # Your logic to proccess data
     # return data
-
-    # return resources # Replace with your actual return logic
