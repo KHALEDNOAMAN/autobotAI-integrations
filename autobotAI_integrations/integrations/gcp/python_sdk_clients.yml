@@ -412,7 +412,12 @@
   module: google.cloud.compute
   name: RegionsClient
   pip_package_names:
-    - google-cloud-compute    
+    - google-cloud-compute  
+- class_name: GlobalOperationsClient
+  module: google.cloud.compute
+  name: GlobalOperationsClient
+  pip_package_names:
+    - google-cloud-compute   
 - class_name: Client
   module: google.cloud.texttospeech
   name: Texttospeech
