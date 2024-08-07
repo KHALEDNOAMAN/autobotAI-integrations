@@ -109,7 +109,7 @@ class CoralogixService(BaseService):
     def build_python_exec_combinations_hook(
         self, payload_task: PayloadTask, client_definitions: List[SDKClient]
     ) -> list:
-        api_url = f"{payload_task.creds.envs.get("CORALOGIX_API_URL")}/api/v1/dataprime/query"
+        api_url = f"{payload_task.creds.envs.get('CORALOGIX_API_URL')}/api/v1/dataprime/query"
         return [
             {
                 "clients": {
