@@ -408,6 +408,11 @@
   name: SubnetworksClient
   pip_package_names:
     - google-cloud-compute
+- class_name: RegionsClient
+  module: google.cloud.compute
+  name: RegionsClient
+  pip_package_names:
+    - google-cloud-compute    
 - class_name: Client
   module: google.cloud.texttospeech
   name: Texttospeech
