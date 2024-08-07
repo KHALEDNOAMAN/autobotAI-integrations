@@ -71,7 +71,7 @@ class CoralogixService(BaseService):
                     "name": "api_url",
                     "type": "text/url",
                     "label":"API URL",
-                    "placeholder": "Enter HOST URL",
+                    "placeholder": "default: 'https://ng-api-http.coralogix.com'",
                     "description": "Enter your domain api url, for more info: https://coralogix.com/docs/coralogix-endpoints/#data-prime",
                     "required": False
                 },
