@@ -31,7 +31,10 @@ class IntegrationServiceFactory:
             integration_schema = srvic_cls.get_schema()
             temp = srvic_cls.get_details()
 
-            temp["name"] = integration_type
+            # Used for frontend display
+            temp["displayName"] = integration_schema.model_fields.get("name").default or integration_type.replace('_', ' ').title()
+            # Used for links and service creation
+            temp['name'] = integration_type
             temp["logo"] = integration_schema.model_fields.get("logo").default
             temp["description"] = integration_schema.model_fields.get(
                 "description"

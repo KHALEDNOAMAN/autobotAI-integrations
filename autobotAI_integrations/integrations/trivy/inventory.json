@@ -1,0 +1,144 @@
+{
+    "trivy": [
+        {
+            "name": "trivy_advisory",
+            "all_columns": [
+                "affected_version",
+                "fixed_version",
+                "key",
+                "name",
+                "patched_versions",
+                "severity",
+                "source",
+                "state",
+                "unaffected_versions",
+                "vendor_ids",
+                "vulnerability_id",
+                "vulnerable_versions"
+            ],
+            "included": [],
+            "excluded": [],
+            "inventory_supported": true
+        },
+        {
+            "name": "trivy_data_source",
+            "all_columns": [
+                "id",
+                "name",
+                "system",
+                "url"
+            ],
+            "included": [],
+            "excluded": [],
+            "inventory_supported": true
+        },
+        {
+            "name": "trivy_scan_artifact",
+            "all_columns": [
+                "artifact_name",
+                "artifact_type",
+                "metadata",
+                "results"
+            ],
+            "included": [],
+            "excluded": [],
+            "inventory_supported": true
+        },
+        {
+            "name": "trivy_scan_package",
+            "all_columns": [
+                "arch",
+                "artifact_name",
+                "artifact_type",
+                "build_info",
+                "class",
+                "epoch",
+                "file_path",
+                "id",
+                "indirect",
+                "layer",
+                "licenses",
+                "modularity_label",
+                "name",
+                "ref",
+                "release",
+                "src_epoch",
+                "src_name",
+                "src_release",
+                "src_version",
+                "target",
+                "type",
+                "version"
+            ],
+            "included": [],
+            "excluded": [],
+            "inventory_supported": true
+        },
+        {
+            "name": "trivy_scan_secret",
+            "all_columns": [
+                "artifact_name",
+                "artifact_type",
+                "category",
+                "end_line",
+                "match",
+                "rule_id",
+                "severity",
+                "start_line",
+                "target",
+                "title"
+            ],
+            "included": [],
+            "excluded": [],
+            "inventory_supported": true
+        },
+        {
+            "name": "trivy_scan_vulnerability",
+            "all_columns": [
+                "artifact_name",
+                "artifact_type",
+                "class",
+                "cvss",
+                "cwe_ids",
+                "data_source",
+                "description",
+                "fixed_version",
+                "installed_version",
+                "last_modified_date",
+                "layer",
+                "package_id",
+                "package_name",
+                "package_path",
+                "primary_url",
+                "published_date",
+                "severity",
+                "severity_source",
+                "target",
+                "title",
+                "vendor_ids",
+                "vendor_severity",
+                "vulnerability_id"
+            ],
+            "included": [],
+            "excluded": [],
+            "inventory_supported": true
+        },
+        {
+            "name": "trivy_vulnerability",
+            "all_columns": [
+                "cvss",
+                "cwe_ids",
+                "description",
+                "last_modified_date",
+                "name",
+                "published_date",
+                "severity",
+                "title",
+                "vendor_severity"
+            ],
+            "included": [],
+            "excluded": [],
+            "inventory_supported": true
+        }
+    ]
+}

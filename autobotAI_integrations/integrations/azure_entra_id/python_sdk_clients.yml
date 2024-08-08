@@ -1,0 +1,5 @@
+- name: msgraph
+  import_library_names:
+    - msgraph
+  pip_package_names:
+    - msgraph-sdk

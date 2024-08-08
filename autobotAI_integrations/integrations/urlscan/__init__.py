@@ -14,6 +14,7 @@ import json
 class URLScanIntegrations(BaseSchema):
     api_key: Optional[str] = Field(default=None, exclude=True)
 
+    name: Optional[str] = "URLScan"
     category: Optional[str] = IntegrationCategory.SECURITY_TOOLS.value
     description: Optional[str] = (
         "UrlScan is a free service to scan and analyse websites."
@@ -44,7 +45,7 @@ class URLScanService(BaseService):
         else:
             return {
                 "success": False,
-                "error": f"Error: API request failed. Status code: {response.status_code}",
+                "error": f"Request failed with status code: {response.status_code}",
             }
 
     @staticmethod

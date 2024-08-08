@@ -1,0 +1,56 @@
+{
+    "whois": [
+        {
+            "name": "rdap_domain",
+            "all_columns": [
+                "conformance",
+                "domain",
+                "entities",
+                "events",
+                "handle",
+                "ldh_name",
+                "links",
+                "nameservers",
+                "network",
+                "notices",
+                "object_class_name",
+                "secure_dns",
+                "status",
+                "variants"
+            ],
+            "included": [],
+            "excluded": [],
+            "inventory_supported": true
+        },
+        {
+            "name": "whois_domain",
+            "all_columns": [
+                "admin",
+                "billing",
+                "client_delete_prohibited",
+                "client_transfer_prohibited",
+                "client_update_prohibited",
+                "created_date",
+                "dns_sec",
+                "domain",
+                "domain_extension",
+                "domain_id",
+                "domain_punycode",
+                "expiration_date",
+                "name_servers",
+                "registrant",
+                "registrar",
+                "server_delete_prohibited",
+                "server_transfer_prohibited",
+                "server_update_prohibited",
+                "status",
+                "technical",
+                "updated_date",
+                "whois_server"
+            ],
+            "included": [],
+            "excluded": [],
+            "inventory_supported": true
+        }
+    ]
+}

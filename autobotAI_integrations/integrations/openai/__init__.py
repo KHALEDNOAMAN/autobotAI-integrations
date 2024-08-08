@@ -3,6 +3,7 @@ import os
 import uuid
 from typing import List, Optional
 from pydantic import Field
+import requests
 
 from autobotAI_integrations import (
     BaseSchema,
@@ -25,6 +26,7 @@ from autobotAI_integrations.utils.logging_config import logger
 class OpenAIIntegration(BaseSchema):
     api_key: str = Field(default=None, exclude=True)
 
+    name: Optional[str] = "OpenAI"
     category: Optional[str] = IntegrationCategory.AI.value
     description: Optional[str] = (
         "A research company developing and providing access to powerful large language models."
@@ -40,18 +42,15 @@ class OpenAIService(AIBaseService):
 
     def _test_integration(self):
         try:
-            client = OpenAI(api_key=self.integration.api_key)
-            chat_completion = client.chat.completions.create(
-                messages=[
-                    {
-                        "role": "user",
-                        "content": "Say this is a test",
-                    }
-                ],
-                model="gpt-3.5-turbo",
-            )
-            print(chat_completion)
-            return {"success": True}
+            response = requests.get("https://api.openai.com/v1/engines", headers={"Authorization": f"Bearer {self.integration.api_key}"})
+            if response.status_code == 200:
+                return {"success": True}
+            if response.status_code == 401:
+                return {"success": False, "error": "API key is invalid."}
+            return {
+                "success": False,
+                "error": f"An error occurred: {response.status_code} - {response.text}",
+            }
         except BaseException as e:
             return {"success": False, "error": str(e)}
 

@@ -33,16 +33,18 @@ class OllamaService(AIBaseService):
 
     def _test_integration(self) -> dict:
         try:
-            response = requests.get(self.integration.base_url)
-            assert response.ok
-            return {"success": True}
+            response = requests.get(self.integration.base_url + "/api/tags")
+            if response.status_code == 200:
+                return {"success": True}
+            else:
+                return {"success": False, "error": f"Request Failed: Cannot stablish connection, Status code {response.status_code}"}
         except Exception as e:
-            return {"success": False, "error": str(e)}
+            return {"success": False, "error": "Request Failed with Connection Error"}
 
     def get_integration_specific_details(self) -> dict:
         try:
             client = ollama.Client(self.integration.base_url)
-            models = client.list()["models"]
+            models = [model.get('model') for model in client.list()["models"]]
             return {
                 "integration_id": self.integration.accountId,
                 "models": models,
@@ -51,6 +53,17 @@ class OllamaService(AIBaseService):
             return {
                 "error": "Details can not be fetched"
             }
+
+    @classmethod
+    def get_details(cls):
+        return {
+            "python_code_sample": cls.get_code_sample(),
+            "supported_interfaces": cls.supported_connection_interfaces(),
+            "clients": list_of_unique_elements(cls.get_all_python_sdk_clients()),
+            "supported_executor": "ecs",
+            "compliance_supported": False,
+            "preview": True
+        }
 
     @staticmethod
     def get_forms():

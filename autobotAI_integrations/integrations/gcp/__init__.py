@@ -16,7 +16,10 @@ from autobotAI_integrations import BaseSchema, SteampipeCreds, RestAPICreds, SDK
 
 from google.cloud.storage import Client as StorageClient
 from google.oauth2.service_account import Credentials
+from google.api_core.exceptions import Forbidden, BadRequest
+from google.auth.exceptions import RefreshError
 import os
+import pydantic
 
 
 class GCPCredentials(BaseModel):
@@ -45,6 +48,7 @@ class GCPIntegration(BaseSchema):
     account_id: Optional[str] = uuid.uuid4().hex
     credentials: Optional[GCPCredentials] = Field(default=None, exclude=True)
 
+    name: Optional[str] = "GCP"
     category: Optional[str] = IntegrationCategory.CLOUD_SERVICES_PROVIDERS.value
     description: Optional[str] = (
         "GCP is Google Cloud Platform, a suite of cloud computing services offered by Google."
@@ -55,11 +59,15 @@ class GCPIntegration(BaseSchema):
             creds = kwargs.get("credentials")
             if isinstance(kwargs.get('credentials'), str):
                 creds = json.loads(creds)
-            kwargs["credentials"] = GCPCredentials(**creds)
+            try:
+                kwargs["credentials"] = GCPCredentials(**creds)
+            except pydantic.ValidationError as e:
+                # generating custom error message
+                errors = [err_str for err_str in str(e).split("\n") if not err_str.startswith(' ')]
+                raise ValueError("Validation error for fields: {}".format(errors[1:]))
         if not kwargs.get("accountId"):
             kwargs["accountId"] = str(creds.get("project_id"))
         super().__init__(**kwargs)
-
 
     @field_validator('credentials', mode='before')
     @classmethod
@@ -87,15 +95,38 @@ class GCPService(BaseService):
     def _test_integration(self) -> dict:
         try:
             gcp_creds = self.integration.credentials.model_dump()
-            credentials = Credentials.from_service_account_info(gcp_creds)
+            scopes = ["https://www.googleapis.com/auth/cloud-platform"]
+            try:
+                credentials = Credentials.from_service_account_info(gcp_creds, scopes=scopes)
+            except:
+                return {
+                    "success": False,
+                    "error": "Invalid credentials provided. Please check your service account keys and try again.",
+                }
             client = StorageClient(credentials=credentials)
-            buckets = client.list_buckets()
-            print("Buckets: ")
-            for bucket in buckets:
-                print(bucket.name)
-            return {"success": True}
+            try:
+                buckets = client.list_buckets()
+                print("Buckets: ")
+                for bucket in buckets:
+                    print(bucket.name)
+                return {"success": True}
+            except BadRequest as e:
+                return {
+                    "success": False,
+                    "error": f"Bad request: Please check the project ID and request parameters.",
+                }
+            except Forbidden:
+                return {
+                    "success": False,
+                    "error": "Permission denied. Please ensure the service account has the storage.buckets.list permission.",
+                }
+            except RefreshError:
+                return {
+                    "success": False,
+                    "error": "Invalid or expired credentials. Please check your service account keys (client email)  and try again.",
+                }
         except Exception as e:
-            return {"success": False, "error": str(e)}
+            return {"success": False, "error": f"Unexpected Error: {str(e)}"}
 
     @staticmethod
     def get_forms():
@@ -155,14 +186,18 @@ class GCPService(BaseService):
                 client_module = importlib.import_module(client.module, package=None)
                 if hasattr(client_module, client.class_name):
                     cls = getattr(client_module, client.class_name)
-                    clients_classes[client.name] = cls(
-                        project=payload_task.creds.envs["CLOUDSDK_CORE_PROJECT"],
-                        credentials=credentials
-                    )
+                    try:
+                        clients_classes[client.name] = cls(
+                            project=payload_task.creds.envs["CLOUDSDK_CORE_PROJECT"],
+                            credentials=credentials
+                        )
+                    except TypeError:
+                        clients_classes[client.name] = cls(
+                            credentials=credentials,
+                        )
             except BaseException as e:
                 print(e)
                 continue
-
         return [
             {
                 "clients": clients_classes,

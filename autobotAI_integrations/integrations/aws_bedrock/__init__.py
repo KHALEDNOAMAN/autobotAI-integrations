@@ -19,6 +19,7 @@ class AWSBedrockIntegration(BaseSchema):
     roleArn: Optional[str] = None
     externalId: Optional[str] = None
 
+    name: Optional[str] = "AWS Bedrock"
     category: Optional[str] = IntegrationCategory.AI.value
     description: Optional[str] = (
         "AWS Bedrock is a service that lets you use powerful AI models from various companies for your applications, all through one place."
@@ -281,7 +282,7 @@ def executor(context):
                 creds["AWS_SESSION_TOKEN"] = str(self.integration.session_token)
             return creds
 
-    def _get_bedrock_model_request(self, model: str, prompt: str, max_tokens=512, temperature=0.1, *args, **kwargs):
+    def _get_bedrock_model_request(self, model: str, prompt: str, max_tokens=2048, temperature=0.1, *args, **kwargs):
         if model.startswith("amazon.titan-text"):
             native_request = {
                 "inputText": prompt,

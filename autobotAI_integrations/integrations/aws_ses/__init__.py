@@ -19,6 +19,7 @@ class AwsSesIntegration(BaseSchema):
     roleArn: Optional[str] = None
     externalId: Optional[str] = None
 
+    name: Optional[str] = "AWS SES"
     category: Optional[str] = IntegrationCategory.NOTIFICATIONS_AND_COMMUNICATIONS.value
     description: Optional[str] = (
         "Amazon Web Services Simple Email Service is a cost-effective and reliable platform for sending transactional and marketing emails at scale within the AWS cloud environment."

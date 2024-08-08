@@ -1,0 +1,285 @@
+{
+    "newrelic": [
+        {
+            "name": "newrelic_account",
+            "all_columns": [
+                "id",
+                "name",
+                "reporting_event_types"
+            ],
+            "included": [],
+            "excluded": [],
+            "inventory_supported": true
+        },
+        {
+            "name": "newrelic_alert_channel",
+            "all_columns": [
+                "base_url",
+                "channel",
+                "id",
+                "key",
+                "name",
+                "payload_type",
+                "policies",
+                "recipients",
+                "region",
+                "route_key",
+                "service_key",
+                "tags",
+                "teams",
+                "type",
+                "url",
+                "user_id"
+            ],
+            "included": [],
+            "excluded": [],
+            "inventory_supported": true
+        },
+        {
+            "name": "newrelic_alert_condition",
+            "all_columns": [
+                "enabled",
+                "entities",
+                "gc_metric",
+                "id",
+                "metric",
+                "name",
+                "policy_id",
+                "runbook_url",
+                "scope",
+                "terms",
+                "type",
+                "user_metric",
+                "user_value_function",
+                "violation_close_timer"
+            ],
+            "included": [],
+            "excluded": [],
+            "inventory_supported": true
+        },
+        {
+            "name": "newrelic_alert_event",
+            "all_columns": [
+                "description",
+                "entity_group_id",
+                "entity_id",
+                "entity_type",
+                "event_type",
+                "id",
+                "incident_id",
+                "priority",
+                "product",
+                "timestamp"
+            ],
+            "included": [],
+            "excluded": [],
+            "inventory_supported": true
+        },
+        {
+            "name": "newrelic_alert_incident",
+            "all_columns": [
+                "closed_at",
+                "id",
+                "incident_preference",
+                "opened_at",
+                "policy_id",
+                "violations"
+            ],
+            "included": [],
+            "excluded": [],
+            "inventory_supported": true
+        },
+        {
+            "name": "newrelic_alert_policy",
+            "all_columns": [
+                "created_at",
+                "id",
+                "incident_preference",
+                "name",
+                "updated_at"
+            ],
+            "included": [],
+            "excluded": [],
+            "inventory_supported": true
+        },
+        {
+            "name": "newrelic_apm_application",
+            "all_columns": [
+                "alert_policy_id",
+                "apdex_score",
+                "apdex_target",
+                "apdex_threshold",
+                "concurrent_instance_count",
+                "end_user_apdex_score",
+                "end_user_apdex_target",
+                "end_user_apdex_threshold",
+                "end_user_response_time",
+                "end_user_throughput",
+                "error_rate",
+                "health_status",
+                "host_count",
+                "hosts",
+                "id",
+                "instance_count",
+                "instances",
+                "language",
+                "last_reported_at",
+                "name",
+                "real_user_monitoring",
+                "reporting",
+                "response_time",
+                "server_side_config",
+                "servers",
+                "throughput"
+            ],
+            "included": [],
+            "excluded": [],
+            "inventory_supported": true
+        },
+        {
+            "name": "newrelic_apm_application_deployment",
+            "all_columns": [
+                "app_id",
+                "changelog",
+                "description",
+                "id",
+                "revision",
+                "timestamp",
+                "user"
+            ],
+            "included": [],
+            "excluded": [],
+            "inventory_supported": true
+        },
+        {
+            "name": "newrelic_apm_application_instance",
+            "all_columns": [
+                "apdex_score",
+                "apdex_target",
+                "app_host",
+                "app_id",
+                "application_name",
+                "concurrent_instance_count",
+                "end_user_apdex_score",
+                "end_user_apdex_target",
+                "end_user_response_time",
+                "end_user_throughput",
+                "error_rate",
+                "health_status",
+                "host",
+                "host_count",
+                "id",
+                "instance_count",
+                "language",
+                "port",
+                "response_time",
+                "throughput"
+            ],
+            "included": [],
+            "excluded": [],
+            "inventory_supported": true
+        },
+        {
+            "name": "newrelic_apm_application_metric",
+            "all_columns": [
+                "app_id",
+                "name",
+                "values"
+            ],
+            "included": [],
+            "excluded": [],
+            "inventory_supported": true
+        },
+        {
+            "name": "newrelic_apm_application_metric_data",
+            "all_columns": [
+                "app_id",
+                "from",
+                "name",
+                "to",
+                "values"
+            ],
+            "included": [],
+            "excluded": [],
+            "inventory_supported": true
+        },
+        {
+            "name": "newrelic_component",
+            "all_columns": [
+                "health_status",
+                "id",
+                "name",
+                "plugin_id",
+                "summary_metrics"
+            ],
+            "included": [],
+            "excluded": [],
+            "inventory_supported": true
+        },
+        {
+            "name": "newrelic_notification_channel",
+            "all_columns": [
+                "account_id",
+                "active",
+                "created_at",
+                "destination_id",
+                "id",
+                "name",
+                "product",
+                "properties",
+                "status",
+                "type",
+                "updated_at",
+                "updated_by"
+            ],
+            "included": [],
+            "excluded": [],
+            "inventory_supported": true
+        },
+        {
+            "name": "newrelic_notification_destination",
+            "all_columns": [
+                "account_id",
+                "active",
+                "auth",
+                "created_at",
+                "id",
+                "is_user_authenticated",
+                "last_sent",
+                "name",
+                "properties",
+                "status",
+                "type",
+                "updated_at",
+                "updated_by"
+            ],
+            "included": [],
+            "excluded": [],
+            "inventory_supported": true
+        },
+        {
+            "name": "newrelic_plugin",
+            "all_columns": [
+                "component_agent_count",
+                "created_at",
+                "description",
+                "download_url",
+                "guid",
+                "has_unpublished_changes",
+                "id",
+                "is_public",
+                "name",
+                "published_version",
+                "publisher",
+                "publisher_about_url",
+                "publisher_support_url",
+                "short_name",
+                "summary_metrics",
+                "updated_at"
+            ],
+            "included": [],
+            "excluded": [],
+            "inventory_supported": true
+        }
+    ]
+}

@@ -1,5 +1,3 @@
-import importlib
-import uuid, re
 from typing import List, Optional
 
 from pydantic import Field
@@ -11,6 +9,7 @@ from slack_sdk.webhook import WebhookClient
 
 from autobotAI_integrations.models import IntegrationCategory
 from autobotAI_integrations.utils import list_of_unique_elements
+from autobotAI_integrations.utils.logging_config import logger
 
 
 class SlackIntegration(BaseSchema):
@@ -35,25 +34,41 @@ class SlackService(BaseService):
         try:
             if self.integration.webhook not in [None, "None"]:
                 webhook = WebhookClient(self.integration.webhook)
-                response = webhook.send(text="Hello, Integration Tested Successfully!")
+                response = webhook.send(text="Integration State: Active")
                 assert response.status_code == 200
                 assert response.body == "ok"
                 return {"success": True}
             else:
                 client = WebClient(token=self.integration.bot_token)
-                client.usergroups_list()
+                response = client.conversations_list()
             return {"success": True}
         except Exception as e:
+            logger.error(e)
             return {"success": False, "error": str(e)}
 
     @classmethod
     def get_details(cls):
         return {
             "clients": list_of_unique_elements(cls.get_all_python_sdk_clients()),
-            "supported_executor": "lambda",            
+            "supported_executor": "lambda", 
             "supported_interfaces": cls.supported_connection_interfaces(),
             "python_code_sample": cls.get_code_sample(),
         }
+
+    def get_integration_specific_details(self):
+        try:
+            details = {}
+            details["integration_id"] = self.integration.accountId
+            if self.integration.webhook in [None, "None"]:
+                client = WebClient(token=self.integration.bot_token)
+                response = client.conversations_list()
+                if response.get("ok"):
+                    details["channels"] = [channel.get('name') for channel in response.get("channels")]
+            return details
+        except Exception as e:
+            logger.error(e)
+            return {"error": "Details can not be fetched"}
+
     @staticmethod
     def get_forms():
         return {
@@ -89,7 +104,7 @@ class SlackService(BaseService):
                             "type": "text",
                             "label": "Slack Bot Token",
                             "placeholder": "Enter the Slack Token",
-                            "description": "Make sure to have 'usergroups:read' scope in your Oauth token",
+                            "description": "Scopes needed: channels:read, chat:write.customize, chat:write, chat:write.public, groups:read",
                             "required": True,
                         },
                     ],
@@ -117,6 +132,7 @@ class SlackService(BaseService):
             clients["WebhookClient"] = webhook
         else:
             clients["WebClient"] = WebClient(payload_task.creds.envs.get("SLACK_BOT_TOKEN"))
+        
         return [
             {
                 "clients": clients,
@@ -141,9 +157,9 @@ class SlackService(BaseService):
         pass
 
     def generate_python_sdk_creds(self) -> SDKCreds:
-        envs = {
-            "SLACK_WEBHOOK": self.integration.webhook,
-        }
+        envs = {}
+        if self.integration.webhook not in [None, "None"]:
+            envs["SLACK_WEBHOOK"] = self.integration.webhook
         if self.integration.bot_token not in [None, "None"]:
             envs["SLACK_BOT_TOKEN"] = self.integration.bot_token
         return SDKCreds(envs=envs)
