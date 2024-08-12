@@ -71,8 +71,7 @@ class IPStackService(BaseService):
             "clients": [],
             "supported_executor": "ecs",
             "compliance_supported": False,
-            "supported_interfaces": cls.supported_connection_interfaces(),
-            "preview": True
+            "supported_interfaces": cls.supported_connection_interfaces()
         }
 
     @staticmethod

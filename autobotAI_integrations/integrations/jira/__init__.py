@@ -57,6 +57,24 @@ class JiraService(BaseService):
         except BaseException as e:
             return {"success": False, "error": str(e.text)}
 
+    def get_integration_specific_details(self) -> dict:
+        try:
+            jira_cloud_options = {"server": self.integration.base_url}
+            jira_cloud = JIRA(
+                options=jira_cloud_options,
+                basic_auth=(
+                    self.integration.username,
+                    self.integration.token or self.integration.personal_access_token,
+                ),
+            )
+            return {
+                "integration_id": self.integration.accountId,
+                "projects": [project.key for project in jira_cloud.projects()],
+                "issue_types": [issue.name for issue in jira_cloud.issue_types()],
+            }
+        except Exception as e:
+            return {"error": "Details can not be fetched"}
+
     @staticmethod
     def get_forms():
         return {
