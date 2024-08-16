@@ -69,9 +69,13 @@ class JiraService(BaseService):
             )
             return {
                 "integration_id": self.integration.accountId,
-                "projects": [project.key for project in jira_cloud.projects()],
-                "issue_types": [issue.name for issue in jira_cloud.issue_types()],
-                "priorities": [priority.name for priority in jira_cloud.priorities()],
+                "projects": list(set(project.key for project in jira_cloud.projects())),
+                "issue_types": list(
+                    set(issue.name for issue in jira_cloud.issue_types())
+                ),
+                "priorities": list(
+                    set(priority.name for priority in jira_cloud.priorities())
+                ),
             }
         except Exception as e:
             return {"error": "Details can not be fetched"}
