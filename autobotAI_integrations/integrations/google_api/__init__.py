@@ -14,6 +14,7 @@ from autobotAI_integrations import (
 
 from google.oauth2.service_account import Credentials
 from autobotAI_integrations.integrations.gcp import GCPCredentials, GCPService, GCPIntegration
+import uuid
 
 
 class GoogleAPIsIntegration(GCPIntegration):
@@ -21,6 +22,11 @@ class GoogleAPIsIntegration(GCPIntegration):
     description: Optional[str] = (
         "Google APIs are a set of tools that allow developers to programmatically access and interact with Google's services and data."
     )
+
+    def __init__(self, **kwargs):
+        if not kwargs.get("accountId"):
+            kwargs["accountId"] = str(uuid.uuid4().hex)
+        super().__init__(**kwargs)
 
 
 class GoogleAPIsService(GCPService, BaseService):
