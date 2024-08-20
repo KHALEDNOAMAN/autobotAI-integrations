@@ -1,0 +1,8 @@
+- module: googleapiclient.discovery
+  name: docs_v1
+  pip_package_names:
+    - google-api-python-client
+- module: googleapiclient.discovery.build
+  name: cloudresourcemanager_v1
+  pip_package_names:
+    - google-api-python-client
