@@ -1,8 +1,2060 @@
 - module: googleapiclient.discovery
-  name: docs_v1
+  name: abusiveexperiencereport_v1
   pip_package_names:
-    - google-api-python-client
-- module: googleapiclient.discovery.build
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: acceleratedmobilepageurl_v1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: accessapproval_v1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: accesscontextmanager_v1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: accesscontextmanager_v1beta
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: acmedns_v1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: addressvalidation_v1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: adexchangebuyer2_v2beta1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: adexchangebuyer_v1_2
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: adexchangebuyer_v1_3
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: adexchangebuyer_v1_4
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: adexperiencereport_v1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: admin_datatransfer_v1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: admin_directory_v1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: admin_reports_v1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: admob_v1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: admob_v1beta
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: adsense_v1_4
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: adsense_v2
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: adsensehost_v4_1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: adsenseplatform_v1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: adsenseplatform_v1alpha
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: advisorynotifications_v1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: aiplatform_v1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: aiplatform_v1beta1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: airquality_v1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: alertcenter_v1beta1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: alloydb_v1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: alloydb_v1alpha
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: alloydb_v1beta
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: analytics_v3
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: analyticsadmin_v1alpha
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: analyticsadmin_v1beta
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: analyticsdata_v1alpha
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: analyticsdata_v1beta
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: analyticshub_v1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: analyticshub_v1beta1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: analyticsreporting_v4
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: androiddeviceprovisioning_v1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: androidenterprise_v1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: androidmanagement_v1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: androidpublisher_v3
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: apigateway_v1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: apigateway_v1beta
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: apigee_v1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: apigeeregistry_v1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: apikeys_v2
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: apim_v1alpha
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: appengine_v1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: appengine_v1alpha
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: appengine_v1beta
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: appengine_v1beta4
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: appengine_v1beta5
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: apphub_v1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: apphub_v1alpha
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: area120tables_v1alpha1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: artifactregistry_v1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: artifactregistry_v1beta1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: artifactregistry_v1beta2
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: assuredworkloads_v1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: assuredworkloads_v1beta1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: authorizedbuyersmarketplace_v1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: authorizedbuyersmarketplace_v1alpha
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: backupdr_v1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: baremetalsolution_v1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: baremetalsolution_v1alpha1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: baremetalsolution_v2
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: batch_v1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: beyondcorp_v1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: beyondcorp_v1alpha
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: biglake_v1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: bigquery_v2
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: bigqueryconnection_v1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: bigqueryconnection_v1beta1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: bigquerydatapolicy_v1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: bigquerydatatransfer_v1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: bigqueryreservation_v1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: bigqueryreservation_v1beta1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: bigtableadmin_v1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: bigtableadmin_v2
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: billingbudgets_v1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: billingbudgets_v1beta1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: binaryauthorization_v1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: binaryauthorization_v1beta1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: blockchainnodeengine_v1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: blogger_v2
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: blogger_v3
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: books_v1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: businessprofileperformance_v1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: calendar_v3
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: certificatemanager_v1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: chat_v1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: checks_v1alpha
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: chromemanagement_v1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: chromepolicy_v1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: chromeuxreport_v1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: civicinfo_v2
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: classroom_v1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: cloudasset_v1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: cloudasset_v1beta1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: cloudasset_v1p1beta1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: cloudasset_v1p4beta1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: cloudasset_v1p5beta1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: cloudasset_v1p7beta1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: cloudbilling_v1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: cloudbilling_v1beta
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: cloudbuild_v1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: cloudbuild_v1alpha1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: cloudbuild_v1alpha2
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: cloudbuild_v1beta1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: cloudbuild_v2
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: cloudchannel_v1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: cloudcommerceprocurement_v1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: cloudcontrolspartner_v1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: cloudcontrolspartner_v1beta
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: clouddebugger_v2
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: clouddeploy_v1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: clouderrorreporting_v1beta1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: cloudfunctions_v1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: cloudfunctions_v2
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: cloudfunctions_v2alpha
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: cloudfunctions_v2beta
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: cloudidentity_v1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: cloudidentity_v1beta1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: cloudiot_v1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: cloudkms_v1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: cloudprofiler_v2
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
   name: cloudresourcemanager_v1
   pip_package_names:
-    - google-api-python-client
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: cloudresourcemanager_v1beta1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: cloudresourcemanager_v2
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: cloudresourcemanager_v2beta1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: cloudresourcemanager_v3
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: cloudscheduler_v1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: cloudscheduler_v1beta1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: cloudsearch_v1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: cloudshell_v1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: cloudsupport_v2
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: cloudsupport_v2beta
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: cloudtasks_v2
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: cloudtasks_v2beta2
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: cloudtasks_v2beta3
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: cloudtrace_v1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: cloudtrace_v2
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: cloudtrace_v2beta1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: composer_v1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: composer_v1beta1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: compute_alpha
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: compute_beta
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: compute_v1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: config_v1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: connectors_v1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: connectors_v2
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: contactcenteraiplatform_v1alpha1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: contactcenterinsights_v1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: container_v1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: container_v1beta1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: containeranalysis_v1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: containeranalysis_v1alpha1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: containeranalysis_v1beta1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: content_v2
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: content_v2_1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: contentwarehouse_v1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: css_v1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: customsearch_v1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: datacatalog_v1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: datacatalog_v1beta1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: dataflow_v1b3
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: dataform_v1beta1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: datafusion_v1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: datafusion_v1beta1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: datalabeling_v1beta1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: datalineage_v1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: datamigration_v1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: datamigration_v1beta1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: datapipelines_v1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: dataplex_v1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: dataportability_v1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: dataportability_v1beta
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: dataproc_v1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: dataproc_v1beta2
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: datastore_v1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: datastore_v1beta1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: datastore_v1beta3
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: datastream_v1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: datastream_v1alpha1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: deploymentmanager_alpha
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: deploymentmanager_v2
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: deploymentmanager_v2beta
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: developerconnect_v1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: dfareporting_v3_3
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: dfareporting_v3_4
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: dfareporting_v3_5
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: dfareporting_v4
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: dialogflow_v2
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: dialogflow_v2beta1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: dialogflow_v3
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: dialogflow_v3beta1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: digitalassetlinks_v1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: discovery_v1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: discoveryengine_v1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: discoveryengine_v1alpha
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: discoveryengine_v1beta
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: displayvideo_v1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: displayvideo_v2
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: displayvideo_v3
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: displayvideo_v4
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: dlp_v2
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: dns_v1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: dns_v1beta2
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: dns_v2
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: docs_v1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: documentai_v1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: documentai_v1beta2
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: documentai_v1beta3
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: domains_v1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: domains_v1alpha2
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: domains_v1beta1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: domainsrdap_v1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: doubleclickbidmanager_v1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: doubleclickbidmanager_v1_1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: doubleclickbidmanager_v2
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: doubleclicksearch_v2
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: drive_v2
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: drive_v3
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: driveactivity_v2
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: drivelabels_v2
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: drivelabels_v2beta
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: essentialcontacts_v1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: eventarc_v1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: eventarc_v1beta1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: factchecktools_v1alpha1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: fcm_v1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: fcmdata_v1beta1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: file_v1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: file_v1beta1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: firebase_v1beta1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: firebaseappcheck_v1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: firebaseappcheck_v1beta
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: firebaseappdistribution_v1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: firebaseappdistribution_v1alpha
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: firebasedatabase_v1beta
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: firebasedynamiclinks_v1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: firebasehosting_v1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: firebasehosting_v1beta1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: firebaseml_v1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: firebaseml_v1beta2
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: firebaseml_v2beta
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: firebaserules_v1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: firebasestorage_v1beta
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: firestore_v1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: firestore_v1beta1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: firestore_v1beta2
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: fitness_v1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: forms_v1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: gamesConfiguration_v1configuration
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: gamesManagement_v1management
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: games_v1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: gameservices_v1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: gameservices_v1beta
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: genomics_v1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: genomics_v1alpha2
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: genomics_v2alpha1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: gkebackup_v1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: gkehub_v1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: gkehub_v1alpha
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: gkehub_v1alpha2
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: gkehub_v1beta
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: gkehub_v1beta1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: gkehub_v2
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: gkehub_v2alpha
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: gkehub_v2beta
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: gkeonprem_v1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: gmail_v1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: gmailpostmastertools_v1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: gmailpostmastertools_v1beta1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: groupsmigration_v1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: groupssettings_v1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: healthcare_v1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: healthcare_v1beta1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: homegraph_v1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: iam_v1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: iam_v2
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: iam_v2beta
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: iamcredentials_v1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: iap_v1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: iap_v1beta1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: ideahub_v1alpha
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: ideahub_v1beta
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: identitytoolkit_v1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: identitytoolkit_v2
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: identitytoolkit_v3
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: ids_v1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: index
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: indexing_v3
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: integrations_v1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: integrations_v1alpha
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: jobs_v3
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: jobs_v3p1beta1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: jobs_v4
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: keep_v1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: kgsearch_v1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: kmsinventory_v1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: language_v1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: language_v1beta1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: language_v1beta2
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: language_v2
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: libraryagent_v1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: licensing_v1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: lifesciences_v2beta
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: localservices_v1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: logging_v2
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: looker_v1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: managedidentities_v1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: managedidentities_v1alpha1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: managedidentities_v1beta1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: manufacturers_v1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: marketingplatformadmin_v1alpha
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: meet_v2
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: memcache_v1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: memcache_v1beta2
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: merchantapi_accounts_v1beta
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: merchantapi_conversions_v1beta
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: merchantapi_datasources_v1beta
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: merchantapi_inventories_v1beta
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: merchantapi_lfp_v1beta
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: merchantapi_notifications_v1beta
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: merchantapi_products_v1beta
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: merchantapi_promotions_v1beta
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: merchantapi_quota_v1beta
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: merchantapi_reports_v1beta
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: metastore_v1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: metastore_v1alpha
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: metastore_v1beta
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: migrationcenter_v1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: migrationcenter_v1alpha1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: ml_v1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: monitoring_v1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: monitoring_v3
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: mybusinessaccountmanagement_v1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: mybusinessbusinesscalls_v1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: mybusinessbusinessinformation_v1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: mybusinesslodging_v1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: mybusinessnotifications_v1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: mybusinessplaceactions_v1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: mybusinessqanda_v1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: mybusinessverifications_v1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: networkconnectivity_v1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: networkconnectivity_v1alpha1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: networkmanagement_v1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: networkmanagement_v1beta1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: networksecurity_v1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: networksecurity_v1beta1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: networkservices_v1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: networkservices_v1beta1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: notebooks_v1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: notebooks_v2
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: oauth2_v2
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: ondemandscanning_v1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: ondemandscanning_v1beta1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: orgpolicy_v2
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: osconfig_v1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: osconfig_v1alpha
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: osconfig_v1beta
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: oslogin_v1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: oslogin_v1alpha
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: oslogin_v1beta
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: pagespeedonline_v5
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: paymentsresellersubscription_v1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: people_v1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: places_v1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: playablelocations_v3
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: playcustomapp_v1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: playdeveloperreporting_v1alpha1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: playdeveloperreporting_v1beta1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: playgrouping_v1alpha1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: playintegrity_v1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: policyanalyzer_v1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: policyanalyzer_v1beta1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: policysimulator_v1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: policysimulator_v1alpha
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: policysimulator_v1beta
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: policysimulator_v1beta1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: policytroubleshooter_v1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: policytroubleshooter_v1beta
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: pollen_v1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: poly_v1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: privateca_v1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: privateca_v1beta1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: prod_tt_sasportal_v1alpha1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: publicca_v1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: publicca_v1alpha1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: publicca_v1beta1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: pubsub_v1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: pubsub_v1beta1a
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: pubsub_v1beta2
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: pubsublite_v1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: rapidmigrationassessment_v1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: readerrevenuesubscriptionlinking_v1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: realtimebidding_v1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: realtimebidding_v1alpha
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: recaptchaenterprise_v1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: recommendationengine_v1beta1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: recommender_v1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: recommender_v1beta1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: redis_v1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: redis_v1beta1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: remotebuildexecution_v1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: remotebuildexecution_v1alpha
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: remotebuildexecution_v2
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: reseller_v1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: resourcesettings_v1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: retail_v2
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: retail_v2alpha
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: retail_v2beta
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: run_v1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: run_v1alpha1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: run_v1beta1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: run_v2
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: runtimeconfig_v1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: runtimeconfig_v1beta1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: safebrowsing_v4
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: safebrowsing_v5
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: sasportal_v1alpha1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: script_v1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: searchads360_v0
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: searchconsole_v1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: secretmanager_v1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: secretmanager_v1beta1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: secretmanager_v1beta2
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: securitycenter_v1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: securitycenter_v1beta1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: securitycenter_v1beta2
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: serviceconsumermanagement_v1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: serviceconsumermanagement_v1beta1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: servicecontrol_v1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: servicecontrol_v2
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: servicedirectory_v1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: servicedirectory_v1beta1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: servicemanagement_v1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: servicenetworking_v1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: servicenetworking_v1beta
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: serviceusage_v1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: serviceusage_v1beta1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: sheets_v4
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: siteVerification_v1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: slides_v1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: smartdevicemanagement_v1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: solar_v1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: sourcerepo_v1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: spanner_v1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: speech_v1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: speech_v1p1beta1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: speech_v2beta1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: sqladmin_v1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: sqladmin_v1beta4
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: storage_v1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: storagetransfer_v1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: streetviewpublish_v1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: sts_v1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: sts_v1beta
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: tagmanager_v1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: tagmanager_v2
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: tasks_v1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: testing_v1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: texttospeech_v1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: texttospeech_v1beta1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: toolresults_v1beta3
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: tpu_v1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: tpu_v1alpha1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: tpu_v2
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: tpu_v2alpha1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: trafficdirector_v2
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: trafficdirector_v3
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: transcoder_v1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: transcoder_v1beta1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: translate_v2
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: translate_v3
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: translate_v3beta1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: travelimpactmodel_v1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: vault_v1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: vectortile_v1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: verifiedaccess_v1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: verifiedaccess_v2
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: versionhistory_v1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: videointelligence_v1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: videointelligence_v1beta2
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: videointelligence_v1p1beta1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: videointelligence_v1p2beta1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: videointelligence_v1p3beta1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: vision_v1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: vision_v1p1beta1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: vision_v1p2beta1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: vmmigration_v1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: vmmigration_v1alpha1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: vmwareengine_v1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: vpcaccess_v1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: vpcaccess_v1beta1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: walletobjects_v1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: webfonts_v1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: webmasters_v3
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: webrisk_v1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: websecurityscanner_v1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: websecurityscanner_v1alpha
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: websecurityscanner_v1beta
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: workflowexecutions_v1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: workflowexecutions_v1beta
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: workflows_v1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: workflows_v1beta
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: workloadmanager_v1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: workspaceevents_v1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: workstations_v1
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: workstations_v1beta
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: youtubeAnalytics_v2
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: youtube_v3
+  pip_package_names:
+  - google-api-python-client
+- module: googleapiclient.discovery
+  name: youtubereporting_v1
+  pip_package_names:
+  - google-api-python-client
