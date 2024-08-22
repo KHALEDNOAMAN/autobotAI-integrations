@@ -2,11 +2,15 @@ from typing import List, Type, Union
 import importlib
 import json
 
+from pydantic import field_validator
+import urllib.parse
+
 from autobotAI_integrations.models import *
-from autobotAI_integrations.models import List
+from autobotAI_integrations.models import List, SDKCreds
 from autobotAI_integrations import (
     BaseSchema,
     BaseService,
+    SDKCreds,
     SteampipeCreds,
     PayloadTask,
     SDKClient,
@@ -18,6 +22,9 @@ import uuid
 
 
 class GoogleAPIsIntegration(GCPIntegration):
+    scopes: List[str] = []
+    user_email: Optional[str] = None
+
     name: Optional[str] = "Google APIs"
     description: Optional[str] = (
         "Google APIs are a set of tools that allow developers to programmatically access and interact with Google's services and data."
@@ -27,6 +34,26 @@ class GoogleAPIsIntegration(GCPIntegration):
         if not kwargs.get("accountId"):
             kwargs["accountId"] = str(uuid.uuid4().hex)
         super().__init__(**kwargs)
+
+    @field_validator("scopes", mode="before")
+    @classmethod
+    def validate_scopes(cls, scopes) -> List[str]:
+        validated_scopes = []
+        if isinstance(scopes, list):
+            return scopes
+        elif isinstance(scopes, str):
+            scopes = scopes.split(", ")
+            for scope in scopes:
+                decoded_url = urllib.parse.unquote(scope)
+                cleaned_url = decoded_url.replace("\n", "")
+                scope = cleaned_url.strip()
+                if scope.startswith("https://"):
+                    validated_scopes.append(scope)
+                else:
+                    raise ValueError("Invalid scope format")
+        if len(validated_scopes) == 0:
+            raise ValueError("At least one valid scope is required")
+        return validated_scopes
 
 
 class GoogleAPIsService(GCPService, BaseService):
@@ -50,8 +77,25 @@ class GoogleAPIsService(GCPService, BaseService):
                     "type": "json",
                     "label": "Credentials JSON",
                     "placeholder": "Enter the Credentials In JSON Format",
+                    "description": "Upload the service account Credentials JSON file obtained from Google Cloud Console.",
                     "required": True,
-                }
+                },
+                {
+                    "name": "scopes",
+                    "type": "textarea",
+                    "label": "Scopes",
+                    "placeholder": "https://www.googleapis.com/auth/gmail.readonly, https://www.googleapis.com/auth/drive",
+                    "description": "Enter multiple OAuth scopes as comma-separated values. Example: https://www.googleapis.com/auth/gmail.readonly, https://www.googleapis.com/auth/drive",
+                    "required": True,
+                },
+                {
+                    "name": "user_email",
+                    "type": "text",
+                    "label": "User Email",
+                    "placeholder": "username@domain.com",
+                    "description": "Enter the email of the user to be impersonated by the service account. This must be a valid user in your Google Workspace domain.",
+                    "required": True,
+                },
             ],
         }
 
@@ -68,11 +112,13 @@ class GoogleAPIsService(GCPService, BaseService):
     def generate_steampipe_creds(self) -> SteampipeCreds:
         creds = self._temp_credentials()
         conf_path = "(~/.steampipe/config/googleworkspace.spc"
-        config = """connection "googleworkspace" {
-  plugin    = "googleworkspace"
+        config = f"""connection "googleworkspace" {{
+  plugin = "googleworkspace"
+  impersonated_user_email = "{self.integration.user_email}"
 
-}
+}}
 """
+        print(config)
         return SteampipeCreds(
             envs=creds,
             plugin_name="googleworkspace",
@@ -90,16 +136,20 @@ class GoogleAPIsService(GCPService, BaseService):
             json.loads(payload_task.creds.envs["GOOGLE_APPLICATION_CREDENTIALS"])
         ).model_dump()
 
-        credentials = Credentials.from_service_account_info(
-            credentials_dict
-        )
+        scopes = payload_task.creds.envs["GOOGLE_APPLICATION_SCOPES"].split(",")
+        credentials = Credentials.from_service_account_info(credentials_dict, scopes=scopes)
+
+        if payload_task.creds.envs.get("IMPERSONATED_USER_EMAIL"):
+            credentials = credentials.with_subject(
+                payload_task.creds.envs["IMPERSONATED_USER_EMAIL"]
+            )
         for client in client_definitions:
             try:
-                print(client.model_dump_json(indent=2))
                 discovery = importlib.import_module(client.module, package=None)
                 name, version = client.name.split("_")
                 clients_classes[client.name] = discovery.build(
-                    serviceName=name, version=version,
+                    serviceName=name,
+                    version=version,
                     credentials=credentials,
                 )
             except BaseException as e:
@@ -112,3 +162,9 @@ class GoogleAPIsService(GCPService, BaseService):
                 "context": payload_task.context,
             }
         ]
+
+    def generate_python_sdk_creds(self, requested_clients=None) -> SDKCreds:
+        envs = super()._temp_credentials()
+        envs["GOOGLE_APPLICATION_SCOPES"] = ",".join(self.integration.scopes)
+        envs["IMPERSONATED_USER_EMAIL"] = self.integration.user_email
+        return SDKCreds(creds={}, envs=envs)
