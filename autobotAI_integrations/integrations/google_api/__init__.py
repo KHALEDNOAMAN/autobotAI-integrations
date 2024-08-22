@@ -118,7 +118,6 @@ class GoogleAPIsService(GCPService, BaseService):
 
 }}
 """
-        print(config)
         return SteampipeCreds(
             envs=creds,
             plugin_name="googleworkspace",
