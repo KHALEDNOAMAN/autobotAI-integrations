@@ -133,9 +133,12 @@ class GithubService(BaseService):
 
     def generate_steampipe_creds(self) -> SteampipeCreds:
         envs = {
-            "GITHUB_BASE_URL": self.integration.base_url if self.integration.base_url not in ["None", None] else "",
             "GITHUB_TOKEN": str(self.integration.token),
         }
+        if re.match(
+            r"^https://github\.[\w.-]+\.com/api/v3/?$", self.integration.base_url
+        ):
+            envs["GITHUB_BASE_URL"] = self.integration.base_url
         conf_path = "~/.steampipe/config/github.spc"
         config = """connection "github" {
   plugin = "github"
