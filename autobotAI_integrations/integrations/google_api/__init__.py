@@ -73,14 +73,6 @@ class GoogleAPIsService(GCPService, BaseService):
             "type": "form",
             "children": [
                 {
-                    "name": "credentials",
-                    "type": "json",
-                    "label": "Credentials JSON",
-                    "placeholder": "Enter the Credentials In JSON Format",
-                    "description": "Upload the service account Credentials JSON file obtained from Google Cloud Console.",
-                    "required": True,
-                },
-                {
                     "name": "scopes",
                     "type": "textarea",
                     "label": "Scopes",
@@ -94,6 +86,14 @@ class GoogleAPIsService(GCPService, BaseService):
                     "label": "User Email",
                     "placeholder": "username@domain.com",
                     "description": "Enter the email of the user to be impersonated by the service account. This must be a valid user in your Google Workspace domain.",
+                    "required": True,
+                },
+                {
+                    "name": "credentials",
+                    "type": "json",
+                    "label": "Credentials JSON",
+                    "placeholder": "Enter the Credentials In JSON Format",
+                    "description": "Upload the service account Credentials JSON file obtained from Google Cloud Console.",
                     "required": True,
                 },
             ],
