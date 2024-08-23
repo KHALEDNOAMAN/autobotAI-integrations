@@ -109,22 +109,31 @@ class GoogleAPIsService(GCPService, BaseService):
         details["compliance_supported"] = False
         return details
 
-    def generate_steampipe_creds(self) -> SteampipeCreds:
-        creds = self._temp_credentials()
-        conf_path = "(~/.steampipe/config/googleworkspace.spc"
-        config = f"""connection "googleworkspace" {{
-  plugin = "googleworkspace"
-  impersonated_user_email = "{self.integration.user_email}"
+    #     def generate_steampipe_creds(self) -> SteampipeCreds:
+    #         creds = self._temp_credentials()
+    #         conf_path = "(~/.steampipe/config/googleworkspace.spc"
+    #         config = f"""connection "googleworkspace" {{
+    #   plugin = "googleworkspace"
+    #   impersonated_user_email = "{self.integration.user_email}"
 
-}}
-"""
-        return SteampipeCreds(
-            envs=creds,
-            plugin_name="googleworkspace",
-            connection_name="googleworkspace",
-            conf_path=conf_path,
-            config=config,
-        )
+    # }}
+    # """
+    #         return SteampipeCreds(
+    #             envs=creds,
+    #             plugin_name="googleworkspace",
+    #             connection_name="googleworkspace",
+    #             conf_path=conf_path,
+    #             config=config,
+    #         )
+
+    @staticmethod
+    def supported_connection_interfaces():
+        return [
+            ConnectionInterfaces.PYTHON_SDK,
+        ]
+
+    def generate_steampipe_creds(self) -> SteampipeCreds:
+        raise NotImplementedError()
 
     def build_python_exec_combinations_hook(
         self, payload_task: PayloadTask, client_definitions: List[SDKClient]
