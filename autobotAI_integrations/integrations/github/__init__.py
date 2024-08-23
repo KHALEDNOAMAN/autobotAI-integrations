@@ -1,19 +1,18 @@
 import importlib
-import os
-import uuid
+import re
 from typing import List, Optional, Union
 
-from pydantic import Field
+from pydantic import Field, field_validator
+import requests
 
 from autobotAI_integrations import BaseSchema, SteampipeCreds, RestAPICreds, SDKCreds, CLICreds, \
     BaseService, ConnectionInterfaces, PayloadTask, SDKClient
-from github import Auth, Github
 
 from autobotAI_integrations.models import IntegrationCategory
 
 
 class GithubIntegration(BaseSchema):
-    base_url: Optional[str] =  None# If enterprise version of github
+    base_url: str =  Field(default="https://api.github.com")# If enterprise version of github
     token: str = Field(default=None, exclude=True)
 
     name: Optional[str] = "GitHub"
@@ -22,9 +21,21 @@ class GithubIntegration(BaseSchema):
         "Popular version control platform for software development, known for its social coding features and large user base."
     )
 
+    @field_validator("base_url", mode="before")
+    @classmethod
+    def validate_base_url(cls, base_url) -> Optional[str]:
+        public_github_pattern = r"^https://api\.github\.com/?$"
+        enterprise_github_pattern = r"^https://github\.[\w.-]+\.com/api/v3/?$"
+        if base_url and base_url != "None":
+            if re.match(public_github_pattern, base_url) or re.match(
+                enterprise_github_pattern, base_url
+            ):
+                return base_url.strip("/")
+            raise ValueError("Invalid GitHub Base URL {}".format(base_url))
+        return "https://api.github.com"
+
 
 class GithubService(BaseService):
-
     def __init__(self, ctx: dict, integration: Union[GithubIntegration, dict]):
         """
         Integration should have all the data regarding the integration
@@ -34,17 +45,35 @@ class GithubService(BaseService):
         super().__init__(ctx, integration)
 
     def _test_integration(self):
+        headers = {
+            "Authorization": f"token {self.integration.token}",
+            "Accept": "application/vnd.github+json",
+        }
+
+        # Try accessing the user endpoint to validate the token and URL
+        user_endpoint = f"{self.integration.base_url}/user"
+
         try:
-            if self.integration.base_url not in ["None", None]:
-                github = Github(
-                    str(self.integration.token), base_url=self.integration.base_url
-                )
+            response = requests.get(user_endpoint, headers=headers)
+
+            if response.status_code == 200:
+                return {"success": True}
+            elif response.status_code == 401:
+                return {
+                    "success": False,
+                    "error": "Error: Unauthorized. Invalid token or token does not have access to this GitHub instance.",
+                }
+            elif response.status_code == 404:
+                return {
+                    "success": False,
+                    "error": "Error: Not Found. Invalid GitHub URL or endpoint.",
+                }
             else:
-                github = Github(str(self.integration.token))
-            user = github.get_user()
-            print(f"Github Username: {user.login}")
-            return {"success": True}
-        except Exception as e:
+                return {
+                    "success": False,
+                    "error": f"Error: Unexpected status code {response.status_code}. Response: {response.text}",
+                }
+        except requests.exceptions.RequestException as e:
             return {"success": False, "error": str(e)}
 
     @staticmethod
@@ -57,7 +86,7 @@ class GithubService(BaseService):
                     "name": "base_url",
                     "type": "text/url",
                     "label": "Github Base URL",
-                    "placeholder": "Enter Base URL",
+                    "placeholder": "Enter Base URL default: https://api.github.com",
                     "description": "Github Base URL if Using Enterprise Version",
                     "required": False,
                 },
@@ -88,13 +117,10 @@ class GithubService(BaseService):
                                             client_definitions: List[SDKClient]) -> list:
         github = importlib.import_module(client_definitions[0].import_library_names[0], package=None)
 
-        if self.integration.base_url not in ["None", None]:
-            github_client = github.Github(
-                payload_task.creds.envs.get("GITHUB_TOKEN"),
-                base_url=payload_task.creds.envs.get("GITHUB_BASE_URL") if payload_task.creds.envs.get("GITHUB_BASE_URL") != "None" else None,
-            )
-        else:
-            github_client = github.Github(payload_task.creds.envs.get("GITHUB_TOKEN"))
+        github_client = github.Github(
+            payload_task.creds.envs.get("GITHUB_TOKEN"),
+            base_url=payload_task.creds.envs.get("GITHUB_BASE_URL"),
+        )
         return [
             {
                 "clients": {
@@ -107,9 +133,12 @@ class GithubService(BaseService):
 
     def generate_steampipe_creds(self) -> SteampipeCreds:
         envs = {
-            "GITHUB_BASE_URL": self.integration.base_url if self.integration.base_url not in ["None", None] else "",
             "GITHUB_TOKEN": str(self.integration.token),
         }
+        if re.match(
+            r"^https://github\.[\w.-]+\.com/api/v3/?$", self.integration.base_url
+        ):
+            envs["GITHUB_BASE_URL"] = self.integration.base_url
         conf_path = "~/.steampipe/config/github.spc"
         config = """connection "github" {
   plugin = "github"
@@ -122,12 +151,8 @@ class GithubService(BaseService):
 
     def generate_python_sdk_creds(self) -> SDKCreds:
         envs = {
-            "GITHUB_BASE_URL": (
-                self.integration.base_url
-                if self.integration.base_url not in ["None", None]
-                else ""
-            ),
-            "GITHUB_TOKEN": self.integration.token,
+            "GITHUB_BASE_URL": self.integration.base_url,
+            "GITHUB_TOKEN": self.integration.token
         }
         return SDKCreds(envs=envs)
 

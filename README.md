@@ -1,6 +1,8 @@
 # autobotAI-integrations
 
-**autobotAI-Integrations** enables seamless connections between diverse workspaces, cloud AI platforms, and various tools to integrate with your code effortlessly. Currently, we support implementations in Python and Steampipe, boasting **38 integrations**, including major cloud providers such as AWS, GCP, and Azure. Additionally, we are continuously adding more integrations to expand our capabilities and better serve your needs.
+**autobotAI-Integrations** enables seamless connections between diverse workspaces, cloud AI platforms, and various tools to integrate with your code effortlessly. Currently, we support implementations in Python and Steampipe, boasting **40 integrations**, including major cloud providers such as AWS, GCP, and Azure. Additionally, we are continuously adding more integrations to expand our capabilities and better serve your needs.
+
+**For more extensive documentation visit**: [documentation](./docs/INTEGRATIONS.md)
 
 ## Installation
 
@@ -84,7 +86,7 @@ handle_payload(payload=payload, print_output=True)
 ### Utilities
 
 - **`utils.some_utility`**: Description of this utility function.
--->
+
 ## Testing
 
 To run tests, you can use `pytest`. First, ensure you have `pytest` installed:
@@ -98,6 +100,7 @@ Run the tests with:
 ```sh
 pytest
 ```
+
 <!--
 ### Test Configuration
 
@@ -125,4 +128,3 @@ For support or inquiries, please contact us at:
 
 - **Email**: support@shunyeka-spl.com
 - **GitHub Issues**: [GitHub Issues Page](https://github.com/shunyeka-spl/autobotAI-integrations/issues)
--->

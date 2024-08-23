@@ -155,54 +155,48 @@ class AWSBedrockService(AIBaseService):
                     "required": True,
                 },
             ],
-            "code": """import json
-import traceback
-
-
+            "code": """
+import json
 def executor(context):
+    sample_json=\"\"\"
+        {
+                "name":"string"(name of the resources)
+                "action_required": 'Boolean',
+                "probability_score": 'int',
+                "confidence_score": 'int',
+                "reason": 'string',
+                "fields_evaluated": ["field 1", "field 2", "field 3", "field 4", "field n"],
+        }
+        \"\"\"
+    user_prompt=f\"\"\"Description for each field that provides context and reason of above json fields.{sample_json}.Instructions \n 1.action_required : this field should be either true or false. It indicate that whether to go with automation or not, based on the  probability_score and confidence_score to  decide whether its feasible to take action or not. \n 2. probability_score :  this field provides probability of the decision for provided prompt. this score should be from 1 - 100. higher score is better indicator to decide if user should automate remediation / response operation for provided data. lower score indicates that manual operations feasible since task mining and process mining from given data indicates that automation of such operations can be overkill or operations overhead.\n 3. confidence_score :  if you (generative AI) need to take assumption because either prompt or given context data do not have enough information or provided json context do not have enough details. this data should be between 0 to 100. lower number means that AI has taken lot of assumptions and whether to automate violation or not that decision may not be accurate. \n 4.reason : this value provides justification to human user, on what basis above provided confidence_score and probability_score calculated by generative AI. this will help human user to improve decision making. \n 5. this value provides field names in fetcher output context json fields. this should be field name only and NOT be individual value of each records.
+    \n. Return JSON in {sample_json} format for each and every prompt JSON 
+    \"\"\"
+    
     client = context["clients"]["bedrock-runtime"]
     prompt = context["params"]["prompt"]
-    # model = context["params"]["model"]
-    model = "meta.llama3-8b-instruct-v1:0"
+    model = context["params"]["model"]
     resources = json.loads(json.dumps(context["params"]["resources"], default=str))
-    prompts = [
-        f"<|start_header_id|>user<|end_header_id|>For each Input dict provided, return a dict with attributes such as, 'name': str name of the resource, 'action_required': boolean that shows is the action advisable or not, 'probability_score': integer that shows the probability of the result being correct, 'confidence_score': integrer that shows the confidence in judgement, 'reason': string that mentions the reason for the judgement, 'fields_evaluated': list of fields that were evaluted for the judgement, the evaluation criterion given is {prompt}. The output should be valid parseable json, do not use any markup language at all, the returned message content should be json parsable. Wait till all data is provided before starting"
-    ]
-    for resource in resources:
-        prompts.append(
-            f"<|start_header_id|>user<|end_header_id|>{json.dumps(resource, default=str)}"
-        )
-    prompts.append(
-        "<|start_header_id|>user<|end_header_id|>All resources are provided, return the result for each resource in the same order. don't give any explaination and retun only the output json."
-    )
-    formatted_prompt = f"<|begin_of_text|>{''.join(prompts)}<|eot_id|><|start_header_id|>assistant<|end_header_id|>"
+    extra_prompt = f'Return JSON for using {user_prompt} for each and every object which is there in {resources} and make the JSON should be accurate and proper it should not be same for every resource using this  {prompt}'
+    final_prompt=f\"\"\"
+            <|begin_of_text|>
+            <|start_header_id|>user<|end_header_id|>
+             Ensure all property names are enclosed in double quotes, and the JSON structure is clean and syntactically correct. Handle multiline strings appropriately to avoid any JSON errors. otherwise my application will fail
+            {extra_prompt}
+            strick warning - Generate a multiple JSON for each and every prompt dont omit any of the resources otherwise my application will fail
+            respond using JSON. without any additional text. Response must not have any additional or tilt symbol (```) or  text except the JSON as JSON array . 
+    \"\"\"
     native_request = {
-        "prompt": formatted_prompt,
+        "prompt": final_prompt,
         "max_gen_len": 2048,
     }
+    
     request = json.dumps(native_request)
-    counter = 0
-    while counter < 5:  # 4 Retries
-        counter = counter + 1
-        response = client.invoke_model(modelId=model, body=request)
-        model_response = json.loads(response["body"].read())
-        try:
-            message_content =  json.loads(model_response["generation"])
-            if message_content:
-                if len(message_content) == len(resources):
-                    for idx, response in enumerate(message_content):
-                        if not resources[idx].get("name") or (resources[idx].get("name") and response["name"] == resources[idx]["name"]):
-                            resources[idx]["decision"] = response
-                        else:
-                            for resource in resources:
-                                if response["name"] == resource["name"]:
-                                    resource["decision"] = response
-                    break
-        except:
-            print(type(model_response["generation"]), model_response["generation"])
-            traceback.print_exc()
-    print("Completed Evaluation with ", counter, "tries.")
-    return resources
+    
+    response = client.invoke_model(modelId=model, body=request)
+    model_output = json.loads(response['body'].read())
+    
+    print("response is ",json.loads(model_output['generation']))
+    return json.loads(model_output['generation'])
 """,
         }
 
