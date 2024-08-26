@@ -154,7 +154,9 @@ class GoogleAPIsService(GCPService, BaseService):
         for client in client_definitions:
             try:
                 discovery = importlib.import_module(client.module, package=None)
-                name, version = client.name.split("_")
+                # TODO: Use different version and client separator than '_'
+                name, version = client.name.split("_", 1)
+                print(f"API name: {name}, API version: {version}")
                 clients_classes[client.name] = discovery.build(
                     serviceName=name,
                     version=version,
