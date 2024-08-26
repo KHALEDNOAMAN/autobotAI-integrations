@@ -23,3 +23,8 @@
   name: NetworkManagementClient
   pip_package_names:
     - azure-mgmt-network
+- class_name: MonitorManagementClient
+  module: azure.mgmt.monitor
+  name: MonitorManagementClient
+  pip_package_names:
+    - azure-mgmt-monitor
