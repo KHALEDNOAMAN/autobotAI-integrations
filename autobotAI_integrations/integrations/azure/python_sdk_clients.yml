@@ -28,3 +28,8 @@
   name: MonitorManagementClient
   pip_package_names:
     - azure-mgmt-monitor
+- class_name: AuthorizationManagementClient
+  module: azure.mgmt.authorization
+  name: AuthorizationManagementClient
+  pip_package_names:
+    - azure-mgmt-authorization
