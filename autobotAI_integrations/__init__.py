@@ -218,17 +218,30 @@ def executor(context):
 
     def build_python_exec_combinations(self, payload_task: PayloadTask):
         client_definitions = self.find_client_definitions(payload_task.clients)
-        for client in client_definitions:
-            if client.pip_package_names:
+        # Prevents the reinstallation of the same package in different clients
+        current_installation = set()
+        # Installation dir by 'idx' to prevent packages co-interference
+        for idx, client in enumerate(client_definitions):
+            if client.pip_package_names and not set(client.pip_package_names).issubset(current_installation):
                 logger.info(f"Installing {client.pip_package_names}")
                 try:
-                    subprocess.check_output(['pip', 'show', " ".join(client.pip_package_names)])
+                    # prevents the reinstallation of the same package for different tasks
+                    subprocess.check_call(
+                        ["pip", "show", " ".join(client.pip_package_names)],
+                    )
                     logger.info(f"Requirements already installed for {client.pip_package_names}")
                 except subprocess.CalledProcessError:
                     subprocess.check_call(
-                        [sys.executable, '-m', 'pip', 'install', " ".join(client.pip_package_names), "-t", "/tmp/",
-                         "--no-cache-dir"])
-                    sys.path.insert(1, '/tmp/')
+                        [
+                            sys.executable, "-m",
+                            "pip", "install", " ".join(client.pip_package_names),
+                            "-t", f"/tmp/{idx}/", "--no-cache-dir", "--upgrade"
+                        ]
+                    )
+                    sys.path.insert(1,  f"/tmp/{idx}/")
+                    current_installation.update(client.pip_package_names)
+                except Exception as e:
+                    logger.exception(f"Error occurred while installing packages: {e}")
 
         return self.build_python_exec_combinations_hook(payload_task, client_definitions)
 
