@@ -174,7 +174,7 @@ class AWSService(BaseService):
         config = """connection "aws" {
   plugin = "aws"
   regions = ["*"]
-  ignore_error_codes = ["AccessDenied", "AccessDeniedException", "NotAuthorized", "UnauthorizedOperation", "UnrecognizedClientException", "AuthorizationError"]
+  ignore_error_codes = ["InvalidToken", "AccessDenied", "AccessDeniedException", "NotAuthorized", "UnauthorizedOperation", "UnrecognizedClientException", "AuthorizationError"]
 }
 """
         return SteampipeCreds(envs=creds, plugin_name="aws", connection_name="aws",
