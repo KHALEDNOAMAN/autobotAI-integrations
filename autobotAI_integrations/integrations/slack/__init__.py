@@ -104,7 +104,7 @@ class SlackService(BaseService):
                             "type": "text",
                             "label": "Slack Bot Token",
                             "placeholder": "Enter the Slack Token",
-                            "description": "Scopes needed: channels:read, chat:write.customize, chat:write, chat:write.public, groups:read",
+                            "description": "Scopes needed: channels:read, groups:read, im:read, mpin:read",
                             "required": True,
                         },
                     ],

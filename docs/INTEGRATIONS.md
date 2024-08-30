@@ -17,6 +17,7 @@ Below is a comprehensive overview of the support for both No-Code and Code Actio
 |:---:|:---:|:---:|:---:|
 | <img src="../autobotAI_integrations/integrations/abuseipdb/logo-img/light.svg" alt="AbuseIPDB" width="40" height="40"><br>**AbuseIPDB** | ✅ | ❌ | [link](./abuseipdb/Integrate.md)|
 | <img src="../autobotAI_integrations/integrations/google_api/logo-img/light.svg" alt="Google APIs" width="40" height="40"><br>**Google APIs** | ✅ | ✅ | [link](./google_api/Integrate.md)|
+| <img src="../autobotAI_integrations/integrations/slack/logo-img/light.svg" alt="Slack" width="40" height="40"><br>**Slack** | ✅ | ✅ | [link](./slack/Integrate.md)|
 <!--
 | <img src="../autobotAI_integrations/integrations/aws/logo-img/light.svg" alt="AWS" width="40" height="40"><br>**AWS** | ✅ | ✅ | [link](./aws/Integrate.md)|
 | <img src="../autobotAI_integrations/integrations/aws_athena/logo-img/light.svg" alt="AWS Athena" width="40" height="40"><br>**AWS Athena** | ❌ | ✅ | [link](./aws_athena/Integrate.md)|
@@ -50,7 +51,6 @@ Below is a comprehensive overview of the support for both No-Code and Code Actio
 | <img src="../autobotAI_integrations/integrations/prometheus/logo-img/light.svg" alt="Prometheus" width="40" height="40"><br>**Prometheus** | ✅ | ✅ | [link](./prometheus/Integrate.md)|
 | <img src="../autobotAI_integrations/integrations/python/logo-img/light.svg" alt="Python" width="40" height="40"><br>**Python** | ❌ | ✅ | [link](./python/Integrate.md)|
 | <img src="../autobotAI_integrations/integrations/shodan/logo-img/light.svg" alt="Shodan" width="40" height="40"><br>**Shodan** | ✅ | ✅ | [link](./shodan/Integrate.md)|
-| <img src="../autobotAI_integrations/integrations/slack/logo-img/light.svg" alt="Slack" width="40" height="40"><br>**Slack** | ✅ | ✅ | [link](./slack/Integrate.md)|
 | <img src="../autobotAI_integrations/integrations/splunk/logo-img/light.svg" alt="Splunk" width="40" height="40"><br>**Splunk** | ✅ | ✅ | [link](./splunk/Integrate.md)|
 | <img src="../autobotAI_integrations/integrations/trivy/logo-img/light.svg" alt="Trivy" width="40" height="40"><br>**Trivy** | ✅ | ❌ | [link](./trivy/Integrate.md)|
 | <img src="../autobotAI_integrations/integrations/uptimerobot/logo-img/light.svg" alt="Uptimerobot" width="40" height="40"><br>**Uptimerobot** | ✅ | ❌ | [link](./uptimerobot/Integrate.md)|
