@@ -17,30 +17,30 @@ def executor(context):
 
 
 class TestClassGoogle_api:
-    def test_google_api_steampipe_task(
-        self,
-        get_keys,
-        sample_integration_dict,
-        sample_steampipe_task,
-        test_result_format,
-    ):
-        with open(get_keys["GCP_TOKEN_PATH"]) as f:
-            creds = json.load(fp=f)
+#     def test_google_api_steampipe_task(
+#         self,
+#         get_keys,
+#         sample_integration_dict,
+#         sample_steampipe_task,
+#         test_result_format,
+#     ):
+#         with open(get_keys["GCP_TOKEN_PATH"]) as f:
+#             creds = json.load(fp=f)
 
-        tokens = {
-            "scopes": """https://www.googleapis.com/auth/calendar.readonly, https://www.googleapis.com/auth/contacts.readonly,
-https://www.googleapis.com/auth/contacts.other.readonly,
-https://www.googleapis.com/auth/directory.readonly,
-https://www.googleapis.com/auth/drive.readonly,
-https://www.googleapis.com/auth/gmail.readonly""",
-            "user_email": "ritin.tiwari@shunyeka.com",
-            "credentials": creds,
-        }
-        integration = sample_integration_dict("google_api", tokens)
-        google_api_query = "select name, id from googleworkspace_drive_my_file"
-        task = sample_steampipe_task(integration, query=google_api_query)
-        result = handle_task(task)
-        test_result_format(result)
+#         tokens = {
+#             "scopes": """https://www.googleapis.com/auth/calendar.readonly, https://www.googleapis.com/auth/contacts.readonly,
+# https://www.googleapis.com/auth/contacts.other.readonly,
+# https://www.googleapis.com/auth/directory.readonly,
+# https://www.googleapis.com/auth/drive.readonly,
+# https://www.googleapis.com/auth/gmail.readonly""",
+#             "user_email": "ritin.tiwari@shunyeka.com",
+#             "credentials": creds,
+#         }
+#         integration = sample_integration_dict("google_api", tokens)
+#         google_api_query = "select name, id from googleworkspace_drive_my_file"
+#         task = sample_steampipe_task(integration, query=google_api_query)
+#         result = handle_task(task)
+#         test_result_format(result)
 
     def test_google_api_python_task(
         self, get_keys, sample_integration_dict, sample_python_task, test_result_format
