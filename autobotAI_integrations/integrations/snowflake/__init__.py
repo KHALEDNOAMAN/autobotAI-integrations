@@ -23,7 +23,8 @@ class SnowflakeIntegration(BaseSchema):
     account: str
     username: str
     password: Optional[str] = Field(default=None, exclude=True)
-    region: str
+    account_locator: Optional[str] = None
+    region: Optional[str] = None
 
     category: Optional[str] = IntegrationCategory.MONITORING_TOOLS.value
     description: Optional[str] = (
@@ -54,12 +55,13 @@ class SnowflakeService(BaseService):
                 headers={"Content-Type": "application/json"},
                 json={
                     "data": {
-                        "LOGIN_NAME": {self.integration.username},
-                        "PASSWORD": {self.integration.password},
+                        "ACCOUNT": self.integration.account,
+                        "LOGIN_NAME": self.integration.username,
+                        "PASSWORD": self.integration.password,
                     }
                 },
             )
-            if response.status_code == 200:
+            if response.status_code == 200 and response.json().get('success'):
                 return {"success": True}
             else:
                 return {
@@ -97,12 +99,19 @@ class SnowflakeService(BaseService):
                     "placeholder": "password",
                 },
                 {
+                    "name": "account_locator",
+                    "type": "text",
+                    "label": "Account Locator",
+                    "required": True,
+                    "placeholder": "Account Locator",
+                },
+                {
                     "name": "region",
                     "type": "text",
                     "label": "Region",
                     "required": True,
-                    "placeholder": "region code",
-                }
+                    "placeholder": "example: ap-southeast-1",
+                },
             ],
         }
 
@@ -132,7 +141,7 @@ class SnowflakeService(BaseService):
                 "clients": {
                     "snowflake": connector.connect(
                         user=payload_task.creds.envs.get("SNOWFLAKE_USERNAME"),
-                        password=payload_task.creds.envs.get("GITGUARDIAN_PASSWORD"),
+                        password=payload_task.creds.envs.get("SNOWFLAKE_PASSWORD"),
                         account=payload_task.creds.envs.get("SNOWFLAKE_ACCOUNT"),
                     )
                 },
@@ -142,19 +151,17 @@ class SnowflakeService(BaseService):
         ]
 
     def generate_steampipe_creds(self) -> SteampipeCreds:
-        envs = self._temp_credentials()
         conf_path = "~/.steampipe/config/snowflake.spc"
         config_str = f"""connection "snowflake" {{
   plugin = "snowflake"
-  account = "{envs['SNOWFLAKE_ACCOUNT']}"
-  user = "{envs['SNOWFLAKE_USERNAME']}"
-  password = "{envs['SNOWFLAKE_PASSWORD']}"
-  role = "{envs['SNOWFLAKE_ROLE']}"
-  region = "{envs['SNOWFLAKE_REGION']}"
+  account = "{self.integration.account_locator}"
+  user = "{self.integration.username}"
+  password = "{self.integration.password}"
+  region = "{self.integration.region}"
 }}
 """
         return SteampipeCreds(
-            envs=envs,
+            envs={},
             plugin_name="snowflake",
             connection_name="snowflake",
             conf_path=conf_path,
@@ -162,32 +169,9 @@ class SnowflakeService(BaseService):
         )
 
     def generate_python_sdk_creds(self) -> SDKCreds:
-        envs = self._temp_credentials()
+        envs = {
+            "SNOWFLAKE_ACCOUNT": self.integration.account,
+            "SNOWFLAKE_USERNAME": self.integration.username,
+            "SNOWFLAKE_PASSWORD": self.integration.password,
+        }
         return SDKCreds(envs=envs)
-
-    def _temp_credentials(self):
-        envs = {}
-        try:
-            response = requests.post(
-                f"https://{self.integration.account}.snowflakecomputing.com/session/v1/login-request",
-                headers={"Content-Type": "application/json"},
-                json={
-                    "data": {
-                        "LOGIN_NAME": {self.integration.username},
-                        "PASSWORD": {self.integration.password},
-                    }
-                },
-            )
-            if response.status_code == 200:
-                envs["SNOWFLAKE_ACCOUNT"] = self.integration.account
-                envs["SNOWFLAKE_USERNAME"] = self.integration.username
-                envs["SNOWFLAKE_PASSWORD"] = response.json()["data"]["token"]
-                envs["SNOWFLAKE_ROLE"] = response.json()["data"]["sessionInfo"]["roleName"]
-                envs["SNOWFLAKE_REGION"] = self.integration.region
-        except KeyError as e:
-            logger.ERROR(str(e))
-            logger.DEBUG(response.json())
-        except BaseException as e:
-            logger.ERROR(str(e))
-        finally:
-            return envs
