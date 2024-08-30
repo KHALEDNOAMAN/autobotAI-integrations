@@ -33,7 +33,7 @@ class SnowflakeIntegration(BaseSchema):
     
     def __init__(self, **kwargs):
         if "accountId" not in kwargs:
-            kwargs["accountId"] = f"{kwargs.get('account')}_{kwargs('region')}_{kwargs.get('username')}"
+            kwargs["accountId"] = f"{kwargs.get('account')}_{kwargs.get('region')}_{kwargs.get('username')}"
         super().__init__(**kwargs)
 
 
