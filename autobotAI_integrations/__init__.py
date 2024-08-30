@@ -137,6 +137,8 @@ def executor(context):
 
     @classmethod
     def get_steampipe_tables(cls) -> List[dict]:
+        if ConnectionInterfaces.STEAMPIPE not in cls.supported_connection_interfaces():
+            return []
         base_path = os.path.dirname(inspect.getfile(cls))
         integration_type = cls.get_integration_type()
         with open(path.join(base_path, 'inventory.json')) as f:
@@ -146,6 +148,8 @@ def executor(context):
 
     @classmethod
     def get_all_python_sdk_clients(cls,integration_type=None):
+        if ConnectionInterfaces.PYTHON_SDK not in cls.supported_connection_interfaces():
+            return []
         base_path = os.path.dirname(inspect.getfile(cls))
         if integration_type!=None:
             base_path = base_path + f'/integrations/{integration_type}'
