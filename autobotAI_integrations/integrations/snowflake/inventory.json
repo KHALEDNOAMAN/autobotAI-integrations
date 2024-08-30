@@ -1,0 +1,386 @@
+{
+    "snowflake": [
+        {
+            "name": "snowflake_account_grant",
+            "all_columns": [
+                "account",
+                "created_on",
+                "grant_option",
+                "granted_by",
+                "granted_on",
+                "granted_to",
+                "grantee_name",
+                "name",
+                "privilege",
+                "region"
+            ],
+            "included": [],
+            "excluded": [],
+            "inventory_supported": true
+        },
+        {
+            "name": "snowflake_account_parameter",
+            "all_columns": [
+                "account",
+                "default",
+                "description",
+                "key",
+                "level",
+                "region",
+                "type",
+                "value"
+            ],
+            "included": [],
+            "excluded": [],
+            "inventory_supported": true
+        },
+        {
+            "name": "snowflake_database",
+            "all_columns": [
+                "account",
+                "comment",
+                "created_on",
+                "is_current",
+                "is_default",
+                "name",
+                "options",
+                "origin",
+                "owner",
+                "region",
+                "retention_time"
+            ],
+            "included": [],
+            "excluded": [],
+            "inventory_supported": true
+        },
+        {
+            "name": "snowflake_database_grant",
+            "all_columns": [
+                "account",
+                "created_on",
+                "database",
+                "grant_option",
+                "granted_by",
+                "granted_on",
+                "granted_to",
+                "grantee_name",
+                "privilege",
+                "region"
+            ],
+            "included": [],
+            "excluded": [],
+            "inventory_supported": true
+        },
+        {
+            "name": "snowflake_login_history",
+            "all_columns": [
+                "account",
+                "client_ip",
+                "error_code",
+                "error_message",
+                "event_id",
+                "event_timestamp",
+                "event_type",
+                "first_authentication_factor",
+                "is_success",
+                "region",
+                "related_event_id",
+                "reported_client_type",
+                "reported_client_version",
+                "second_authentication_factor",
+                "user_name"
+            ],
+            "included": [],
+            "excluded": [],
+            "inventory_supported": true
+        },
+        {
+            "name": "snowflake_network_policy",
+            "all_columns": [
+                "account",
+                "allowed_ip_list",
+                "blocked_ip_list",
+                "comment",
+                "created_on",
+                "entries_in_allowed_ip_list",
+                "entries_in_blocked_ip_list",
+                "name",
+                "region"
+            ],
+            "included": [],
+            "excluded": [],
+            "inventory_supported": true
+        },
+        {
+            "name": "snowflake_resource_monitor",
+            "all_columns": [
+                "account",
+                "comment",
+                "created_on",
+                "credit_quota",
+                "end_time",
+                "frequency",
+                "level",
+                "name",
+                "notify_at",
+                "notify_users",
+                "owner",
+                "region",
+                "remaining_credits",
+                "start_time",
+                "suspend_at",
+                "suspend_immediately_at",
+                "used_credits"
+            ],
+            "included": [],
+            "excluded": [],
+            "inventory_supported": true
+        },
+        {
+            "name": "snowflake_role",
+            "all_columns": [
+                "account",
+                "assigned_to_users",
+                "comment",
+                "created_on",
+                "granted_roles",
+                "granted_to_roles",
+                "is_current",
+                "is_default",
+                "is_inherited",
+                "name",
+                "owner",
+                "region"
+            ],
+            "included": [],
+            "excluded": [],
+            "inventory_supported": true
+        },
+        {
+            "name": "snowflake_role_grant",
+            "all_columns": [
+                "account",
+                "created_on",
+                "granted_by",
+                "granted_to",
+                "grantee_name",
+                "region",
+                "role"
+            ],
+            "included": [],
+            "excluded": [],
+            "inventory_supported": true
+        },
+        {
+            "name": "snowflake_schemata",
+            "all_columns": [
+                "account",
+                "catalog_id",
+                "catalog_name",
+                "comment",
+                "created",
+                "deleted",
+                "is_managed_access",
+                "is_transient",
+                "last_altered",
+                "region",
+                "retention_time",
+                "schema_id",
+                "schema_name",
+                "schema_owner"
+            ],
+            "included": [],
+            "excluded": [],
+            "inventory_supported": true
+        },
+        {
+            "name": "snowflake_session",
+            "all_columns": [
+                "account",
+                "authentication_method",
+                "client_application_id",
+                "client_application_version",
+                "client_build_id",
+                "client_environment",
+                "client_version",
+                "created_on",
+                "login_event_id",
+                "region",
+                "session_id",
+                "user_name"
+            ],
+            "included": [],
+            "excluded": [],
+            "inventory_supported": true
+        },
+        {
+            "name": "snowflake_session_policy",
+            "all_columns": [
+                "account",
+                "comment",
+                "created_on",
+                "database_name",
+                "kind",
+                "name",
+                "owner",
+                "region",
+                "schema_name",
+                "session_idle_timeout_mins",
+                "session_ui_idle_timeout_mins"
+            ],
+            "included": [],
+            "excluded": [],
+            "inventory_supported": true
+        },
+        {
+            "name": "snowflake_user",
+            "all_columns": [
+                "account",
+                "comment",
+                "created_on",
+                "custom_landing_page_url",
+                "custom_landing_page_url_flush_next_ui_load",
+                "days_to_expiry",
+                "default_namespace",
+                "default_role",
+                "default_secondary_roles",
+                "default_warehouse",
+                "disabled",
+                "display_name",
+                "email",
+                "expires_at_time",
+                "ext_authn_duo",
+                "ext_authn_uid",
+                "first_name",
+                "has_password",
+                "has_rsa_public_key",
+                "last_name",
+                "last_success_login",
+                "locked_until_time",
+                "login_name",
+                "mins_to_bypass_mfa",
+                "mins_to_bypass_network_policy",
+                "mins_to_unlock",
+                "must_change_password",
+                "name",
+                "owner",
+                "password_last_set_time",
+                "region",
+                "rsa_public_key",
+                "rsa_public_key_2",
+                "rsa_public_key_2_fp",
+                "rsa_public_key_fp",
+                "snowflake_lock",
+                "snowflake_support"
+            ],
+            "included": [],
+            "excluded": [],
+            "inventory_supported": true
+        },
+        {
+            "name": "snowflake_user_grant",
+            "all_columns": [
+                "account",
+                "created_on",
+                "granted_by",
+                "granted_to",
+                "region",
+                "role",
+                "username"
+            ],
+            "included": [],
+            "excluded": [],
+            "inventory_supported": true
+        },
+        {
+            "name": "snowflake_view",
+            "all_columns": [
+                "account",
+                "comment",
+                "created_on",
+                "database_name",
+                "is_materialized",
+                "is_secure",
+                "name",
+                "owner",
+                "region",
+                "schema_name",
+                "text"
+            ],
+            "included": [],
+            "excluded": [],
+            "inventory_supported": true
+        },
+        {
+            "name": "snowflake_view_grant",
+            "all_columns": [
+                "account",
+                "created_on",
+                "database_name",
+                "grant_option",
+                "granted_by",
+                "granted_on",
+                "granted_to",
+                "grantee_name",
+                "privilege",
+                "region",
+                "schema_name",
+                "view_name"
+            ],
+            "included": [],
+            "excluded": [],
+            "inventory_supported": true
+        },
+        {
+            "name": "snowflake_warehouse",
+            "all_columns": [
+                "account",
+                "auto_resume",
+                "auto_suspend",
+                "available",
+                "comment",
+                "created_on",
+                "is_current",
+                "is_default",
+                "max_cluster_count",
+                "min_cluster_count",
+                "name",
+                "other",
+                "owner",
+                "provisioning",
+                "queued",
+                "quiescing",
+                "region",
+                "resource_monitor",
+                "resumed_on",
+                "running",
+                "scaling_policy",
+                "size",
+                "started_clusters",
+                "state",
+                "type",
+                "updated_on"
+            ],
+            "included": [],
+            "excluded": [],
+            "inventory_supported": true
+        },
+        {
+            "name": "snowflake_warehouse_metering_history",
+            "all_columns": [
+                "account",
+                "credits_used",
+                "credits_used_cloud_services",
+                "credits_used_compute",
+                "end_time",
+                "region",
+                "start_time",
+                "warehouse_id",
+                "warehouse_name"
+            ],
+            "included": [],
+            "excluded": [],
+            "inventory_supported": true
+        }
+    ]
+}
