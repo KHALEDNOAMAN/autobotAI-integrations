@@ -74,7 +74,7 @@ class SnowflakeService(BaseService):
     @staticmethod
     def get_forms():
         return {
-            "label": "Email",
+            "label": "Snowflake",
             "type": "form",
             "children": [
                 {
