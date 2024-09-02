@@ -33,3 +33,8 @@
   name: AuthorizationManagementClient
   pip_package_names:
     - azure-mgmt-authorization
+- class_name: LogsQueryClient
+  module: azure.monitor.query
+  name: LogsQueryClient
+  pip_package_names:
+    - azure-monitor-query

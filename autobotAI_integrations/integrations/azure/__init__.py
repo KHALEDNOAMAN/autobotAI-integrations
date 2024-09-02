@@ -127,10 +127,15 @@ class AzureService(BaseService):
                 client_module = importlib.import_module(client.module, package=None)
                 if hasattr(client_module, client.class_name):
                     cls = getattr(client_module, client.class_name)
-                    clients_classes[client.class_name] = cls(
-                        credential=credential,
-                        subscription_id=payload_task.creds.envs.get("AZURE_SUBSCRIPTION_ID"),
-                    )
+                    try:
+                        clients_classes[client.class_name] = cls(
+                            credential=credential,
+                            subscription_id=payload_task.creds.envs.get("AZURE_SUBSCRIPTION_ID"),
+                        )
+                    except BaseException as e:
+                        clients_classes[client.class_name] = cls(
+                            credential=credential
+                        )
             except BaseException as e:
                 print(e)
                 continue
