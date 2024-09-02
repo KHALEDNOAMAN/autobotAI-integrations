@@ -61,8 +61,14 @@ class SnowflakeService(BaseService):
                     }
                 },
             )
-            if response.status_code == 200 and response.json().get('success'):
-                return {"success": True}
+            if response.status_code == 200:
+                if response.json().get('success'):
+                    return {"success": True}
+                else:
+                    return {
+                        "success": False,
+                        "error": "Incorrect username or password",
+                    }
             else:
                 return {
                     "success": False,
