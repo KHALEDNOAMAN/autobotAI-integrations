@@ -98,20 +98,20 @@ class SnowflakeService(BaseService):
                     "required": True,
                     "placeholder": "password",
                 },
-                {
-                    "name": "account_locator",
-                    "type": "text",
-                    "label": "Account Locator",
-                    "required": True,
-                    "placeholder": "Account Locator",
-                },
-                {
-                    "name": "region",
-                    "type": "text",
-                    "label": "Region",
-                    "required": True,
-                    "placeholder": "example: ap-southeast-1",
-                },
+                # {
+                #     "name": "account_locator",
+                #     "type": "text",
+                #     "label": "Account Locator",
+                #     "required": True,
+                #     "placeholder": "Account Locator",
+                # },
+                # {
+                #     "name": "region",
+                #     "type": "text",
+                #     "label": "Region",
+                #     "required": True,
+                #     "placeholder": "example: ap-southeast-1",
+                # },
             ],
         }
 
@@ -123,7 +123,7 @@ class SnowflakeService(BaseService):
     def supported_connection_interfaces():
         return [
             ConnectionInterfaces.PYTHON_SDK,
-            ConnectionInterfaces.STEAMPIPE,
+            # ConnectionInterfaces.STEAMPIPE,
         ]
 
     @classmethod
