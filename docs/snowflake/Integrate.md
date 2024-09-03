@@ -57,4 +57,3 @@ Create workflows that interact with Snowflake based on predefined conditions wit
 
 - [Snowflake Documentation](https://docs.snowflake.com/)
 - [SQL Reference Guide](https://docs.snowflake.com/en/sql-reference.html)
-- [Account Setup and Configuration](https://docs.snowflake.com/en/user-guide/admin-account-usage.html)
