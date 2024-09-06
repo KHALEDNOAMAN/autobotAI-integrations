@@ -49,7 +49,7 @@ class SteampipeCreds(BaseCreds):
 class RestAPICreds(BaseCreds):
     connection_interface: ClassVar[ConnectionInterfaces] = ConnectionInterfaces.REST_API
     creds_type: str = ConnectionInterfaces.REST_API.value
-    api_url: str
+    base_url: str
     token: str
     headers: dict
 
@@ -77,7 +77,6 @@ class CLICreds(BaseCreds):
     envs: dict
     installer_check: str
     install_command: str
-
 
 # Setting default to None
 class BaseSchema(IntegrationSchema):

@@ -36,6 +36,8 @@ def handle_task(task: PayloadTask) -> TaskResult:
         output = service.python_sdk_processor(task)
     elif task.connection_interface == ConnectionInterfaces.STEAMPIPE:
         output = service.execute_steampipe_task(task)
+    elif task.connection_interface == ConnectionInterfaces.REST_API:
+        output = service.execute_rest_api_task(task)
     else:
         raise Exception("Invalid task.connection_interface = {}".format(task.connection_interface))
 

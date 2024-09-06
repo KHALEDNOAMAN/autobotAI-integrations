@@ -3,11 +3,12 @@ from datetime import datetime
 import importlib.machinery
 import importlib.util
 import traceback
+from typing import List
 import uuid
 from pathlib import Path
 import json
 
-from autobotAI_integrations.payload_schema import PayloadTask
+from autobotAI_integrations.payload_schema import Param, PayloadTask
 
 
 def fromisoformat(strdate):
@@ -275,3 +276,41 @@ def oscf_based_steampipe_json(data, integration_type, integration_id, query):
                 }
             )
     return result
+
+def get_restapi_validated_params(params: List[Param]):
+    filtered_params = {
+        "headers": {},
+        "query_parameters": {},
+        "path_parameters": {},
+        "json": {},
+        "method": None,
+    }
+    for param in params:
+        if param.params_type == "headers":
+            for key, value in param.values.items():
+                if key.lower() == "authorization":
+                    raise ValueError("Authorization header is not allowed.")
+                filtered_params["headers"][key] = value
+        elif param.params_type == "header":
+            if param.values.lower() == "authorization":
+                raise ValueError("Authorization header is not allowed.")
+            filtered_params["headers"][param.name] = param.values
+        elif param.params_type == "method":
+            if not isinstance(param.values, str):
+                raise ValueError("Method must be a string.")
+            filtered_params["method"] = param.values.upper()
+        elif param.params_type == "query":
+            if param.values is None:
+                continue
+            filtered_params["query_parameters"][param.name] = param.values
+        elif param.params_type == "path":
+            filtered_params["path_parameters"][param.name] = param.values
+        elif param.params_type == "body":
+            if filtered_params["json"]:
+                raise ValueError("Only one JSON body parameter is Allowed")
+            filtered_params["json"] = param.values
+        elif param.params_type == "timeout":
+            if not isinstance(param.values, int):
+                raise ValueError("Timeout must be an integer.")
+            filtered_params["timeout"] = params.values
+    return filtered_params
