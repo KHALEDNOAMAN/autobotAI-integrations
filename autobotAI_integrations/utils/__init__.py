@@ -292,7 +292,7 @@ def get_restapi_validated_params(params: List[Param]):
                     raise ValueError("Authorization header is not allowed.")
                 filtered_params["headers"][key] = value
         elif param.params_type == "header":
-            if param.values.lower() == "authorization":
+            if param.name.lower() == "authorization":
                 raise ValueError("Authorization header is not allowed.")
             filtered_params["headers"][param.name] = param.values
         elif param.params_type == "method":
