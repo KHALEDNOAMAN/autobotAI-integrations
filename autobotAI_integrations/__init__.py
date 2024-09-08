@@ -17,6 +17,7 @@ import yaml
 from pydantic import BaseModel
 from autobotAI_integrations.integration_schema import IntegrationSchema, IntegrationStates
 from autobotAI_integrations.models import *
+from autobotAI_integrations.open_api_schema import OpenAPIAction
 from autobotAI_integrations.payload_schema import PayloadTask, Payload, Param
 from autobotAI_integrations.utils.logging_config import logger
 from autobotAI_integrations.utils import (
@@ -160,7 +161,7 @@ def executor(context):
             return yaml.safe_load(f)
 
     @classmethod
-    def get_all_rest_api_actions(cls):
+    def get_all_rest_api_actions(cls) -> List[OpenAPIAction]:
         if ConnectionInterfaces.REST_API not in cls.supported_connection_interfaces():
             return []
         base_path = os.path.dirname(inspect.getfile(cls))
