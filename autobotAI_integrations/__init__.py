@@ -511,7 +511,11 @@ def executor(context):
             response.raise_for_status()  # Raises an exception for HTTP errors
             # sending json, and non json response
             if response.headers.get("Content-Type", "").startswith("application/json"):
-                return response.json()
+                try:
+                    response = response.json()
+                    return response
+                except json.decoder.JSONDecodeError:
+                    return response.text
             else:
                 return response.text
         except requests.exceptions.RequestException as e:
