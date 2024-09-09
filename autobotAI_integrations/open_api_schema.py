@@ -18,12 +18,10 @@ class OpenAPIAction(BaseModel):
     user_id: str = None
     code: str
     integration_type: str
-    clients: Optional[List[str]] = None
+    clients: Optional[List[str]] = []
     executable_type: Optional[str] = ConnectionInterfaces.REST_API.value
     category: Optional[str] = None
-    parameters_definition: Optional[List[OpenAPIPathParams]] = None
-    created_at: Optional[str] = None
-    updated_at: Optional[str] = None
+    parameters_definition: Optional[List[OpenAPIPathParams]] = []
 
 
 class OpenAPIPathModel(BaseModel):
