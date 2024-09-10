@@ -90,3 +90,4 @@ class BaseSchema(IntegrationSchema):
         }
     )
     category: Optional[IntegrationCategory] = None
+    auth_type: Optional[str] = None
