@@ -52,6 +52,7 @@ class RestAPICreds(BaseCreds):
     base_url: str
     token: str
     headers: dict
+    query_params: dict = dict()
 
 
 class Client(BaseModel):

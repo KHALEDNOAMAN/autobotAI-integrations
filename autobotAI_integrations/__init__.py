@@ -571,7 +571,10 @@ def executor(context):
                     "Content-Type": "application/json",
                     **payload_task.creds.headers,
                 },
-                params=params.get("query_parameters", None),
+                params={
+                    **payload_task.creds.query_params,
+                    **params.get("query_parameters", None),
+                },
                 json=params.get("json", None),
                 timeout=params.get("timeout", 10),
             )
