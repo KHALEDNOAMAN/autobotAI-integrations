@@ -10,7 +10,7 @@ import traceback
 from enum import Enum
 from os import path
 from pathlib import Path
-from typing import Optional, Dict, Any, List, Callable
+from typing import Optional, Dict, Any, List, Callable, Union
 
 import requests
 import yaml
@@ -492,9 +492,11 @@ def executor(context):
         params: Optional[Dict[str, Any]] = None,
         json: Optional[Dict[str, Any]] = None,
         timeout: int = 10,
-    ) -> Dict[str, Any]:
+    ) -> Union[Dict[str, Any], List[Dict[str, Any]]]:
+
         logger.info(f"Making {method} request to {url}")
         logger.debug(f"Headers: {headers}, Params: {params}, JSON: {json}")
+
         try:
             response = requests.request(
                 method=method,
@@ -504,22 +506,44 @@ def executor(context):
                 json=json,
                 timeout=timeout,
             )
-            
+
             logger.info(f"Response Status Code: {response.status_code}")
             logger.debug(f"Response Text: {response.text}")
 
-            response.raise_for_status()  # Raises an exception for HTTP errors
-            # sending json, and non json response
+            # Check for HTTP errors
+            response.raise_for_status()
+
+            # Check if the response content is JSON
             if response.headers.get("Content-Type", "").startswith("application/json"):
                 try:
-                    response = response.json()
-                    return response
+                    # Handle multiple JSON objects separated by '\n'
+                    if "\n" in response.text:
+                        json_objects = response.text.strip().split("\n")
+                        return [json.loads(obj) for obj in json_objects if obj.strip()]
+                    else:
+                        return response.json()  # Return JSON response
                 except json.decoder.JSONDecodeError:
-                    return response.text
+                    logger.error("Failed to decode JSON response")
+                    return {"error": "Invalid JSON response", "text": response.text}
+                except ValueError:
+                    logger.error("Unexpected JSON structure")
+                    return {"error": "Unexpected JSON structure", "text": response.text}
             else:
-                return response.text
+                # Handle non-JSON responses
+                logger.warning("Response is not JSON")
+                return {"error": "Non-JSON response", "text": response.text}
+
+        except requests.exceptions.Timeout:
+            logger.error("Request timed out")
+            return {"error": "Request timed out"}
+
+        except requests.exceptions.ConnectionError:
+            logger.error("Connection error occurred")
+            return {"error": "Connection error"}
+
         except requests.exceptions.RequestException as e:
-            raise Exception(f"Request failed: {e}")
+            logger.error(f"Request failed: {e}")
+            return {"error": f"Request failed: {e}"}
 
     # def make_request
     def execute_rest_api_task(self, payload_task: PayloadTask):
@@ -529,7 +553,7 @@ def executor(context):
         try:
             logger.info(f"Validating Rest API parameters...")
             params = get_restapi_validated_params(payload_task.params)
-            
+
             logger.info(f"Creating request url..")
             request_url = payload_task.executable.format(
                 base_url=payload_task.creds.base_url.strip('/'),
