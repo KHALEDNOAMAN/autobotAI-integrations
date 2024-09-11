@@ -149,11 +149,11 @@ class GenericRestAPIService(BaseService):
                         },
                         {
                             "name": "token",
-                            "type": "text",
+                            "type": "text/password",
                             "label": "Bearer Token",
                             "placeholder": "Bearer Token",
                             "required": True,
-                        }
+                        },
                     ],
                 },
                 {
@@ -176,11 +176,11 @@ class GenericRestAPIService(BaseService):
                         },
                         {
                             "name": "password",
-                            "type": "password",
+                            "type": "text/password",
                             "label": "Password",
                             "placeholder": "Password",
                             "required": True,
-                        }
+                        },
                     ],
                 },
                 {
@@ -203,7 +203,7 @@ class GenericRestAPIService(BaseService):
                         },
                         {
                             "name": "api_key_value",
-                            "type": "text",
+                            "type": "text/password",
                             "label": "API Key Value",
                             "placeholder": "API Key Value",
                             "required": True,
@@ -218,7 +218,7 @@ class GenericRestAPIService(BaseService):
                                 {"label": "Query", "value": "query"},
                             ],
                             "required": True,
-                        }
+                        },
                     ],
                 },
             ],
