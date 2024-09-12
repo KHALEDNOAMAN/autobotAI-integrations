@@ -46,7 +46,6 @@ class GenericRestAPIIntegration(BaseSchema):
         auth_type = values.get("auth_type")
         if isinstance(auth_type, str):
             auth_type = AuthType(auth_type)
-            values["auth_type"] = auth_type
 
         if auth_type == AuthType.NO_AUTH:
             pass
@@ -61,6 +60,8 @@ class GenericRestAPIIntegration(BaseSchema):
                 raise ValueError("API Key details are required for API Key authentication")
         else:
             raise ValueError("Invalid authentication type")
+
+        values["auth_type"] = auth_type.value
         return values
 
     name: Optional[str] = "Generic REST API"
@@ -83,13 +84,13 @@ class GenericRestAPIService(BaseService):
     def _test_integration(self) -> dict:
         try:
             parameters = {}
-            if self.integration.auth_type == AuthType.BEARER_TOKEN:
+            if self.integration.auth_type == AuthType.BEARER_TOKEN.value:
                 parameters["headers"] = {"Authorization": f"Bearer {self.integration.token}"}
-            elif self.integration.auth_type == AuthType.BASIC_AUTH:
+            elif self.integration.auth_type == AuthType.BASIC_AUTH.value:
                 parameters["headers"] = {
                     "Authorization": f"Basic {base64.b64encode('{}:{}'.format(self.integration.username, self.integration.password).encode()).decode()}"
                 }
-            elif self.integration.auth_type == AuthType.API_KEY:
+            elif self.integration.auth_type == AuthType.API_KEY.value:
                 if self.integration.api_key_in == "header":
                     parameters["headers"] = {self.integration.api_key_name: self.integration.api_key_value}
                 elif self.integration.api_key_in == "query":
@@ -119,6 +120,7 @@ class GenericRestAPIService(BaseService):
 
     @staticmethod
     def get_forms():
+        # NOTE: Do not change the labels they are case sensitive to auth_type while used in frontend
         return {
             "label": "Generic REST API",
             "type": "form",
@@ -239,18 +241,18 @@ class GenericRestAPIService(BaseService):
         return [ConnectionInterfaces.REST_API]
 
     def generate_rest_api_creds(self) -> RestAPICreds:
-        if self.integration.auth_type == AuthType.BEARER_TOKEN:
+        if self.integration.auth_type == AuthType.BEARER_TOKEN.value:
             return RestAPICreds(
                 base_url=self.integration.api_url,
                 token=self.integration.token,
                 headers={"Authorization": f"Bearer {self.integration.token}"},
             )
-        elif self.integration.auth_type == AuthType.BASIC_AUTH:
+        elif self.integration.auth_type == AuthType.BASIC_AUTH.value:
             return RestAPICreds(
                 base_url=self.integration.api_url,
                 headers={"Authorization": f"Basic {base64.b64encode('{}:{}'.format(self.integration.username, self.integration.password).encode()).decode()}"},
             )
-        elif self.integration.auth_type == AuthType.API_KEY:
+        elif self.integration.auth_type == AuthType.API_KEY.value:
             if self.integration.api_key_in == "header":
                 return RestAPICreds(
                     base_url=self.integration.api_url,
