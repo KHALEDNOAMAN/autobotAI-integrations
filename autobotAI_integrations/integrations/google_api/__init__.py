@@ -60,6 +60,15 @@ class GoogleAPIsIntegration(GCPIntegration):
         if len(validated_scopes) == 0:
             raise ValueError("At least one valid scope is required")
         return validated_scopes
+    
+    @field_validator("user_email", mode="before")
+    @classmethod
+    def validate_user_email(cls, user_email) -> List[str]:
+        email_regex = r'^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$'
+        if isinstance(user_email, str) and re.match(email_regex, user_email):
+            return user_email
+        else:
+            raise ValueError("Invalid email format")
 
 
 class GoogleAPIsService(GCPService, BaseService):
