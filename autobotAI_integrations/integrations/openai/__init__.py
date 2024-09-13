@@ -268,6 +268,8 @@ def executor(context):
                 extra_headers={"OpenAI-Beta": "assistants=v2"},
             )
             run_id = run.id
+        print("run is ",run)
+        print("run status is ",run.status)
         while run.status!='completed':
             run = client.beta.threads.runs.retrieve(thread_id=thread_id, run_id=run_id)
         # if run.status != "completed":
