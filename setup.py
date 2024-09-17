@@ -29,6 +29,7 @@ setup(
         "jira",
         "GitPython",
         "vt-py",
+        "snowflake-connector-python",
     ],
     package_data={
         "": [

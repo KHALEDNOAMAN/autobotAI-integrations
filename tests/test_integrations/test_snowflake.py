@@ -63,7 +63,6 @@ class TestClassSnowflake:
             "account": get_keys["SNOWFLAKE_ACCOUNT"],
             "username": get_keys["SNOWFLAKE_USERNAME"],
             "password": get_keys["SNOWFLAKE_PASSWORD"],
-            "region": get_keys["SNOWFLAKE_REGION"],
         }
         integration = sample_integration_dict("snowflake", tokens)
         task = sample_python_task(
@@ -77,7 +76,6 @@ class TestClassSnowflake:
             "account": get_keys["SNOWFLAKE_ACCOUNT"],
             "username": get_keys["SNOWFLAKE_USERNAME"],
             "password": get_keys["SNOWFLAKE_PASSWORD"],
-            "region": get_keys["SNOWFLAKE_REGION"],
         }
         integration = sample_integration_dict("snowflake", tokens)
         service = integration_service_factory.get_service(None, integration)
@@ -87,7 +85,6 @@ class TestClassSnowflake:
             "account": get_keys["SNOWFLAKE_ACCOUNT"],
             "username": get_keys["SNOWFLAKE_USERNAME"],
             "password": get_keys["SNOWFLAKE_PASSWORD"][:-2],
-            "region": get_keys["SNOWFLAKE_REGION"],
         }
         integration = sample_integration_dict("snowflake", tokens)
         service = integration_service_factory.get_service(None, integration)

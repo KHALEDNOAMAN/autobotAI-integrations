@@ -1,7 +1,7 @@
 import importlib
 from typing import List, Optional, Union
 
-from pydantic import Field
+from pydantic import Field, field_validator
 
 from autobotAI_integrations import (
     BaseSchema,
@@ -14,9 +14,7 @@ from autobotAI_integrations import (
 )
 
 from autobotAI_integrations.models import IntegrationCategory
-from autobotAI_integrations.utils.logging_config import logger
-import requests
-import uuid
+from snowflake.connector import connect
 
 
 class SnowflakeIntegration(BaseSchema):
@@ -30,13 +28,16 @@ class SnowflakeIntegration(BaseSchema):
     description: Optional[str] = (
         "Snowflake enables data storage, processing, and analytic solutions that are faster, easier to use, and far more flexible than traditional offerings."
     )
-    
-    
+
     def __init__(self, **kwargs):
         if "accountId" not in kwargs:
             kwargs["accountId"] = f"{kwargs.get('account')}_{kwargs.get('username')}"
         super().__init__(**kwargs)
 
+    @field_validator("account", mode="after")
+    @classmethod
+    def validate_account(cls, account: str):
+        return account.lower().replace(".", "-")
 
 class SnowflakeService(BaseService):
 
@@ -50,30 +51,13 @@ class SnowflakeService(BaseService):
 
     def _test_integration(self):
         try:
-            response = requests.post(
-                f"https://{self.integration.account}.snowflakecomputing.com/session/v1/login-request",
-                headers={"Content-Type": "application/json"},
-                json={
-                    "data": {
-                        "ACCOUNT": self.integration.account,
-                        "LOGIN_NAME": self.integration.username,
-                        "PASSWORD": self.integration.password,
-                    }
-                },
+            connection = connect(
+                user=self.integration.username,
+                password=self.integration.password,
+                account=self.integration.account,
             )
-            if response.status_code == 200:
-                if response.json().get('success'):
-                    return {"success": True}
-                else:
-                    return {
-                        "success": False,
-                        "error": "Incorrect username or password",
-                    }
-            else:
-                return {
-                    "success": False,
-                    "error": f"Request failed with status code: {response.status_code}",
-                }
+            connection.close()
+            return {"success": True}
         except Exception as e:
             return {"success": False, "error": str(e)}
 
