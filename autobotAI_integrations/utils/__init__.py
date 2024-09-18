@@ -308,6 +308,11 @@ def get_restapi_validated_params(params: List[Param]):
         elif param.params_type == "body":
             if filtered_params["json"]:
                 raise ValueError("Only one JSON body parameter is Allowed")
+            if isinstance(param.values, str):
+                try:
+                    param.values = json.loads(param.values)
+                except json.JSONDecodeError:
+                    raise ValueError("Invalid JSON Body string provided.")
             filtered_params["json"] = param.values
         elif param.params_type == "timeout":
             if not isinstance(param.values, int):
