@@ -545,7 +545,6 @@ def executor(context):
             logger.error(f"Request failed: {e}")
             return {"error": f"Request failed: {e}"}
 
-    # def make_request
     def execute_rest_api_task(self, payload_task: PayloadTask):
         logger.info("Running Rest API Task")
         results = []
@@ -556,7 +555,7 @@ def executor(context):
 
             logger.info(f"Creating request url..")
             request_url = payload_task.executable.format(
-                base_url=payload_task.creds.base_url.strip('/'),
+                base_url=payload_task.creds.base_url.strip("/"),
                 # Filling path params,
                 **params.get("path_parameters", {}),
             )
@@ -579,23 +578,36 @@ def executor(context):
                 timeout=params.get("timeout", 10),
             )
             logger.info(f"Response: {response}")
-            
+
+            if "error" in response:
+                errors.append(
+                    {
+                        "message": response["error"]
+                        + " "
+                        + str(response.get("text", "")),
+                        "other_details": {
+                            "execution_details": payload_task.context.execution_details
+                        },
+                    }
+                )
+                return results, errors
+
             # Transforming results
             if not isinstance(response, list):
                 response = [response]
-            
+
             for row in response:
                 if not isinstance(row, dict):
-                    row = {
-                        'result': row
+                    row = {"result": row}
+                results.append(
+                    {
+                        **row,
+                        "integration_id": payload_task.context.integration.accountId,
+                        "integration_type": payload_task.context.integration.cspName,
+                        "user_id": payload_task.context.execution_details.caller.user_id,
+                        "root_user_id": payload_task.context.execution_details.caller.root_user_id,
                     }
-                results.append({
-                    **row,
-                    "integration_id": payload_task.context.integration.accountId,
-                    "integration_type": payload_task.context.integration.cspName,
-                    "user_id": payload_task.context.execution_details.caller.user_id,
-                    "root_user_id": payload_task.context.execution_details.caller.root_user_id
-                })
+                )
         except Exception as e:
             logger.exception(str(e))
             errors.append(
