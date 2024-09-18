@@ -579,7 +579,23 @@ def executor(context):
                 timeout=params.get("timeout", 10),
             )
             logger.info(f"Response: {response}")
-            results.append(response)
+            
+            # Transforming results
+            if not isinstance(response, list):
+                response = [response]
+            
+            for row in response:
+                if not isinstance(row, dict):
+                    row = {
+                        'result': row
+                    }
+                results.append({
+                    **row,
+                    "integration_id": payload_task.context.integration.accountId,
+                    "integration_type": payload_task.context.integration.cspName,
+                    "user_id": payload_task.context.execution_details.caller.user_id,
+                    "root_user_id": payload_task.context.execution_details.caller.root_user_id
+                })
         except Exception as e:
             logger.exception(str(e))
             errors.append(
