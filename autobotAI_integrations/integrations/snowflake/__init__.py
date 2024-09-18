@@ -29,11 +29,6 @@ class SnowflakeIntegration(BaseSchema):
         "Snowflake enables data storage, processing, and analytic solutions that are faster, easier to use, and far more flexible than traditional offerings."
     )
 
-    def __init__(self, **kwargs):
-        if "accountId" not in kwargs:
-            kwargs["accountId"] = f"{kwargs.get('account')}_{kwargs.get('username')}"
-        super().__init__(**kwargs)
-
     @field_validator("account", mode="after")
     @classmethod
     def validate_account(cls, account: str):
