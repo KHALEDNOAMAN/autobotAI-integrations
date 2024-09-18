@@ -243,43 +243,45 @@ def executor(context):
                 except:
                     continue
             return "AI-Execution Failed to Generate Result"
-        if "assistant_id" not in options:
-            logger.error(
-                "assistant_id is required if model is not provided, and no default assistant was defined"
-            )
-            raise Exception("assistant_id is required if model is not provided")
+        else:
+            raise Exception("Model is Required")
+        # if "assistant_id" not in options:
+        #     logger.error(
+        #         "assistant_id is required if model is not provided, and no default assistant was defined"
+        #     )
+        #     raise Exception("assistant_id is required if model is not provided")
 
-        thread_id = options.get("thread_id", None)
-        if not thread_id:
-            thread = client.beta.threads.create()
-            thread_id = thread.id
+        # thread_id = options.get("thread_id", None)
+        # if not thread_id:
+        #     thread = client.beta.threads.create()
+        #     thread_id = thread.id
 
-            message = client.beta.threads.messages.create(
-                thread_id=thread_id,
-                role="user",
-                content=prompt,
-            )
+        #     message = client.beta.threads.messages.create(
+        #         thread_id=thread_id,
+        #         role="user",
+        #         content=prompt,
+        #     )
 
-        run_id = options.get("run_id", None)
-        if not run_id:
-            run = client.beta.threads.runs.create(
-                thread_id=thread_id,
-                assistant_id=options.get("assistant_id"),
-                extra_headers={"OpenAI-Beta": "assistants=v2"},
-            )
-            run_id = run.id
-        print("run is ",run)
-        print("run status is ",run.status)
-        while run.status!='completed':
+        # run_id = options.get("run_id", None)
+        # if not run_id:
+        #     run = client.beta.threads.runs.create(
+        #         thread_id=thread_id,
+        #         assistant_id=options.get("assistant_id"),
+        #         extra_headers={"OpenAI-Beta": "assistants=v2"},
+        #     )
+        #     run_id = run.id
+        # print("run is ",run)
+        # print("run status is ",run.status)
+        # while run.status!='completed':
             
-            run = client.beta.threads.runs.retrieve(thread_id=thread_id, run_id=run_id)
-        # if run.status != "completed":
-        #     return {"thread_id": thread_id, "run_id": run.id, "status": run.status}
+        #     run = client.beta.threads.runs.retrieve(thread_id=thread_id, run_id=run_id)
+        # # if run.status != "completed":
+        # #     return {"thread_id": thread_id, "run_id": run.id, "status": run.status}
        
-        print("run status is after ",run.status)
-        messages = client.beta.threads.messages.list(thread_id=thread_id)
-        print("message is ",message)
-        new_message = messages.data[0].content[0].text.value
+        # print("run status is after ",run.status)
+        # messages = client.beta.threads.messages.list(thread_id=thread_id)
+        # print("message is ",message)
+        # new_message = messages.data[0].content[0].text.value
         
-        print("new message os ",new_message)
-        return {"status": run.status, "response": new_message}
+        # print("new message os ",new_message)
+        # return {"status": run.status, "response": new_message}
