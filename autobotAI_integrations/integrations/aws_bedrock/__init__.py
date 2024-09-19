@@ -311,4 +311,4 @@ def executor(context):
 
         # Decode the response body.
         model_response = json.loads(response["body"].read())
-        return model_response
+        return json.loads(model_response['generation'])
