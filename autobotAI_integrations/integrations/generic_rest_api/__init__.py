@@ -39,29 +39,6 @@ class GenericRestAPIIntegration(BaseSchema):
         default="header", description="API Key Location (header, query, etc)"
     )
 
-    @root_validator(pre=True)
-    def validate_auth_type(cls, values):
-        auth_type = values.get("auth_type")
-        if isinstance(auth_type, str):
-            auth_type = AuthType(auth_type)
-
-        if auth_type == AuthType.NO_AUTH:
-            pass
-        elif auth_type == AuthType.BEARER_TOKEN:
-            if not values.get("token"):
-                raise ValueError("Bearer token is required for Bearer Token authentication")
-        elif auth_type == AuthType.BASIC_AUTH:
-            if not values.get("username") or not values.get("password"):
-                raise ValueError("Username and password are required for Basic Auth")
-        elif auth_type == AuthType.API_KEY:
-            if not values.get("api_key_name") or not values.get("api_key_value") or not values.get("api_key_in"):
-                raise ValueError("API Key details are required for API Key authentication")
-        else:
-            raise ValueError("Invalid authentication type")
-
-        values["auth_type"] = auth_type.value
-        return values
-
     name: Optional[str] = "Generic REST API"
     category: Optional[str] = IntegrationCategory.OTHERS.value
     description: Optional[str] = (
