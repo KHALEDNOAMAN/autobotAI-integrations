@@ -501,9 +501,9 @@ def executor(context):
             response = requests.request(
                 method=method,
                 url=url,
-                headers=headers,
-                params=params,
-                json=json,
+                headers=headers if headers else None,
+                params=params if params else None,
+                json=json if json else None,
                 timeout=timeout,
             )
 
@@ -577,7 +577,7 @@ def executor(context):
                 json=params.get("json", None),
                 timeout=params.get("timeout", 10),
             )
-            logger.info(f"Response: {response}")
+            logger.debug(f"Response: {response}")
 
             if "error" in response:
                 errors.append(
