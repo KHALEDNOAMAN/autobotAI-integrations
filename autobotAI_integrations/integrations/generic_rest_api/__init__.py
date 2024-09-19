@@ -26,17 +26,15 @@ class GenericRestAPIIntegration(BaseSchema):
     auth_type: Union[AuthType, str] = AuthType.NO_AUTH
 
     # Bearer Token
-    token: Optional[str] = Field(None, description="Bearer token")
+    token: Optional[str] = Field(default=None, description="Bearer token", exclude=True)
 
     # Basic Auth
-    username: Optional[str] = Field(None, description="Username")
-    password: Optional[str] = Field(None, description="Password")
+    username: Optional[str] = Field(default=None, exclude=True)
+    password: Optional[str] = Field(default=None, exclude=True)
 
     # API Key
-    api_key_name: Optional[str] = Field(None, description="API Key Name")
-    api_key_value: Optional[str] = Field(
-        None, description="API Key Value"
-    )
+    api_key_name: Optional[str] = Field(default=None, exclude=True)
+    api_key_value: Optional[str] = Field(default=None, exclude=True)
     api_key_in: Optional[str] = Field(
         default="header", description="API Key Location (header, query, etc)"
     )
