@@ -1,5 +1,10 @@
 - name: msgraph
-  import_library_names:
-    - msgraph
+  class_name: GraphServiceClient
+  module: msgraph
   pip_package_names:
     - msgraph-sdk
+- name: msgraph-beta
+  class_name: GraphServiceClient
+  module: msgraph
+  pip_package_names:
+    - msgraph-beta-sdk
