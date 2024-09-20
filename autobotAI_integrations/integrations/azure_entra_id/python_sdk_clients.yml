@@ -5,6 +5,6 @@
     - msgraph-sdk
 - name: msgraph-beta
   class_name: GraphServiceClient
-  module: msgraph
+  module: msgraph_beta
   pip_package_names:
     - msgraph-beta-sdk
