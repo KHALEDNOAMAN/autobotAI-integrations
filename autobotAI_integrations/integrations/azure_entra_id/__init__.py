@@ -129,11 +129,11 @@ class AzureEntraIdService(BaseService):
                     cls = getattr(client_module, client.class_name)
                     try:
                         clients_classes[client.name] = cls(
-                            credential=credential,
+                            credentials=credential,
                             scopes=scopes
                         )
                     except BaseException as e:
-                        clients_classes[client.name] = cls(credential=credential)
+                        clients_classes[client.name] = cls(credentials=credential)
             except BaseException as e:
                 print(e)
                 continue
