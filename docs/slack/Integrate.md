@@ -31,7 +31,7 @@ A **Webhook URL** is a unique URL provided by Slack that allows external applica
 ### What You’ll Need
 
 #### OAuth Token
-An **OAuth Token** is a token provided by Slack that allows your application to interact with Slack's API. This token can be a user or bot token, depending on the use case, but a user token is recommended for enabling no-code actions. The minimum required permissions include:
+An **OAuth Token** is a token provided by Slack that allows your application to interact with Slack's API. This token can be a user or bot token, depending on the use case, but a **user token is recommended for enabling no-code actions**. The minimum required permissions include:
 - `channels:read`
 - `groups:read`
 - `im:read`
