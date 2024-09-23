@@ -92,6 +92,8 @@ class Payload(BaseModel):
     state: Optional[dict] = None
     tasks: List[PayloadTask]
     output_url: Optional[dict] = None
+    api_key: Optional[str] = None
+    api_url: Optional[str] = None
 
 
 class ResponseError(BaseModel):
