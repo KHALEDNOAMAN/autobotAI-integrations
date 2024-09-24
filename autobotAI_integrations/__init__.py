@@ -490,12 +490,12 @@ def executor(context):
         method: str = "GET",
         headers: Optional[Dict[str, str]] = None,
         params: Optional[Dict[str, Any]] = None,
-        json: Optional[Dict[str, Any]] = None,
+        json_data: Optional[Dict[str, Any]] = None,
         timeout: int = 10,
     ) -> Union[Dict[str, Any], List[Dict[str, Any]]]:
 
         logger.info(f"Making {method} request to {url}")
-        logger.debug(f"Headers: {headers}, Params: {params}, JSON: {json}")
+        logger.debug(f"Headers: {headers}, Params: {params}, JSON: {json_data}")
 
         try:
             response = requests.request(
@@ -503,7 +503,7 @@ def executor(context):
                 url=url,
                 headers=headers if headers else None,
                 params=params if params else None,
-                json=json if json else None,
+                json=json_data if json_data else None,
                 timeout=timeout,
             )
 
@@ -574,7 +574,7 @@ def executor(context):
                     **payload_task.creds.query_params,
                     **params.get("query_parameters", None),
                 },
-                json=params.get("json", None),
+                json_data=params.get("json_data", None),
                 timeout=params.get("timeout", 10),
             )
             logger.debug(f"Response: {response}")

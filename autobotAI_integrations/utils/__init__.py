@@ -282,7 +282,7 @@ def get_restapi_validated_params(params: List[Param]):
         "headers": {},
         "query_parameters": {},
         "path_parameters": {},
-        "json": {},
+        "json_data": {},
         "method": None,
     }
     for param in params:
@@ -306,14 +306,14 @@ def get_restapi_validated_params(params: List[Param]):
         elif param.params_type == "path":
             filtered_params["path_parameters"][param.name] = param.values
         elif param.params_type == "body":
-            if filtered_params["json"]:
+            if filtered_params["json_data"]:
                 raise ValueError("Only one JSON body parameter is Allowed")
             if isinstance(param.values, str):
                 try:
                     param.values = json.loads(param.values)
                 except json.JSONDecodeError:
                     raise ValueError("Invalid JSON Body string provided.")
-            filtered_params["json"] = param.values
+            filtered_params["json_data"] = param.values
         elif param.params_type == "timeout":
             if not isinstance(param.values, int):
                 raise ValueError("Timeout must be an integer.")
