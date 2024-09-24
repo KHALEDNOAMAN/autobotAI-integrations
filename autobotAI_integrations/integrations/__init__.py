@@ -5,15 +5,17 @@ import os
 
 from pydantic import BaseModel
 
-from autobotAI_integrations import BaseService
-from autobotAI_integrations.integration_schema import IntegrationSchema
+from autobotAI_integrations import BaseService, AIBaseService
 
 
 class IntegrationServiceFactory:
     def __init__(self):
         self._services = {}
+        self._ai_services = {}
         for obj in self._get_subclasses():
             self._services[obj["module_name"]] = obj["subclass"]
+        for obj in self._get_subclasses(serv=AIBaseService):
+            self._ai_services[obj["module_name"]] = obj["subclass"]
 
     def get_service_cls(self, service):
         cls = self._services.get(service)
@@ -23,6 +25,9 @@ class IntegrationServiceFactory:
 
     def get_services(self):
         return list(self._services.keys())
+
+    def get_ai_services(self):
+        return list(self._ai_services.keys())
 
     def get_service_details(self, q=None):
         details_list = []
