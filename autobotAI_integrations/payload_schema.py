@@ -1,3 +1,4 @@
+from enum import Enum
 from typing import List, Optional, Any, Union
 
 from pydantic import BaseModel, SerializeAsAny, field_validator, Field, model_validator
@@ -22,6 +23,16 @@ class ExecutionDetails(BaseModel):
     bot_name: str
     node_name: str
     caller: Caller
+
+
+class JobSizes(str, Enum):
+    MICRO = "Micro"
+    SMALL = "Small"
+    MEDIUM = "Medium"
+    LARGE = "Large"
+
+    def __str__(self):
+        return self.value
 
 
 class PayloadTaskContext(BaseModel):
@@ -51,7 +62,7 @@ class Param(BaseModel):
     required: bool = False
     values: Optional[Any] = None
     filter_relevant_resources: bool = False
-    
+
     def model_dump_json(self, *args, **kwargs) -> str:
         kwargs["by_alias"] = True
         return super().model_dump_json(*args, **kwargs)
@@ -94,6 +105,7 @@ class Payload(BaseModel):
     output_url: Optional[dict] = None
     api_key: Optional[str] = None
     api_url: Optional[str] = None
+    job_size: Optional[JobSizes] = JobSizes.MEDIUM.value
 
 
 class ResponseError(BaseModel):
