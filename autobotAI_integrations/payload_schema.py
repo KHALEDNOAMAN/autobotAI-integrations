@@ -105,7 +105,7 @@ class Payload(BaseModel):
     output_url: Optional[dict] = None
     api_key: Optional[str] = None
     api_url: Optional[str] = None
-    job_size: Union[JobSizes, str] = None
+    job_size: Optional[JobSizes] = JobSizes.MEDIUM.value
 
 
 class ResponseError(BaseModel):
