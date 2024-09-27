@@ -219,7 +219,7 @@ def executor(context):
     def generate_cli_creds(self) -> CLICreds:
         pass
 
-    def prompt_executor(self, model=None, prompt="", options: dict = {}):
+    def prompt_executor(self, model=None, prompt="",params=None, options: dict = {}):
         logger.info(f"Executing prompt: {prompt}")
         client = OpenAI(api_key=self.integration.api_key)
         if model:
@@ -238,6 +238,7 @@ def executor(context):
                     result = client.chat.completions.create(
                         messages=[message], model=model
                     )
+                    print("result is ",result)
                     if result.choices[0].message.content:
                         return result.choices[0].message.content
                 except:
