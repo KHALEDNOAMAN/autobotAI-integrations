@@ -62,7 +62,7 @@ class Param(BaseModel):
     required: bool = False
     values: Optional[Any] = None
     filter_relevant_resources: bool = False
-    system_prompt:str=None
+    system_prompt: Optional[str] = None
 
     def model_dump_json(self, *args, **kwargs) -> str:
         kwargs["by_alias"] = True
