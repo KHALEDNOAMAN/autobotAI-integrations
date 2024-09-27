@@ -61,7 +61,7 @@ class Param(BaseModel):
     ai_generated: bool = False
     required: bool = False
     values: Optional[Any] = None
-    filter_relevant_resources: bool = False,
+    filter_relevant_resources: bool = False
     system_prompt:str=None
 
     def model_dump_json(self, *args, **kwargs) -> str:
