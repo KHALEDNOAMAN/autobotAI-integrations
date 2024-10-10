@@ -1,7 +1,7 @@
 from enum import Enum
 from typing import List, Optional, Any, Union
 
-from pydantic import BaseModel, SerializeAsAny, field_validator, Field, model_validator
+from pydantic import BaseModel, ConfigDict, SerializeAsAny, field_validator, Field, model_validator
 
 from autobotAI_integrations import IntegrationSchema
 from autobotAI_integrations.models import (
@@ -84,6 +84,8 @@ class ParamTypes(str, Enum):
         return fallback_value_mapper.get(str(value).lower(), cls.STR)
 
 class Param(BaseModel):
+    model_config = ConfigDict(extra="allow")
+    
     params_type: ParamTypes = Field(alias="type")
     name: str
     ai_generated: bool = False
