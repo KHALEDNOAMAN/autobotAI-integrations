@@ -2,6 +2,7 @@ from typing import List, Optional
 import yaml
 import json
 from autobotAI_integrations.open_api_schema import OpenAPIAction, OpenAPIPathModel, OpenAPISchema, OpenAPIPathParams
+from autobotAI_integrations.payload_schema import ParamTypes
 
 class OpenApiParser:
     def __init__(self) -> None:
@@ -47,14 +48,14 @@ class OpenApiParser:
     def _create_body_parameter(self, request_body: dict) -> dict:
         open_api_path_param = {
             "name": "body",
-            "params_type": "body",
-            "data_type": "object",
+            "in": "body",
+            "type": "object",
             "description": "Request body",
         }
         open_api_path_param["required"] = request_body.get("required", True)
         # Supports only json for now
         if request_body.get("content", {}).get("application/json"):
-            open_api_path_param["data_type"] = "application/json"
+            open_api_path_param["params_type"] = "application/json"
             schema = request_body["content"]["application/json"].get("schema")
             if "$ref" in schema:
                 open_api_path_param["example"] = self.components.get(
@@ -73,8 +74,8 @@ class OpenApiParser:
             parameters_list.append(
                 OpenAPIPathParams(
                     name="base_url",
-                    params_type="path",
-                    data_type="string",
+                    in_="path",
+                    params_type="string",
                     required=True,
                     description="Base URL of the API",
                 )
@@ -86,8 +87,7 @@ class OpenApiParser:
                 try:
                     parameters_list.append(
                         OpenAPIPathParams(
-                            params_type=parameter.get("in"),
-                            data_type=self._parse_param_data_type(parameter),
+                            params_type=self._parse_param_data_type(parameter),
                             values=self._parse_param_default(parameter),
                             **parameter,
                         )
@@ -215,14 +215,14 @@ class OpenApiParser:
             parameters.append(
                 OpenAPIPathParams(
                     name="method",
-                    params_type="method",
-                    data_type="string",
+                    in_="method",
+                    params_type=ParamTypes.STR.value,
                     required=True,
                     description="HTTP Method",
                     values=path.method,
                 )
             )
-            
+
             # Removing unnecessary and integrations credentials related parameters
             for parameter in path.parameters:
                 if (
@@ -232,12 +232,11 @@ class OpenApiParser:
                     continue
                 elif parameter.params_type == "path" and parameter.name == "base_url":
                     continue
-                
+
                 if parameter.params_type == "body" and not parameter.values:
                     if parameter.example:
                         parameter.values = parameter.example
                 parameters.append(parameter)
-
 
             actions.append(
                 OpenAPIAction(

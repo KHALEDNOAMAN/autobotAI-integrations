@@ -1,11 +1,13 @@
 from typing import Optional, List, Any
 
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict, Field
 from autobotAI_integrations.models import ConnectionInterfaces
 from autobotAI_integrations.payload_schema import Param
 
 class OpenAPIPathParams(Param):
-    data_type: Optional[str] = None
+    model_config = ConfigDict(populate_by_name=True)
+    
+    in_: Optional[str] = Field(default=None, alias="in")
     description: Optional[str] = None
     default: Any = None
     example: Any = None

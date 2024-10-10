@@ -286,26 +286,26 @@ def get_restapi_validated_params(params: List[Param]):
         "method": None,
     }
     for param in params:
-        if param.params_type == "headers":
+        if param.in_ == "headers":
             for key, value in param.values.items():
                 if key.lower() == "authorization":
                     raise ValueError("Authorization header is not allowed.")
                 filtered_params["headers"][key] = value
-        elif param.params_type == "header":
+        elif param.in_ == "header":
             if param.name.lower() == "authorization":
                 raise ValueError("Authorization header is not allowed.")
             filtered_params["headers"][param.name] = param.values
-        elif param.params_type == "method":
+        elif param.in_ == "method":
             if not isinstance(param.values, str):
                 raise ValueError("Method must be a string.")
             filtered_params["method"] = param.values.upper()
-        elif param.params_type == "query":
+        elif param.in_ == "query":
             if param.values is None:
                 continue
             filtered_params["query_parameters"][param.name] = param.values
-        elif param.params_type == "path":
+        elif param.in_ == "path":
             filtered_params["path_parameters"][param.name] = param.values
-        elif param.params_type == "body":
+        elif param.in_ == "body":
             if filtered_params["json_data"]:
                 raise ValueError("Only one JSON body parameter is Allowed")
             if isinstance(param.values, str):
@@ -314,7 +314,7 @@ def get_restapi_validated_params(params: List[Param]):
                 except json.JSONDecodeError:
                     raise ValueError("Invalid JSON Body string provided.")
             filtered_params["json_data"] = param.values
-        elif param.params_type == "timeout":
+        elif param.in_ == "timeout":
             if not isinstance(param.values, int):
                 raise ValueError("Timeout must be an integer.")
             filtered_params["timeout"] = params.values

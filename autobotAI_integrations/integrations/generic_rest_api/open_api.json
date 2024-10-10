@@ -101,6 +101,36 @@
                     }
                 }
             },
+            "patch": {
+                "summary": "Update a resource partially",
+                "operationId": "updateResourcePartially",
+                "parameters": [
+                    {
+                        "name": "resourceId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "description": "ID of the resource to update"
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Resource"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Resource updated successfully"
+                    }
+                }
+            },
             "delete": {
                 "summary": "Delete a resource",
                 "operationId": "deleteResource",

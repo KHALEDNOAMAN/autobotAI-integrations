@@ -167,6 +167,9 @@ def executor(context):
         base_path = os.path.dirname(inspect.getfile(cls))
         parser = open_api_parser.OpenApiParser()
         open_api_actions = []
+        if not os.path.exists(os.path.join(base_path, "open_api.json")):
+            logger.info(f"File open_api.json not found for {cls.get_integration_type()}")
+            return open_api_actions
         try:
             parser.parse_file(os.path.join(base_path, "open_api.json"))
             open_api_actions = parser.get_actions(cls.get_integration_type())
