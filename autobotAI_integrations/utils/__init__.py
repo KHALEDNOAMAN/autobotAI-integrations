@@ -304,6 +304,10 @@ def get_restapi_validated_params(params: List[Param]):
                 continue
             filtered_params["query_parameters"][param.name] = param.values
         elif getattr(param, "in") == "path":
+            if param.name.lower() == "base_url":
+                raise ValueError(
+                    "The path parameter 'base_url' is not allowed. Please use a different name."
+                )
             filtered_params["path_parameters"][param.name] = param.values
         elif getattr(param, "in") == "body":
             if filtered_params["json_data"]:
