@@ -83,9 +83,8 @@ class ParamTypes(str, Enum):
         }
         return fallback_value_mapper.get(str(value).lower(), cls.STR)
 
+
 class Param(BaseModel):
-    model_config = ConfigDict(extra="allow")
-    
     params_type: ParamTypes = Field(alias="type")
     name: str
     ai_generated: bool = False

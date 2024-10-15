@@ -55,7 +55,7 @@ class OpenApiParser:
         open_api_path_param["required"] = request_body.get("required", True)
         # Supports only json for now
         if request_body.get("content", {}).get("application/json"):
-            open_api_path_param["params_type"] = "application/json"
+            open_api_path_param["type"] = "json"
             schema = request_body["content"]["application/json"].get("schema")
             if "$ref" in schema:
                 open_api_path_param["example"] = self.components.get(
@@ -72,13 +72,13 @@ class OpenApiParser:
         parameters_list = []
         if self.base_url == "{base_url}":
             parameters_list.append(
-                OpenAPIPathParams(
-                    name="base_url",
-                    in_="path",
-                    params_type="string",
-                    required=True,
-                    description="Base URL of the API",
-                )
+                OpenAPIPathParams(**{
+                    "name": "base_url",
+                    "in": "path",
+                    "type": "string",
+                    "required": True,
+                    "description": "Base URL of the API",
+                })
             )
         if "parameters" in method_details:
             for parameter in method_details["parameters"]:
@@ -86,11 +86,11 @@ class OpenApiParser:
                     parameter = self._get_reference_to_dict(parameter["$ref"])
                 try:
                     parameters_list.append(
-                        OpenAPIPathParams(
-                            params_type=self._parse_param_data_type(parameter),
-                            values=self._parse_param_default(parameter),
+                        OpenAPIPathParams(**{
+                            "type": self._parse_param_data_type(parameter),
+                            "values": self._parse_param_default(parameter)
                             **parameter,
-                        )
+                        })
                     )
                 except Exception as e:
                     print(e)
@@ -213,27 +213,27 @@ class OpenApiParser:
             parameters = []
             # Adding Method parameter
             parameters.append(
-                OpenAPIPathParams(
-                    name="method",
-                    in_="method",
-                    params_type=ParamTypes.STR.value,
-                    required=True,
-                    description="HTTP Method",
-                    values=path.method,
-                )
+                OpenAPIPathParams(**{
+                    "name": "method",
+                    "in": "method",
+                    "type": ParamTypes.STR.value,
+                    "required": True,
+                    "description": "HTTP Method",
+                    "values": path.method
+                })
             )
 
             # Removing unnecessary and integrations credentials related parameters
             for parameter in path.parameters:
                 if (
-                    parameter.params_type == "header"
+                    getattr(parameter, "in_", None) == "header"
                     and parameter.name.lower() == "authorization"
                 ):
                     continue
-                elif parameter.params_type == "path" and parameter.name == "base_url":
+                elif getattr(parameter, 'in_', None) == "path" and parameter.name == "base_url":
                     continue
 
-                if parameter.params_type == "body" and not parameter.values:
+                if getattr(parameter, "in_", None) == "body" and not parameter.values:
                     if parameter.example:
                         parameter.values = parameter.example
                 parameters.append(parameter)
