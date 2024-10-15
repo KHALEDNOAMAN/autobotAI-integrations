@@ -11,8 +11,6 @@ from autobotAI_integrations.models import (
 import inspect
 import os
 
-from autobotAI_integrations.open_api_schema import OpenAPIPathParams
-
 
 class Caller(BaseModel):
     user_id: str
@@ -116,7 +114,7 @@ class PayloadTask(BaseModel):
     executable: str
     tables: Optional[List[str]] = None
     clients: Optional[List[str]] = None
-    params: Optional[List[Union[Param, OpenAPIPathParams]]] = []
+    params: Optional[List[Param]] = []
     node_details: Optional[Any] = None
     context: PayloadTaskContext
 
@@ -128,20 +126,6 @@ class PayloadTask(BaseModel):
                 if sub_cls.connection_interface.value == creds['creds_type']:
                     return sub_cls(**creds)
         return creds
-
-    @field_validator("params", mode="before")
-    @classmethod
-    def validate_params(cls, params):
-        validated_params = []
-        for param in params:
-            if isinstance(param, dict):
-                if "in" in param or "in_" in param:
-                    validated_params.append(OpenAPIPathParams(**params))
-                else:
-                    validated_params.append(Param(**params))
-        if validated_params:
-            return validated_params
-        return params
 
 
 class Payload(BaseModel):
