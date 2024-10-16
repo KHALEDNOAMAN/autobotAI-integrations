@@ -107,6 +107,26 @@ class Param(BaseModel):
         return values
 
 
+class OpenAPIPathParams(Param):
+    in_: Optional[str] = Field(default=None, alias="in")
+    description: Optional[str] = None
+    default: Any = None
+    example: Any = None
+
+    @model_validator(mode="before")
+    @classmethod
+    def resource_type_validator(cls, values: Any) -> Any:
+        if not values.get("params_type", None) and values.get("type", None):
+            values["params_type"] = values["type"]
+        if not values.get("type", None) and values.get("params_type", None):
+            values["type"] = values["params_type"]
+        if not values.get("in", None) and values.get("in_", None):
+            values["in"] = values["in_"]
+        if not values.get("in_", None) and values.get("in", None):
+            values["in_"] = values["in"]
+        return values
+
+
 class PayloadTask(BaseModel):
     task_id: Optional[str]
     creds: SerializeAsAny[BaseCreds]
@@ -114,7 +134,7 @@ class PayloadTask(BaseModel):
     executable: str
     tables: Optional[List[str]] = None
     clients: Optional[List[str]] = None
-    params: Optional[List[Param]] = []
+    params: Optional[List[Union[OpenAPIPathParams, Param]]] = []
     node_details: Optional[Any] = None
     context: PayloadTaskContext
 
@@ -126,7 +146,6 @@ class PayloadTask(BaseModel):
                 if sub_cls.connection_interface.value == creds['creds_type']:
                     return sub_cls(**creds)
         return creds
-
 
 class Payload(BaseModel):
     job_id: str

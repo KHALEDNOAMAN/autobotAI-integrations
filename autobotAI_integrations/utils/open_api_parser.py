@@ -1,8 +1,8 @@
 from typing import List, Optional
 import yaml
 import json
-from autobotAI_integrations.open_api_schema import OpenAPIAction, OpenAPIPathModel, OpenAPISchema, OpenAPIPathParams
-from autobotAI_integrations.payload_schema import ParamTypes
+from autobotAI_integrations.open_api_schema import OpenAPIAction, OpenAPIPathModel, OpenAPISchema
+from autobotAI_integrations.payload_schema import ParamTypes, OpenAPIPathParams
 
 class OpenApiParser:
     def __init__(self) -> None:
