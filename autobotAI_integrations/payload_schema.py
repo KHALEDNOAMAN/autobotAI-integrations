@@ -70,10 +70,11 @@ class Param(BaseModel):
     @model_validator(mode="before")
     @classmethod
     def resource_type_validator(cls, values: Any) -> Any:
-        if not values.get("params_type", None) and values.get("type", None):
-            values["params_type"] = values["type"]
-        if not values.get("type", None) and values.get("params_type", None):
-            values["type"] = values["params_type"]
+        if isinstance(values, dict):
+            if not values.get("params_type", None) and values.get("type", None):
+                values["params_type"] = values["type"]
+            if not values.get("type", None) and values.get("params_type", None):
+                values["type"] = values["params_type"]
         return values
 
 
@@ -86,14 +87,15 @@ class OpenAPIPathParams(Param):
     @model_validator(mode="before")
     @classmethod
     def resource_type_validator(cls, values: Any) -> Any:
-        if not values.get("params_type", None) and values.get("type", None):
-            values["params_type"] = values["type"]
-        if not values.get("type", None) and values.get("params_type", None):
-            values["type"] = values["params_type"]
-        if not values.get("in", None) and values.get("in_", None):
-            values["in"] = values["in_"]
-        if not values.get("in_", None) and values.get("in", None):
-            values["in_"] = values["in"]
+        if isinstance(values, dict):
+            if not values.get("params_type", None) and values.get("type", None):
+                values["params_type"] = values["type"]
+            if not values.get("type", None) and values.get("params_type", None):
+                values["type"] = values["params_type"]
+            if not values.get("in", None) and values.get("in_", None):
+                values["in"] = values["in_"]
+            if not values.get("in_", None) and values.get("in", None):
+                values["in_"] = values["in"]
         return values
 
 
