@@ -2,7 +2,7 @@ from typing import List, Optional
 import yaml
 import json
 from autobotAI_integrations.open_api_schema import OpenAPIAction, OpenAPIPathModel, OpenAPISchema
-from autobotAI_integrations.payload_schema import ParamTypes, OpenAPIPathParams
+from autobotAI_integrations.payload_schema import OpenAPIPathParams
 
 class OpenApiParser:
     def __init__(self) -> None:
@@ -216,7 +216,7 @@ class OpenApiParser:
                 OpenAPIPathParams(**{
                     "name": "method",
                     "in": "method",
-                    "type": ParamTypes.STR.value,
+                    "type": 'str',
                     "required": True,
                     "description": "HTTP Method",
                     "values": path.method
