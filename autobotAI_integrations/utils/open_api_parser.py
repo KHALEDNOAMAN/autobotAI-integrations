@@ -88,7 +88,7 @@ class OpenApiParser:
                     parameters_list.append(
                         OpenAPIPathParams(**{
                             "type": self._parse_param_data_type(parameter),
-                            "values": self._parse_param_default(parameter)
+                            "values": self._parse_param_default(parameter),
                             **parameter,
                         })
                     )
