@@ -54,38 +54,8 @@ class PayloadTaskContext(BaseModel):
                         return subclass(**integration)
         return integration
 
-
-class ParamTypes(str, Enum):
-    LIST = "list"
-    DICT = "dict"
-    STR = "str"
-    JSON = "json"
-    HANDLEBARS_JSON = "handlebars-json"
-    HANDLEBARS_MARKDOWN = "handlebars-markdown"
-    HANDLEBARS_HTML = "handlebars-html"
-    INT = "int"
-    BOOL = "bool"
-
-    def __str__(self):
-        return self.value
-
-    @classmethod
-    def _missing_(cls, value):
-        fallback_value_mapper = {
-            "integer": cls.INT,
-            "number": cls.INT,
-            "boolean": cls.BOOL,
-            "object": cls.JSON,
-            "array": cls.LIST,
-            "handlebar/html": cls.HANDLEBARS_HTML,
-            "handlebar/markdown": cls.HANDLEBARS_MARKDOWN,
-            "handlebar/json": cls.HANDLEBARS_JSON,
-        }
-        return fallback_value_mapper.get(str(value).lower(), cls.STR)
-
-
 class Param(BaseModel):
-    params_type: ParamTypes = Field(alias="type")
+    params_type: str = Field(alias="type")
     name: str
     ai_generated: bool = False
     required: bool = False
