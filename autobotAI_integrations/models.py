@@ -49,9 +49,10 @@ class SteampipeCreds(BaseCreds):
 class RestAPICreds(BaseCreds):
     connection_interface: ClassVar[ConnectionInterfaces] = ConnectionInterfaces.REST_API
     creds_type: str = ConnectionInterfaces.REST_API.value
-    api_url: str
-    token: str
-    headers: dict
+    base_url: str
+    token: Optional[str] = None
+    headers: dict = {}
+    query_params: dict = dict()
 
 
 class Client(BaseModel):
@@ -78,7 +79,6 @@ class CLICreds(BaseCreds):
     installer_check: str
     install_command: str
 
-
 # Setting default to None
 class BaseSchema(IntegrationSchema):
     name: Optional[str] = None
@@ -90,3 +90,4 @@ class BaseSchema(IntegrationSchema):
         }
     )
     category: Optional[IntegrationCategory] = None
+    auth_type: Optional[str] = None

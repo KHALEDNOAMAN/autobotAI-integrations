@@ -1,0 +1,178 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "Generic API",
+        "description": "This is a simple example of an OpenAPI definition using all HTTP methods with various parameter types.",
+        "version": "1.0.0"
+    },
+    "paths": {
+        "/resource/{resourceId}": {
+            "get": {
+                "summary": "Retrieve a resource",
+                "operationId": "getResource",
+                "parameters": [
+                    {
+                        "name": "resourceId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "description": "ID of the resource to retrieve"
+                    },
+                    {
+                        "name": "X-Custom-Header",
+                        "in": "header",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "description": "Custom header for the request"
+                    },
+                    {
+                        "name": "status",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "description": "Filter resources by status"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Resource retrieved successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Resource"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "summary": "Create a new resource",
+                "operationId": "createResource",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Resource"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Resource created successfully"
+                    }
+                }
+            },
+            "put": {
+                "summary": "Update a resource",
+                "operationId": "updateResource",
+                "parameters": [
+                    {
+                        "name": "resourceId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "description": "ID of the resource to update"
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Resource"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Resource updated successfully"
+                    }
+                }
+            },
+            "patch": {
+                "summary": "Update a resource partially",
+                "operationId": "updateResourcePartially",
+                "parameters": [
+                    {
+                        "name": "resourceId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "description": "ID of the resource to update"
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Resource"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Resource updated successfully"
+                    }
+                }
+            },
+            "delete": {
+                "summary": "Delete a resource",
+                "operationId": "deleteResource",
+                "parameters": [
+                    {
+                        "name": "resourceId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "description": "ID of the resource to delete"
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Resource deleted successfully"
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "Resource": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "string"
+                    },
+                    "name": {
+                        "type": "string"
+                    },
+                    "description": {
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "id",
+                    "name"
+                ]
+            }
+        }
+    }
+}

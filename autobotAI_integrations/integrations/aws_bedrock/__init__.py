@@ -295,9 +295,11 @@ def executor(context):
                 "temperature": float(temperature),
             }
             request = json.dumps(native_request)
+
             return request
 
-    def prompt_executor(self, model=None, prompt=None, options: dict = {}):
+    def prompt_executor(self, model=None, prompt=None,params=None, options: dict = {}):
+
         if not model or not prompt:
             raise Exception("Model and prompt are required")
         request = self._get_bedrock_model_request(model, prompt, **options)
@@ -312,4 +314,8 @@ def executor(context):
 
         # Decode the response body.
         model_response = json.loads(response["body"].read())
-        return model_response
+        if params!="":
+            print("model response is ",model_response['generation'])
+            return model_response['generation']
+        else:
+            return json.loads(model_response['generation'])

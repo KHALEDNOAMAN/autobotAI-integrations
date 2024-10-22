@@ -1,6 +1,7 @@
+from enum import Enum
 from typing import List, Optional, Any, Union
 
-from pydantic import BaseModel, SerializeAsAny, field_validator, Field, model_validator
+from pydantic import BaseModel, ConfigDict, SerializeAsAny, field_validator, Field, model_validator
 
 from autobotAI_integrations import IntegrationSchema
 from autobotAI_integrations.models import (
@@ -24,6 +25,16 @@ class ExecutionDetails(BaseModel):
     caller: Caller
 
 
+class JobSizes(str, Enum):
+    MICRO = "Micro"
+    SMALL = "Small"
+    MEDIUM = "Medium"
+    LARGE = "Large"
+
+    def __str__(self):
+        return self.value
+
+
 class PayloadTaskContext(BaseModel):
     integration: SerializeAsAny[IntegrationSchema]
     global_variables: dict = {}  # Global Variables defined by User, this will be store in secret manager
@@ -43,7 +54,6 @@ class PayloadTaskContext(BaseModel):
                         return subclass(**integration)
         return integration
 
-
 class Param(BaseModel):
     params_type: str = Field(alias="type")
     name: str
@@ -51,7 +61,8 @@ class Param(BaseModel):
     required: bool = False
     values: Optional[Any] = None
     filter_relevant_resources: bool = False
-    
+    system_prompt: Optional[str] = None
+
     def model_dump_json(self, *args, **kwargs) -> str:
         kwargs["by_alias"] = True
         return super().model_dump_json(*args, **kwargs)
@@ -59,10 +70,32 @@ class Param(BaseModel):
     @model_validator(mode="before")
     @classmethod
     def resource_type_validator(cls, values: Any) -> Any:
-        if not values.get("params_type", None) and values.get("type", None):
-            values["params_type"] = values["type"]
-        if not values.get("type", None) and values.get("params_type", None):
-            values["type"] = values["params_type"]
+        if isinstance(values, dict):
+            if not values.get("params_type", None) and values.get("type", None):
+                values["params_type"] = values["type"]
+            if not values.get("type", None) and values.get("params_type", None):
+                values["type"] = values["params_type"]
+        return values
+
+
+class OpenAPIPathParams(Param):
+    in_: Optional[str] = Field(default=None, alias="in")
+    description: Optional[str] = None
+    default: Any = None
+    example: Any = None
+
+    @model_validator(mode="before")
+    @classmethod
+    def resource_type_validator(cls, values: Any) -> Any:
+        if isinstance(values, dict):
+            if not values.get("params_type", None) and values.get("type", None):
+                values["params_type"] = values["type"]
+            if not values.get("type", None) and values.get("params_type", None):
+                values["type"] = values["params_type"]
+            if not values.get("in", None) and values.get("in_", None):
+                values["in"] = values["in_"]
+            if not values.get("in_", None) and values.get("in", None):
+                values["in_"] = values["in"]
         return values
 
 
@@ -73,7 +106,7 @@ class PayloadTask(BaseModel):
     executable: str
     tables: Optional[List[str]] = None
     clients: Optional[List[str]] = None
-    params: Optional[List[Param]] = []
+    params: Optional[List[Union[OpenAPIPathParams, Param]]] = []
     node_details: Optional[Any] = None
     context: PayloadTaskContext
 
@@ -86,12 +119,14 @@ class PayloadTask(BaseModel):
                     return sub_cls(**creds)
         return creds
 
-
 class Payload(BaseModel):
     job_id: str
     state: Optional[dict] = None
     tasks: List[PayloadTask]
     output_url: Optional[dict] = None
+    api_key: Optional[str] = None
+    api_url: Optional[str] = None
+    job_size: Optional[JobSizes] = JobSizes.MEDIUM.value
 
 
 class ResponseError(BaseModel):

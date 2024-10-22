@@ -10,13 +10,14 @@ import traceback
 from enum import Enum
 from os import path
 from pathlib import Path
-from typing import Optional, Dict, Any, List, Callable
+from typing import Optional, Dict, Any, List, Callable, Union
 
 import requests
 import yaml
 from pydantic import BaseModel
 from autobotAI_integrations.integration_schema import IntegrationSchema, IntegrationStates
 from autobotAI_integrations.models import *
+from autobotAI_integrations.open_api_schema import OpenAPIAction
 from autobotAI_integrations.payload_schema import PayloadTask, Payload, Param
 from autobotAI_integrations.utils.logging_config import logger
 from autobotAI_integrations.utils import (
@@ -26,7 +27,9 @@ from autobotAI_integrations.utils import (
     oscf_based_steampipe_json,
     transform_steampipe_compliance_resources,
     change_keys,
-    transform_inventory_resources
+    transform_inventory_resources,
+    open_api_parser,
+    get_restapi_validated_params,
 )
 
 
@@ -137,6 +140,8 @@ def executor(context):
 
     @classmethod
     def get_steampipe_tables(cls) -> List[dict]:
+        if ConnectionInterfaces.STEAMPIPE not in cls.supported_connection_interfaces():
+            return []
         base_path = os.path.dirname(inspect.getfile(cls))
         integration_type = cls.get_integration_type()
         with open(path.join(base_path, 'inventory.json')) as f:
@@ -146,12 +151,32 @@ def executor(context):
 
     @classmethod
     def get_all_python_sdk_clients(cls,integration_type=None):
+        if ConnectionInterfaces.PYTHON_SDK not in cls.supported_connection_interfaces():
+            return []
         base_path = os.path.dirname(inspect.getfile(cls))
         if integration_type!=None:
             base_path = base_path + f'/integrations/{integration_type}'
             print("base path is ",base_path)
         with open(path.join(base_path, ".", 'python_sdk_clients.yml')) as f:
             return yaml.safe_load(f)
+
+    @classmethod
+    def get_all_rest_api_actions(cls) -> List[OpenAPIAction]:
+        if ConnectionInterfaces.REST_API not in cls.supported_connection_interfaces():
+            return []
+        base_path = os.path.dirname(inspect.getfile(cls))
+        parser = open_api_parser.OpenApiParser()
+        open_api_actions = []
+        if not os.path.exists(os.path.join(base_path, "open_api.json")):
+            logger.info(f"File open_api.json not found for {cls.get_integration_type()}")
+            return open_api_actions
+        try:
+            parser.parse_file(os.path.join(base_path, "open_api.json"))
+            open_api_actions = parser.get_actions(cls.get_integration_type())
+        except Exception as e:
+            logger.exception(f"Error occurred while parsing open api file: {e}")
+        finally:
+            return open_api_actions
 
     @staticmethod
     def get_schema() -> BaseSchema:
@@ -173,32 +198,6 @@ def executor(context):
         except Exception as e:
             logger.exception(f"Error occurred while fetching details for {cls.__name__}: {e}")
             return {}
-
-    @staticmethod
-    def generic_rest_api_call(api_creds: RestAPICreds, method: str, endpoint: str, data=None):
-        url = api_creds.api_url + endpoint
-        headers = api_creds.headers.copy()
-        headers["Authorization"] = f"Bearer {api_creds.token}"
-
-        try:
-            if method == "GET":
-                response = requests.get(url, headers=headers)
-            elif method == "POST":
-                response = requests.post(url, headers=headers, json=data)
-            elif method == "PUT":
-                response = requests.put(url, headers=headers, json=data)
-            elif method == "DELETE":
-                response = requests.delete(url, headers=headers)
-            else:
-                raise ValueError("Invalid HTTP method specified.")
-
-            response.raise_for_status()  # Raise exception for non-2xx responses
-
-            return response.json()
-
-        except requests.RequestException as e:
-            logger.exception(f"Error occurred during {method} request to {url}: {e}")
-            return None
 
     def generate_steampipe_creds(self) -> SteampipeCreds:
         raise NotImplementedError()
@@ -487,6 +486,149 @@ def executor(context):
 
         logger.debug(f"Transformed Output: {stdout}")
         return stdout, stderr
+
+    def rest_api_processor(
+        self,
+        url: str,
+        method: str = "GET",
+        headers: Optional[Dict[str, str]] = None,
+        params: Optional[Dict[str, Any]] = None,
+        json_data: Optional[Dict[str, Any]] = None,
+        timeout: int = 10,
+    ) -> Union[Dict[str, Any], List[Dict[str, Any]]]:
+
+        logger.info(f"Making {method} request to {url}")
+        logger.debug(f"Headers: {headers}, Params: {params}, JSON: {json_data}")
+
+        try:
+            response = requests.request(
+                method=method,
+                url=url,
+                headers=headers if headers else None,
+                params=params if params else None,
+                json=json_data if json_data else None,
+                timeout=timeout,
+            )
+
+            logger.info(f"Response Status Code: {response.status_code}")
+            logger.debug(f"Response Text: {response.text}")
+
+            # Check for HTTP errors
+            response.raise_for_status()
+
+            # Check if the response content is JSON
+            if response.headers.get("Content-Type", "").startswith("application/json"):
+                try:
+                    try:
+                        return response.json() 
+                    except json.decoder.JSONDecodeError:
+                        # Handle multiple JSON objects separated by '\n'
+                        if "\n" in response.text:
+                            json_objects = response.text.strip().split("\n")
+                            return [json.loads(obj) for obj in json_objects if obj.strip()]
+                        else:
+                            raise ValueError("Unexpected JSON structure")
+                except json.decoder.JSONDecodeError:
+                    logger.error("Failed to decode JSON response")
+                    return {"error": "Invalid JSON response", "text": response.text}
+                except ValueError:
+                    logger.error("Unexpected JSON structure")
+                    return {"error": "Unexpected JSON structure", "text": response.text}
+            else:
+                # Handle non-JSON responses
+                try:
+                    results = response.json()
+                    return results
+                except json.decoder.JSONDecodeError:
+                    logger.error("Response is not JSON")
+                    return {"error": "Non-JSON response", "text": response.text}
+
+        except requests.exceptions.Timeout:
+            logger.error("Request timed out")
+            return {"error": "Request timed out"}
+
+        except requests.exceptions.ConnectionError:
+            logger.error("Connection error occurred")
+            return {"error": "Connection error"}
+
+        except requests.exceptions.RequestException as e:
+            logger.error(f"Request failed: {e}")
+            return {"error": f"Request failed: {e}"}
+
+    def execute_rest_api_task(self, payload_task: PayloadTask):
+        logger.info("Running Rest API Task")
+        results = []
+        errors = []
+        try:
+            logger.info(f"Validating Rest API parameters...")
+            params = get_restapi_validated_params(payload_task.params)
+
+            logger.info(f"Creating request url..")
+            request_url = payload_task.executable.format(
+                base_url=payload_task.creds.base_url.strip("/"),
+                # Filling path params,
+                **params.get("path_parameters", {}),
+            )
+            logger.info(f"Request URL: {request_url}")
+
+            logger.info(f"Making request..")
+            response = self.rest_api_processor(
+                url=request_url,
+                method=params.get("method", "GET"),
+                headers={
+                    **params.get("headers", {}),
+                    "Content-Type": "application/json",
+                    **payload_task.creds.headers,
+                },
+                params={
+                    **payload_task.creds.query_params,
+                    **params.get("query_parameters", None),
+                },
+                json_data=params.get("json_data", None),
+                timeout=params.get("timeout", 10),
+            )
+            logger.debug(f"Response: {response}")
+
+            if "error" in response:
+                errors.append(
+                    {
+                        "message": response["error"]
+                        + " "
+                        + str(response.get("text", "")),
+                        "other_details": {
+                            "execution_details": payload_task.context.execution_details
+                        },
+                    }
+                )
+                return results, errors
+
+            # Transforming results
+            if not isinstance(response, list):
+                response = [response]
+
+            for row in response:
+                if not isinstance(row, dict):
+                    row = {"result": row}
+                results.append(
+                    {
+                        **row,
+                        "integration_id": payload_task.context.integration.accountId,
+                        "integration_type": payload_task.context.integration.cspName,
+                        "user_id": payload_task.context.execution_details.caller.user_id,
+                        "root_user_id": payload_task.context.execution_details.caller.root_user_id,
+                    }
+                )
+        except Exception as e:
+            logger.exception(str(e))
+            errors.append(
+                {
+                    "message": traceback.format_exc(chain=True, limit=1),
+                    "other_details": {
+                        "execution_details": payload_task.context.execution_details
+                    },
+                }
+            )
+        return results, errors
 
 
 class AIBaseService(BaseService):

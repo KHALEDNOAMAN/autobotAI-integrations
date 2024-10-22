@@ -3,11 +3,12 @@ from datetime import datetime
 import importlib.machinery
 import importlib.util
 import traceback
+from typing import List
 import uuid
 from pathlib import Path
 import json
 
-from autobotAI_integrations.payload_schema import PayloadTask
+from autobotAI_integrations.payload_schema import Param, PayloadTask
 
 
 def fromisoformat(strdate):
@@ -275,3 +276,50 @@ def oscf_based_steampipe_json(data, integration_type, integration_id, query):
                 }
             )
     return result
+
+def get_restapi_validated_params(params: List[Param]):
+    filtered_params = {
+        "headers": {},
+        "query_parameters": {},
+        "path_parameters": {},
+        "json_data": {},
+        "method": None,
+    }
+    for param in params:
+        if getattr(param, "in_") == "headers":
+            for key, value in param.values.items():
+                if key.lower() == "authorization":
+                    raise ValueError("Authorization header is not allowed.")
+                filtered_params["headers"][key] = value
+        elif getattr(param, "in_") == "header":
+            if param.name.lower() == "authorization":
+                raise ValueError("Authorization header is not allowed.")
+            filtered_params["headers"][param.name] = param.values
+        elif getattr(param, "in_") == "method":
+            if not isinstance(param.values, str):
+                raise ValueError("Method must be a string.")
+            filtered_params["method"] = param.values.upper()
+        elif getattr(param, "in_") == "query":
+            if param.values is None:
+                continue
+            filtered_params["query_parameters"][param.name] = param.values
+        elif getattr(param, "in_") == "path":
+            if param.name.lower() == "base_url":
+                raise ValueError(
+                    "The path parameter 'base_url' is not allowed. Please use a different name."
+                )
+            filtered_params["path_parameters"][param.name] = param.values
+        elif getattr(param, "in_") == "body":
+            if filtered_params["json_data"]:
+                raise ValueError("Only one JSON body parameter is Allowed")
+            if isinstance(param.values, str):
+                try:
+                    param.values = json.loads(param.values)
+                except json.JSONDecodeError:
+                    raise ValueError("Invalid JSON Body string provided.")
+            filtered_params["json_data"] = param.values
+        elif getattr(param, "in_") == "timeout":
+            if not isinstance(param.values, int):
+                raise ValueError("Timeout must be an integer.")
+            filtered_params["timeout"] = params.values
+    return filtered_params

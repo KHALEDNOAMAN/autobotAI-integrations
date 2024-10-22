@@ -119,14 +119,27 @@ class AzureEntraIdService(BaseService):
             client_secret=payload_task.creds.envs.get("AZURE_CLIENT_SECRET"),
         )
         scopes = ["https://graph.microsoft.com/.default"]
-        msgraph = importlib.import_module(client_definitions[0].import_library_names[0], package=None)
+        clients_classes = {}
+        for client in client_definitions:
+            try:
+                client_module = importlib.import_module(
+                    client.module, package=None
+                )
+                if hasattr(client_module, client.class_name):
+                    cls = getattr(client_module, client.class_name)
+                    try:
+                        clients_classes[client.name] = cls(
+                            credentials=credential,
+                            scopes=scopes
+                        )
+                    except BaseException as e:
+                        clients_classes[client.name] = cls(credentials=credential)
+            except BaseException as e:
+                print(e)
+                continue
         return [
             {
-                "clients": {
-                    "msgraph": msgraph.GraphServiceClient(
-                        credentials=credential, scopes=scopes
-                    )
-                },
+                "clients": clients_classes,
                 "params": self.prepare_params(payload_task.params),
                 "context": payload_task.context,
             }

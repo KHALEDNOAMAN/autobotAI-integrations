@@ -1,3 +1,4 @@
+import re
 from typing import List, Type, Union
 import importlib
 import json
@@ -39,21 +40,35 @@ class GoogleAPIsIntegration(GCPIntegration):
     @classmethod
     def validate_scopes(cls, scopes) -> List[str]:
         validated_scopes = []
+        valid_scope_pattern =  re.compile(r'https:\/\/www\.googleapis\.com\/auth\/[a-zA-Z0-9_\-\.]+')
         if isinstance(scopes, list):
             return scopes
         elif isinstance(scopes, str):
-            scopes = scopes.split(", ")
+            scopes = scopes.split(",")
             for scope in scopes:
                 decoded_url = urllib.parse.unquote(scope)
                 cleaned_url = decoded_url.replace("\n", "")
                 scope = cleaned_url.strip()
-                if scope.startswith("https://"):
+                if (
+                    scope.startswith("https://")
+                    and scope.count("https://") == 1
+                    and valid_scope_pattern.match(scope)
+                ):
                     validated_scopes.append(scope)
                 else:
-                    raise ValueError("Invalid scope format")
+                    raise ValueError(f"Invalid scope format {scope}")
         if len(validated_scopes) == 0:
             raise ValueError("At least one valid scope is required")
         return validated_scopes
+    
+    @field_validator("user_email", mode="before")
+    @classmethod
+    def validate_user_email(cls, user_email) -> List[str]:
+        email_regex = r'^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$'
+        if isinstance(user_email, str) and re.match(email_regex, user_email):
+            return user_email
+        else:
+            raise ValueError("Invalid email format")
 
 
 class GoogleAPIsService(GCPService, BaseService):

@@ -29,12 +29,14 @@ setup(
         "jira",
         "GitPython",
         "vt-py",
+        "snowflake-connector-python",
     ],
     package_data={
         "": [
             "integrations/*/inventory.json",
             "integrations/*/python_sdk_clients.yml",
             "integrations/*/compliance.json",
+            "integrations/*/open_api.json",
         ]
     },
     classifiers=[

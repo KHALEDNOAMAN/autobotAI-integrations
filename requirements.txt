@@ -50,3 +50,4 @@ ollama
 jira
 GitPython
 vt-py
+snowflake-connector-python

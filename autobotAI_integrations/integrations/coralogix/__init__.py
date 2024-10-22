@@ -9,6 +9,7 @@ from autobotAI_integrations.models import (
     IntegrationCategory,
     SDKClient,
     SDKCreds,
+    RestAPICreds
 )
 from autobotAI_integrations.payload_schema import PayloadTask
 from autobotAI_integrations.utils import list_of_unique_elements
@@ -129,3 +130,10 @@ class CoralogixService(BaseService):
             "CORALOGIX_APIKEY": str(self.integration.api_key),
         }
         return SDKCreds(envs=creds)
+    
+    def generate_rest_api_creds(self) -> RestAPICreds:
+        return RestAPICreds(
+            base_url=self.integration.api_url,
+            token=self.integration.api_key,
+            headers={"Authorization": f"Bearer {self.integration.api_key}"}
+        )

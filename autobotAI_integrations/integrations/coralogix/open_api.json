@@ -1,0 +1,304 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "query_service",
+        "description": "",
+        "version": "1"
+    },
+    "paths": {
+        "/api/v1/dataprime/query": {
+            "post": {
+                "operationId": "com.coralogixapis.dataprime.v1.DataprimeQueryService.Query",
+                "summary": "method to run dataprime text queries",
+                "description": "method to run dataprime text queries",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/com.coralogixapis.dataprime.v1.QueryRequest"
+                            }
+                        }
+                    },
+                    "description": "dataprime text query request",
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/com.coralogixapis.dataprime.v1.QueryResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "com.coralogixapis.dataprime.v1.QueryRequest": {
+                "type": "object",
+                "properties": {
+                    "query": {
+                        "type": "string",
+                        "description": "query for which you seek results"
+                    },
+                    "metadata": {
+                        "$ref": "#/components/schemas/com.coralogixapis.dataprime.v1.Metadata"
+                    }
+                },
+                "description": "dataprime text query request",
+                "required": [
+                    "query"
+                ]
+            },
+            "com.coralogixapis.dataprime.v1.Metadata": {
+                "type": "object",
+                "properties": {
+                    "tier": {
+                        "$ref": "#/components/schemas/com.coralogixapis.dataprime.v1.Metadata.Tier"
+                    },
+                    "syntax": {
+                        "$ref": "#/components/schemas/com.coralogixapis.dataprime.v1.Metadata.QuerySyntax"
+                    },
+                    "limit": {
+                        "type": "integer",
+                        "format": "int32",
+                        "description": "limit number of results, default: 2000; max for TIER_FREQUENT_SEARCH: 12000;  max for TIER_ARCHIVE: 50000"
+                    },
+                    "startDate": {
+                        "type": "string",
+                        "format": "date-time",
+                        "description": "beginning of the time range for the query, default: end - 15 min or current time - 15 min if end is not defined, example 2023-11-05T13:15:30Z"
+                    },
+                    "endDate": {
+                        "type": "string",
+                        "format": "date-time",
+                        "description": "end of the time range for the query, default: start + 15 min or current time if start is not defined, example 2023-11-05T13:15:30Z"
+                    },
+                    "defaultSource": {
+                        "type": "string",
+                        "description": "default value for source to be used when source is omitted in a query"
+                    },
+                    "strictFieldsValidation": {
+                        "type": "boolean",
+                        "description": "prohibit using unknown fields, ones which were not detected in the ingested data, default = false"
+                    }
+                },
+                "description": "configuration of query execution"
+            },
+            "com.coralogixapis.dataprime.v1.QueryResponse": {
+                "type": "object",
+                "properties": {
+                    "error": {
+                        "$ref": "#/components/schemas/com.coralogixapis.dataprime.v1.DataprimeError"
+                    },
+                    "result": {
+                        "$ref": "#/components/schemas/com.coralogixapis.dataprime.v1.DataprimeResult"
+                    },
+                    "warning": {
+                        "$ref": "#/components/schemas/com.coralogixapis.dataprime.v1.DataprimeWarning"
+                    },
+                    "queryId": {
+                        "$ref": "#/components/schemas/com.coralogixapis.dataprime.v1.QueryId"
+                    }
+                },
+                "description": "dataprime response for text query, at most one of the fields can be defined in this object"
+            },
+            "com.coralogixapis.dataprime.v1.DataprimeWarning": {
+                "type": "object",
+                "properties": {
+                    "compileWarning": {
+                        "$ref": "#/components/schemas/com.coralogixapis.dataprime.v1.CompileWarning"
+                    },
+                    "timeRangeWarning": {
+                        "$ref": "#/components/schemas/com.coralogixapis.dataprime.v1.TimeRangeWarning"
+                    },
+                    "numberOfResultsLimitWarning": {
+                        "$ref": "#/components/schemas/com.coralogixapis.dataprime.v1.NumberOfResultsLimitWarning"
+                    },
+                    "bytesScannedLimitWarning": {
+                        "$ref": "#/components/schemas/com.coralogixapis.dataprime.v1.BytesScannedLimitWarning"
+                    },
+                    "deprecationWarning": {
+                        "$ref": "#/components/schemas/com.coralogixapis.dataprime.v1.DeprecationWarning"
+                    },
+                    "blocksLimitWarning": {
+                        "$ref": "#/components/schemas/com.coralogixapis.dataprime.v1.BlocksLimitWarning"
+                    }
+                },
+                "description": "warning message, at most one of the fields can be defined in this object"
+            },
+            "com.coralogixapis.dataprime.v1.CompileWarning": {
+                "type": "object",
+                "properties": {
+                    "warningMessage": {
+                        "type": "string"
+                    }
+                },
+                "description": "warning from Dataprime compilation",
+                "required": [
+                    "warningMessage"
+                ]
+            },
+            "com.coralogixapis.dataprime.v1.TimeRangeWarning": {
+                "type": "object",
+                "properties": {
+                    "warningMessage": {
+                        "type": "string"
+                    },
+                    "startDate": {
+                        "type": "string",
+                        "format": "date-time",
+                        "description": "example 2023-11-05T13:15:30Z"
+                    },
+                    "endDate": {
+                        "type": "string",
+                        "format": "date-time",
+                        "description": "example 2023-11-05T13:15:30Z"
+                    }
+                },
+                "description": "warning from applying time range to query",
+                "required": [
+                    "warningMessage"
+                ]
+            },
+            "com.coralogixapis.dataprime.v1.NumberOfResultsLimitWarning": {
+                "type": "object",
+                "properties": {
+                    "numberOfResultsLimit": {
+                        "type": "integer",
+                        "format": "int32"
+                    }
+                },
+                "description": "warning from applying limit on number of results",
+                "required": [
+                    "numberOfResultsLimit"
+                ]
+            },
+            "com.coralogixapis.dataprime.v1.BytesScannedLimitWarning": {
+                "type": "object",
+                "properties": {},
+                "description": "warning for reaching bytes scanned limit"
+            },
+            "com.coralogixapis.dataprime.v1.DeprecationWarning": {
+                "type": "object",
+                "properties": {
+                    "warningMessage": {
+                        "type": "string"
+                    }
+                },
+                "description": "warning about deprecated elements",
+                "required": [
+                    "warningMessage"
+                ]
+            },
+            "com.coralogixapis.dataprime.v1.BlocksLimitWarning": {
+                "type": "object",
+                "properties": {},
+                "description": "Warning for when query has reached maximum number of parquet blocks"
+            },
+            "com.coralogixapis.dataprime.v1.DataprimeResult": {
+                "type": "object",
+                "properties": {
+                    "results": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/com.coralogixapis.dataprime.v1.DataprimeResults"
+                        }
+                    }
+                },
+                "description": "batch of results",
+                "required": [
+                    "results"
+                ]
+            },
+            "com.coralogixapis.dataprime.v1.DataprimeResults": {
+                "type": "object",
+                "properties": {
+                    "metadata": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/com.coralogixapis.dataprime.v1.DataprimeResults.KeyValue"
+                        }
+                    },
+                    "labels": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/com.coralogixapis.dataprime.v1.DataprimeResults.KeyValue"
+                        }
+                    },
+                    "userData": {
+                        "type": "string"
+                    }
+                },
+                "description": "wrapper for dataprime results",
+                "required": [
+                    "userData",
+                    "labels",
+                    "metadata"
+                ]
+            },
+            "com.coralogixapis.dataprime.v1.DataprimeError": {
+                "type": "object",
+                "properties": {
+                    "message": {
+                        "type": "string"
+                    }
+                },
+                "description": "wrapper for dataprime error",
+                "required": [
+                    "message"
+                ]
+            },
+            "com.coralogixapis.dataprime.v1.QueryId": {
+                "type": "object",
+                "properties": {
+                    "queryId": {
+                        "type": "string"
+                    }
+                },
+                "description": "internal identifier of the query. Can be used to simplify investigation of issues",
+                "required": [
+                    "queryId"
+                ]
+            },
+            "com.coralogixapis.dataprime.v1.Metadata.Tier": {
+                "type": "string",
+                "enum": [
+                    "TIER_UNSPECIFIED",
+                    "TIER_ARCHIVE",
+                    "TIER_FREQUENT_SEARCH"
+                ],
+                "description": "tier on which query runs, default: TIER_FREQUENT_SEARCH"
+            },
+            "com.coralogixapis.dataprime.v1.Metadata.QuerySyntax": {
+                "type": "string",
+                "enum": [
+                    "QUERY_SYNTAX_UNSPECIFIED",
+                    "QUERY_SYNTAX_LUCENE",
+                    "QUERY_SYNTAX_DATAPRIME"
+                ],
+                "description": "syntax of the query, default: QUERY_SYNTAX_DATAPRIME"
+            },
+            "com.coralogixapis.dataprime.v1.DataprimeResults.KeyValue": {
+                "type": "object",
+                "properties": {
+                    "key": {
+                        "type": "string"
+                    },
+                    "value": {
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "value",
+                    "key"
+                ]
+            }
+        }
+    }
+}

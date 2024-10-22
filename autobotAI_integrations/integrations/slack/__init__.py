@@ -1,6 +1,7 @@
 from typing import List, Optional
 
 from pydantic import Field
+import requests
 
 from autobotAI_integrations import BaseSchema, SteampipeCreds, RestAPICreds, SDKCreds, CLICreds, \
     BaseService, ConnectionInterfaces, PayloadTask, SDKClient
@@ -33,11 +34,11 @@ class SlackService(BaseService):
     def _test_integration(self):
         try:
             if self.integration.webhook not in [None, "None"]:
-                webhook = WebhookClient(self.integration.webhook)
-                response = webhook.send(text="Integration State: Active")
-                assert response.status_code == 200
-                assert response.body == "ok"
-                return {"success": True}
+                response = requests.post(self.integration.webhook)
+                if response.status_code == 400 and response.text == "invalid_payload":
+                    return {"success": True}
+                else:
+                    return {"success": False, "error": response.text}
             else:
                 client = WebClient(token=self.integration.bot_token)
                 response = client.conversations_list()
@@ -104,7 +105,7 @@ class SlackService(BaseService):
                             "type": "text",
                             "label": "Slack Bot Token",
                             "placeholder": "Enter the Slack Token",
-                            "description": "Scopes needed: channels:read, chat:write.customize, chat:write, chat:write.public, groups:read",
+                            "description": "Scopes needed: channels:read, groups:read, im:read, mpin:read",
                             "required": True,
                         },
                     ],
@@ -132,7 +133,7 @@ class SlackService(BaseService):
             clients["WebhookClient"] = webhook
         else:
             clients["WebClient"] = WebClient(payload_task.creds.envs.get("SLACK_BOT_TOKEN"))
-        
+
         return [
             {
                 "clients": clients,
