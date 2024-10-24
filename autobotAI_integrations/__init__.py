@@ -217,7 +217,12 @@ def executor(context):
 
     def build_python_exec_combinations(self, payload_task: PayloadTask):
         client_definitions = self.find_client_definitions(payload_task.clients)
-        # Prevents the reinstallation of the same package in different clients
+        try:
+            # This will delete all files and folders recursively inside /tmp
+            subprocess.run(["rm", "-rf", "/tmp/*"], check=True)
+            logger.info("All files in /tmp/ have been deleted.")
+        except subprocess.CalledProcessError as e:
+            logger.error(f"Error occurred during /tmp cleanup: {e}")
         current_installation = set()
         # Installation dir by 'idx' to prevent packages co-interference
         for idx, client in enumerate(client_definitions):
