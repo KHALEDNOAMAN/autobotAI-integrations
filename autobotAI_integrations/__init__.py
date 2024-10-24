@@ -217,12 +217,6 @@ def executor(context):
 
     def build_python_exec_combinations(self, payload_task: PayloadTask):
         client_definitions = self.find_client_definitions(payload_task.clients)
-        try:
-            # This will delete all files and folders recursively inside /tmp
-            subprocess.run(["rm", "-rf", "/tmp/*"], check=True, shell=True)
-            print("All files in /tmp/ have been deleted.")
-        except subprocess.CalledProcessError as e:
-            print(f"Error occurred during /tmp cleanup: {e}")
         current_installation = set()
         # Installation dir by 'idx' to prevent packages co-interference
         for idx, client in enumerate(client_definitions):
