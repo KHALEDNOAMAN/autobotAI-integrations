@@ -203,7 +203,10 @@ class AwsAthenaService(BaseService):
 
     @staticmethod
     def supported_connection_interfaces():
-        return [ConnectionInterfaces.PYTHON_SDK]
+        return [
+            ConnectionInterfaces.STEAMPIPE,
+            ConnectionInterfaces.PYTHON_SDK
+        ]
 
     def generate_cli_creds(self) -> CLICreds:
         raise NotImplementedError()
