@@ -217,7 +217,6 @@ def executor(context):
 
     def build_python_exec_combinations(self, payload_task: PayloadTask):
         client_definitions = self.find_client_definitions(payload_task.clients)
-        # Prevents the reinstallation of the same package in different clients
         current_installation = set()
         # Installation dir by 'idx' to prevent packages co-interference
         for idx, client in enumerate(client_definitions):
@@ -263,7 +262,17 @@ def executor(context):
         combinations = self.build_python_exec_combinations(payload_task)
         for combo in combinations:
             try:
-                results.extend(self._execute_python_sdk_code(combo, payload_task))
+                result, error = self._execute_python_sdk_code(combo, payload_task)
+                results.extend(result)
+                if error:
+                    errors.append(
+                        {
+                            "message": error,
+                            "other_details": {
+                                "execution_details": payload_task.context.execution_details
+                            },
+                        }
+                    )
             except:
                 errors.append({
                     "message": traceback.format_exc(chain=True, limit=1),
@@ -288,7 +297,7 @@ def executor(context):
     def _execute_python_sdk_code(cls, combination, payload_task: PayloadTask):
         mod = load_mod_from_string(payload_task.executable)
         context = {**payload_task.context.model_dump(), **combination}
-        result = run_mod_func(mod.executor, context=context)
+        result, error = run_mod_func(mod.executor, context=context)
         resources = []
         if result:
             default_data = {
@@ -314,7 +323,7 @@ def executor(context):
                         {"result": r, **combination.get("metadata", {}), **default_data}
                     )
         resources = change_keys(resources)
-        return resources
+        return resources, error
 
     def _get_steampipe_config_path(self, plugin_name):
         home_dir = Path.home()

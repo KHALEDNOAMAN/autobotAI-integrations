@@ -37,6 +37,8 @@ class OpenApiParser:
             return parameter["schema"]["type"]
         elif "type" in parameter:
             return parameter["type"]
+        elif parameter.get('in', "query") == "path":
+            return "string"
 
     def _parse_param_default(self, parameter: dict):
         """parses the data type of the parameter"""
@@ -82,8 +84,7 @@ class OpenApiParser:
             )
         if "parameters" in method_details:
             for parameter in method_details["parameters"]:
-                if parameter.get("$ref"):
-                    parameter = self._get_reference_to_dict(parameter["$ref"])
+                parameter = self._resolve_reference(parameter)
                 try:
                     parameters_list.append(
                         OpenAPIPathParams(**{
@@ -127,6 +128,20 @@ class OpenApiParser:
             if isinstance(value, dict):
                 value = value.get(key)
         return value
+
+    def _resolve_reference(self, data):
+        if isinstance(data, dict):
+            if "$ref" in data:
+                ref_data = self._get_reference_to_dict(data["$ref"])
+                del data["$ref"]
+                data.update(ref_data)
+            for k, val in data.items():
+                data[k] = self._resolve_reference(val)
+            return data
+        elif isinstance(data, list):
+            return [self._resolve_reference(item) for item in data]
+        else:
+            return data
 
     def _parse_components(self):
         if not self._parsed_dict.get("components"):

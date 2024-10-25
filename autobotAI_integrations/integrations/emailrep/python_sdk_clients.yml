@@ -1,0 +1,5 @@
+- name: emailrep
+  import_library_names:
+    - emailrep.EmailRep
+  pip_package_names:
+    - emailrep
