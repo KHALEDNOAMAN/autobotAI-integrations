@@ -614,7 +614,9 @@ def executor(context):
             # Transforming results
             if not isinstance(response, list):
                 response = [response]
-
+            
+            response = change_keys(response)
+            
             for row in response:
                 if not isinstance(row, dict):
                     row = {"result": row}

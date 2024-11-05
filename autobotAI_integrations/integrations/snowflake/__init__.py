@@ -115,7 +115,6 @@ class SnowflakeService(BaseService):
     @classmethod
     def get_details(cls):
         details = super().get_details()
-        details["preview"] = True
         return details
 
     def build_python_exec_combinations_hook(

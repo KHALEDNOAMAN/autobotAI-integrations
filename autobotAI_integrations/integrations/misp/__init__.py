@@ -70,7 +70,7 @@ class MISPService(BaseService):
                     "name": "token",
                     "type": "text/password",
                     "label": "API Key",
-                    "placeholder": "Your CTI API KEY",
+                    "placeholder": "Your API KEY",
                     "required": True,
                 }
             ],

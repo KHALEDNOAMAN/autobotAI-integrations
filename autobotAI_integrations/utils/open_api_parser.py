@@ -1,3 +1,4 @@
+import re
 from typing import List, Optional
 import yaml
 import json
@@ -255,7 +256,7 @@ class OpenApiParser:
 
             actions.append(
                 OpenAPIAction(
-                    name=path.summary,
+                    name=re.sub(r'[^A-Za-z0-9\-]', '', str(path.summary)),
                     description=path.description,
                     code=path.path_url,
                     integration_type=integration_type,

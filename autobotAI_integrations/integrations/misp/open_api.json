@@ -293,7 +293,7 @@
         },
         "/attributes/restSearch": {
             "post": {
-                "summary": "[restSearch] Get a filtered and paginated list of attributes",
+                "summary": "restSearch Get a filtered and paginated list of attributes",
                 "description": "**This is the recommended endpoint for searching attributes.**\n",
                 "operationId": "restSearchAttributes",
                 "tags": [
@@ -794,7 +794,7 @@
         },
         "/events/restSearch": {
             "post": {
-                "summary": "[restSearch] Get a filtered and paginated list of events",
+                "summary": "restSearch Get a filtered and paginated list of events",
                 "operationId": "restSearchEvents",
                 "description": "**This is the recommended endpoint for searching events.**\n",
                 "tags": [
@@ -3217,7 +3217,7 @@
         },
         "/objects/restsearch": {
             "post": {
-                "summary": "[restSearch] Get a filtered and paginated list of objects",
+                "summary": "restSearch Get a filtered and paginated list of objects",
                 "description": "**This is the recommended endpoint for searching objects.**\n",
                 "operationId": "restSearchObjects",
                 "tags": [
