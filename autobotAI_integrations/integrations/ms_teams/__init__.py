@@ -29,22 +29,19 @@ class MsTeamsService(BaseService):
         super().__init__(ctx, integration)
 
     def _test_integration(self) -> dict:
-        res = None
         pattern = re.compile(
             "https:\\/\\/[\\w\\-\\.]+\\/webhookb2\\/[\\w\\d\\-\\@]+\\/IncomingWebhook\\/[\\w\\d\\-\\@]+\\/[\\w\\d\\-\\@]+")
         result = pattern.match(self.integration.webhook)
         if result is None:
-            res = {'success': False, "error": "Webhook is not valid ms_teams webhook URL"}
+            return {'success': False, "error": "Webhook is not valid MS Teams webhook URL"}
         try:
-            if not res:
-                client = pymsteams.connectorcard(self.integration.webhook)
-                client.title("Teams Integration Test Title")
-                client.text("Teams Integration Test Body")
-                client.send()
-                res = {'success': True}
-        except:
-            res = {'success': False, "error": "Unable to send message to Webhook"}
-        return res
+            client = pymsteams.connectorcard(self.integration.webhook)
+            client.send()
+            return {'success': True}
+        except Exception as e:
+            if str(e).startswith("Summary or Text is required"):
+                return {"success": True}
+        return {"success": False, "error": "Unable to send message to Webhook"}
 
     @staticmethod
     def get_forms():
