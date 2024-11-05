@@ -1,0 +1,5 @@
+- name: snyk
+  import_library_names:
+    - snyk
+  pip_package_names:
+    - pysnyk
