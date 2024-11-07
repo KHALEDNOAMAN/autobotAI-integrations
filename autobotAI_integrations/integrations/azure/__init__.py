@@ -39,7 +39,7 @@ class AzureService(BaseService):
             integration = AzureIntegration(**integration)
         super().__init__(ctx, integration)
 
-    def _test_integration(self, user_initiated_request: bool = False) -> dict:
+    def _test_integration(self) -> dict:
         try:
             credentials = ClientSecretCredential(
                 tenant_id=self.integration.tenant_id,

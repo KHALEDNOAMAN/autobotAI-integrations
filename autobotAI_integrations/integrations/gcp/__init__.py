@@ -92,7 +92,7 @@ class GCPService(BaseService):
             integration = GCPIntegration(**integration)
         super().__init__(ctx, integration)
 
-    def _test_integration(self, user_initiated_request: bool = False) -> dict:
+    def _test_integration(self) -> dict:
         try:
             gcp_creds = self.integration.credentials.model_dump()
             scopes = ["https://www.googleapis.com/auth/cloud-platform"]

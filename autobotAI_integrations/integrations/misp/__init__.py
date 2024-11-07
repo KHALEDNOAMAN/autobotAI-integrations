@@ -31,7 +31,7 @@ class MISPService(BaseService):
             integration = MISPIntegration(**integration)
         super().__init__(ctx, integration)
 
-    def _test_integration(self, user_initiated_request: bool = False):
+    def _test_integration(self):
         try:
             response = requests.get(
                 url=self.integration.base_url,

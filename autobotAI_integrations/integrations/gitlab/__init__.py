@@ -33,7 +33,7 @@ class GitlabService(BaseService):
             integration = GitlabIntegration(**integration)
         super().__init__(ctx, integration)
 
-    def _test_integration(self, user_initiated_request: bool = False):
+    def _test_integration(self):
         try:
             if str(self.integration.base_url) not in ["None", None]:
                 gitlab = Gitlab(url=str(self.integration.base_url), private_token=str(self.integration.token))

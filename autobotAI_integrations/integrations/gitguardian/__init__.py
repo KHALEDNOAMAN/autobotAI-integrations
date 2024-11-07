@@ -61,7 +61,7 @@ class GitGuardianService(BaseService):
             ConnectionInterfaces.STEAMPIPE
         ]
 
-    def _test_integration(self, user_initiated_request: bool = False):
+    def _test_integration(self):
         try:
             client = GGClient(api_key=self.integration.token)
             if client.health_check().success:

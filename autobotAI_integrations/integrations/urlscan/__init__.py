@@ -31,7 +31,7 @@ class URLScanService(BaseService):
             integration = URLScanIntegrations(**integration)
         super().__init__(ctx, integration)
 
-    def _test_integration(self, user_initiated_request: bool = False) -> dict:
+    def _test_integration(self) -> dict:
         headers = {
             "API-Key": str(self.integration.api_key),
             "Content-Type": "application/json",

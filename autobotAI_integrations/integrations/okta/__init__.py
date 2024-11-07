@@ -45,7 +45,7 @@ class OktaService(BaseService):
             integration = OktaIntegration(**integration)
         super().__init__(ctx, integration)
 
-    def _test_integration(self, user_initiated_request: bool = False):
+    def _test_integration(self):
         try:
             response = requests.get(
                 url=self.integration.host_url + '/api/v1/users',

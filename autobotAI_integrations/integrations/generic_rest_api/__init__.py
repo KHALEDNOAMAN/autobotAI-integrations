@@ -56,7 +56,7 @@ class GenericRestAPIService(BaseService):
             integration = GenericRestAPIIntegration(**integration)
         super().__init__(ctx, integration)
 
-    def _test_integration(self, user_initiated_request: bool = False) -> dict:
+    def _test_integration(self) -> dict:
         try:
             parameters = {}
             if self.integration.auth_type == AuthType.BEARER_TOKEN.value:

@@ -64,7 +64,7 @@ class AwsSesService(BaseService):
                 ),
             )
 
-    def _test_integration(self, user_initiated_request: bool = False) -> dict:
+    def _test_integration(self) -> dict:
         try:
             ses_client = self._get_aws_client('ses')
             response = ses_client.list_identities()

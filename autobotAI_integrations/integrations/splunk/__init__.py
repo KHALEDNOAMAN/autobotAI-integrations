@@ -39,7 +39,7 @@ class SplunkService(BaseService):
             integration = SplunkIntegration(**integration)
         super().__init__(ctx, integration)
 
-    def _test_integration(self, user_initiated_request: bool = False) -> dict:
+    def _test_integration(self) -> dict:
         try:
             HOST, PORT = self._get_host_and_port()
             print(HOST, PORT)

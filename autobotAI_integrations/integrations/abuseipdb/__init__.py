@@ -29,7 +29,7 @@ class AbuseIPDBService(BaseService):
             integration = AbuseIPDBIntegration(**integration)
         super().__init__(ctx, integration)
 
-    def _test_integration(self, user_initiated_request: bool = False) -> dict:
+    def _test_integration(self) -> dict:
         response = requests.get(
             "https://api.abuseipdb.com/api/v2/check",
             params={"ipAddress": "118.25.6.39", "maxAgeInDays": 90, "verbose": True},

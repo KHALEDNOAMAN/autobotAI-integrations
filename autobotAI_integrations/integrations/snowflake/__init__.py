@@ -44,7 +44,7 @@ class SnowflakeService(BaseService):
             integration = SnowflakeIntegration(**integration)
         super().__init__(ctx, integration)
 
-    def _test_integration(self, user_initiated_request: bool = False):
+    def _test_integration(self):
         try:
             connection = connect(
                 user=self.integration.username,

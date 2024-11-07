@@ -35,7 +35,7 @@ class EmailRepService(BaseService):
             integration = EmailRepIntegration(**integration)
         super().__init__(ctx, integration)
 
-    def _test_integration(self, user_initiated_request: bool = False) -> dict:
+    def _test_integration(self) -> dict:
         try:
             response = requests.get(
                 url= "https://emailrep.io/bsheffield432@gmail.com",

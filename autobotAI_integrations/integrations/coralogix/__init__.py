@@ -37,7 +37,7 @@ class CoralogixService(BaseService):
             integration = CoralogixIntegration(**integration)
         super().__init__(ctx, integration)
 
-    def _test_integration(self, user_initiated_request: bool = False) -> dict:
+    def _test_integration(self) -> dict:
         try:
             response = requests.post(
                 url=f"{self.integration.api_url}/api/v1/dataprime/query",
@@ -130,7 +130,7 @@ class CoralogixService(BaseService):
             "CORALOGIX_APIKEY": str(self.integration.api_key),
         }
         return SDKCreds(envs=creds)
-
+    
     def generate_rest_api_creds(self) -> RestAPICreds:
         return RestAPICreds(
             base_url=self.integration.api_url,

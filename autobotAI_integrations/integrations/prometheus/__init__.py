@@ -38,7 +38,7 @@ class PrometheusService(BaseService):
             integration = PrometheusIntegration(**integration)
         super().__init__(ctx, integration)
 
-    def _test_integration(self, user_initiated_request: bool = False):
+    def _test_integration(self):
         try:
             response = requests.get(self.integration.host_url)
             if response.status_code == 200:
