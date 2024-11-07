@@ -39,7 +39,7 @@ class GoogleChatService(BaseService):
                 "success": False,
                 "error": "Webhook is not valid Google Chat webhook URL",
             }
-        if self.ctx and self.ctx.config.get("user_initiated_request"):
+        if self.ctx and self.ctx.meta and self.ctx.meta.get("user_initiated_request"):
             try:
                 client = GoogleChatWebhookClient(
                     url=self.integration.webhook, header="autobotAI"
