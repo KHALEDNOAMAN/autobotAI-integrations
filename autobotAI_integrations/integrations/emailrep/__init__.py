@@ -62,7 +62,7 @@ class EmailRepService(BaseService):
     def get_forms():
         # NOTE: Do not change the labels they are case sensitive to auth_type while used in frontend
         return {
-            "label": "Generic REST API",
+            "label": "EmailRep",
             "type": "form",
             "children": [
                 {
