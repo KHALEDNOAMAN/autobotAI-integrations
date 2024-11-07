@@ -32,7 +32,7 @@ class UptimeRobotService(BaseService):
             integration = UptimeRobotIntegrations(**integration)
         super().__init__(ctx, integration)
 
-    def _test_integration(self) -> dict:
+    def _test_integration(self, user_initiated_request: bool = False) -> dict:
         try:
             url = "https://api.uptimerobot.com/v2/getAccountDetails"
             payload = "api_key={}&format=json".format(self.integration.api_key)

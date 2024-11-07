@@ -31,7 +31,7 @@ class OllamaService(AIBaseService):
             integration = OllamaIntegration(**integration)
         super().__init__(ctx, integration)
 
-    def _test_integration(self) -> dict:
+    def _test_integration(self, user_initiated_request: bool = False) -> dict:
         try:
             response = requests.get(self.integration.base_url + "/api/tags")
             if response.status_code == 200:

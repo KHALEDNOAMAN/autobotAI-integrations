@@ -29,7 +29,7 @@ class IPinfoService(BaseService):
             integration = IPinfoIntegrations(**integration)
         super().__init__(ctx, integration)
 
-    def _test_integration(self) -> dict:
+    def _test_integration(self, user_initiated_request: bool = False) -> dict:
         try:
             response = requests.get("https://ipinfo.io/8.8.8.8/json", params={
                 "token": self.integration.token if self.integration.token not in [None, 'None'] else None

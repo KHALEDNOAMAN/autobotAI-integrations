@@ -36,7 +36,7 @@ class SnykService(BaseService):
             integration = SnykIntegration(**integration)
         super().__init__(ctx, integration)
 
-    def _test_integration(self) -> dict:
+    def _test_integration(self, user_initiated_request: bool = False) -> dict:
         try:
             # Snyk API request
             response = requests.get(

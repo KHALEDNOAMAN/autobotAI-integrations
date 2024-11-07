@@ -32,7 +32,7 @@ class CloudflareService(BaseService):
             integration = CloudflareIntegration(**integration)
         super().__init__(ctx, integration)
 
-    def _test_integration(self) -> dict:
+    def _test_integration(self, user_initiated_request: bool = False) -> dict:
         try:
             if self.integration.token not in ["None", None]:
                 response = requests.get(

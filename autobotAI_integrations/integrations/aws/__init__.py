@@ -79,7 +79,7 @@ class AWSService(BaseService):
                 ),
             )
 
-    def _test_integration(self) -> dict:
+    def _test_integration(self, user_initiated_request: bool = False) -> dict:
         try:
             sts_client = self._get_aws_client("sts")
             ec2_client = self._get_aws_client("ec2")

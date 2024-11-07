@@ -29,7 +29,7 @@ class GrafanaService(BaseService):
             integration = GrafanaIntegrations(**integration)
         super().__init__(ctx, integration)
 
-    def _test_integration(self) -> dict:
+    def _test_integration(self, user_initiated_request: bool = False) -> dict:
         try:
             if len(self.integration.auth_key.split(":")) > 1:
                 response = requests.get(f"https://{self.integration.auth_key}@{self.integration.host_url.split('://')[1]}/api/user")

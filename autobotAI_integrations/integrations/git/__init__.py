@@ -27,7 +27,7 @@ class GitService(BaseService):
             integration = GitIntegration(**integration)
         super().__init__(ctx, integration)
 
-    def _test_integration(self) -> dict:
+    def _test_integration(self, user_initiated_request: bool = False) -> dict:
         if not self._is_git_installed():
             self._install_git_with_python()
             if not self._is_git_installed():

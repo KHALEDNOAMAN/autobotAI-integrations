@@ -40,7 +40,7 @@ class DATADOGService(BaseService):
             integration = DATADOGIntegration(**integration)
         super().__init__(ctx, integration)
 
-    def _test_integration(self):
+    def _test_integration(self, user_initiated_request: bool = False):
         try:
             headers = {
                 "Accept": "application/json",

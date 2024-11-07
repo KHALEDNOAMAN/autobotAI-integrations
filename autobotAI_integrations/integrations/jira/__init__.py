@@ -42,7 +42,7 @@ class JiraService(BaseService):
             integration = JiraIntegration(**integration)
         super().__init__(ctx, integration)
 
-    def _test_integration(self):
+    def _test_integration(self, user_initiated_request: bool = False):
         try:
             jira_cloud_options = {"server": self.integration.base_url}
             jira_cloud = JIRA(

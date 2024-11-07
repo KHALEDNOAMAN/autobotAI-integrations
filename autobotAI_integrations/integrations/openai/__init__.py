@@ -40,7 +40,7 @@ class OpenAIService(AIBaseService):
             integration = OpenAIIntegration(**integration)
         super().__init__(ctx, integration)
 
-    def _test_integration(self):
+    def _test_integration(self, user_initiated_request: bool = False):
         try:
             response = requests.get("https://api.openai.com/v1/engines", headers={"Authorization": f"Bearer {self.integration.api_key}"})
             if response.status_code == 200:
@@ -274,15 +274,15 @@ def executor(context):
         # print("run is ",run)
         # print("run status is ",run.status)
         # while run.status!='completed':
-            
+
         #     run = client.beta.threads.runs.retrieve(thread_id=thread_id, run_id=run_id)
         # # if run.status != "completed":
         # #     return {"thread_id": thread_id, "run_id": run.id, "status": run.status}
-       
+
         # print("run status is after ",run.status)
         # messages = client.beta.threads.messages.list(thread_id=thread_id)
         # print("message is ",message)
         # new_message = messages.data[0].content[0].text.value
-        
+
         # print("new message os ",new_message)
         # return {"status": run.status, "response": new_message}

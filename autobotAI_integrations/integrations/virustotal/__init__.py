@@ -31,7 +31,7 @@ class VirusTotalService(BaseService):
             integration = VirusTotalIntegration(**integration)
         super().__init__(ctx, integration)
 
-    def _test_integration(self) -> dict:
+    def _test_integration(self, user_initiated_request: bool = False) -> dict:
         url = "https://example.com/"
         url_id = base64.urlsafe_b64encode(url.encode()).decode().strip("=")
         api_url = f"https://www.virustotal.com/api/v3/urls/{url_id}"

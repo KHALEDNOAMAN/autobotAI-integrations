@@ -55,7 +55,7 @@ class BaseService:
         """
         raise NotImplementedError()
 
-    def _test_integration(self) -> dict:
+    def _test_integration(self, user_initiated_request: bool = False) -> dict:
         """
         Returns a dictionary with the following keys:
         - success: bool
@@ -63,8 +63,8 @@ class BaseService:
         """
         raise NotImplementedError()
 
-    def is_active(self):
-        result = self._test_integration()
+    def is_active(self, user_initiated_request: bool = False):
+        result = self._test_integration(user_initiated_request=user_initiated_request)
         if result["success"]:
             self.integration.integrationState = IntegrationStates.ACTIVE
         else:
@@ -614,9 +614,9 @@ def executor(context):
             # Transforming results
             if not isinstance(response, list):
                 response = [response]
-            
+
             response = change_keys(response)
-            
+
             for row in response:
                 if not isinstance(row, dict):
                     row = {"result": row}

@@ -30,7 +30,7 @@ class WizService(BaseService):
             integration = WizIntegrations(**integration)
         super().__init__(ctx, integration)
 
-    def _test_integration(self) -> dict:
+    def _test_integration(self, user_initiated_request: bool = False) -> dict:
         try:
             # TODO: replace with actual API
             return {"success": True}

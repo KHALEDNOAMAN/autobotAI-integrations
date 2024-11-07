@@ -64,7 +64,7 @@ class AWSBedrockService(AIBaseService):
                 ),
             )
 
-    def _test_integration(self) -> dict:
+    def _test_integration(self, user_initiated_request: bool = False) -> dict:
         try:
             bedrock_client = self._get_aws_client('bedrock')
             models = [

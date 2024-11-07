@@ -54,7 +54,7 @@ class KubernetesService(BaseService):
             ConnectionInterfaces.STEAMPIPE
         ]
 
-    def _test_integration(self):
+    def _test_integration(self, user_initiated_request: bool = False):
         return {"success": True}
 
     def build_python_exec_combinations_hook(self, payload_task: PayloadTask,

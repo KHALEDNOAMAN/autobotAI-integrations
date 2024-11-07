@@ -38,7 +38,7 @@ class PythonService(BaseService):
             integration = PythonIntegration(**integration)
         super().__init__(ctx, integration)
 
-    def _test_integration(self) -> dict:
+    def _test_integration(self, user_initiated_request: bool = False) -> dict:
         return {"success": True}
 
     @staticmethod

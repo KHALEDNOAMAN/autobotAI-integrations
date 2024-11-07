@@ -30,7 +30,7 @@ class AzureEntraIdService(BaseService):
             integration = AzureEntraIdIntegration(**integration)
         super().__init__(ctx, integration)
 
-    def _test_integration(self) -> dict:
+    def _test_integration(self, user_initiated_request: bool = False) -> dict:
         try:
             url = f"https://login.microsoftonline.com/{self.integration.tenant_id}/oauth2/v2.0/token"
             headers = {"Content-Type": "application/x-www-form-urlencoded"}

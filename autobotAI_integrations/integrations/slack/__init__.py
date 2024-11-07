@@ -31,7 +31,7 @@ class SlackService(BaseService):
             integration = SlackIntegration(**integration)
         super().__init__(ctx, integration)
 
-    def _test_integration(self):
+    def _test_integration(self, user_initiated_request: bool = False):
         try:
             if self.integration.webhook not in [None, "None"]:
                 response = requests.post(self.integration.webhook)

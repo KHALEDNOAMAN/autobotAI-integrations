@@ -29,7 +29,7 @@ class IPStackService(BaseService):
             integration = IPStackIntegrations(**integration)
         super().__init__(ctx, integration)
 
-    def _test_integration(self) -> dict:
+    def _test_integration(self, user_initiated_request: bool = False) -> dict:
         try:
             url = f"http://api.ipstack.com/check"
             response = requests.get(url, params={"access_key": self.integration.api_key})
