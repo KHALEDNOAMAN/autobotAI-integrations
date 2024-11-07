@@ -108,6 +108,7 @@ class SnowflakeService(BaseService):
     def supported_connection_interfaces():
         return [
             ConnectionInterfaces.PYTHON_SDK,
+            # NOTE:Snowflake steampipe is not updated with their latest version
             # ConnectionInterfaces.STEAMPIPE,
             # ConnectionInterfaces.REST_API
         ]
