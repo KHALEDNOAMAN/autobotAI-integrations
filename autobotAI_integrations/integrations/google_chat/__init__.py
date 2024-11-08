@@ -34,25 +34,26 @@ class GoogleChatService(BaseService):
             "https://chat.googleapis.com/v1/spaces/[a-zA-Z0-9].*?/messages?.*"
         )
         result = pattern.match(self.integration.webhook)
+        res = None
         if result is None:
-            return {
+            res = {
                 "success": False,
                 "error": "Webhook is not valid Google Chat webhook URL",
             }
-        if self.ctx and self.ctx.meta and self.ctx.meta.get("user_initiated_request"):
-            try:
+        try:
+            if not res:
                 client = GoogleChatWebhookClient(
                     url=self.integration.webhook, header="autobotAI"
                 )
                 client.send("Hello from autobotAI!!!", "The webhook works!!!")
-                return {"success": True, "data": "Message Sent!"}
-            except:
-                return {
-                    "success": False,
-                    "error": "Unable to send message to Google Chat webhook",
-                }
-        else:
-            return {"success": True}
+                res = {"success": True}
+        except:
+            res = {
+                "success": False,
+                "error": "Unable to send message to Google Chat webhook",
+            }
+
+        return res
 
     @staticmethod
     def get_forms():

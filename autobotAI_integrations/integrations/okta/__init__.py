@@ -93,6 +93,7 @@ class OktaService(BaseService):
     @classmethod
     def get_details(cls):
         details = super().get_details()
+        details["preview"] = True
         return details
 
     @staticmethod
