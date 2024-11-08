@@ -51,5 +51,6 @@ class TestClassSnyk:
         service = integration_service_factory.get_service_cls('snyk')
         actions = service.get_all_rest_api_actions()
         for action in actions:
-            print(action.model_dump_json(indent=2))
+            assert action.name != None
+            assert action.name.strip() != ""
         assert len(actions) > 0
