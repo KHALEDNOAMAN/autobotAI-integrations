@@ -14,7 +14,7 @@ class OpenApiParser:
         self.paths: Optional[List[OpenAPIPathModel]] = None
         self.tags: Optional[List[dict]] = None
         self.security: Optional[List[dict]] = None
-        self.components: Optional[dict] = None
+        self.components: Optional[dict] = dict()
         self.open_api_schema: Optional[OpenAPISchema] = None
 
     def _parse_version_type(self):
