@@ -11,7 +11,6 @@
                 "last_resource_analyzed",
                 "last_resource_analyzed_at",
                 "status_reason",
-                "findings",
                 "title",
                 "tags",
                 "akas",
@@ -33,6 +32,35 @@
                     "alias": "id"
                 }
             ],
+            "inventory_supported": false
+        },
+        {
+            "name": "aws_accessanalyzer_finding",
+            "all_columns": [
+                "access_analyzer_arn",
+                "account_id",
+                "action",
+                "analyzed_at",
+                "condition",
+                "created_at",
+                "error",
+                "id",
+                "is_public",
+                "partition",
+                "principal",
+                "region",
+                "resource",
+                "resource_owner_account",
+                "resource_type",
+                "sources",
+                "sp_connection_name",
+                "status",
+                "title",
+                "updated_at"
+            ],
+            "included": [],
+            "excluded": [],
+            "aliases": [],
             "inventory_supported": false
         },
         {
