@@ -4,6 +4,7 @@ import uuid
 from typing import List, Optional
 from pydantic import Field
 import requests
+from pathlib import Path
 
 from autobotAI_integrations import (
     BaseSchema,
@@ -70,76 +71,39 @@ class OpenAIService(AIBaseService):
 
     @staticmethod
     def ai_prompt_python_template():
-        return {
-            "integration_type": "openai",
-            "ai_client": "openai",
-            "param_definitions": [
-                {
-                    "name": "prompt",
-                    "type": "str",
-                    "description": "The prompt to use for the AI model",
-                    "required": True,
-                },
-                {
-                    "name": "model",
-                    "type": "str",
-                    "description": "The model to use for the AI model",
-                    "required": True,
-                },
-                {
-                    "name": "resources",
-                    "type": "list",
-                    "description": "The resources to use for the AI model",
-                    "required": True,
-                },
-            ],
-            "code": """import json
-import traceback
-def executor(context):
-    openai = context['clients']['openai']
-    prompt = context['params']['prompt']
-    model = context['params']['model']
-    resources = json.loads(json.dumps(context['params']['resources'], default=str))
-    prompts = [{
-        'role': 'user',
-        'content': f"For each Input dict provided, return a dict with attributes such as, 'name': str name of the resource, 'action_required': boolean that shows is the action advisable or not, 'probability_score': integer that shows the probability of the result being correct, 'confidence_score': integrer that shows the confidence in judgement, 'reason': string that mentions the reason for the judgement, 'fields_evaluated': list of fields that were evaluted for the judgement, the evaluation criterion given is {prompt}. The output should be valid parseable json, do not use any markup language at all, the returned message content should be json parsable. Wait till all data is provided before starting",
-    }]
-    for resource in resources:
-        prompts.append({
-            'role': 'user',
-            'content': json.dumps(resource, default=str),
-        })
-    prompts.append({
-        'role': 'user',
-        'content': "All resources are provided, return the result for each resource in the same order.",
-    })
-    counter = 0
-    while counter < 5:  # 4 Retries
-        counter = counter + 1
-        chat_completion = openai.chat.completions.create(
-            messages=prompts,
-            model=model,
-        )
-        try:
-            message_content = chat_completion.choices[0].message.content
-            if message_content:
-                if "```json" in message_content:
-                    message_content = message_content.split("```json")[1].split("```")[0]
-                if len(json.loads(message_content)) == len(resources):
-                    for idx, response in enumerate(json.loads(message_content)):
-                        if not resources[idx].get("name") or (resources[idx].get("name") and response["name"] == resources[idx]["name"]):
-                            resources[idx]["decision"] = response
-                        else:
-                            for resource in resources:
-                                if response["name"] == resource["name"]:
-                                    resource["decision"] = response
-                    break
-        except:
-            print(type(chat_completion.choices[0].message.content), chat_completion.choices[0].message.content)
-            traceback.print_exc()
-    print("Completed Evaluation with ", counter, "tries.")
-    return resources""",
-        }
+        current_directory = Path(__file__).resolve().parent
+        with open(os.path.join(current_directory, "ai_evaluator_code.py")) as f:
+            return {
+                "integration_type": "openai",
+                "ai_client": "openai",
+                "param_definitions": [
+                    {
+                        "name": "prompt",
+                        "type": "str",
+                        "description": "The prompt to use for the AI model",
+                        "required": True,
+                    },
+                    {
+                        "name": "model",
+                        "type": "str",
+                        "description": "The model to use for the AI model",
+                        "required": True,
+                    },
+                    {
+                        "name": "resources",
+                        "type": "list",
+                        "description": "The resources to use for the AI model",
+                        "required": True,
+                    },
+                    {
+                        "name": "MAX TOKEN",
+                        "type": "number",
+                        "required": False,
+                        "description": "Set a max token limit for your model, in case if you reach max token limit (default: 8192)",
+                    },
+                ],
+                "code": f.read(),
+            }
 
     @staticmethod
     def get_forms():
@@ -274,15 +238,15 @@ def executor(context):
         # print("run is ",run)
         # print("run status is ",run.status)
         # while run.status!='completed':
-            
+
         #     run = client.beta.threads.runs.retrieve(thread_id=thread_id, run_id=run_id)
         # # if run.status != "completed":
         # #     return {"thread_id": thread_id, "run_id": run.id, "status": run.status}
-       
+
         # print("run status is after ",run.status)
         # messages = client.beta.threads.messages.list(thread_id=thread_id)
         # print("message is ",message)
         # new_message = messages.data[0].content[0].text.value
-        
+
         # print("new message os ",new_message)
         # return {"status": run.status, "response": new_message}
