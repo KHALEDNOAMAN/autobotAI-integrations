@@ -43,7 +43,15 @@ class OpenAIService(AIBaseService):
 
     def _test_integration(self):
         try:
-            response = requests.get("https://api.openai.com/v1/engines", headers={"Authorization": f"Bearer {self.integration.api_key}"})
+            response = requests.post(
+                "https://api.openai.com/v1/chat/completions",
+                headers={"Authorization": f"Bearer {self.integration.api_key}"},
+                json={
+                    "model": "gpt-3.5-turbo",
+                    "messages": [{"role": "user", "content": "Say this is a test!"}],
+                    "temperature": 0.7,
+                }
+            )
             if response.status_code == 200:
                 return {"success": True}
             if response.status_code == 401:
