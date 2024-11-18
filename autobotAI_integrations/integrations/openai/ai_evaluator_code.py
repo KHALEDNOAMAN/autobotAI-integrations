@@ -15,7 +15,7 @@ def executor(context):
     if context['params'].get('MAX TOKEN'):
         MAX_TOKEN = int(context['params'].get('MAX TOKEN'))
     
-    if isinstance(resources, dict):
+    if not isinstance(resources, list):
         resources = [resources]
 
     sample_json = """
