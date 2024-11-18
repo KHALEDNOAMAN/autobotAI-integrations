@@ -14,7 +14,7 @@ def executor(context):
 
     if context['params'].get('MAX TOKEN'):
         MAX_TOKEN = int(context['params'].get('MAX TOKEN'))
-    
+
     if not isinstance(resources, list):
         resources = [resources]
 
@@ -28,7 +28,7 @@ def executor(context):
         "fields_evaluated": ["field1", "field2", "field3", ..., "fieldN"]
     }
     """
-    
+
     user_prompt = f"""Generate JSON output based on the following field descriptions and instructions:
     
     1. **action_required**: Boolean. Return `true` or `false` to indicate if automation is feasible based on `probability_score` and `confidence_score`.
@@ -75,8 +75,8 @@ def executor(context):
             parsable_resource_count += 1
             continue
         break
-    
-    resources = resources[:parsable_resource_count]
+
+    resources = resources[:min(parsable_resource_count, 10)]
 
     # Final signal to process resources
     prompts.append(
@@ -118,15 +118,11 @@ def executor(context):
 
 
 def combine_resources_with_decision(resources, decisions):
-    if len(decisions) != len(resources):
-        raise Exception(
-            f"Number of decisions: {len(decisions)} and resources: {len(resources)} are not equal"
-        )
-    if isinstance(resources, dict):
-        resources = [resources]
+    results = []
     for resource in resources:
         for decision in decisions:
             if resource["name"] == decision["name"]:
                 resource["decision"] = decision
+                results.append(resource)
                 break
-    return resources
+    return results

@@ -51,7 +51,7 @@ def executor(context):
     except:
         pass
     else:
-        resources = resources[:parsable_resources_count]
+        resources = resources[: min(parsable_resources_count, 10)]
 
     final_prompt = f"""
 <|begin_of_text|><|start_header_id|>system<|end_header_id|>
@@ -114,15 +114,11 @@ Prompt: {prompt}
 
 
 def combine_resources_with_decision(resources, decisions):
-    if len(decisions) != len(resources):
-        raise Exception(
-            f"Number of decisions: {len(decisions)} and resources: {len(resources)} are not equal"
-        )
-    if isinstance(resources, dict):
-        resources = [resources]
+    results = []
     for resource in resources:
         for decision in decisions:
             if resource["name"] == decision["name"]:
                 resource["decision"] = decision
+                results.append(resource)
                 break
-    return resources
+    return results
