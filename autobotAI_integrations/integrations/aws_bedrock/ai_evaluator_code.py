@@ -32,6 +32,8 @@ def executor(context):
 
     MAX_TOKEN = 8192  # for meta llama 70b
     if context["params"].get("MAX TOKEN"):
+        if context["params"].get("MAX TOKEN") < 800:
+            raise Exception("The Input Token Should be greater than 800.")
         MAX_TOKEN = int(context["params"].get("MAX TOKEN"))
 
     if not isinstance(resources, list):
@@ -115,6 +117,8 @@ Prompt: {prompt}
 
 def combine_resources_with_decision(resources, decisions):
     results = []
+    if isinstance(decisions, dict):
+        decisions = [decisions]
     for resource in resources:
         for decision in decisions:
             if resource["name"] == decision["name"]:
