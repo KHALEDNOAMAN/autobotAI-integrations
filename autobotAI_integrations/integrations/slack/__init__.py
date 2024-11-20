@@ -62,7 +62,10 @@ class SlackService(BaseService):
             details["integration_id"] = self.integration.accountId
             if self.integration.webhook in [None, "None"]:
                 client = WebClient(token=self.integration.bot_token)
-                response = client.conversations_list()
+                response = client.conversations_list(
+                    exclude_archived=True,
+                    types="public_channel, private_channel",
+                )
                 if response.get("ok"):
                     details["channels"] = [channel.get('name') for channel in response.get("channels")]
             return details
