@@ -64,6 +64,7 @@ class SlackService(BaseService):
                 client = WebClient(token=self.integration.bot_token)
                 response = client.conversations_list(
                     exclude_archived=True,
+                    limit=999,
                     types="public_channel, private_channel",
                 )
                 if response.get("ok"):
