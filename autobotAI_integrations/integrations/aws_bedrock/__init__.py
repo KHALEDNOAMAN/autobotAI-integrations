@@ -79,7 +79,7 @@ class AWSBedrockService(AIBaseService):
             return {'success': True}
         except ClientError as e:
             logger.error(traceback.format_exc())
-            return {'success': False, 'error': traceback.format_exc()}
+            return {'success': False, 'error': "Integration Failed!"}
 
     def get_integration_specific_details(self) -> dict:
         try:
