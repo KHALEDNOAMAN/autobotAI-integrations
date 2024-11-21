@@ -33,11 +33,12 @@ def executor(context):
 
     user_prompt = f"""Generate JSON output based on the following field descriptions and instructions:
     
-    1. **action_required**: Boolean. Return `true` or `false` to indicate if automation is feasible based on `probability_score` and `confidence_score`.
-    2. **probability_score**: Integer (1-100). Represents the likelihood of a successful automation based on process mining. Higher scores favor automation; lower scores suggest manual handling.
-    3. **confidence_score**: Integer (0-100). Reflects how confidently assumptions were minimized; lower scores mean more assumptions were necessary.
-    4. **reason**: Textual explanation detailing the basis for `probability_score` and `confidence_score`.
-    5. **fields_evaluated**: List of field names (only) evaluated from the provided data.
+    1. **name**: The unique name of the resource being evaluated. It should match exactly with the resource name.
+    2. **action_required**: A Boolean indicating whether action is advisable for the resource. Determine this based on `probability_score` and `confidence_score`. Return `true` if action is recommended; otherwise, return `false`.
+    3. **probability_score**: An integer (1-100) representing the likelihood of a specific outcome occurring. Higher scores suggest automation or action; lower scores suggest manual intervention or no action.
+    4. **confidence_score**: An integer (0-100) reflecting the confidence in the evaluation's accuracy. Lower scores imply that more assumptions were needed to reach the result.
+    5. **reason**: A textual explanation justifying the `action_required` value, based on the `probability_score` and `confidence_score`.
+    6. **fields_evaluated**: A list of the field names considered in determining the above values.
 
     Return JSON strictly in the format of this example: {sample_json} for each prompt JSON provided. No extra text or symbols; respond with JSON output only.
     """
@@ -105,14 +106,14 @@ def executor(context):
                 results = json.loads(message_content)
                 return combine_resources_with_decision(resources, results)
         except json.decoder.JSONDecodeError as e:
-            results =  {
+            results = {
                 "error": "Response too large or invalid JSON format.",
-                "response": str(message_content)
+                "evaluated-response": str(message_content),
             }
         except Exception as e:
             results = {
                 "error": str(e),
-                "response": json.loads(message_content)
+                "evaluated-response": json.loads(message_content),
             }
         counter += 1
     print("Completed Evaluation with ", counter, "tries.")
@@ -129,4 +130,7 @@ def combine_resources_with_decision(resources, decisions):
                 resource["decision"] = decision
                 results.append(resource)
                 break
-    return results
+    if results:
+        return results
+    else:
+        raise Exception("Something Went Wrong, Please try again.")
