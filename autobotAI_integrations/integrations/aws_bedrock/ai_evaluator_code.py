@@ -57,35 +57,31 @@ def executor(context):
     else:
         resources = resources[: min(parsable_resources_count, 10)]
 
+    system_instruction = f"You are an AI evaluator that returns decision-making JSON data only. Given the prompt and resource list, evaluate each resource according to: {user_prompt}. Return only a JSON array with one JSON object per resource, structured for direct parsing using `json.loads(response)` in Python. No other text should be included."
+
     llama_final_prompt = f"""
 <|begin_of_text|><|start_header_id|>system<|end_header_id|>
-
-You are an AI evaluator that returns decision-making JSON data only. Given the
-prompt and resource list, evaluate each resource according to: {user_prompt}.
-Return only a JSON array with one JSON object per resource, structured for
-direct parsing using `json.loads(response)` in Python. No other text should be
-included.
-
+{system_instruction}
 <|eot_id|><|start_header_id|>user<|end_header_id|>
-
 Resources: {resources}
-
 Prompt: {prompt}
-
 <|eot_id|><|start_header_id|>assistant<|end_header_id|>
-
 """
     mistral_final_prompt = f"""
-[INST] You are an AI evaluator that returns decision-making JSON data only. Given the
-prompt and resource list, evaluate each resource according to: {user_prompt}.
-Return only a JSON array with one JSON object per resource, structured for
-direct parsing using `json.loads(response)` in Python. No other text should be
-included.
+[INST] {system_instruction}
 Resources: {resources}
 Prompt: {prompt}
 [/INST]
 """
-    native_request = ""
+    amazon_titan_final_prompt = f"""
+User: 
+    {'{{' + system_instruction + '}}'}
+    Resources: {resources}
+    Prompt: {prompt}
+Bot:
+    """
+
+    native_request = {}
     if model.startswith("meta.llama3"):
         native_request = {
             "prompt": llama_final_prompt,
@@ -97,6 +93,11 @@ Prompt: {prompt}
             "prompt": mistral_final_prompt,
             "max_tokens": 8192,
             "top_p": 0.9,
+        }
+    elif model.startswith("amazon.titan"):
+        native_request = {
+            "inputText": amazon_titan_final_prompt,
+            "textGenerationConfig": {"topP": 0.9, "maxTokenCount": 8192},
         }
     else:
         raise Exception(f"Model '{model}' is not supported by ai evaluator.")
@@ -112,6 +113,8 @@ Prompt: {prompt}
         generated_text = ""
         if model.startswith("mistral.mistral"):
             generated_text = model_output["outputs"][0]["text"]
+        elif model.startswith("amazon.titan"):
+            generated_text = model_output["results"][0]["outputText"]
         else:
             generated_text = model_output["generation"]
         try:
