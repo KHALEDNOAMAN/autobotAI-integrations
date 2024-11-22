@@ -91,13 +91,13 @@ Bot:
     elif model.startswith("mistral.mistral"):
         native_request = {
             "prompt": mistral_final_prompt,
-            "max_tokens": 8192,
+            "max_tokens": MAX_TOKEN,
             "top_p": 0.9,
         }
     elif model.startswith("amazon.titan"):
         native_request = {
             "inputText": amazon_titan_final_prompt,
-            "textGenerationConfig": {"topP": 0.9, "maxTokenCount": 8192},
+            "textGenerationConfig": {"topP": 0.9, "maxTokenCount": MAX_TOKEN},
         }
     else:
         raise Exception(f"Model '{model}' is not supported by ai evaluator.")
