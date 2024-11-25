@@ -15,7 +15,7 @@ def executor(context):
 
     sample_json = """
     {
-        "name": "string (matches unique resource name)",
+        "name": "string (matches unique resource 'name' field)",
         "action_required": "Boolean",
         "probability_score": "int (1-100)",
         "confidence_score": "int (0-100)",
@@ -26,7 +26,7 @@ def executor(context):
 
     user_prompt = f"""Generate JSON output based on the following field descriptions and instructions:
     
-    1. **name**: The unique name of the resource being evaluated. It should match exactly with the resource name.
+    1. **name**: The unique name of the resource being evaluated. It should match exactly with the resource 'name' field value.
     2. **action_required**: A Boolean indicating whether action is advisable for the resource. Determine this based on `probability_score` and `confidence_score`. Return `true` if action is recommended; otherwise, return `false`.
     3. **probability_score**: An integer (1-100) representing the likelihood of a specific outcome occurring. Higher scores suggest automation or action; lower scores suggest manual intervention or no action.
     4. **confidence_score**: An integer (0-100) reflecting the confidence in the evaluation's accuracy. Lower scores imply that more assumptions were needed to reach the result.
