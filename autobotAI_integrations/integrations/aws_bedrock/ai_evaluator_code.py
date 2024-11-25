@@ -31,12 +31,8 @@ def executor(context):
     model = context["params"]["model"]
 
     resources = json.loads(json.dumps(context["params"]["resources"], default=str))
-
-    MAX_TOKEN = 8192  # for meta llama 70b
-    if context["params"].get("MAX TOKEN"):
-        if context["params"].get("MAX TOKEN") < 800:
-            raise Exception("The Input Token Should be greater than 800.")
-        MAX_TOKEN = int(context["params"].get("MAX TOKEN"))
+    
+    MAX_TOKEN = 8192
 
     if not isinstance(resources, list):
         resources = [resources]
@@ -44,7 +40,7 @@ def executor(context):
     # Handling max token limit here
     parsable_resources_count = 0
     try:
-        current_words_length = 1800  # prompt length
+        current_words_length = 2200  # prompt length
         for resource in resources:
             resource_len = len(str(resource))
             if resource_len + current_words_length < MAX_TOKEN * 3:

@@ -7,15 +7,8 @@ def executor(context):
     prompt = context["params"]["prompt"]
     model = context["params"]["model"]
     resources = json.loads(json.dumps(context["params"]["resources"], default=str))
-
-    # Based on model this increases or decreases i.e for gpt-4o it's 128000
-    # Here we are taking safe value to support most model
+    
     MAX_TOKEN = 8192
-
-    if context['params'].get('MAX TOKEN'):
-        if context['params'].get('MAX TOKEN') < 800:
-            raise Exception("The Input Token Should be greater than 800.")
-        MAX_TOKEN = int(context['params'].get('MAX TOKEN'))
 
     if not isinstance(resources, list):
         resources = [resources]
@@ -63,7 +56,7 @@ def executor(context):
     )
 
     # Adding individual resources to prompts
-    current_prompt_len = 1800 # for prompts
+    current_prompt_len = 2200 # for prompts
     parsable_resource_count = 0
     for resource in enumerate(resources):
         resource_len = len(str(resource))

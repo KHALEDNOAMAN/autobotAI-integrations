@@ -102,13 +102,7 @@ class OpenAIService(AIBaseService):
                         "type": "list",
                         "description": "The resources to use for the AI model",
                         "required": True,
-                    },
-                    {
-                        "name": "MAX TOKEN",
-                        "type": "number",
-                        "required": False,
-                        "description": "Set a max token limit for your model, in case if you reach max token limit (default: 8192)",
-                    },
+                    }
                 ],
                 "code": f.read(),
             }
