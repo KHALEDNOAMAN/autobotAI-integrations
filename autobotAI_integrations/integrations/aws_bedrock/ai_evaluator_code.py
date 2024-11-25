@@ -40,7 +40,7 @@ def executor(context):
     # Handling max token limit here
     parsable_resources_count = 0
     try:
-        current_words_length = 2200  # prompt length
+        current_words_length = 2300 + len(prompt) # prompt length
         for resource in resources:
             resource_len = len(str(resource))
             if resource_len + current_words_length < MAX_TOKEN * 3:

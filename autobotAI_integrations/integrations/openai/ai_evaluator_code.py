@@ -56,7 +56,7 @@ def executor(context):
     )
 
     # Adding individual resources to prompts
-    current_prompt_len = 2200 # for prompts
+    current_prompt_len = 2300 + len(prompt) # prompt length
     parsable_resource_count = 0
     for resource in enumerate(resources):
         resource_len = len(str(resource))
