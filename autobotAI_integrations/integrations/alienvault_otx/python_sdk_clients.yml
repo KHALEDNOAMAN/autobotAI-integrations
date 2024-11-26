@@ -1,0 +1,5 @@
+- name: OTXv2
+  import_library_names:
+    - OTXv2
+  pip_package_names:
+    - OTXv2
