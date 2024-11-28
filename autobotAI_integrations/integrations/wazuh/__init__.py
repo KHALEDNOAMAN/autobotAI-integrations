@@ -1,4 +1,5 @@
 import base64
+import json
 from typing import Optional, Type, Union
 
 from pydantic import Field
@@ -44,14 +45,14 @@ class WazuhService(BaseService):
                 },
             )
             response.raise_for_status()
-            if response.status_code == 200:
+            if response.status_code == 200 and response.json().get("data", {}).get("token"):
                 return {"success": True}
             else:
                 return {
                     "success": False,
                     "error": f"Request failed with status code: {response.status_code}",
                 }
-        except requests.exceptions.ConnectionError:
+        except (requests.exceptions.ConnectionError, json.decoder.JSONDecodeError):
             return {"success": False, "error": "Connection is Unreachable"}
         except Exception as e:
             return {"success": False, "error": str(e)}
