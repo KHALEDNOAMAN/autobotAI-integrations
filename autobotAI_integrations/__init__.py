@@ -598,7 +598,7 @@ def executor(context):
             )
             logger.debug(f"Response: {response}")
 
-            if "error" in response:
+            if response.get("error"):
                 errors.append(
                     {
                         "message": response["error"]
