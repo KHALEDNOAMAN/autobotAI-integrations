@@ -105,7 +105,7 @@ class WazuhService(BaseService):
     def generate_rest_api_creds(self) -> RestAPICreds:
         response = requests.get(
             url=self.integration.base_url.strip("/")
-            + "/security/user/authenticate?raw=true",
+            + "/security/user/authenticate",
             headers={
                 "Authorization": f"Basic {base64.b64encode('{}:{}'.format(self.integration.username, self.integration.password).encode()).decode()}",
             },
