@@ -601,7 +601,7 @@ def executor(context):
             if response.get("error"):
                 errors.append(
                     {
-                        "message": response["error"]
+                        "message": str(response["error"])
                         + " "
                         + str(response.get("text", "")),
                         "other_details": {
