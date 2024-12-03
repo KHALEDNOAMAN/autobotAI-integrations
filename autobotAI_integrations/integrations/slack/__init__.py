@@ -62,13 +62,9 @@ class SlackService(BaseService):
             details["integration_id"] = self.integration.accountId
             if self.integration.webhook in [None, "None"]:
                 client = WebClient(token=self.integration.bot_token)
-                response = client.conversations_list(
-                    exclude_archived=True,
-                    limit=999,
-                    types="public_channel, private_channel",
-                )
-                if response.get("ok"):
-                    details["channels"] = [channel.get('name') for channel in response.get("channels")]
+                channels = self._get_all_channels_name(client)
+                if channels:
+                    details["channels"] = channels
             return details
         except Exception as e:
             logger.error(e)
@@ -168,3 +164,34 @@ class SlackService(BaseService):
         if self.integration.bot_token not in [None, "None"]:
             envs["SLACK_BOT_TOKEN"] = self.integration.bot_token
         return SDKCreds(envs=envs)
+    
+    @staticmethod
+    def _get_all_channels_name(client, iteration_count=10):
+        channels, count = [], 0
+        try:
+            # Initialize pagination
+            next_cursor = None
+            while count < iteration_count:
+                # Call the conversations.list API
+                response = client.conversations_list(
+                    exclude_archived=True,
+                    limit=1000,
+                    types="public_channel, private_channel",
+                    cursor=next_cursor,  # Cursor for pagination
+                )
+
+                # Add the channels from the current response
+                channels.extend(
+                    [channel.get("name") for channel in response.get("channels")]
+                )
+
+                # Check for the next cursor
+                next_cursor = response.get("response_metadata", {}).get("next_cursor")
+                count += 1
+                if not next_cursor:
+                    break  # Exit the loop if there's no next page
+
+        except Exception as e:
+            print(f"Error fetching channels: {e}")
+        
+        return channels
