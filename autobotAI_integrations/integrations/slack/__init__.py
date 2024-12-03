@@ -3,8 +3,16 @@ from typing import List, Optional
 from pydantic import Field
 import requests
 
-from autobotAI_integrations import BaseSchema, SteampipeCreds, RestAPICreds, SDKCreds, CLICreds, \
-    BaseService, ConnectionInterfaces, PayloadTask, SDKClient
+from autobotAI_integrations import (
+    BaseSchema,
+    SteampipeCreds,
+    RestAPICreds,
+    SDKCreds,
+    BaseService,
+    ConnectionInterfaces,
+    PayloadTask,
+    SDKClient,
+)
 from slack_sdk import WebClient
 from slack_sdk.webhook import WebhookClient
 
@@ -25,7 +33,6 @@ class SlackIntegration(BaseSchema):
 
 
 class SlackService(BaseService):
-
     def __init__(self, ctx, integration: SlackIntegration):
         if not isinstance(integration, SlackIntegration):
             integration = SlackIntegration(**integration)
@@ -51,7 +58,7 @@ class SlackService(BaseService):
     def get_details(cls):
         return {
             "clients": list_of_unique_elements(cls.get_all_python_sdk_clients()),
-            "supported_executor": "lambda", 
+            "supported_executor": "lambda",
             "supported_interfaces": cls.supported_connection_interfaces(),
             "python_code_sample": cls.get_code_sample(),
         }
@@ -120,25 +127,27 @@ class SlackService(BaseService):
     @staticmethod
     def supported_connection_interfaces():
         return [
-            ConnectionInterfaces.REST_API,
             ConnectionInterfaces.PYTHON_SDK,
-            ConnectionInterfaces.STEAMPIPE
+            ConnectionInterfaces.STEAMPIPE,
         ]
 
-    def build_python_exec_combinations_hook(self, payload_task: PayloadTask,
-                                            client_definitions: List[SDKClient]) -> list:
+    def build_python_exec_combinations_hook(
+        self, payload_task: PayloadTask, client_definitions: List[SDKClient]
+    ) -> list:
         clients = {}
         if payload_task.creds.envs.get("SLACK_WEBHOOK"):
             webhook = WebhookClient(payload_task.creds.envs.get("SLACK_WEBHOOK"))
             clients["WebhookClient"] = webhook
         else:
-            clients["WebClient"] = WebClient(payload_task.creds.envs.get("SLACK_BOT_TOKEN"))
+            clients["WebClient"] = WebClient(
+                payload_task.creds.envs.get("SLACK_BOT_TOKEN")
+            )
 
         return [
             {
                 "clients": clients,
                 "params": self.prepare_params(payload_task.params),
-                "context": payload_task.context
+                "context": payload_task.context,
             }
         ]
 
@@ -151,8 +160,13 @@ class SlackService(BaseService):
   plugin = "slack"
 }
 """
-        return SteampipeCreds(envs=envs, plugin_name="slack", connection_name="slack",
-                              conf_path=conf_path, config=config_str)
+        return SteampipeCreds(
+            envs=envs,
+            plugin_name="slack",
+            connection_name="slack",
+            conf_path=conf_path,
+            config=config_str,
+        )
 
     def generate_rest_api_creds(self) -> RestAPICreds:
         pass
@@ -164,7 +178,7 @@ class SlackService(BaseService):
         if self.integration.bot_token not in [None, "None"]:
             envs["SLACK_BOT_TOKEN"] = self.integration.bot_token
         return SDKCreds(envs=envs)
-    
+
     @staticmethod
     def _get_all_channels_name(client, iteration_count=10):
         channels, count = [], 0
@@ -193,5 +207,5 @@ class SlackService(BaseService):
 
         except Exception as e:
             print(f"Error fetching channels: {e}")
-        
+
         return channels
