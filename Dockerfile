@@ -17,7 +17,7 @@ RUN useradd -u ${uid} -g ${group} -s /bin/sh -m ${user}
 
 USER ${uid}:${gid}
     
-RUN steampipe plugin install steampipe aws theapsgroup/gitlab # azure gcp azuread kubernetes
+RUN steampipe plugin install steampipe>=1.22.7 aws theapsgroup/gitlab # azure gcp azuread kubernetes
 
 RUN steampipe plugin update --all
 

@@ -1,5 +1,3 @@
-import pytest
-
 from autobotAI_integrations.handlers.task_handler import handle_task
 from autobotAI_integrations.integrations import integration_service_factory
 
@@ -10,6 +8,7 @@ def executor(context):
     orgs = snyk_client.get('/orgs').json().get('data')
     return orgs
 """
+
 
 class TestClassSnyk:
     def test_snyk_token(
@@ -48,9 +47,9 @@ class TestClassSnyk:
         test_result_format(result)
 
     def test_actions_generation(self, get_keys):
-        service = integration_service_factory.get_service_cls('snyk')
+        service = integration_service_factory.get_service_cls("snyk")
         actions = service.get_all_rest_api_actions()
         for action in actions:
-            assert action.name != None
+            assert action.name is not None
             assert action.name.strip() != ""
         assert len(actions) > 0

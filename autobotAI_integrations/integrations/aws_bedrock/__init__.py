@@ -4,6 +4,7 @@ from typing import Type, Union
 import boto3, uuid, json
 from botocore.exceptions import ClientError
 from pydantic import Field
+from pathlib import Path
 
 from autobotAI_integrations import AIBaseService, BaseService, list_of_unique_elements, PayloadTask, Param
 from autobotAI_integrations.models import *
@@ -78,7 +79,7 @@ class AWSBedrockService(AIBaseService):
             return {'success': True}
         except ClientError as e:
             logger.error(traceback.format_exc())
-            return {'success': False, 'error': traceback.format_exc()}
+            return {'success': False, 'error': "Integration Failed!"}
 
     def get_integration_specific_details(self) -> dict:
         try:
@@ -132,73 +133,33 @@ class AWSBedrockService(AIBaseService):
 
     @staticmethod
     def ai_prompt_python_template():
-        return {
-            "integration_type": "aws_bedrock",
-            "ai_client": "bedrock-runtime",
-            "param_definitions": [
-                {
-                    "name": "prompt",
-                    "type": "str",
-                    "description": "The prompt to use for the AI model",
-                    "required": True,
-                },
-                {
-                    "name": "model",
-                    "type": "str",
-                    "description": "The model to use for the AI model",
-                    "required": True,
-                },
-                {
-                    "name": "resources",
-                    "type": "list",
-                    "description": "The resources to use for the AI model",
-                    "required": True,
-                },
-            ],
-            "code": """
-import json
-def executor(context):
-    sample_json=\"\"\"
-        {
-                "name":"string"(name of the resources)
-                "action_required": 'Boolean',
-                "probability_score": 'int',
-                "confidence_score": 'int',
-                "reason": 'string',
-                "fields_evaluated": ["field 1", "field 2", "field 3", "field 4", "field n"],
-        }
-        \"\"\"
-    user_prompt=f\"\"\"Description for each field that provides context and reason of above json fields.{sample_json}.Instructions \n 1.action_required : this field should be either true or false. It indicate that whether to go with automation or not, based on the  probability_score and confidence_score to  decide whether its feasible to take action or not. \n 2. probability_score :  this field provides probability of the decision for provided prompt. this score should be from 1 - 100. higher score is better indicator to decide if user should automate remediation / response operation for provided data. lower score indicates that manual operations feasible since task mining and process mining from given data indicates that automation of such operations can be overkill or operations overhead.\n 3. confidence_score :  if you (generative AI) need to take assumption because either prompt or given context data do not have enough information or provided json context do not have enough details. this data should be between 0 to 100. lower number means that AI has taken lot of assumptions and whether to automate violation or not that decision may not be accurate. \n 4.reason : this value provides justification to human user, on what basis above provided confidence_score and probability_score calculated by generative AI. this will help human user to improve decision making. \n 5. this value provides field names in fetcher output context json fields. this should be field name only and NOT be individual value of each records.
-    \n. Return JSON in {sample_json} format for each and every prompt JSON 
-    \"\"\"
-    
-    client = context["clients"]["bedrock-runtime"]
-    prompt = context["params"]["prompt"]
-    model = context["params"]["model"]
-    resources = json.loads(json.dumps(context["params"]["resources"], default=str))
-    extra_prompt = f'Return JSON for using {user_prompt} for each and every object which is there in {resources} and make the JSON should be accurate and proper it should not be same for every resource using this  {prompt}'
-    final_prompt=f\"\"\"
-            <|begin_of_text|>
-            <|start_header_id|>user<|end_header_id|>
-             Ensure all property names are enclosed in double quotes, and the JSON structure is clean and syntactically correct. Handle multiline strings appropriately to avoid any JSON errors. otherwise my application will fail
-            {extra_prompt}
-            strick warning - Generate a multiple JSON for each and every prompt dont omit any of the resources otherwise my application will fail
-            respond using JSON. without any additional text. Response must not have any additional or tilt symbol (```) or  text except the JSON as JSON array . 
-    \"\"\"
-    native_request = {
-        "prompt": final_prompt,
-        "max_gen_len": 2048,
-    }
-    
-    request = json.dumps(native_request)
-    
-    response = client.invoke_model(modelId=model, body=request)
-    model_output = json.loads(response['body'].read())
-    
-    print("response is ",json.loads(model_output['generation']))
-    return json.loads(model_output['generation'])
-""",
-        }
+        current_directory = Path(__file__).resolve().parent
+        with open(os.path.join(current_directory, "ai_evaluator_code.py")) as f:
+            return {
+                "integration_type": "aws_bedrock",
+                "ai_client": "bedrock-runtime",
+                "param_definitions": [
+                    {
+                        "name": "prompt",
+                        "type": "str",
+                        "description": "The prompt to use for the AI model",
+                        "required": True,
+                    },
+                    {
+                        "name": "model",
+                        "type": "str",
+                        "description": "The model to use for the AI model",
+                        "required": True,
+                    },
+                    {
+                        "name": "resources",
+                        "type": "list",
+                        "description": "The resources to use for the AI model",
+                        "required": True,
+                    }
+                ],
+                "code": f.read(),
+            }
 
     @staticmethod
     def get_schema() -> Type[BaseSchema]:

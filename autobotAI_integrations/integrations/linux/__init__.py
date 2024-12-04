@@ -103,7 +103,8 @@ class LinuxService(BaseService):
     def supported_connection_interfaces():
         return [
             ConnectionInterfaces.PYTHON_SDK,
-            ConnectionInterfaces.STEAMPIPE,
+            # Disabling steampipe as it is not working properly
+            # ConnectionInterfaces.STEAMPIPE,
         ]
 
     def generate_cli_creds(self) -> CLICreds:

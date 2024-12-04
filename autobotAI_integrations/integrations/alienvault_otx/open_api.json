@@ -1,0 +1,2803 @@
+{
+    "openapi": "3.0.1",
+    "info": {
+        "title": "AlienVault OTX API",
+        "description": "OpenAPI specification for AlienVault OTX APIs.",
+        "version": "1.0.0"
+    },
+    "servers": [
+        {
+            "url": "https://otx.alienvault.com",
+            "description": "AlienVault OTX API Server"
+        }
+    ],
+    "paths": {
+        "/api/v1/users/{username}/{action}": {
+            "get": {
+                "summary": "Perform user actions",
+                "description": "Perform actions like follow or subscribe to a user's account using their username.",
+                "parameters": [
+                    {
+                        "name": "username",
+                        "in": "path",
+                        "description": "Username of the user to perform the action on.",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "LevelBlue"
+                        }
+                    },
+                    {
+                        "name": "action",
+                        "in": "path",
+                        "description": "Action to perform: `subscribe`, `unsubscribe`, `follow`, or `unfollow`.",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "subscribe",
+                                "unsubscribe",
+                                "follow",
+                                "unfollow"
+                            ],
+                            "example": "subscribe"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Action performed successfully.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "additionalProperties": false,
+                                    "required": [
+                                        "status"
+                                    ],
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "enum": [
+                                                "subscribed",
+                                                "unsubscribed",
+                                                "followed",
+                                                "unfollowed"
+                                            ]
+                                        }
+                                    }
+                                },
+                                "example": {
+                                    "status": "followed"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "User not found or invalid action.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "additionalProperties": true,
+                                    "description": "Error message indicating the user or action was not found."
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/users/me": {
+            "get": {
+                "summary": "Retrieve user details",
+                "description": "Fetch details about the authenticated user.",
+                "responses": {
+                    "200": {
+                        "description": "User details retrieved successfully.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "additionalProperties": false,
+                                    "required": [
+                                        "username",
+                                        "pulse_count",
+                                        "user_id",
+                                        "subscriber_count",
+                                        "member_since",
+                                        "award_count",
+                                        "avatar_url",
+                                        "follower_count",
+                                        "indicator_count"
+                                    ],
+                                    "properties": {
+                                        "username": {
+                                            "type": "string"
+                                        },
+                                        "pulse_count": {
+                                            "type": "integer"
+                                        },
+                                        "user_id": {
+                                            "type": "integer"
+                                        },
+                                        "subscriber_count": {
+                                            "type": "integer"
+                                        },
+                                        "member_since": {
+                                            "type": "string"
+                                        },
+                                        "award_count": {
+                                            "type": "integer"
+                                        },
+                                        "avatar_url": {
+                                            "type": "string",
+                                            "format": "uri"
+                                        },
+                                        "follower_count": {
+                                            "type": "integer"
+                                        },
+                                        "indicator_count": {
+                                            "type": "integer"
+                                        }
+                                    }
+                                },
+                                "example": {
+                                    "username": "LevelBlue",
+                                    "pulse_count": 178,
+                                    "user_id": 16976,
+                                    "subscriber_count": 7,
+                                    "member_since": "1343 days ago",
+                                    "award_count": 0,
+                                    "avatar_url": "https://otx.alienvault.com/assets/images/default-avatar.png",
+                                    "follower_count": 4,
+                                    "indicator_count": 62545
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/search/pulses": {
+            "get": {
+                "summary": "Search threat pulses",
+                "description": "Search for pulses based on a query string and other optional filters.",
+                "parameters": [
+                    {
+                        "name": "limit",
+                        "in": "query",
+                        "description": "Number of results to include per page.",
+                        "schema": {
+                            "type": "integer",
+                            "example": 10
+                        }
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Which page of results is desired.",
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    },
+                    {
+                        "name": "sort",
+                        "in": "query",
+                        "description": "Order by one of these fields: `modified`, `created`, `subscriber_count`.",
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "modified",
+                                "created",
+                                "subscriber_count"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "q",
+                        "in": "query",
+                        "description": "Query string to search results with.",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Pulses retrieved successfully.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "additionalProperties": true,
+                                    "description": "Search results containing pulses and metadata."
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "No pulses found for the given query.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "additionalProperties": true,
+                                    "description": "Error message indicating that no results were found."
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/search/users": {
+            "get": {
+                "summary": "Search for users",
+                "description": "Search for users based on a query string and other optional filters.",
+                "parameters": [
+                    {
+                        "name": "limit",
+                        "in": "query",
+                        "description": "Number of results to include per page.",
+                        "schema": {
+                            "type": "integer",
+                            "example": 10
+                        }
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Which page of results is desired.",
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    },
+                    {
+                        "name": "sort",
+                        "in": "query",
+                        "description": "Order by one of these fields: `username`, `pulse_count`.",
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "username",
+                                "pulse_count"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "q",
+                        "in": "query",
+                        "description": "Query string to search for users.",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Users retrieved successfully.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "additionalProperties": true,
+                                    "description": "Search results containing users and metadata."
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "No users found for the given query.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "additionalProperties": true,
+                                    "description": "Error message indicating that no results were found."
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/pulses/{pulse_id}": {
+            "get": {
+                "summary": "View a pulse by ID",
+                "description": "Retrieve details of a pulse using its unique ID.",
+                "parameters": [
+                    {
+                        "name": "pulse_id",
+                        "in": "path",
+                        "description": "Unique ID of the pulse.",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "57204e9b3c4c3e015d93cb12"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Pulse details retrieved successfully.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "additionalProperties": true,
+                                    "description": "Details of the requested pulse."
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Pulse not found.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "additionalProperties": true,
+                                    "description": "Error message indicating the pulse was not found."
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "patch": {
+                "summary": "Edit a pulse by ID",
+                "description": "Edit details of a pulse using its unique ID. For list fields, you can add or remove values by providing `add` or `remove` dictionaries.",
+                "parameters": [
+                    {
+                        "name": "pulse_id",
+                        "in": "path",
+                        "description": "Unique ID of the pulse.",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "57204e9b3c4c3e015d93cb12"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "description": "Fields to update for the pulse. String, numeric, or boolean fields can be directly updated, while list fields should use `add` or `remove` dictionaries.",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "example": {
+                                    "update_description_tags": {
+                                        "summary": "Update description and tags.",
+                                        "value": {
+                                            "description": "New Description",
+                                            "tags": {
+                                                "add": [
+                                                    "addtag1",
+                                                    "addtag2"
+                                                ],
+                                                "remove": [
+                                                    "remtag1"
+                                                ]
+                                            }
+                                        }
+                                    },
+                                    "update_indicators": {
+                                        "summary": "Update indicators.",
+                                        "value": {
+                                            "indicators": {
+                                                "add": [
+                                                    {
+                                                        "indicator": "8.8.8.9",
+                                                        "type": "IPv4",
+                                                        "role": "command_and_control"
+                                                    },
+                                                    {
+                                                        "indicator": "8.8.8.10",
+                                                        "type": "IPv4"
+                                                    }
+                                                ],
+                                                "edit": [
+                                                    {
+                                                        "id": 1,
+                                                        "type": "hostname",
+                                                        "indicator": "www.amazon.com"
+                                                    },
+                                                    {
+                                                        "id": 2,
+                                                        "indicator": "you@rustybrooks.com"
+                                                    },
+                                                    {
+                                                        "id": 3,
+                                                        "is_active": true,
+                                                        "expiration": "2017-01-01",
+                                                        "role": "scanning_host"
+                                                    }
+                                                ],
+                                                "remove": [
+                                                    {
+                                                        "id": 4
+                                                    }
+                                                ]
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Pulse updated successfully.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "additionalProperties": true,
+                                    "description": "Details of the updated pulse."
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Pulse not found.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "additionalProperties": true,
+                                    "description": "Error message indicating the pulse was not found."
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/pulses/{pulse_id}/indicators": {
+            "get": {
+                "summary": "Retrieve indicators of a pulse",
+                "description": "Get the indicators associated with a specific pulse using its unique ID.",
+                "parameters": [
+                    {
+                        "name": "pulse_id",
+                        "in": "path",
+                        "description": "Unique ID of the pulse.",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "57204e9b3c4c3e015d93cb12"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Indicators for the pulse retrieved successfully.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "additionalProperties": true,
+                                    "description": "The list of indicators associated with the specified pulse."
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Pulse not found.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "additionalProperties": true,
+                                    "description": "Error message indicating that the pulse was not found."
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/pulses/{pulse_id}/related": {
+            "get": {
+                "summary": "Retrieve related pulses",
+                "description": "Get all pulses that share an indicator with the specified pulse.",
+                "parameters": [
+                    {
+                        "name": "pulse_id",
+                        "in": "path",
+                        "description": "Unique ID of the pulse to find related pulses.",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "57204e9b3c4c3e015d93cb12"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Related pulses retrieved successfully.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object",
+                                        "additionalProperties": true,
+                                        "description": "A pulse that shares an indicator with the given pulse."
+                                    },
+                                    "description": "List of related pulses"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Pulse not found.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "additionalProperties": true,
+                                    "description": "Error message indicating that the pulse was not found."
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/pulses/subscribed_pulse_ids": {
+            "get": {
+                "summary": "List subscribed pulse IDs",
+                "description": "Retrieve the IDs of all pulses the user is subscribed to.",
+                "parameters": [
+                    {
+                        "name": "limit",
+                        "in": "query",
+                        "description": "Number of results to include per page.",
+                        "schema": {
+                            "type": "integer",
+                            "example": 10
+                        }
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Which page of results is desired.",
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully retrieved subscribed pulse IDs.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$schema": "http://json-schema.org/draft-04/schema",
+                                    "type": "object",
+                                    "additionalProperties": false,
+                                    "required": [
+                                        "count",
+                                        "next",
+                                        "results",
+                                        "previous"
+                                    ],
+                                    "properties": {
+                                        "count": {
+                                            "type": "integer"
+                                        },
+                                        "next": {
+                                            "type": [
+                                                "string",
+                                                "null"
+                                            ]
+                                        },
+                                        "results": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "string"
+                                            }
+                                        },
+                                        "previous": {
+                                            "type": [
+                                                "string",
+                                                "null"
+                                            ]
+                                        }
+                                    }
+                                },
+                                "examples": {
+                                    "subscribed_pulses_example": {
+                                        "value": {
+                                            "count": 2,
+                                            "next": null,
+                                            "results": [
+                                                "546ce8eb11d40838dc6e43f1",
+                                                "5e6138dc020b38eaa184d9e7"
+                                            ],
+                                            "previous": null
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "No subscribed pulses found.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "additionalProperties": true,
+                                    "description": "Error message indicating no subscribed pulses."
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/pulses/activity": {
+            "get": {
+                "summary": "Retrieve activity feed",
+                "description": "Get an activity feed consisting of pulses from subscriptions, users you follow, and your own created pulses.",
+                "parameters": [
+                    {
+                        "name": "limit",
+                        "in": "query",
+                        "description": "Number of results to include per page.",
+                        "schema": {
+                            "type": "integer",
+                            "example": 10
+                        }
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Which page of results is desired.",
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    },
+                    {
+                        "name": "modified_since",
+                        "in": "query",
+                        "description": "(Optional) Only include pulses modified after the specified datetime in ISO 8601 format (UTC).",
+                        "schema": {
+                            "type": "string",
+                            "format": "date-time",
+                            "example": "2017-01-01T12:35:00+00:00"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Activity feed retrieved successfully.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "additionalProperties": true,
+                                    "description": "List of pulses included in the activity feed."
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Activity feed not found or no activity available.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "additionalProperties": true,
+                                    "description": "Error message indicating no activity feed found."
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/pulses/create": {
+            "post": {
+                "summary": "Create a new pulse",
+                "description": "Allows users to submit new pulses via the API. A pulse contains various threat intelligence details such as indicators, tags, TLP, and more.",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/CreatePulse",
+                                "example": {
+                                    "name": "Test Pulse Name",
+                                    "description": "Test Pulse Description",
+                                    "public": true,
+                                    "TLP": "white",
+                                    "tags": [
+                                        "tag1",
+                                        "tag2",
+                                        "tag3"
+                                    ],
+                                    "references": [
+                                        "https://google.com",
+                                        "https://amazon.com"
+                                    ],
+                                    "adversary": "APT 1",
+                                    "targeted_countries": [
+                                        "Afghanistan",
+                                        "Anguilla"
+                                    ],
+                                    "industries": [
+                                        "Industry1",
+                                        "Industry2"
+                                    ],
+                                    "group_ids": [
+                                        1,
+                                        2,
+                                        3
+                                    ],
+                                    "malware_families": [
+                                        "Backdoor:Linux/Netbus",
+                                        "Backdoor:Linux/Cyrax"
+                                    ],
+                                    "attack_ids": [
+                                        "T1001",
+                                        "T1486"
+                                    ],
+                                    "indicators": [
+                                        {
+                                            "indicator": "8.8.8.8",
+                                            "type": "IPv4",
+                                            "description": "",
+                                            "title": "",
+                                            "content": "",
+                                            "expiration": "2020-01-01T00:00:00",
+                                            "role": null
+                                        },
+                                        {
+                                            "indicator": "rustybrooks.com",
+                                            "type": "domain",
+                                            "description": "A longer description can be used if desired",
+                                            "title": "It's my website",
+                                            "content": "",
+                                            "expiration": "2019-01-01T00:00:00",
+                                            "role": "scanning_host"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Pulse created successfully.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$schema": "http://json-schema.org/draft-04/schema",
+                                    "type": "object",
+                                    "additionalProperties": false,
+                                    "properties": {
+                                        "id": {
+                                            "type": "string"
+                                        },
+                                        "revision": {
+                                            "type": "integer"
+                                        },
+                                        "author_id": {
+                                            "type": "integer"
+                                        },
+                                        "author_name": {
+                                            "type": "string"
+                                        },
+                                        "name": {
+                                            "type": "string"
+                                        },
+                                        "pulse_name": {
+                                            "type": "string"
+                                        },
+                                        "description": {
+                                            "type": "string"
+                                        },
+                                        "public": {
+                                            "type": "boolean"
+                                        },
+                                        "TLP": {
+                                            "type": "string",
+                                            "enum": [
+                                                "white",
+                                                "green",
+                                                "amber",
+                                                "red",
+                                                ""
+                                            ]
+                                        },
+                                        "tags": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "string"
+                                            }
+                                        },
+                                        "references": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "string"
+                                            }
+                                        },
+                                        "indicators": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "object",
+                                                "properties": {
+                                                    "indicator": {
+                                                        "type": "string"
+                                                    },
+                                                    "type": {
+                                                        "type": "string"
+                                                    },
+                                                    "description": {
+                                                        "type": "string"
+                                                    },
+                                                    "expiration": {
+                                                        "type": "string",
+                                                        "format": "date-time"
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                },
+                                "example": {
+                                    "id": "5dcdbc6f9d8108c36bbcbb56",
+                                    "revision": 1,
+                                    "author_id": 16976,
+                                    "author_name": "rbrooks_av",
+                                    "name": "Test Pulse Name",
+                                    "description": "Test Pulse Description",
+                                    "public": true,
+                                    "TLP": "white",
+                                    "tags": [
+                                        "tag1",
+                                        "tag2",
+                                        "tag3"
+                                    ],
+                                    "indicators": [
+                                        {
+                                            "indicator": "8.8.8.8",
+                                            "type": "IPv4",
+                                            "description": "",
+                                            "expiration": "2020-01-01T00:00:00"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/pulses/{pulse_id}/delete": {
+            "get": {
+                "summary": "Delete a pulse",
+                "description": "Deletes a pulse identified by its `pulse_id`. The pulse will be removed if the ID is valid and the user has the necessary permissions.",
+                "parameters": [
+                    {
+                        "name": "pulse_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "description": "Unique identifier of the pulse to delete"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Pulse successfully removed.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$schema": "http://json-schema.org/draft-04/schema",
+                                    "type": "object",
+                                    "additionalProperties": false,
+                                    "required": [
+                                        "status"
+                                    ],
+                                    "properties": {
+                                        "status": {
+                                            "type": "string"
+                                        }
+                                    }
+                                },
+                                "example": {
+                                    "status": "Pulse removed (id: 5e46ee71665eed2ce67ed4be)"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Pulse not found.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$schema": "http://json-schema.org/draft-04/schema",
+                                    "type": "object",
+                                    "additionalProperties": false,
+                                    "properties": {
+                                        "error": {
+                                            "type": "string"
+                                        }
+                                    }
+                                },
+                                "example": {
+                                    "error": "Pulse not found."
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/pulses/{pulse_id}/subscribe": {
+            "get": {
+                "summary": "Subscribe to a Pulse",
+                "description": "Subscribes the user to the specified pulse. The pulse will then appear in the user's subscription feed.",
+                "parameters": [
+                    {
+                        "name": "pulse_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "description": "The ID of the pulse to subscribe to.",
+                        "example": "57204e9b3c4c3e015d93cb12"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully subscribed to the pulse.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$schema": "http://json-schema.org/draft-04/schema",
+                                    "type": "object",
+                                    "additionalProperties": false,
+                                    "required": [
+                                        "status",
+                                        "subscriber_count"
+                                    ],
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "enum": [
+                                                "subscribe"
+                                            ]
+                                        },
+                                        "subscriber_count": {
+                                            "type": "integer"
+                                        }
+                                    }
+                                },
+                                "example": {
+                                    "status": "subscribe",
+                                    "subscriber_count": 2
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Pulse not found or cannot be subscribed to.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$schema": "http://json-schema.org/draft-04/schema",
+                                    "type": "object",
+                                    "properties": {
+                                        "error": {
+                                            "type": "string"
+                                        }
+                                    }
+                                },
+                                "example": {
+                                    "error": "Pulse not found."
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/pulses/{pulse_id}/unsubscribe": {
+            "get": {
+                "summary": "Unsubscribe from a Pulse",
+                "description": "Unsubscribes the user from the specified pulse. If the user is subscribed to the pulse, it will no longer appear in their subscription feed. Subscriptions to the author of the pulse remain unaffected.",
+                "parameters": [
+                    {
+                        "name": "pulse_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "description": "The ID of the pulse to unsubscribe from.",
+                        "example": "57204e9b3c4c3e015d93cb12"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully unsubscribed from the pulse.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$schema": "http://json-schema.org/draft-04/schema",
+                                    "type": "object",
+                                    "additionalProperties": false,
+                                    "required": [
+                                        "status",
+                                        "subscriber_count"
+                                    ],
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "enum": [
+                                                "unsubscribe"
+                                            ]
+                                        },
+                                        "subscriber_count": {
+                                            "type": "integer"
+                                        }
+                                    }
+                                },
+                                "example": {
+                                    "status": "unsubscribe",
+                                    "subscriber_count": 2
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Pulse not found or cannot be unsubscribed from.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$schema": "http://json-schema.org/draft-04/schema",
+                                    "type": "object",
+                                    "properties": {
+                                        "error": {
+                                            "type": "string"
+                                        }
+                                    }
+                                },
+                                "example": {
+                                    "error": "Pulse not found."
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/pulses/indicators/types": {
+            "get": {
+                "summary": "Retrieve Indicator Types",
+                "description": "Returns a list of recognized indicator types, including their string representations, names, and descriptions, as defined by OTX. Useful for validating indicators and creating pulses.",
+                "responses": {
+                    "200": {
+                        "description": "Successful response containing a list of indicator types.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$schema": "http://json-schema.org/draft-04/schema",
+                                    "type": "object",
+                                    "additionalProperties": false,
+                                    "required": [
+                                        "detail"
+                                    ],
+                                    "properties": {
+                                        "detail": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "object",
+                                                "additionalProperties": false,
+                                                "required": [
+                                                    "slug",
+                                                    "name",
+                                                    "description"
+                                                ],
+                                                "properties": {
+                                                    "slug": {
+                                                        "type": "string"
+                                                    },
+                                                    "name": {
+                                                        "type": "string"
+                                                    },
+                                                    "description": {
+                                                        "type": "string"
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                },
+                                "example": {
+                                    "detail": [
+                                        {
+                                            "slug": "ip",
+                                            "name": "IPv4",
+                                            "description": "An IPv4 address indicating the online location of a server or other computer."
+                                        },
+                                        {
+                                            "slug": "domain",
+                                            "name": "domain",
+                                            "description": "A domain name for a website or server. Domains encompass a series of hostnames."
+                                        },
+                                        {
+                                            "slug": "file",
+                                            "name": "FileHash-MD5",
+                                            "description": "A MD5-format hash that summarizes the architecture and content of a file."
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Indicator types not found.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$schema": "http://json-schema.org/draft-04/schema",
+                                    "type": "object",
+                                    "properties": {
+                                        "error": {
+                                            "type": "string"
+                                        }
+                                    }
+                                },
+                                "example": {
+                                    "error": "Indicator types not found."
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/pulses/indicators/validate": {
+            "post": {
+                "summary": "Validate an indicator:type pair",
+                "description": "Validate an indicator:type pair to ensure it complies with OTX standards.",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/ValidatedIndecatorPair",
+                                "example": {
+                                    "indicator": "192.168.1.1",
+                                    "type": "IPv4"
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Validation result",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "valid": {
+                                            "type": "boolean",
+                                            "example": true
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Validation error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "error": {
+                                            "type": "string",
+                                            "example": "Invalid indicator:type pair."
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/pulses/events": {
+            "get": {
+                "summary": "List events",
+                "description": "Retrieve events like subscribe/unsubscribe to user/pulse, or pulse deleted by the author. Useful for managing threat intelligence data.",
+                "parameters": [
+                    {
+                        "name": "limit",
+                        "in": "query",
+                        "description": "Number of results to include per page.",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 10
+                        }
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Page number for paginated results.",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    },
+                    {
+                        "name": "modified_since",
+                        "in": "query",
+                        "description": "Include only pulses modified more recently than this time (ISO format).",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "format": "date-time",
+                            "example": "2017-01-01T12:35:00+00:00"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful response with event data.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "count",
+                                        "results",
+                                        "next",
+                                        "previous"
+                                    ],
+                                    "properties": {
+                                        "count": {
+                                            "type": "integer",
+                                            "description": "Total number of events."
+                                        },
+                                        "next": {
+                                            "type": [
+                                                "string",
+                                                "null"
+                                            ],
+                                            "format": "uri",
+                                            "description": "URI to the next page of results."
+                                        },
+                                        "previous": {
+                                            "type": [
+                                                "string",
+                                                "null"
+                                            ],
+                                            "format": "uri",
+                                            "description": "URI to the previous page of results."
+                                        },
+                                        "results": {
+                                            "type": "array",
+                                            "description": "List of event objects.",
+                                            "items": {
+                                                "type": "object",
+                                                "required": [
+                                                    "action",
+                                                    "object_type",
+                                                    "id",
+                                                    "object_id",
+                                                    "created"
+                                                ],
+                                                "properties": {
+                                                    "action": {
+                                                        "type": "string",
+                                                        "enum": [
+                                                            "subscribe",
+                                                            "unsubscribe",
+                                                            "private",
+                                                            "delete",
+                                                            "join",
+                                                            "leave",
+                                                            "add_pulse",
+                                                            "remove_pulse"
+                                                        ],
+                                                        "description": "Action type for the event."
+                                                    },
+                                                    "object_type": {
+                                                        "type": "string",
+                                                        "enum": [
+                                                            "pulse",
+                                                            "user",
+                                                            "group"
+                                                        ],
+                                                        "description": "Type of object related to the event."
+                                                    },
+                                                    "id": {
+                                                        "type": [
+                                                            "integer",
+                                                            "string"
+                                                        ],
+                                                        "description": "Event ID."
+                                                    },
+                                                    "object_id": {
+                                                        "type": "string",
+                                                        "description": "ID of the object involved in the event."
+                                                    },
+                                                    "created": {
+                                                        "type": "string",
+                                                        "format": "date-time",
+                                                        "description": "Timestamp of when the event occurred."
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "No events found or invalid request.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "error": {
+                                            "type": "string",
+                                            "example": "No events found."
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/pulses/user/{username}": {
+            "get": {
+                "summary": "Get pulses for a user",
+                "description": "Returns the authenticated user's or the specified user's pulse feed, default sorted by the latest modified.",
+                "parameters": [
+                    {
+                        "name": "username",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "LevelBlue"
+                        },
+                        "description": "The username of the user whose pulses are to be fetched."
+                    },
+                    {
+                        "name": "since",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "format": "date-time",
+                            "example": "2017-01-01T12:35:00+00:00"
+                        },
+                        "description": "Only include pulses whose modified time is strictly greater than the supplied ISO 8601 datetime."
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "A list of pulses",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$schema": "http://json-schema.org/draft-04/schema",
+                                    "type": "object",
+                                    "properties": {
+                                        "count": {
+                                            "type": "integer"
+                                        },
+                                        "next": {
+                                            "type": [
+                                                "string",
+                                                "null"
+                                            ],
+                                            "format": "uri"
+                                        },
+                                        "previous": {
+                                            "type": [
+                                                "string",
+                                                "null"
+                                            ],
+                                            "format": "uri"
+                                        },
+                                        "results": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "object",
+                                                "additionalProperties": false,
+                                                "required": [
+                                                    "id",
+                                                    "name",
+                                                    "created",
+                                                    "modified",
+                                                    "pulse_source",
+                                                    "TLP",
+                                                    "description",
+                                                    "indicator_type_counts",
+                                                    "tags",
+                                                    "malware_families",
+                                                    "references",
+                                                    "targeted_countries",
+                                                    "groups",
+                                                    "vote",
+                                                    "adversary",
+                                                    "industries",
+                                                    "cloned_from",
+                                                    "attack_ids",
+                                                    "author",
+                                                    "threat_hunter_has_agents",
+                                                    "threat_hunter_scannable",
+                                                    "is_author",
+                                                    "locked",
+                                                    "is_subscribing",
+                                                    "is_modified",
+                                                    "in_group",
+                                                    "public",
+                                                    "subscriber_count",
+                                                    "export_count",
+                                                    "upvotes_count",
+                                                    "downvotes_count",
+                                                    "votes_count",
+                                                    "validator_count",
+                                                    "comment_count",
+                                                    "indicator_count",
+                                                    "follower_count"
+                                                ],
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "string"
+                                                    },
+                                                    "name": {
+                                                        "type": "string"
+                                                    },
+                                                    "created": {
+                                                        "type": "string",
+                                                        "format": "date-time"
+                                                    },
+                                                    "modified": {
+                                                        "type": "string",
+                                                        "format": "date-time"
+                                                    },
+                                                    "pulse_source": {
+                                                        "enum": [
+                                                            "web",
+                                                            "api"
+                                                        ]
+                                                    },
+                                                    "TLP": {
+                                                        "enum": [
+                                                            "white",
+                                                            "green",
+                                                            "amber",
+                                                            "red"
+                                                        ]
+                                                    },
+                                                    "description": {
+                                                        "type": "string"
+                                                    },
+                                                    "indicator_type_counts": {
+                                                        "type": "object"
+                                                    },
+                                                    "tags": {
+                                                        "type": "array",
+                                                        "items": {
+                                                            "type": "string"
+                                                        }
+                                                    },
+                                                    "malware_families": {
+                                                        "type": "array",
+                                                        "items": {
+                                                            "type": "object",
+                                                            "required": [
+                                                                "display_name",
+                                                                "id",
+                                                                "target"
+                                                            ],
+                                                            "properties": {
+                                                                "display_name": {
+                                                                    "type": "string"
+                                                                },
+                                                                "id": {
+                                                                    "type": "string"
+                                                                },
+                                                                "target": {
+                                                                    "type": [
+                                                                        "string",
+                                                                        "null"
+                                                                    ]
+                                                                }
+                                                            }
+                                                        }
+                                                    },
+                                                    "references": {
+                                                        "type": "array",
+                                                        "items": {
+                                                            "type": "string"
+                                                        }
+                                                    },
+                                                    "targeted_countries": {
+                                                        "type": "array",
+                                                        "items": {
+                                                            "type": "string"
+                                                        }
+                                                    },
+                                                    "groups": {
+                                                        "type": "array",
+                                                        "items": {
+                                                            "required": [
+                                                                "name",
+                                                                "id"
+                                                            ],
+                                                            "properties": {
+                                                                "name": {
+                                                                    "type": "string"
+                                                                },
+                                                                "id": {
+                                                                    "type": "integer"
+                                                                }
+                                                            }
+                                                        }
+                                                    },
+                                                    "vote": {
+                                                        "type": "integer"
+                                                    },
+                                                    "adversary": {
+                                                        "type": "string"
+                                                    },
+                                                    "industries": {
+                                                        "type": "array",
+                                                        "items": {
+                                                            "type": "string"
+                                                        }
+                                                    },
+                                                    "cloned_from": {
+                                                        "type": [
+                                                            "null",
+                                                            "string"
+                                                        ]
+                                                    },
+                                                    "attack_ids": {
+                                                        "type": "array",
+                                                        "items": {
+                                                            "type": "object",
+                                                            "required": [
+                                                                "id",
+                                                                "display_name",
+                                                                "name"
+                                                            ],
+                                                            "properties": {
+                                                                "id": {
+                                                                    "type": "string"
+                                                                },
+                                                                "display_name": {
+                                                                    "type": "string"
+                                                                },
+                                                                "name": {
+                                                                    "type": "string"
+                                                                }
+                                                            }
+                                                        }
+                                                    },
+                                                    "author": {
+                                                        "type": "object",
+                                                        "required": [
+                                                            "username",
+                                                            "is_subscribed",
+                                                            "avatar_url",
+                                                            "is_following",
+                                                            "id"
+                                                        ],
+                                                        "properties": {
+                                                            "username": {
+                                                                "type": "string"
+                                                            },
+                                                            "is_subscribed": {
+                                                                "type": "boolean"
+                                                            },
+                                                            "avatar_url": {
+                                                                "type": "string"
+                                                            },
+                                                            "is_following": {
+                                                                "type": "boolean"
+                                                            },
+                                                            "id": {
+                                                                "type": "string"
+                                                            }
+                                                        }
+                                                    },
+                                                    "threat_hunter_has_agents": {
+                                                        "type": "integer"
+                                                    },
+                                                    "threat_hunter_scannable": {
+                                                        "type": "boolean"
+                                                    },
+                                                    "is_author": {
+                                                        "type": "boolean"
+                                                    },
+                                                    "locked": {
+                                                        "type": "boolean"
+                                                    },
+                                                    "is_subscribing": {
+                                                        "type": [
+                                                            "boolean",
+                                                            "null"
+                                                        ]
+                                                    },
+                                                    "is_modified": {
+                                                        "type": "boolean"
+                                                    },
+                                                    "in_group": {
+                                                        "type": "boolean"
+                                                    },
+                                                    "public": {
+                                                        "type": [
+                                                            "boolean",
+                                                            "integer"
+                                                        ]
+                                                    },
+                                                    "subscriber_count": {
+                                                        "type": "integer"
+                                                    },
+                                                    "export_count": {
+                                                        "type": "integer"
+                                                    },
+                                                    "upvotes_count": {
+                                                        "type": "integer"
+                                                    },
+                                                    "downvotes_count": {
+                                                        "type": "integer"
+                                                    },
+                                                    "votes_count": {
+                                                        "type": "integer"
+                                                    },
+                                                    "validator_count": {
+                                                        "type": "integer"
+                                                    },
+                                                    "comment_count": {
+                                                        "type": "integer"
+                                                    },
+                                                    "indicator_count": {
+                                                        "type": "integer"
+                                                    },
+                                                    "follower_count": {
+                                                        "type": "integer"
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/pulses/my": {
+            "get": {
+                "summary": "Returns your feed of pulses you've created, default sorted by latest modified.",
+                "operationId": "getMyPulses",
+                "parameters": [
+                    {
+                        "name": "limit",
+                        "in": "query",
+                        "description": "Number of results to include per page",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 10
+                        }
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Which page of results is desired",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    },
+                    {
+                        "name": "since",
+                        "in": "query",
+                        "description": "Only include pulses whose modified time is strictly greater than the supplied parameter. ISO 8601 format.",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "format": "date-time",
+                            "example": "2017-01-01T12:35:00+00:00"
+                        }
+                    }
+                ]
+            }
+        },
+        "/api/v1/indicators/submitted_filesget": {
+            "get": {
+                "tags": [
+                    "Indicators"
+                ],
+                "summary": "Returns a list of all submitted files.",
+                "description": "Returns a list of all submitted files, along with the status of the submission. When complete, results can be found at `/indicator/file/{file_hash}` in your browser, or `/api/v1/indicators/file/{file_hash}/{section}` in the API.",
+                "operationId": "getSubmittedFiles",
+                "parameters": [
+                    {
+                        "name": "limit",
+                        "in": "query",
+                        "description": "Number of results to include per page.",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 10
+                        }
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Which page of results is desired.",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    },
+                    {
+                        "name": "sort",
+                        "in": "query",
+                        "description": "Order by one of these fields: `add_date`, `sha256`, `complete_date`.",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "add_date",
+                                "sha256",
+                                "complete_date"
+                            ]
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful response.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {
+                                            "file_hash": {
+                                                "type": "string",
+                                                "description": "The hash of the file."
+                                            },
+                                            "status": {
+                                                "type": "string",
+                                                "description": "The status of the file submission."
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid parameters."
+                    },
+                    "500": {
+                        "description": "Server error."
+                    }
+                }
+            }
+        },
+        "/api/v1/indicators/update_submitted_files_tlp": {
+            "post": {
+                "tags": [
+                    "Indicators"
+                ],
+                "summary": "Update TLP level of previously submitted files.",
+                "description": "Update the TLP level of previously submitted files. Valid TLPs are `white`, `green`, `amber`, and `red`. You can only update the TLP of a file you submitted yourself, and you cannot update the TLP if someone else has submitted the same file.",
+                "operationId": "updateSubmittedFilesTlp",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "additionalProperties": false,
+                                "required": [
+                                    "urls",
+                                    "tlp"
+                                ],
+                                "properties": {
+                                    "urls": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "tlp": {
+                                        "type": "string",
+                                        "enum": [
+                                            "white",
+                                            "green",
+                                            "amber",
+                                            "red"
+                                        ]
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "TLP updated successfully."
+                    },
+                    "400": {
+                        "description": "Invalid input parameters."
+                    },
+                    "403": {
+                        "description": "Unauthorized to update the TLP of this file."
+                    },
+                    "500": {
+                        "description": "Server error."
+                    }
+                }
+            }
+        },
+        "/api/v1/indicators/submit_url": {
+            "post": {
+                "tags": [
+                    "Indicators"
+                ],
+                "summary": "Submit a single URL for analysis.",
+                "description": "Analyze suspicious URLs to quickly detect malware and malicious activity. When you submit a URL, the system will automatically visit the URL and analyze the content. If the URL has other artifacts, such as a file in the response, this will be automatically submitted to the system for analysis.",
+                "operationId": "submitUrl",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "additionalProperties": false,
+                                "required": [
+                                    "url"
+                                ],
+                                "properties": {
+                                    "url": {
+                                        "type": "string"
+                                    },
+                                    "tlp": {
+                                        "type": "string",
+                                        "enum": [
+                                            "white",
+                                            "green",
+                                            "amber",
+                                            "red"
+                                        ]
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "URL submitted successfully and under analysis."
+                    },
+                    "400": {
+                        "description": "Invalid input parameters."
+                    },
+                    "500": {
+                        "description": "Server error."
+                    }
+                }
+            }
+        },
+        "/api/v1/indicators/submit_urls": {
+            "post": {
+                "tags": [
+                    "Indicators"
+                ],
+                "summary": "Submit multiple URLs for analysis.",
+                "description": "Analyze suspicious URLs to quickly detect malware and malicious activity. When you submit URLs, the system will automatically visit each URL and analyze the content. If a URL has other artifacts, such as a file in the response, this will be automatically submitted to our system for analysis.",
+                "operationId": "submitUrls",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "additionalProperties": false,
+                                "required": [
+                                    "url"
+                                ],
+                                "properties": {
+                                    "url": {
+                                        "type": "string",
+                                        "description": "The URLs to be analyzed, submitted as a JSON string."
+                                    },
+                                    "tlp": {
+                                        "type": "string",
+                                        "enum": [
+                                            "white",
+                                            "green",
+                                            "amber",
+                                            "red"
+                                        ],
+                                        "description": "The TLP level associated with the submitted URLs."
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "URLs submitted successfully and under analysis."
+                    },
+                    "400": {
+                        "description": "Invalid input parameters."
+                    },
+                    "500": {
+                        "description": "Server error."
+                    }
+                }
+            }
+        },
+        "/api/v1/indicators/submitted_urlsget": {
+            "get": {
+                "tags": [
+                    "Indicators"
+                ],
+                "summary": "Returns a list of all submitted URLs.",
+                "description": "Returns a list of all submitted URLs, along with the status of the submission. When complete, results can be found at `/indicator/url/{url}` in your browser, or `/api/v1/indicators/url/{url}/{section}` in the API.",
+                "operationId": "getSubmittedUrls",
+                "parameters": [
+                    {
+                        "name": "limit",
+                        "in": "query",
+                        "description": "Number of results to include per page.",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 10
+                        }
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Which page of results is desired.",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    },
+                    {
+                        "name": "sort",
+                        "in": "query",
+                        "description": "Order by one of these fields: `add_date`, `url`, `complete_date`.",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "add_date",
+                                "url",
+                                "complete_date"
+                            ]
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful response.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {
+                                            "url": {
+                                                "type": "string",
+                                                "description": "The submitted URL."
+                                            },
+                                            "status": {
+                                                "type": "string",
+                                                "description": "The status of the URL submission."
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid parameters."
+                    },
+                    "500": {
+                        "description": "Server error."
+                    }
+                }
+            }
+        },
+        "/api/v1/indicators/update_submitted_urls_tlp": {
+            "post": {
+                "tags": [
+                    "Indicators"
+                ],
+                "summary": "Update TLP level of previously submitted URLs.",
+                "description": "Update the TLP level of previously submitted URLs. Valid TLPs are `white`, `green`, `amber`, and `red`. You can only update the TLP of a URL you submitted yourself, and you cannot update the TLP if someone else has submitted the same URL.",
+                "operationId": "updateSubmittedUrlsTlp",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "additionalProperties": false,
+                                "required": [
+                                    "hashes",
+                                    "tlp"
+                                ],
+                                "properties": {
+                                    "hashes": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "string"
+                                        },
+                                        "description": "Array of URL hashes to update."
+                                    },
+                                    "tlp": {
+                                        "type": "string",
+                                        "enum": [
+                                            "white",
+                                            "green",
+                                            "amber",
+                                            "red"
+                                        ],
+                                        "description": "The new TLP level for the URLs."
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "TLP updated successfully."
+                    },
+                    "400": {
+                        "description": "Invalid input parameters."
+                    },
+                    "403": {
+                        "description": "Unauthorized to update the TLP of these URLs."
+                    },
+                    "500": {
+                        "description": "Server error."
+                    }
+                }
+            }
+        },
+        "/api/v1/indicators/IPv4/{ip}/{section}": {
+            "get": {
+                "tags": [
+                    "Indicators"
+                ],
+                "summary": "Retrieve information about an IPv4 address.",
+                "description": "Retrieve detailed information about an IPv4 address by section. Available sections include:\n- `general`: General information about the IP, such as geo data, and a list of other sections currently available for this IP address.\n- `reputation`: OTX data on malicious activity observed by LevelBlue Labs (IP Reputation).\n- `geo`: A more verbose listing of geographic data (Country code, coordinates, etc.).\n- `malware`: Malware samples analyzed by LevelBlue Labs which have been observed connecting to this IP address.\n- `url_list`: URLs analyzed by LevelBlue Labs which point to or are somehow associated with this IP address.\n- `passive_dns`: Passive DNS information about hostnames/domains observed by LevelBlue Labs pointing to this IP address.\n- `http_scans`: Meta data for HTTP(s) connections to the IP.",
+                "operationId": "getIPv4Info",
+                "parameters": [
+                    {
+                        "name": "ip",
+                        "in": "path",
+                        "description": "The IPv4 address to retrieve information for.",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "8.8.8.8"
+                        }
+                    },
+                    {
+                        "name": "section",
+                        "in": "path",
+                        "description": "The section of data to retrieve. Available values: `general`, `reputation`, `geo`, `malware`, `url_list`, `passive_dns`, `http_scans`.",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "general",
+                                "reputation",
+                                "geo",
+                                "malware",
+                                "url_list",
+                                "passive_dns",
+                                "http_scans"
+                            ]
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful response containing the requested data.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "description": "Response containing section data for the given IP."
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid IP address or section."
+                    },
+                    "404": {
+                        "description": "No data found for the given IP or section."
+                    },
+                    "500": {
+                        "description": "Server error."
+                    }
+                }
+            }
+        },
+        "/api/v1/indicators/IPv6/{ip}/{section}": {
+            "get": {
+                "tags": [
+                    "Indicators"
+                ],
+                "summary": "Retrieve information about an IPv6 address.",
+                "description": "Retrieve detailed information about an IPv6 address by section. Available sections include:\n- `general`: General information about the IP, such as geo data, and a list of the other sections currently available for this IP address.\n- `reputation`: OTX data on malicious activity observed by LevelBlue Labs (IP Reputation).\n- `geo`: A more verbose listing of geographic data (Country code, coordinates, etc.).\n- `malware`: Malware samples analyzed by LevelBlue Labs which have been observed connecting to this IP address.\n- `url_list`: URLs analyzed by LevelBlue Labs which point to or are somehow associated with this IP address.\n- `passive_dns`: Passive DNS information about hostnames/domains observed by LevelBlue Labs pointing to this IP address.",
+                "operationId": "getIPv6Info",
+                "parameters": [
+                    {
+                        "name": "ip",
+                        "in": "path",
+                        "description": "The IPv6 address to retrieve information for.",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "2001:4860:4860::8888"
+                        }
+                    },
+                    {
+                        "name": "section",
+                        "in": "path",
+                        "description": "The section of data to retrieve. Available values: `general`, `reputation`, `geo`, `malware`, `url_list`, `passive_dns`.",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "general",
+                                "reputation",
+                                "geo",
+                                "malware",
+                                "url_list",
+                                "passive_dns"
+                            ]
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful response containing the requested data.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "description": "Response containing section data for the given IPv6 address."
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid IPv6 address or section."
+                    },
+                    "404": {
+                        "description": "No data found for the given IPv6 address or section."
+                    },
+                    "500": {
+                        "description": "Server error."
+                    }
+                }
+            }
+        },
+        "/api/v1/indicators/domain/{domain}/{section}": {
+            "get": {
+                "tags": [
+                    "Indicators"
+                ],
+                "summary": "Retrieve information about a domain.",
+                "description": "Retrieve detailed information about a domain by section. Available sections include:\n- `general`: General information about the domain, including any pulses, and a list of the other sections currently available for this domain.\n- `geo`: A more verbose listing of geographic data (Country code, coordinates, etc.).\n- `malware`: Malware samples analyzed by LevelBlue Labs which have been observed connecting to this domain.\n- `url_list`: URLs analyzed by LevelBlue Labs on this domain.\n- `passive_dns`: Passive DNS records observed by LevelBlue Labs pointing to this domain.\n- `whois`: Whois records for the domain.\n- `http_scans`: Meta data for HTTP(s) connections to the domain.",
+                "operationId": "getDomainInfo",
+                "parameters": [
+                    {
+                        "name": "domain",
+                        "in": "path",
+                        "description": "The domain name to retrieve information for.",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "spywaresite.info"
+                        }
+                    },
+                    {
+                        "name": "section",
+                        "in": "path",
+                        "description": "The section of data to retrieve. Available values: `general`, `geo`, `malware`, `url_list`, `passive_dns`, `whois`, `http_scans`.",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "general",
+                                "geo",
+                                "malware",
+                                "url_list",
+                                "passive_dns",
+                                "whois",
+                                "http_scans"
+                            ]
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful response containing the requested data.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "description": "Response containing section data for the given domain."
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid domain name or section."
+                    },
+                    "404": {
+                        "description": "No data found for the given domain or section."
+                    },
+                    "500": {
+                        "description": "Server error."
+                    }
+                }
+            }
+        },
+        "/api/v1/indicators/hostname/{hostname}/{section}": {
+            "get": {
+                "tags": [
+                    "Indicators"
+                ],
+                "summary": "Retrieve information about a hostname.",
+                "description": "Retrieve detailed information about a hostname by section. Available sections include:\n- `general`: General information about the hostname, including any pulses, and a list of the other sections currently available for this hostname.\n- `geo`: A more verbose listing of geographic data (Country code, coordinates, etc.).\n- `malware`: Malware samples analyzed by LevelBlue Labs which have been observed connecting to this hostname.\n- `url_list`: URLs analyzed by LevelBlue Labs on this hostname.\n- `passive_dns`: Passive DNS records observed by LevelBlue Labs pointing to this hostname.\n- `http_scans`: Meta data for HTTP(s) connections to the hostname.",
+                "operationId": "getHostnameInfo",
+                "parameters": [
+                    {
+                        "name": "hostname",
+                        "in": "path",
+                        "description": "The hostname to retrieve information for.",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "mail.vspcord.com"
+                        }
+                    },
+                    {
+                        "name": "section",
+                        "in": "path",
+                        "description": "The section of data to retrieve. Available values: `general`, `geo`, `malware`, `url_list`, `passive_dns`, `http_scans`.",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "general",
+                                "geo",
+                                "malware",
+                                "url_list",
+                                "passive_dns",
+                                "http_scans"
+                            ]
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful response containing the requested data.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "description": "Response containing section data for the given hostname."
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid hostname or section."
+                    },
+                    "404": {
+                        "description": "No data found for the given hostname or section."
+                    },
+                    "500": {
+                        "description": "Server error."
+                    }
+                }
+            }
+        },
+        "/api/v1/indicators/file/{file_hash}/{section}": {
+            "get": {
+                "tags": [
+                    "Indicators"
+                ],
+                "summary": "Retrieve information about a file hash.",
+                "description": "Retrieve detailed information about a file hash by section. Available sections include:\n- `general`: General metadata about the file hash, and a list of the other sections currently available for this hash.\n- `analysis`: Dynamic and static analysis of this file (Cuckoo analysis, exiftool, etc.).",
+                "operationId": "getFileInfo",
+                "parameters": [
+                    {
+                        "name": "file_hash",
+                        "in": "path",
+                        "description": "The file hash to retrieve information for.",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "6c5360d41bd2b14b1565f5b18e5c203cf512e493"
+                        }
+                    },
+                    {
+                        "name": "section",
+                        "in": "path",
+                        "description": "The section of data to retrieve. Available values: `general`, `analysis`.",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "general",
+                                "analysis"
+                            ]
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful response containing the requested data.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "description": "Response containing section data for the given file hash."
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid file hash or section."
+                    },
+                    "404": {
+                        "description": "No data found for the given file hash or section."
+                    },
+                    "500": {
+                        "description": "Server error."
+                    }
+                }
+            }
+        },
+        "/api/v1/indicators/url/{url}/{section}": {
+            "get": {
+                "tags": [
+                    "Indicators"
+                ],
+                "summary": "Retrieve information about a URL.",
+                "description": "Retrieve detailed information about a URL by section. Available sections include:\n- `general`: Historical geographic info, any pulses this indicator is on, and a list of the other sections currently available for this URL.\n- `url_list`: Full results (potentially multiple) from LevelBlue Labs URL analysis.",
+                "operationId": "getUrlInfo",
+                "parameters": [
+                    {
+                        "name": "url",
+                        "in": "path",
+                        "description": "The URL to retrieve information for.",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "http://www.fotoidea.com/sport/4x4_san_ponso/slides/IMG_0068.html"
+                        }
+                    },
+                    {
+                        "name": "section",
+                        "in": "path",
+                        "description": "The section of data to retrieve. Available values: `general`, `url_list`.",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "general",
+                                "url_list"
+                            ]
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful response containing the requested data.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "description": "Response containing section data for the given URL."
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid URL or section."
+                    },
+                    "404": {
+                        "description": "No data found for the given URL or section."
+                    },
+                    "500": {
+                        "description": "Server error."
+                    }
+                }
+            }
+        },
+        "/api/v1/indicators/cve/{cve}/{section}": {
+            "get": {
+                "tags": [
+                    "Indicators"
+                ],
+                "summary": "Retrieve information about a CVE.",
+                "description": "Retrieve detailed information about a CVE by section. Available sections include:\n- `general`: MITRE CVE data (CPEs, CWEs, etc.), any pulses this indicator is on, and a list of the other sections currently available for this CVE.",
+                "operationId": "getCveInfo",
+                "parameters": [
+                    {
+                        "name": "cve",
+                        "in": "path",
+                        "description": "The CVE identifier to retrieve information for.",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "CVE-2014-0160"
+                        }
+                    },
+                    {
+                        "name": "section",
+                        "in": "path",
+                        "description": "The section of data to retrieve. Available value: `general`.",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "general"
+                            ]
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful response containing the requested data.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "description": "Response containing section data for the given CVE."
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid CVE identifier or section."
+                    },
+                    "404": {
+                        "description": "No data found for the given CVE identifier or section."
+                    },
+                    "500": {
+                        "description": "Server error."
+                    }
+                }
+            }
+        },
+        "/api/v1/indicators/nids/{nids}/{section}": {
+            "get": {
+                "tags": [
+                    "Indicators"
+                ],
+                "summary": "Retrieve information about a NIDS.",
+                "description": "Retrieve detailed information about a Network Intrusion Detection System (NIDS) indicator by section. Available sections include:\n- `general`: General metadata about the NIDS.",
+                "operationId": "getNidsInfo",
+                "parameters": [
+                    {
+                        "name": "nids",
+                        "in": "path",
+                        "description": "The NIDS identifier to retrieve information for.",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "2820184"
+                        }
+                    },
+                    {
+                        "name": "section",
+                        "in": "path",
+                        "description": "The section of data to retrieve. Available value: `general`.",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "general"
+                            ]
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful response containing the requested data.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "description": "Response containing section data for the given NIDS."
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid NIDS identifier or section."
+                    },
+                    "404": {
+                        "description": "No data found for the given NIDS identifier or section."
+                    },
+                    "500": {
+                        "description": "Server error."
+                    }
+                }
+            }
+        },
+        "/api/v1/indicators/correlation-rule/{correlationrule}/{section}": {
+            "get": {
+                "tags": [
+                    "Indicators"
+                ],
+                "summary": "Retrieve information about a Correlation Rule.",
+                "description": "Retrieve detailed information about a Correlation Rule by section. Available sections include:\n- `general`: General metadata about the Correlation Rule.",
+                "operationId": "getCorrelationRuleInfo",
+                "parameters": [
+                    {
+                        "name": "correlationrule",
+                        "in": "path",
+                        "description": "The Correlation Rule identifier to retrieve information for.",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "572f8c3c540c6f0161677877"
+                        }
+                    },
+                    {
+                        "name": "section",
+                        "in": "path",
+                        "description": "The section of data to retrieve. Available value: `general`.",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "general"
+                            ]
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful response containing the requested data.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "description": "Response containing section data for the given Correlation Rule."
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid Correlation Rule identifier or section."
+                    },
+                    "404": {
+                        "description": "No data found for the given Correlation Rule identifier or section."
+                    },
+                    "500": {
+                        "description": "Server error."
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "ValidatedIndecatorPair": {
+                "type": "object",
+                "required": [
+                    "indicator",
+                    "type"
+                ],
+                "properties": {
+                    "indicator": {
+                        "type": "string",
+                        "example": "192.168.1.1"
+                    },
+                    "type": {
+                        "type": "string",
+                        "example": "IPv4"
+                    }
+                }
+            },
+            "CreatePulse": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                    "name",
+                    "public"
+                ],
+                "properties": {
+                    "name": {
+                        "type": "string"
+                    },
+                    "description": {
+                        "type": "string"
+                    },
+                    "public": {
+                        "type": "boolean"
+                    },
+                    "tags": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "TLP": {
+                        "type": "string",
+                        "enum": [
+                            "white",
+                            "green",
+                            "amber",
+                            "red"
+                        ]
+                    },
+                    "references": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "adversary": {
+                        "type": "string"
+                    },
+                    "targeted_countries": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "industries": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "group_ids": {
+                        "type": "array",
+                        "items": {
+                            "type": "integer"
+                        }
+                    },
+                    "malware_families": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "attack_ids": {
+                        "type": "array",
+                        "items": {
+                            "type": "string",
+                            "pattern": "^[A-Z][0-9]{4}$"
+                        }
+                    },
+                    "indicators": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "additionalProperties": false,
+                            "required": [
+                                "indicator",
+                                "type",
+                                "description"
+                            ],
+                            "properties": {
+                                "indicator": {
+                                    "type": "string"
+                                },
+                                "type": {
+                                    "type": "string"
+                                },
+                                "title": {
+                                    "type": "string"
+                                },
+                                "description": {
+                                    "type": "string"
+                                },
+                                "expiration": {
+                                    "type": "string",
+                                    "format": "date-time"
+                                },
+                                "content": {
+                                    "type": "string"
+                                },
+                                "role": {
+                                    "type": [
+                                        "string",
+                                        "null"
+                                    ],
+                                    "enum": [
+                                        null,
+                                        "",
+                                        "scanning_host",
+                                        "malware_hosting",
+                                        "command_and_control",
+                                        "exploit_kit",
+                                        "malvertising",
+                                        "phishing",
+                                        "bruteforce",
+                                        "web_attack",
+                                        "exploit_source",
+                                        "trojan",
+                                        "rat",
+                                        "backdoor",
+                                        "adware",
+                                        "hacking_tool",
+                                        "ransomware",
+                                        "worm",
+                                        "macro_malware",
+                                        "domain_owner",
+                                        "delivery_email",
+                                        "unknown",
+                                        "file_scanning",
+                                        "memory_scanning",
+                                        "hunting",
+                                        "pcap_scanning"
+                                    ]
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

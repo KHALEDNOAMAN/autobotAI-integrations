@@ -539,10 +539,13 @@ def executor(context):
                             raise ValueError("Unexpected JSON structure")
                 except json.decoder.JSONDecodeError:
                     logger.error("Failed to decode JSON response")
-                    return {"error": "Invalid JSON response", "text": response.text}
+                    return {"abAI-client-error": "Invalid JSON response", "text": response.text}
                 except ValueError:
                     logger.error("Unexpected JSON structure")
-                    return {"error": "Unexpected JSON structure", "text": response.text}
+                    return {
+                        "abAI-client-error": "Unexpected JSON structure",
+                        "text": response.text,
+                    }
             else:
                 # Handle non-JSON responses
                 try:
@@ -550,29 +553,32 @@ def executor(context):
                     return results
                 except json.decoder.JSONDecodeError:
                     logger.error("Response is not JSON")
-                    return {"error": "Non-JSON response", "text": response.text}
+                    return {
+                        "abAI-client-error": "Non-JSON response",
+                        "text": response.text,
+                    }
 
         except requests.exceptions.Timeout:
             logger.error("Request timed out")
-            return {"error": "Request timed out"}
+            return {"abAI-client-error": "Request timed out"}
 
         except requests.exceptions.ConnectionError:
             logger.error("Connection error occurred")
-            return {"error": "Connection error"}
+            return {"abAI-client-error": "Connection error"}
 
         except requests.exceptions.RequestException as e:
             logger.error(f"Request failed: {e}")
-            return {"error": f"Request failed: {e}"}
+            return {"abAI-client-error": f"Request failed: {e}"}
 
     def execute_rest_api_task(self, payload_task: PayloadTask):
         logger.info("Running Rest API Task")
         results = []
         errors = []
         try:
-            logger.info(f"Validating Rest API parameters...")
+            logger.info("Validating Rest API parameters...")
             params = get_restapi_validated_params(payload_task.params)
 
-            logger.info(f"Creating request url..")
+            logger.info("Creating request url..")
             request_url = payload_task.executable.format(
                 base_url=payload_task.creds.base_url.strip("/"),
                 # Filling path params,
@@ -580,7 +586,7 @@ def executor(context):
             )
             logger.info(f"Request URL: {request_url}")
 
-            logger.info(f"Making request..")
+            logger.info("Making request..")
             response = self.rest_api_processor(
                 url=request_url,
                 method=params.get("method", "GET"),
@@ -598,10 +604,10 @@ def executor(context):
             )
             logger.debug(f"Response: {response}")
 
-            if "error" in response:
+            if response.get("abAI-client-error"):
                 errors.append(
                     {
-                        "message": response["error"]
+                        "message": str(response["abAI-client-error"])
                         + " "
                         + str(response.get("text", "")),
                         "other_details": {
