@@ -30,6 +30,7 @@ setup(
         "GitPython",
         "vt-py",
         "snowflake-connector-python",
+        "opensearch-py",
     ],
     package_data={
         "": [

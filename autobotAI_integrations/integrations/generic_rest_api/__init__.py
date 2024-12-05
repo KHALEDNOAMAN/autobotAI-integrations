@@ -14,7 +14,7 @@ from autobotAI_integrations.models import (
 
 
 # Supported Auth Types
-class AuthType(Enum):
+class APIAuthType(str, Enum):
     NO_AUTH = "no_auth"
     BASIC_AUTH = "basic_auth"
     BEARER_TOKEN = "bearer_token"
@@ -24,7 +24,7 @@ class AuthType(Enum):
 class GenericRestAPIIntegration(BaseSchema):
     # No Auth
     api_url: str
-    auth_type: Union[AuthType, str] = AuthType.NO_AUTH
+    auth_type: Union[APIAuthType, str] = APIAuthType.NO_AUTH
 
     # Bearer Token
     token: Optional[str] = Field(default=None, description="Bearer token", exclude=True)
@@ -59,15 +59,15 @@ class GenericRestAPIService(BaseService):
     def _test_integration(self) -> dict:
         try:
             parameters = {}
-            if self.integration.auth_type == AuthType.BEARER_TOKEN.value:
+            if self.integration.auth_type == APIAuthType.BEARER_TOKEN.value:
                 parameters["headers"] = {
                     "Authorization": f"Bearer {self.integration.token}"
                 }
-            elif self.integration.auth_type == AuthType.BASIC_AUTH.value:
+            elif self.integration.auth_type == APIAuthType.BASIC_AUTH.value:
                 parameters["headers"] = {
                     "Authorization": f"Basic {base64.b64encode('{}:{}'.format(self.integration.username, self.integration.password).encode()).decode()}"
                 }
-            elif self.integration.auth_type == AuthType.API_KEY.value:
+            elif self.integration.auth_type == APIAuthType.API_KEY.value:
                 if self.integration.api_key_in == "header":
                     parameters["headers"] = {
                         self.integration.api_key_name: self.integration.api_key_value
@@ -106,6 +106,7 @@ class GenericRestAPIService(BaseService):
                 {
                     "label": "No Auth",
                     "type": "form",
+                    "formId": APIAuthType.NO_AUTH.value,
                     "children": [
                         {
                             "name": "api_url",
@@ -119,6 +120,7 @@ class GenericRestAPIService(BaseService):
                 {
                     "label": "Bearer Token",
                     "type": "form",
+                    "formId": APIAuthType.BEARER_TOKEN.value,
                     "children": [
                         {
                             "name": "api_url",
@@ -139,6 +141,7 @@ class GenericRestAPIService(BaseService):
                 {
                     "label": "Basic Auth",
                     "type": "form",
+                    "formId": APIAuthType.BASIC_AUTH.value,
                     "children": [
                         {
                             "name": "api_url",
@@ -166,6 +169,7 @@ class GenericRestAPIService(BaseService):
                 {
                     "label": "API Key",
                     "type": "form",
+                    "formId": APIAuthType.API_KEY.value,
                     "children": [
                         {
                             "name": "api_url",
@@ -219,20 +223,20 @@ class GenericRestAPIService(BaseService):
         return [ConnectionInterfaces.REST_API]
 
     def generate_rest_api_creds(self) -> RestAPICreds:
-        if self.integration.auth_type == AuthType.BEARER_TOKEN.value:
+        if self.integration.auth_type == APIAuthType.BEARER_TOKEN.value:
             return RestAPICreds(
                 base_url=self.integration.api_url,
                 token=self.integration.token,
                 headers={"Authorization": f"Bearer {self.integration.token}"},
             )
-        elif self.integration.auth_type == AuthType.BASIC_AUTH.value:
+        elif self.integration.auth_type == APIAuthType.BASIC_AUTH.value:
             return RestAPICreds(
                 base_url=self.integration.api_url,
                 headers={
                     "Authorization": f"Basic {base64.b64encode('{}:{}'.format(self.integration.username, self.integration.password).encode()).decode()}"
                 },
             )
-        elif self.integration.auth_type == AuthType.API_KEY.value:
+        elif self.integration.auth_type == APIAuthType.API_KEY.value:
             if self.integration.api_key_in == "header":
                 return RestAPICreds(
                     base_url=self.integration.api_url,

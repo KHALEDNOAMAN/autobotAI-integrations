@@ -52,3 +52,4 @@ jira
 GitPython
 vt-py
 snowflake-connector-python
+opensearch-py

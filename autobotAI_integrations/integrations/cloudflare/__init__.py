@@ -1,4 +1,5 @@
 from typing import Type, Union
+from enum import Enum
 
 from autobotAI_integrations.models import *
 from autobotAI_integrations import (
@@ -7,6 +8,10 @@ from autobotAI_integrations import (
     ConnectionInterfaces,
 )
 import requests
+
+class CloudflareAuthTypes(str, Enum):
+    TOKEN_INTEGRATION = "token_integration"
+    GLOBAL_API_KEY_INTEGRATION = "global_api_key_integration"
 
 
 class CloudflareIntegration(BaseSchema):
@@ -71,6 +76,7 @@ class CloudflareService(BaseService):
                 {
                     "label": "Token Integration(Recommended)",
                     "type": "form",
+                    "formId": CloudflareAuthTypes.TOKEN_INTEGRATION.value,
                     "children": [
                         {
                             "name": "token",
@@ -85,6 +91,7 @@ class CloudflareService(BaseService):
                 {
                     "label": "Global API Key Integration",
                     "type": "form",
+                    "formId": CloudflareAuthTypes.GLOBAL_API_KEY_INTEGRATION.value,
                     "children": [
                         {
                             "name": "email",

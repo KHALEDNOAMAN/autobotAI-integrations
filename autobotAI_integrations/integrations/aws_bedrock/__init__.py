@@ -30,12 +30,13 @@ class AWSBedrockIntegration(BaseSchema):
         kwargs["activeRegions"] = [kwargs['region']]
         super().__init__(**kwargs)
 
-    def use_dependency(self, dependency):
-        self.roleArn = dependency["roleArn"]
-        self.access_key: dependency["access_key"]
-        self.secret_key: dependency["secret_key"]
-        self.session_token: dependency["session_token"]
-        self.externalId = dependency["externalId"]
+    def use_dependency(self, dependency: dict):
+        self.roleArn = dependency.get("roleArn")
+        self.access_key = dependency.get("access_key")
+        self.secret_key = dependency.get("secret_key")
+        self.session_token = dependency.get("session_token")
+        self.externalId = dependency.get("externalId")
+        self.account_id = dependency.get("account_id")
 
 
 class AWSBedrockService(AIBaseService):
