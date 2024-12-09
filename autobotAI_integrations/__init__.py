@@ -604,7 +604,7 @@ def executor(context):
             )
             logger.debug(f"Response: {response}")
 
-            if response.get("abAI-client-error"):
+            if isinstance(response, dict) and response.get("abAI-client-error"):
                 errors.append(
                     {
                         "message": str(response["abAI-client-error"])
