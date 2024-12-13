@@ -22,7 +22,7 @@ def executor(context):
     clients = context["clients"]
 
     # Placeholder for retrieving the integration-specific client if needed
-    client = clients["kubernetes"]  # Supports only one client
+    client = clients["kubernetes"]
 
     # User's Python code execution logic goes here
     # (Replace this comment with the your actual code)
