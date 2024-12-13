@@ -3,3 +3,9 @@
     - kubernetes.client
   pip_package_names:
     - kubernetes
+- name: os
+  import_library_names:
+    - os
+- name: subprocess
+  import_library_names:
+    - subprocess
