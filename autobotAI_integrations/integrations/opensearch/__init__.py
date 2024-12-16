@@ -225,11 +225,11 @@ class OpensearchService(BaseService):
                             "options": [
                                 {
                                     "label": "Amazon OpenSearch Service",
-                                    "value": "amazon_opensearch",
+                                    "value": AWSOpensearchType.AWS_OPENSEARCH_SERVICE.value,
                                 },
                                 {
                                     "label": "OpenSearch Serverless",
-                                    "value": "opensearch_serverless",
+                                    "value": AWSOpensearchType.OPENSEARCH_SERVERLESS.value,
                                 },
                             ],
                             "required": True,
@@ -275,7 +275,7 @@ class OpensearchService(BaseService):
                             "label": "Password",
                             "placeholder": "Enter your password",
                             "required": True,
-                        }
+                        },
                     ],
                 },
             ],
