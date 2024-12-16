@@ -267,14 +267,14 @@ class OpensearchService(BaseService):
                             "type": "text",
                             "label": "Username",
                             "placeholder": "Enter your username",
-                            "required": False,
+                            "required": True,
                         },
                         {
                             "name": "password",
                             "type": "text/password",
                             "label": "Password",
                             "placeholder": "Enter your password",
-                            "required": False,
+                            "required": True,
                         }
                     ],
                 },
