@@ -63,9 +63,7 @@ class AlienvaultOTXService(BaseService):
     def build_python_exec_combinations_hook(
         self, payload_task: PayloadTask, client_definitions: List[SDKClient]
     ) -> list:
-        OTXv2 = importlib.import_module(
-            client_definitions[0].import_library_names[0], package=None
-        )
+        OTXv2 = importlib.import_module("OTXv2", package=None)
 
         alienvault_client = OTXv2.OTXv2(
             payload_task.creds.envs.get("ALIENVAULT_OTX_TOKEN"),
@@ -74,6 +72,7 @@ class AlienvaultOTXService(BaseService):
             {
                 "clients": {
                     "OTXv2": alienvault_client,
+                    "IndicatorTypes": OTXv2.IndicatorTypes
                 },
                 "params": self.prepare_params(payload_task.params),
                 "context": payload_task.context,

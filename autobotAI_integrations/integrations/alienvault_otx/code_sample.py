@@ -1,5 +1,4 @@
 # Import your modules here
-from OTXv2 import IndicatorTypes
 
 # **Security Note:** Client-related modules should not be directly imported here.
 # Instead, they are passed as arguments and retrieved from a secure configuration.
@@ -23,10 +22,11 @@ def executor(context):
 
     # Placeholder for retrieving the integration-specific client if needed
     client = clients["OTXv2"]  # Supports only one client
+    indicator_types = clients["IndicatorTypes"]
     # Use code parameters
     print(params)
 
     # Example: # Get everything OTX knows about google.com
     # for full details visit: https://github.com/AlienVault-OTX/OTX-Python-SDK?tab=readme-ov-file
 
-    return client.get_indicator_details_full(IndicatorTypes.DOMAIN, "google.com")
+    return client.get_indicator_details_full(indicator_types.DOMAIN, "google.com")
