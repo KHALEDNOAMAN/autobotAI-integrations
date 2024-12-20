@@ -108,7 +108,7 @@ class OllamaService(AIBaseService):
             "param_definitions": [
                 {
                     "name": "prompt",
-                    "type": "str",
+                    "type": "handlebars-text",
                     "description": "The prompt to use for the AI model",
                     "required": True,
                 },

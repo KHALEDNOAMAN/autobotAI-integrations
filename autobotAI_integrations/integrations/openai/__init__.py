@@ -87,7 +87,7 @@ class OpenAIService(AIBaseService):
                 "param_definitions": [
                     {
                         "name": "prompt",
-                        "type": "str",
+                        "type": "handlebars-text",
                         "description": "The prompt to use for the AI model",
                         "required": True,
                     },
@@ -102,7 +102,7 @@ class OpenAIService(AIBaseService):
                         "type": "list",
                         "description": "The resources to use for the AI model",
                         "required": True,
-                    }
+                    },
                 ],
                 "code": f.read(),
             }

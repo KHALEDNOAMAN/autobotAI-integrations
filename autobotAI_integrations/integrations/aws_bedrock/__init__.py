@@ -142,7 +142,7 @@ class AWSBedrockService(AIBaseService):
                 "param_definitions": [
                     {
                         "name": "prompt",
-                        "type": "str",
+                        "type": "handlebars-text",
                         "description": "The prompt to use for the AI model",
                         "required": True,
                     },
@@ -157,7 +157,7 @@ class AWSBedrockService(AIBaseService):
                         "type": "list",
                         "description": "The resources to use for the AI model",
                         "required": True,
-                    }
+                    },
                 ],
                 "code": f.read(),
             }
