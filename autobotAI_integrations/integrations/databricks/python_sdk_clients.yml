@@ -1,0 +1,10 @@
+- name: WorkspaceClient
+  import_library_names:
+    - databricks.sdk
+  pip_package_names:
+    - databricks-sdk
+- name: AccountClient
+  import_library_names:
+    - databricks.sdk
+  pip_package_names:
+    - databricks-sdk
