@@ -431,7 +431,6 @@ def executor(context):
 
         else:
             logger.info(f"Running query: '{payload_task.executable}'")
-            logger.debug(f"Environment variables: {payload_task.creds.envs}")
             process = subprocess.run(
                 ["/usr/local/bin/steampipe", "query", "{}".format(payload_task.executable), "--output", "json"],
                 stdout=subprocess.PIPE,

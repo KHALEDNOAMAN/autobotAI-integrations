@@ -40,7 +40,6 @@ class GitlabService(BaseService):
             else:
                 gitlab = Gitlab(private_token=str(self.integration.token))
             gitlab.auth()
-            print(f"Gitlab Username: {gitlab.user.username}")
             return {"success": True}
         except Exception as e:
             return {"success": False, "error": str(e)}

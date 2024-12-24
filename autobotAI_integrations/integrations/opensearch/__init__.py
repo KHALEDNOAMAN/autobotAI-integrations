@@ -133,7 +133,6 @@ class OpensearchService(BaseService):
     def build_python_exec_combinations_hook(
         self, payload_task: PayloadTask, client_definitions: List[SDKClient]
     ) -> list:
-        logger.info(f"Initiating test for integration: {self.integration}")
         host = payload_task.creds.envs.get("OPENSEARCH_HOST_URL").split("://")[1]
         use_ssl = (
             payload_task.creds.envs.get("OPENSEARCH_HOST_URL").split("://")[0]
