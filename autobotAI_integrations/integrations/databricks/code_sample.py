@@ -21,12 +21,16 @@ def executor(context):
     clients = context["clients"]
 
     # Placeholder for retrieving the integration-specific client if needed
-    client = clients["OTXv2"]  # Supports only one client
-    indicator_types = clients["IndicatorTypes"]
-    # Use code parameters
-    print(params)
+    # client = clients["client_name"]  # Uncomment and modify this line to retrieve the client
 
-    # Example: # Get everything OTX knows about google.com
-    # for full details visit: https://github.com/AlienVault-OTX/OTX-Python-SDK?tab=readme-ov-file
+    # User's Python code execution logic goes here
+    # (Replace this comment with the your actual code)
+    clients = context["clients"]
+    workspace_client = clients["WorkspaceClient"]
 
-    return client.get_indicator_details_full(indicator_types.DOMAIN, "google.com")
+    # Example: List All Users directory inside workspace
+    res = []
+    for user in workspace_client.workspace.list('/Users'):
+        res.append(user.as_dict())
+    
+    return res

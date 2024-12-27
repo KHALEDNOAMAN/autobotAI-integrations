@@ -420,7 +420,7 @@ def executor(context):
         logger.debug("Checking for Query type")
         if payload_task.executable.startswith(f"{payload_task.creds.plugin_name}_compliance"):
             execution_mode = "compliance"
-        elif payload_task.executable.startswith("select"):
+        elif payload_task.executable.lower().startswith("select"):
             execution_mode = "query"
         else:
             raise ValueError("Execution mode is not supported.")
@@ -431,7 +431,6 @@ def executor(context):
 
         else:
             logger.info(f"Running query: '{payload_task.executable}'")
-            logger.debug(f"Environment variables: {payload_task.creds.envs}")
             process = subprocess.run(
                 ["/usr/local/bin/steampipe", "query", "{}".format(payload_task.executable), "--output", "json"],
                 stdout=subprocess.PIPE,

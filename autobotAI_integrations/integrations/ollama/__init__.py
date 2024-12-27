@@ -1,16 +1,27 @@
-from typing import Type, Union
+from typing import List, Optional, Type, Union
 
-import uuid
 from pydantic import Field
 
 
-from autobotAI_integrations import list_of_unique_elements, PayloadTask, Param, AIBaseService
-from autobotAI_integrations.models import *
+from autobotAI_integrations import (
+    list_of_unique_elements,
+    PayloadTask,
+    AIBaseService,
+)
 import importlib
 import ollama
 import requests
 
-from autobotAI_integrations.models import RestAPICreds
+from autobotAI_integrations.models import (
+    BaseSchema,
+    CLICreds,
+    ConnectionInterfaces,
+    IntegrationCategory,
+    RestAPICreds,
+    SDKClient,
+    SDKCreds,
+)
+
 
 class OllamaIntegration(BaseSchema):
     base_url: str = Field(default="http://127.0.0.1:11434", exclude=None)
@@ -37,22 +48,23 @@ class OllamaService(AIBaseService):
             if response.status_code == 200:
                 return {"success": True}
             else:
-                return {"success": False, "error": f"Request Failed: Cannot stablish connection, Status code {response.status_code}"}
-        except Exception as e:
+                return {
+                    "success": False,
+                    "error": f"Request Failed: Cannot stablish connection, Status code {response.status_code}",
+                }
+        except Exception:
             return {"success": False, "error": "Request Failed with Connection Error"}
 
     def get_integration_specific_details(self) -> dict:
         try:
             client = ollama.Client(self.integration.base_url)
-            models = [model.get('model') for model in client.list()["models"]]
+            models = [model.get("model") for model in client.list()["models"]]
             return {
                 "integration_id": self.integration.accountId,
                 "models": models,
             }
-        except Exception as e:
-            return {
-                "error": "Details can not be fetched"
-            }
+        except Exception:
+            return {"error": "Details can not be fetched"}
 
     @classmethod
     def get_details(cls):
@@ -62,7 +74,7 @@ class OllamaService(AIBaseService):
             "clients": list_of_unique_elements(cls.get_all_python_sdk_clients()),
             "supported_executor": "ecs",
             "compliance_supported": False,
-            "preview": True
+            "preview": True,
         }
 
     @staticmethod
@@ -94,18 +106,24 @@ class OllamaService(AIBaseService):
         return {
             "integration_type": "ollama",
             "param_definitions": [
-                {"name": "prompt",
-                 "type": "str",
-                 "description": "The prompt to use for the AI model",
-                 "required": True},
-                {"name": "model",
-                 "type": "str",
-                 "description": "The model to use for the AI model",
-                 "required": True},
-                {"name": "resources",
-                 "type": "list",
-                 "description": "The resources to use for the AI model",
-                 "required": True}
+                {
+                    "name": "prompt",
+                    "type": "handlebars-text",
+                    "description": "The prompt to use for the AI model",
+                    "required": True,
+                },
+                {
+                    "name": "model",
+                    "type": "str",
+                    "description": "The model to use for the AI model",
+                    "required": True,
+                },
+                {
+                    "name": "resources",
+                    "type": "list",
+                    "description": "The resources to use for the AI model",
+                    "required": True,
+                },
             ],
             "code": """import json
 def executor(context):
@@ -133,20 +151,24 @@ def executor(context):
     print(response)
     for idx, res in enumerate(json.loads(response['message']['content'])):
         resources[idx]["decision"] = res
-    return resources"""}
+    return resources""",
+        }
+
     @staticmethod
     def get_schema() -> Type[BaseSchema]:
         return OllamaIntegration
 
-    def build_python_exec_combinations_hook(self, payload_task: PayloadTask, client_definitions: List[SDKClient]) -> list:
-        ollama = importlib.import_module(client_definitions[0].import_library_names[0], package=None)
+    def build_python_exec_combinations_hook(
+        self, payload_task: PayloadTask, client_definitions: List[SDKClient]
+    ) -> list:
+        ollama = importlib.import_module(
+            client_definitions[0].import_library_names[0], package=None
+        )
         return [
             {
-                "clients": {
-                    "ollama": ollama.Client(host=self.integration.base_url)
-                },
+                "clients": {"ollama": ollama.Client(host=self.integration.base_url)},
                 "params": self.prepare_params(payload_task.params),
-                "context": payload_task.context
+                "context": payload_task.context,
             }
         ]
 
@@ -161,8 +183,6 @@ def executor(context):
     def supported_connection_interfaces():
         return [
             ConnectionInterfaces.PYTHON_SDK,
-            ConnectionInterfaces.REST_API,
-            ConnectionInterfaces.CLI
         ]
 
     def generate_cli_creds(self) -> CLICreds:

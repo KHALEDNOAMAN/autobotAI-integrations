@@ -1,0 +1,5 @@
+- name: opensearch
+  import_library_names:
+    - opensearchpy
+  pip_package_names:
+    - opensearch-py

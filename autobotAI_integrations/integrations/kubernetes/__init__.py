@@ -1,12 +1,21 @@
-import uuid
 from typing import List, Optional
-from autobotAI_integrations import BaseSchema, SteampipeCreds, RestAPICreds, SDKCreds, CLICreds, \
-    BaseService, ConnectionInterfaces, PayloadTask, SDKClient, list_of_unique_elements
+from autobotAI_integrations import (
+    BaseSchema,
+    SteampipeCreds,
+    SDKCreds,
+    CLICreds,
+    BaseService,
+    ConnectionInterfaces,
+    PayloadTask,
+    SDKClient,
+    list_of_unique_elements,
+)
 from autobotAI_integrations.integration_schema import ConnectionTypes
 import importlib
 from kubernetes import config
 
 from autobotAI_integrations.models import IntegrationCategory
+
 
 class KubernetesIntegration(BaseSchema):
     agent_ids: list = []
@@ -20,16 +29,12 @@ class KubernetesIntegration(BaseSchema):
 
 class KubernetesService(BaseService):
     def __init__(self, ctx, integration: KubernetesIntegration):
-        # Assuming the cluster is alredy running in activate state
+        # Assuming the cluster is already running in activate state
         super().__init__(ctx, integration)
 
     @staticmethod
     def get_forms():
-        return  {
-            "label": "Kubernetes",
-            "type": "form",
-            "children": []
-        }
+        return {"label": "Kubernetes", "type": "form", "children": []}
 
     @staticmethod
     def get_schema():
@@ -51,29 +56,40 @@ class KubernetesService(BaseService):
             ConnectionInterfaces.REST_API,
             ConnectionInterfaces.CLI,
             ConnectionInterfaces.PYTHON_SDK,
-            ConnectionInterfaces.STEAMPIPE
+            ConnectionInterfaces.STEAMPIPE,
         ]
 
     def _test_integration(self):
         return {"success": True}
 
-    def build_python_exec_combinations_hook(self, payload_task: PayloadTask,
-                                            client_definitions: List[SDKClient]) -> list:
-        kubernetes = importlib.import_module(client_definitions[0].import_library_names[0], package=None)
+    def build_python_exec_combinations_hook(
+        self, payload_task: PayloadTask, client_definitions: List[SDKClient]
+    ) -> list:
+        kubernetes = importlib.import_module(
+            client_definitions[0].import_library_names[0], package=None
+        )
         try:
             config.load_kube_config()
-        except:
+        except Exception:
             try:
                 config.load_incluster_config()
-            except:
+            except Exception:
                 raise BaseException("Failed to load configurations")
+        clients_classes = dict()
+        for client in client_definitions:
+            try:
+                client_module = importlib.import_module(
+                    client.import_library_names[0], package=None
+                )
+                clients_classes[client.name] = client_module
+            except BaseException as e:
+                print(e)
+                continue
         return [
             {
-                "clients": {
-                    "kubernetes": kubernetes,
-                },
+                "clients": {"kubernetes": kubernetes, **clients_classes},
                 "params": self.prepare_params(payload_task.params),
-                "context": payload_task.context
+                "context": payload_task.context,
             }
         ]
 
@@ -85,7 +101,11 @@ class KubernetesService(BaseService):
   config_path    = "~/.kube/config"
 }"""
         return SteampipeCreds(
-            envs=envs, plugin_name="kubernetes", connection_name="kubernetes", conf_path=conf_path, config=config
+            envs=envs,
+            plugin_name="kubernetes",
+            connection_name="kubernetes",
+            conf_path=conf_path,
+            config=config,
         )
 
     def generate_python_sdk_creds(self) -> SDKCreds:
@@ -97,6 +117,4 @@ class KubernetesService(BaseService):
         return CLICreds(envs=envs)
 
     def _temp_credentials(self):
-        return {
-            "KUBECONFIG": "~/.kube/config"
-        }
+        return {"KUBECONFIG": "~/.kube/config"}

@@ -15,38 +15,35 @@ from autobotAI_integrations.models import (
 from autobotAI_integrations.payload_schema import PayloadTask
 
 
-class AlienvaultOTXIntegration(BaseSchema):
-    base_url: str = Field(
-        default="https://otx.alienvault.com", description="base url"
-    )
+class ElasticsearchIntegration(BaseSchema):
+    base_url: str = Field(default=None, description="base url", exclude=True)
     token: Optional[str] = Field(default=None, description="token", exclude=True)
 
-    name: Optional[str] = "Alienvault OTX"
-    category: Optional[str] = IntegrationCategory.SECURITY_TOOLS.value
+    name: Optional[str] = "Elasticsearch"
+    category: Optional[str] = IntegrationCategory.MONITORING_TOOLS.value
     description: Optional[str] = (
-        "Alienvault OTX is a threat intelligence platform that provides security-related insights and data for detecting and responding to potential threats."
+        "Elasticsearch is a distributed, open-source search and analytics engine for managing and querying large volumes of structured and unstructured data in near real-time."
     )
 
 
-class AlienvaultOTXService(BaseService):
-    def __init__(self, ctx: dict, integration: Union[AlienvaultOTXIntegration, dict]):
+class ElasticsearchService(BaseService):
+    def __init__(self, ctx: dict, integration: Union[ElasticsearchIntegration, dict]):
         """
         Integration should have all the data regarding the integration
         """
-        if not isinstance(integration, AlienvaultOTXIntegration):
-            integration = AlienvaultOTXIntegration(**integration)
+        if not isinstance(integration, ElasticsearchIntegration):
+            integration = ElasticsearchIntegration(**integration)
         super().__init__(ctx, integration)
 
     def _test_integration(self):
         try:
-            response = requests.get(
-                url=self.integration.base_url + '/api/v1/users/me',
-                headers={
-                    "X-OTX-API-KEY": self.integration.token,  # Replace with your actual API key
-                    "Accept": "application/json",
-                    "Content-Type": "application/json",
-                },
-            )
+            headers = {
+                "Authorization": f"ApiKey {self.integration.token}",
+                "Content-Type": "application/json",
+            }
+            # Attempt a health check endpoint
+            response = requests.get(f"{self.integration.base_url.strip('/')}", headers=headers)
+
             response.raise_for_status()
             if response.status_code == 200:
                 return {"success": True, "data": response.json()}
@@ -63,16 +60,18 @@ class AlienvaultOTXService(BaseService):
     def build_python_exec_combinations_hook(
         self, payload_task: PayloadTask, client_definitions: List[SDKClient]
     ) -> list:
-        OTXv2 = importlib.import_module("OTXv2", package=None)
+        elasticsearch = importlib.import_module(
+            client_definitions[0].import_library_names[0], package=None
+        )
 
-        alienvault_client = OTXv2.OTXv2(
-            payload_task.creds.envs.get("ALIENVAULT_OTX_TOKEN"),
+        client = elasticsearch.Elasticsearch(
+            payload_task.creds.envs.get("ELASTICSEARCH_API_URL"),
+            api_key=payload_task.creds.envs.get("ELASTICSEARCH_API_KEY"),
         )
         return [
             {
                 "clients": {
-                    "OTXv2": alienvault_client,
-                    "IndicatorTypes": OTXv2.IndicatorTypes
+                    "elasticsearch": client,
                 },
                 "params": self.prepare_params(payload_task.params),
                 "context": payload_task.context,
@@ -82,22 +81,29 @@ class AlienvaultOTXService(BaseService):
     @staticmethod
     def get_forms():
         return {
-            "label": "Alienvault OTX",
+            "label": "Elasticsearch",
             "type": "form",
             "children": [
+                {
+                    "name": "base_url",
+                    "type": "text/url",
+                    "label": "API URL",
+                    "placeholder": "API URL",
+                    "required": False,
+                },
                 {
                     "name": "token",
                     "type": "text/password",
                     "label": "API Key",
                     "placeholder": "Your API KEY",
                     "required": True,
-                }
+                },
             ],
         }
 
     @staticmethod
     def get_schema() -> Type[BaseSchema]:
-        return AlienvaultOTXIntegration
+        return ElasticsearchIntegration
 
     @classmethod
     def get_details(cls):
@@ -107,20 +113,24 @@ class AlienvaultOTXService(BaseService):
 
     @staticmethod
     def supported_connection_interfaces():
-        return [ConnectionInterfaces.PYTHON_SDK, ConnectionInterfaces.REST_API]
+        return [
+            ConnectionInterfaces.PYTHON_SDK,
+            # ConnectionInterfaces.REST_API
+        ]
 
     def generate_python_sdk_creds(self) -> SDKCreds:
         envs = {
-            "ALIENVAULT_OTX_TOKEN": self.integration.token,
+            "ELASTICSEARCH_API_URL": self.integration.base_url,
+            "ELASTICSEARCH_API_KEY": self.integration.token,
         }
         return SDKCreds(envs=envs)
 
-    def generate_rest_api_creds(self) -> RestAPICreds:
-        return RestAPICreds(
-            base_url=self.integration.base_url,
-            headers={
-                "X-OTX-API-KEY": self.integration.token,
-                "Accept": "application/json",
-                "Content-Type": "application/json",
-            },
-        )
+    # def generate_rest_api_creds(self) -> RestAPICreds:
+    #     return RestAPICreds(
+    #         base_url=self.integration.base_url,
+    #         headers={
+    #             "Authorization": f"ApiKey {self.integration.token}",
+    #             "Content-Type": "application/json",
+    #             "Accept": "application/json",
+    #         },
+    #     )

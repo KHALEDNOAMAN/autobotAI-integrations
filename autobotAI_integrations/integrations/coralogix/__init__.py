@@ -9,7 +9,7 @@ from autobotAI_integrations.models import (
     IntegrationCategory,
     SDKClient,
     SDKCreds,
-    RestAPICreds
+    RestAPICreds,
 )
 from autobotAI_integrations.payload_schema import PayloadTask
 from autobotAI_integrations.utils import list_of_unique_elements
@@ -28,7 +28,6 @@ class CoralogixIntegration(BaseSchema):
 
 
 class CoralogixService(BaseService):
-
     def __init__(self, ctx: dict, integration: Union[CoralogixIntegration, dict]):
         """
         Integration should have all the data regarding the integration
@@ -50,11 +49,14 @@ class CoralogixService(BaseService):
             if response.status_code == 200:
                 return {"success": True}
             else:
-                return {"success": False, "error": f"Request failed with status code: {response.status_code}"}
+                return {
+                    "success": False,
+                    "error": f"Request failed with status code: {response.status_code}",
+                }
         except requests.exceptions.SSLError:
             return {
                 "success": False,
-                "error": f"Request failed with invalid API URl",
+                "error": "Request failed with invalid API URl",
             }
         except BaseException as e:
             return {
@@ -71,10 +73,10 @@ class CoralogixService(BaseService):
                 {
                     "name": "api_url",
                     "type": "text/url",
-                    "label":"API URL",
+                    "label": "API URL",
                     "placeholder": "default: 'https://ng-api-http.coralogix.com'",
                     "description": "Enter your domain api url, for more info: https://coralogix.com/docs/coralogix-endpoints/#data-prime",
-                    "required": False
+                    "required": False,
                 },
                 {
                     "name": "api_key",
@@ -82,7 +84,7 @@ class CoralogixService(BaseService):
                     "label": "API Key",
                     "placeholder": "Enter the Coralogix API Key",
                     "required": True,
-                }
+                },
             ],
         }
 
@@ -104,13 +106,15 @@ class CoralogixService(BaseService):
     def supported_connection_interfaces():
         return [
             ConnectionInterfaces.PYTHON_SDK,
-            ConnectionInterfaces.REST_API
+            # ConnectionInterfaces.REST_API
         ]
 
     def build_python_exec_combinations_hook(
         self, payload_task: PayloadTask, client_definitions: List[SDKClient]
     ) -> list:
-        api_url = f"{payload_task.creds.envs.get('CORALOGIX_API_URL')}/api/v1/dataprime/query"
+        api_url = (
+            f"{payload_task.creds.envs.get('CORALOGIX_API_URL')}/api/v1/dataprime/query"
+        )
         return [
             {
                 "clients": {
@@ -130,10 +134,10 @@ class CoralogixService(BaseService):
             "CORALOGIX_APIKEY": str(self.integration.api_key),
         }
         return SDKCreds(envs=creds)
-    
+
     def generate_rest_api_creds(self) -> RestAPICreds:
         return RestAPICreds(
             base_url=self.integration.api_url,
             token=self.integration.api_key,
-            headers={"Authorization": f"Bearer {self.integration.api_key}"}
+            headers={"Authorization": f"Bearer {self.integration.api_key}"},
         )

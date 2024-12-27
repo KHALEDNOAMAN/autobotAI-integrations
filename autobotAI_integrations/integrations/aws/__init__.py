@@ -1,5 +1,6 @@
 import traceback
 from typing import Type, Union
+from enum import Enum
 
 import uuid
 import boto3
@@ -20,6 +21,10 @@ class Forms:
 
 class AWSSDKClient(SDKClient):
     is_regional: bool
+
+class AWSAuthTypes(str, Enum):
+    IAM_ROLE_INTEGRaTION = "iam_role_integration"
+    ACCESS_KEY_INTEGRATION = "access_key_integration"
 
 
 class AWSIntegration(BaseSchema):
@@ -106,6 +111,7 @@ class AWSService(BaseService):
                 {
                     "label": "IAM Role Integration",
                     "type": "form",
+                    "formId": AWSAuthTypes.IAM_ROLE_INTEGRaTION.value,
                     "children": [
                         {
                             "name": "roleArn",
@@ -119,6 +125,7 @@ class AWSService(BaseService):
                 {
                     "label": "AccessKey / SecretKey Integration",
                     "type": "form",
+                    "formId": AWSAuthTypes.ACCESS_KEY_INTEGRATION.value,
                     "children": [
                         {
                             "name": "access_key",
