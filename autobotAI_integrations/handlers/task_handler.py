@@ -16,6 +16,13 @@ def handle_task(task: PayloadTask) -> TaskResult:
     integration = IntegrationSchema.model_validate(task.context.integration)
     service = integration_service_factory.get_service(None, integration)
 
+    # Clearing Sensitive Keys from Environment Variables
+    try:
+        for key in task.creds.envs:
+            os.environ.pop(key, None)
+    except Exception as e:
+        logger.error(f"Error while clearing sensitive keys from environment variables: {e}")
+
     result_json = {
         "task_id": task.task_id,
         "integration_id": task.context.integration.accountId,
