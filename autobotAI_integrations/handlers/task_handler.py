@@ -33,7 +33,7 @@ def handle_task(task: PayloadTask) -> TaskResult:
             "executable": task.executable,
             "job_type": "job_type_here",
             "resource_type": "",
-            "environs": {**os.environ},
+            "environs": {},
         }),
     }
 
