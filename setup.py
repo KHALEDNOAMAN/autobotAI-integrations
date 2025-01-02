@@ -31,6 +31,8 @@ setup(
         "vt-py",
         "snowflake-connector-python",
         "opensearch-py",
+        "langchain_aws",
+        "langchain_openai"
     ],
     package_data={
         "": [
