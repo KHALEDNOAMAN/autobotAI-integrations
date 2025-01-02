@@ -652,5 +652,8 @@ class AIBaseService(BaseService):
     def ai_prompt_python_template():
         raise NotImplementedError()
 
+    def langchain_authenticator(self,model):
+        raise NotImplementedError()
+
     def prompt_executor(self, model=None, prompt=None, options: dict = {}):
         raise NotImplementedError()
