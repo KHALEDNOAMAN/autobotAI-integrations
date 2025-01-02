@@ -20,6 +20,8 @@ from autobotAI_integrations import (
 )
 from openai import OpenAI
 
+from langchain_openai import ChatOpenAI
+
 from autobotAI_integrations.models import IntegrationCategory
 from autobotAI_integrations.utils.logging_config import logger
 
@@ -184,6 +186,15 @@ class OpenAIService(AIBaseService):
 
     def generate_cli_creds(self) -> CLICreds:
         pass
+    
+    
+    def langchain_authenticator(self, model):
+        llm = ChatOpenAI(
+            temperature=0,
+            model_name=model,
+            openai_api_key=self.integration.api_key
+        )
+        return llm
 
     def prompt_executor(self, model=None, prompt="",params=None, options: dict = {}):
         logger.info(f"Executing prompt: {prompt}")
