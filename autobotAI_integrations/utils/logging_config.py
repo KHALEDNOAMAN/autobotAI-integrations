@@ -1,29 +1,25 @@
 import logging
 import logging.config
 import os
+import sys
 
 DEBUG = os.getenv("DEBUG", None)
 
 
 def setup_logging():
-    if DEBUG:
-        # Configure logging for development
-        logging.basicConfig(
-            level=logging.DEBUG,
-            format="%(asctime)s - %(levelname)s - %(message)s",
-            handlers=[
-                logging.StreamHandler(),
-            ],
-        )
-    else:
-        # Configure logging for production
-        logging.basicConfig(
-            level=logging.INFO,
-            format="%(asctime)s - %(levelname)s - %(message)s",
-            handlers=[
-                logging.StreamHandler(),
-            ],
-        )
+    # Remove existing handlers to avoid duplicate or ignored handlers
+    for handler in logging.root.handlers[:]:
+        logging.root.removeHandler(handler)
+
+    # Configure logging based on environment
+    log_level = logging.DEBUG if DEBUG else logging.INFO
+    logging.basicConfig(
+        level=log_level,
+        format="%(asctime)s - %(levelname)s - %(message)s",
+        handlers=[
+            logging.StreamHandler(sys.stdout),
+        ],
+    )
     return logging
 
 
