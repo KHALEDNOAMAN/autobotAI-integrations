@@ -31,15 +31,11 @@ DANGEROUS_FUNCTIONS = {
     "reload",  # Added for module reload prevention
 }
 
+# TODO: Add New line compatibility for pattern recognition
 SUSPICIOUS_PATTERNS = [
     (r"/dev/tcp", "Detected potential network socket manipulation"),
     (r"/dev/udp", "Detected potential network socket manipulation"),
-    (r"bash -i", "Possible interactive shell attempt"),
     (r"nc -e", "Netcat shell redirection pattern detected"),
-    (r"sh -c", "Shell command injection pattern"),
-    (r"python -c", "Potential code injection attempt"),
-    (r"curl\s+", "Detected file download utility"),  # Confidence score
-    (r"wget\s+", "Detected file download utility"),
 ]
 
 
@@ -52,7 +48,6 @@ class SecurityAnalyzer(ast.NodeVisitor):
         try:
             tree = ast.parse(code)
             self.visit(tree)
-            # NOTE: Disabling Pattern Check for now as some agent based action uses them
             self.check_patterns(code)
         except SyntaxError as e:
             self.issues.append(f"Invalid syntax: {e}")
