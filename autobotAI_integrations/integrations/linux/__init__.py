@@ -1,16 +1,19 @@
-import uuid
-from typing import Dict, List, Type, Union
-import os
+from typing import List, Optional, Type, Union
 import importlib
-from pydantic import Field
-from functools import wraps
 
 from autobotAI_integrations import list_of_unique_elements
-from autobotAI_integrations.models import *
-from autobotAI_integrations.models import List
-from autobotAI_integrations import BaseSchema, SteampipeCreds, RestAPICreds, SDKCreds, CLICreds, \
-    BaseService, ConnectionInterfaces, PayloadTask, SDKClient
+from autobotAI_integrations import (
+    BaseSchema,
+    SteampipeCreds,
+    SDKCreds,
+    CLICreds,
+    BaseService,
+    ConnectionInterfaces,
+    PayloadTask,
+    SDKClient,
+)
 from autobotAI_integrations.integration_schema import ConnectionTypes
+from autobotAI_integrations.models import IntegrationCategory
 
 
 class LinuxIntegration(BaseSchema):
@@ -22,9 +25,7 @@ class LinuxIntegration(BaseSchema):
 
 
 class LinuxService(BaseService):
-
     def __init__(self, ctx: dict, integration: Union[LinuxIntegration, dict]):
-        connection_type: ConnectionTypes = ConnectionTypes.AGENT.value
         """
         Integration should have all the data regarding the integration
         """
@@ -35,20 +36,16 @@ class LinuxService(BaseService):
     def _test_integration(self) -> dict:
         try:
             import platform
+
             linux_version = platform.platform()
             print(f"Linux Distribution: {linux_version}")
             return {"success": True}
         except Exception as e:
-            return {"success": False, "error": str(e) }
+            return {"success": False, "error": str(e)}
 
     @staticmethod
     def get_forms():
-        return {
-            "label": "Linux Integration",
-            "type": "form",
-            "children": [
-            ]
-        }
+        return {"label": "Linux Integration", "type": "form", "children": []}
 
     @staticmethod
     def get_schema() -> Type[BaseSchema]:
@@ -72,17 +69,22 @@ class LinuxService(BaseService):
 }
 """
         return SteampipeCreds(
-            envs=creds, plugin_name="exec", connection_name="exec", conf_path=conf_path, config=config,
+            envs=creds,
+            plugin_name="exec",
+            connection_name="exec",
+            conf_path=conf_path,
+            config=config,
         )
 
     def build_python_exec_combinations_hook(
-            self, payload_task: PayloadTask, client_definitions: List[SDKClient]
+        self, payload_task: PayloadTask, client_definitions: List[SDKClient]
     ) -> list:
-
         clients_classes = dict()
         for client in client_definitions:
             try:
-                client_module = importlib.import_module(client.import_library_names[0], package=None)
+                client_module = importlib.import_module(
+                    client.import_library_names[0], package=None
+                )
                 clients_classes[client.name] = client_module
             except BaseException as e:
                 print(e)
@@ -91,7 +93,7 @@ class LinuxService(BaseService):
             {
                 "clients": clients_classes,
                 "params": self.prepare_params(payload_task.params),
-                "context": payload_task.context
+                "context": payload_task.context,
             }
         ]
 

@@ -2,7 +2,12 @@ import os
 from autobotAI_integrations import IntegrationSchema
 from autobotAI_integrations.integrations import integration_service_factory
 from autobotAI_integrations.models import ConnectionInterfaces
-from autobotAI_integrations.payload_schema import TaskResult, PayloadTask, ResponseDebugInfo, ResponseError
+from autobotAI_integrations.payload_schema import (
+    TaskResult,
+    PayloadTask,
+    ResponseDebugInfo,
+    ResponseError,
+)
 from autobotAI_integrations.utils.logging_config import logger
 import json
 
@@ -21,7 +26,9 @@ def handle_task(task: PayloadTask) -> TaskResult:
         for key in task.creds.envs:
             os.environ.pop(key, None)
     except Exception as e:
-        logger.error(f"Error while clearing sensitive keys from environment variables: {e}")
+        logger.error(
+            f"Error while clearing sensitive keys from environment variables: {e}"
+        )
 
     result_json = {
         "task_id": task.task_id,
@@ -29,12 +36,14 @@ def handle_task(task: PayloadTask) -> TaskResult:
         "integration_type": task.context.integration.cspName,
         "resources": None,
         "errors": None,
-        "debug_info": ResponseDebugInfo(**{
-            "executable": task.executable,
-            "job_type": "job_type_here",
-            "resource_type": "",
-            "environs": {},
-        }),
+        "debug_info": ResponseDebugInfo(
+            **{
+                "executable": task.executable,
+                "job_type": "job_type_here",
+                "resource_type": "",
+                "environs": {},
+            }
+        ),
     }
 
     logger.info(f"Checking For Connection Interface: {task.connection_interface}")
@@ -46,7 +55,9 @@ def handle_task(task: PayloadTask) -> TaskResult:
     elif task.connection_interface == ConnectionInterfaces.REST_API:
         output = service.execute_rest_api_task(task)
     else:
-        raise Exception("Invalid task.connection_interface = {}".format(task.connection_interface))
+        raise Exception(
+            "Invalid task.connection_interface = {}".format(task.connection_interface)
+        )
 
     logger.info(f"Task Completed With Id: {task.task_id}")
     logger.debug(f"Task Completed With Output: {output}")
@@ -54,7 +65,7 @@ def handle_task(task: PayloadTask) -> TaskResult:
     try:
         formatted_result = json.dumps(output[0])
         formatted_result = json.loads(formatted_result)
-    except TypeError as e:
+    except TypeError:
         formatted_result = json.dumps(output[0], default=str)
         formatted_result = json.loads(formatted_result)
         result.resources = formatted_result
