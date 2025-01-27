@@ -7,8 +7,6 @@ from typing import List
 import uuid
 from pathlib import Path
 import json
-import importlib
-from autobotAI_integrations.utils.security_measures import validate_code
 
 from autobotAI_integrations.payload_schema import Param, PayloadTask
 
@@ -36,15 +34,14 @@ def filter_stacktrace(stacktrace, start_path="/tmp/mods"):
 
     return "\n".join(filtered_lines)
 
+
 def load_mod_from_string(code_string):
-    # Perform static analysis first
-    validate_code(code_string)
-    
     Path("/tmp/mods/").mkdir(parents=True, exist_ok=True)
     file_path = "/tmp/mods/" + str(uuid.uuid4()) + ".py"
-    with open(file_path, "w") as f:
-        f.write(code_string)
-    loader = importlib.machinery.SourceFileLoader("fetcher", str(file_path))
+    f = open(file_path, "w")
+    f.write(code_string)
+    f.close()
+    loader = importlib.machinery.SourceFileLoader("fetcher", file_path)
     spec = importlib.util.spec_from_loader(loader.name, loader)
     mod = importlib.util.module_from_spec(spec)
     loader.exec_module(mod)
