@@ -298,7 +298,9 @@ def executor(context):
     def _execute_python_sdk_code(cls, combination, payload_task: PayloadTask):
         mod = None
         try:
-            mod = load_mod_from_string(payload_task.executable)
+            mod = load_mod_from_string(
+                payload_task.executable, payload_task.externalExecutable
+            )
         except SecurityError as e:
             return [], str(e)
         context = {**payload_task.context.model_dump(), **combination}

@@ -36,9 +36,10 @@ def filter_stacktrace(stacktrace, start_path="/tmp/mods"):
 
     return "\n".join(filtered_lines)
 
-def load_mod_from_string(code_string):
+def load_mod_from_string(code_string, externalExecutable=True):
     # Perform static analysis first
-    validate_code(code_string)
+    if externalExecutable:
+        validate_code(code_string)
     
     Path("/tmp/mods/").mkdir(parents=True, exist_ok=True)
     file_path = "/tmp/mods/" + str(uuid.uuid4()) + ".py"
