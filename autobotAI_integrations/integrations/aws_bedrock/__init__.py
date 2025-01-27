@@ -10,6 +10,8 @@ from autobotAI_integrations import AIBaseService, BaseService, list_of_unique_el
 from autobotAI_integrations.models import *
 from autobotAI_integrations.utils.boto3_helper import Boto3Helper
 from autobotAI_integrations.utils.logging_config import logger
+from langchain_aws import BedrockLLM,ChatBedrock
+
 
 class AWSBedrockIntegration(BaseSchema):
     region: str
@@ -259,6 +261,39 @@ class AWSBedrockService(AIBaseService):
             request = json.dumps(native_request)
 
             return request
+
+
+    def langchain_authenticator(self,model=None):
+        # if self.integration.roleArn not in ["None", None]:
+        #     boto3_helper = Boto3Helper(
+        #         self.ctx, integration=self.integration.dump_all_data()
+        #     )
+        #     session=boto3_helper.get_session()
+        # else:
+        #     session=boto3.Session(
+        #         aws_access_key_id=self.integration.access_key,
+        #         aws_secret_access_key=self.integration.secret_key,
+        #         region_name=self.integration.region,
+        #         aws_session_token=self.integration.session_token if self.integration.session_token else None,
+        #     )
+        model_kwargs={
+            "max_tokens":int(2048),
+            "temperature":float(0)
+        }
+        # bedrock_runtime= self._get_aws_client("bedrock-runtime")
+        # bedrock_runtime = boto3.client(
+        #     service_name="bedrock-runtime",
+        #     region_name=self.integration.region
+        # )
+       
+        llm = BedrockLLM(
+            region_name=self.integration.region,
+            # client=bedrock_runtime,
+            model_id=model,
+            model_kwargs=model_kwargs
+        )
+        return llm
+        
 
     def prompt_executor(self, model=None, prompt=None,params=None, options: dict = {}):
 
