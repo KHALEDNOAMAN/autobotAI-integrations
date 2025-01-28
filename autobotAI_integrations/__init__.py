@@ -31,6 +31,7 @@ from autobotAI_integrations.utils import (
     open_api_parser,
     get_restapi_validated_params,
 )
+from autobotAI_integrations.utils.security_measures import SecurityError
 
 
 class BaseService:

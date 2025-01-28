@@ -1,12 +1,13 @@
-from typing import Type, Union
-
-from autobotAI_integrations.models import *
+from typing import Optional, Type, Union
 from autobotAI_integrations import (
     BaseSchema,
     BaseService,
     ConnectionInterfaces,
 )
 import requests
+from pydantic import Field
+
+from autobotAI_integrations.models import IntegrationCategory, SteampipeCreds
 
 
 class AbuseIPDBIntegration(BaseSchema):
@@ -20,7 +21,6 @@ class AbuseIPDBIntegration(BaseSchema):
 
 
 class AbuseIPDBService(BaseService):
-
     def __init__(self, ctx: dict, integration: Union[AbuseIPDBIntegration, dict]):
         """
         Integration should have all the data regarding the integration
@@ -65,15 +65,10 @@ class AbuseIPDBService(BaseService):
 
     @staticmethod
     def supported_connection_interfaces():
-        return [
-            ConnectionInterfaces.STEAMPIPE,
-            ConnectionInterfaces.REST_API
-        ]
+        return [ConnectionInterfaces.STEAMPIPE, ConnectionInterfaces.REST_API]
 
     def generate_steampipe_creds(self) -> SteampipeCreds:
-        creds = {
-            "ABUSEIPDB_API_KEY": self.integration.api_key
-        }
+        creds = {"ABUSEIPDB_API_KEY": self.integration.api_key}
         conf_path = "~/.steampipe/config/abuseipdb.spc"
         config = """connection "abuseipdb" {
   plugin = "abuseipdb"
