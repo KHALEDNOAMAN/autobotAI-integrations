@@ -6,7 +6,7 @@
 
 **Clients and resources**: [visit](./docs/clients_and_resources.md)
 
-## Installation
+## Installation 
 
 To install the `autobotAI-integrations` package, use the following command:
 
