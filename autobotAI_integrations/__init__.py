@@ -31,6 +31,7 @@ from autobotAI_integrations.utils import (
     open_api_parser,
     get_restapi_validated_params,
 )
+from autobotAI_integrations.utils.security_measures import SecurityError
 
 
 class BaseService:
@@ -295,7 +296,13 @@ def executor(context):
 
     @classmethod
     def _execute_python_sdk_code(cls, combination, payload_task: PayloadTask):
-        mod = load_mod_from_string(payload_task.executable)
+        mod = None
+        try:
+            mod = load_mod_from_string(
+                payload_task.executable, payload_task.externalExecutable
+            )
+        except SecurityError as e:
+            return [], str(e)
         context = {**payload_task.context.model_dump(), **combination}
         result, error = run_mod_func(mod.executor, context=context)
         resources = []

@@ -109,6 +109,7 @@ class PayloadTask(BaseModel):
     params: Optional[List[Union[OpenAPIPathParams, Param]]] = []
     node_details: Optional[Any] = None
     context: PayloadTaskContext
+    externalExecutable: bool = True
 
     @field_validator('creds', mode='before')
     @classmethod
