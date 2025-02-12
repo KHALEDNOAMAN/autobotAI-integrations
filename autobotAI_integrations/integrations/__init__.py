@@ -7,6 +7,7 @@ from pydantic import BaseModel
 
 from autobotAI_integrations import BaseService, AIBaseService
 
+HIDDEEN_INTEGRATIONS = ['python']
 
 class IntegrationServiceFactory:
     def __init__(self):
@@ -32,6 +33,8 @@ class IntegrationServiceFactory:
     def get_service_details(self, q=None):
         details_list = []
         for integration_type in list(self._services.keys()):
+            if integration_type in HIDDEEN_INTEGRATIONS:
+                continue
             srvic_cls = integration_service_factory.get_service_cls(integration_type)
             integration_schema = srvic_cls.get_schema()
             temp = srvic_cls.get_details()
