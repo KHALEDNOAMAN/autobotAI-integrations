@@ -48,6 +48,7 @@ class KubernetesService(BaseService):
             "compliance_supported": True,
             "supported_interfaces": cls.supported_connection_interfaces(),
             "python_code_sample": cls.get_code_sample(),
+            "connection_type": ConnectionTypes.AGENT.value
         }
 
     @staticmethod
