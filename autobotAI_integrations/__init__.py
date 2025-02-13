@@ -15,7 +15,7 @@ from typing import Optional, Dict, Any, List, Callable, Union
 import requests
 import yaml
 from pydantic import BaseModel
-from autobotAI_integrations.integration_schema import IntegrationSchema, IntegrationStates
+from autobotAI_integrations.integration_schema import ConnectionTypes, IntegrationSchema, IntegrationStates
 from autobotAI_integrations.models import *
 from autobotAI_integrations.open_api_schema import OpenAPIAction
 from autobotAI_integrations.payload_schema import PayloadTask, Payload, Param
@@ -299,7 +299,9 @@ def executor(context):
         mod = None
         try:
             mod = load_mod_from_string(
-                payload_task.executable, payload_task.externalExecutable
+                payload_task.executable,
+                payload_task.externalExecutable,
+                connection_type=payload_task.context.integration.connection_type,
             )
         except SecurityError as e:
             return [], str(e)
