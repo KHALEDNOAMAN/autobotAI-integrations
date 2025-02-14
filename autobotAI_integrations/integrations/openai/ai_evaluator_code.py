@@ -106,7 +106,7 @@ def executor(context):
         except Exception as e:
             results = {
                 "error": str(e),
-                "evaluated-response": json.loads(message_content),
+                "evaluated-response": str(message_content),
             }
         counter += 1
     print("Completed Evaluation with ", counter, "tries.")

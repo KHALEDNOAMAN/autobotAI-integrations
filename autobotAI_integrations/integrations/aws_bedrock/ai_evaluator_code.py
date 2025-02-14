@@ -134,7 +134,7 @@ Bot:
         except Exception as e:
             results = {
                 "error": str(e),
-                "evaluated-response": json.loads(generated_text),
+                "evaluated-response": str(generated_text),
             }
         count += 1
     print(f"Evaluated on {count} iterations.")
