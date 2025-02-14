@@ -111,13 +111,9 @@ class PythonHTTPService(BaseService):
 
     @classmethod
     def get_details(cls):
-        return {
-            "clients": list_of_unique_elements(cls.get_all_python_sdk_clients()),
-            "supported_executor": "ecs",
-            "compliance_supported": False,
-            "supported_interfaces": cls.supported_connection_interfaces(),
-            "python_code_sample": cls.get_code_sample(),
-        }
+        details = super().get_details()
+        details["preview"] = True
+        return details
 
     @staticmethod
     def supported_connection_interfaces():
