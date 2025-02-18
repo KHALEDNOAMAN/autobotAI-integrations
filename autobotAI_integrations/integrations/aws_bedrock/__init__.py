@@ -86,30 +86,44 @@ class AWSBedrockService(AIBaseService):
 
     def get_integration_specific_details(self) -> dict:
         try:
-            # Fetching the model
-            # models = [model['modelId'] for model in bedrock_client.list_foundation_models()['modelSummaries']]
-            ec2_client = self._get_aws_client("ec2")
-            regions = [
-                region["RegionName"]
-                for region in ec2_client.describe_regions()["Regions"]
-            ]
-            models = [
+            available_models = {
+                model["modelId"]
+                for model in self._get_aws_client('bedrock').list_foundation_models()['modelSummaries']
+            }
+
+            models_to_check = {
                 "amazon.titan-text-express-v1",
                 "meta.llama3-8b-instruct-v1:0",
                 "meta.llama3-70b-instruct-v1:0",
+                "meta.llama3-3-70b-instruct-v1:0",
+                "meta.llama3-2-11b-instruct-v1:0",
+                "meta.llama3-2-1b-instruct-v1:0",
+                "meta.llama3-2-3b-instruct-v1:0",
+                "meta.llama3-2-90b-instruct-v1:0",
                 "mistral.mistral-7b-instruct-v0:2",
+            }
+
+            available_models_list = list(models_to_check.intersection(available_models))
+
+            regions = [
+                region["RegionName"]
+                for region in self._get_aws_client("ec2").describe_regions()["Regions"]
             ]
+
+            if self.integration.region not in regions:
+                regions.append(self.integration.region)
+
             return {
                 "integration_id": self.integration.accountId,
-                "models": models,
-                "available_regions": list(set([self.integration.region, *regions])),
+                "models": available_models_list,
+                "available_regions": regions,
             }
+
         except Exception as e:
-            logger.error(e)
+            logger.error(f"Error fetching integration details: {e}")
             logger.debug(traceback.format_exc())
-            return {
-                "error": "Details can not be fetched"
-            }
+            return {"error": "Details cannot be fetched"}
+
 
     @staticmethod
     def get_forms():
