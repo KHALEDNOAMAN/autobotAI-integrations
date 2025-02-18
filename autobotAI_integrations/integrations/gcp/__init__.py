@@ -186,7 +186,15 @@ class GCPService(BaseService):
                 client_module = importlib.import_module(client.module, package=None)
                 if not client.class_name:
                     # NOTE: Preventing the import of module as much as possible to reduce complexity
-                    clients_classes[client.name] = client_module
+                    try:
+                        name, version = client.name.split("_", 1)
+                        clients_classes[client.name] = client_module.build(
+                            serviceName=name,
+                            version=version,
+                            credentials=credentials,
+                        )
+                    except ValueError as e:
+                        clients_classes[client.name] = client_module
                     continue
                 if hasattr(client_module, client.class_name):
                     cls = getattr(client_module, client.class_name)
