@@ -304,7 +304,7 @@ class AWSBedrockService(AIBaseService):
 
         except (ClientError, Exception) as e:
             print(f"ERROR: Can't invoke '{model}'. Reason: {e}")
-            exit(1)
+            return json.dumps({"error": f"Can't invoke '{model}'. Reason: {str(e)}"})
 
         # Decode the response body.
         model_response = json.loads(response["body"].read())
