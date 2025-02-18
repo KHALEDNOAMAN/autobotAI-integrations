@@ -18,11 +18,6 @@
   name: iam_v1
   pip_package_names:
   - google-api-python-client
-- class_name: null
-  module: googleapiclient.discovery
-  name: discovery
-  pip_package_names:
-  - google-api-python-client
 - class_name: FoldersClient
   module: google.cloud.resourcemanager_v3
   name: FoldersClient
