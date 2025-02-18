@@ -664,5 +664,5 @@ class AIBaseService(BaseService):
     def langchain_authenticator(self,model):
         raise NotImplementedError()
 
-    def prompt_executor(self, model=None, prompt=None, options: dict = {}):
+    def prompt_executor(self, model=None, prompt=None, options: dict = {}, messages: List[Dict[str, Any]] = []):
         raise NotImplementedError()

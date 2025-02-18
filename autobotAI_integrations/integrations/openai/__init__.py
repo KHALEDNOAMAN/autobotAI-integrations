@@ -1,7 +1,7 @@
 import importlib
 import os
 import uuid
-from typing import List, Optional
+from typing import List, Optional, Dict, Any
 from pydantic import Field
 import requests
 from pathlib import Path
@@ -196,7 +196,7 @@ class OpenAIService(AIBaseService):
         )
         return llm
 
-    def prompt_executor(self, model=None, prompt="",params=None, options: dict = {}):
+    def prompt_executor(self, model=None, prompt="",params=None, options: dict = {}, messages: List[Dict[str, Any]] = []):
         logger.info(f"Executing prompt: {prompt}")
         client = OpenAI(api_key=self.integration.api_key)
         if model:
@@ -209,11 +209,12 @@ class OpenAIService(AIBaseService):
             if "max_tokens" in options:
                 message["max_tokens"] = options["max_tokens"]
             counter = 0
+            messages.append(message)
             while counter < 5:
                 counter += 1
                 try:
                     result = client.chat.completions.create(
-                        messages=[message], model=model
+                        messages=messages, model=model, n=1
                     )
                     print("result is ",result)
                     if result.choices[0].message.content:

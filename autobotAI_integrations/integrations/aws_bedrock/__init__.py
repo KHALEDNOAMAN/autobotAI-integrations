@@ -250,17 +250,14 @@ class AWSBedrockService(AIBaseService):
                     "temperature": float(temperature),
                 },
             }
-            request = json.dumps(native_request)
-            return request
         else:
             native_request = {
                 "prompt": prompt,
                 "max_gen_len": int(max_tokens),
                 "temperature": float(temperature),
             }
-            request = json.dumps(native_request)
-
-            return request
+        request = json.dumps(native_request)
+        return request
 
 
     def langchain_authenticator(self,model=None):
@@ -295,7 +292,7 @@ class AWSBedrockService(AIBaseService):
         return llm
         
 
-    def prompt_executor(self, model=None, prompt=None,params=None, options: dict = {}):
+    def prompt_executor(self, model=None, prompt=None,params=None, options: dict = {}, messages: List[Dict[str, Any]] = []):
 
         if not model or not prompt:
             raise Exception("Model and prompt are required")
