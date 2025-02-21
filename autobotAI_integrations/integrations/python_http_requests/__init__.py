@@ -37,6 +37,8 @@ class PythonHTTPRequestIntegration(BaseSchema):
         except json.JSONDecodeError:
             print(headers_json)
             raise json.JSONDecodeError
+        except Exception:
+            raise ValueError('Invalid headers passed !')
     # @field_validator JSON
 
 
