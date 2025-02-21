@@ -29,11 +29,13 @@ class PythonHTTPRequestIntegration(BaseSchema):
     
     @field_validator("headers_json", mode="before")
     @classmethod
-    def validate_scopes(cls, json_string) -> Dict[str,str]:
+    def validate_headers_json(cls, headers_json) -> Dict[str, str]:
+        if isinstance(headers_json, dict):
+            return headers_json
         try:
-            return json.loads(json_string)
+            return json.loads(headers_json)
         except json.JSONDecodeError:
-            print(json_string)
+            print(headers_json)
             raise json.JSONDecodeError
     # @field_validator JSON
 
