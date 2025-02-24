@@ -1,8 +1,14 @@
-from typing import Type, Union
+from typing import Any, List, Optional, Type, Union
 import uuid
 from pydantic import model_validator
-from autobotAI_integrations import BaseService, list_of_unique_elements, PayloadTask
-from autobotAI_integrations.models import *
+from autobotAI_integrations import BaseService, PayloadTask
+from autobotAI_integrations.models import (
+    BaseSchema,
+    ConnectionInterfaces,
+    IntegrationCategory,
+    SDKClient,
+    SDKCreds,
+)
 
 
 class Forms:
@@ -10,11 +16,11 @@ class Forms:
 
 
 class PythonIntegration(BaseSchema):
-
     category: Optional[str] = IntegrationCategory.OTHERS.value
     description: Optional[str] = (
         "Python is a programming language that lets you work more quickly and integrate your systems more effectively."
     )
+
     def __init__(self, **kwargs):
         if not kwargs.get("accountId"):
             kwargs["accountId"] = str(uuid.uuid4().hex)
@@ -29,7 +35,6 @@ class PythonIntegration(BaseSchema):
 
 
 class PythonService(BaseService):
-
     def __init__(self, ctx: dict, integration: Union[PythonIntegration, dict]):
         """
         Integration should have all the data regarding the integration
@@ -47,12 +52,8 @@ class PythonService(BaseService):
             "label": "Python",
             "type": "form",
             "children": [
-                {
-                    "label": "Base Integration Creator",
-                    "type": "form",
-                    "children": []
-                }
-            ]
+                {"label": "Base Integration Creator", "type": "form", "children": []}
+            ],
         }
 
     @staticmethod
@@ -66,16 +67,18 @@ class PythonService(BaseService):
             "supported_executor": "lambda",
             "compliance_supported": False,
             "supported_interfaces": cls.supported_connection_interfaces(),
-            "python_code_sample": cls.get_code_sample()
+            "python_code_sample": cls.get_code_sample(),
+            "isAutoIntegrated": True,
         }
 
-    def build_python_exec_combinations_hook(self, payload_task: PayloadTask,
-                                            client_definitions: List[SDKClient]) -> list:
+    def build_python_exec_combinations_hook(
+        self, payload_task: PayloadTask, client_definitions: List[SDKClient]
+    ) -> list:
         return [
             {
                 "clients": {},
                 "params": self.prepare_params(payload_task.params),
-                "context": payload_task.context
+                "context": payload_task.context,
             }
         ]
 

@@ -8,6 +8,16 @@
   name: ProjectsClient
   pip_package_names:
     - google-cloud-resource-manager
+- class_name: OrganizationsClient
+  module: google.cloud.resourcemanager_v3
+  name: OrganizationsClient
+  pip_package_names:
+    - google-cloud-resource-manager
+- class_name: null
+  module: googleapiclient.discovery
+  name: iam_v1
+  pip_package_names:
+  - google-api-python-client
 - class_name: FoldersClient
   module: google.cloud.resourcemanager_v3
   name: FoldersClient
@@ -278,11 +288,11 @@
   name: AppEngine-Logging
   pip_package_names:
     - google-cloud-appengine-logging
-- class_name: Client
-  module: grpc.google.iam.v1
-  name: V1
+- class_name: null
+  module: google.iam.v1.policy_pb2
+  name: policy_pb2_module
   pip_package_names:
-    - grpc-google-iam-v1
+    - google-cloud-iam
 - class_name: Client
   module: google.cloud.service.management
   name: Service-Management
@@ -378,11 +388,6 @@
   name: Dataflow-Client
   pip_package_names:
     - google-cloud-dataflow-client
-- class_name: discovery
-  module: googleapiclient
-  name: Discovery
-  pip_package_names:
-    - google-api-python-client
 - class_name: Client
   module: google.cloud.access.approval
   name: Approval

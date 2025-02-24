@@ -8,6 +8,7 @@ import uuid
 from pathlib import Path
 import json
 import importlib
+from autobotAI_integrations.integration_schema import ConnectionTypes
 from autobotAI_integrations.utils.security_measures import validate_code
 
 from autobotAI_integrations.payload_schema import Param, PayloadTask
@@ -36,10 +37,10 @@ def filter_stacktrace(stacktrace, start_path="/tmp/mods"):
 
     return "\n".join(filtered_lines)
 
-def load_mod_from_string(code_string, externalExecutable=True):
+def load_mod_from_string(code_string, externalExecutable=True, connection_type = ConnectionTypes.DIRECT.value):
     # Perform static analysis first
     if externalExecutable:
-        validate_code(code_string)
+        validate_code(code_string, connection_type)
     
     Path("/tmp/mods/").mkdir(parents=True, exist_ok=True)
     file_path = "/tmp/mods/" + str(uuid.uuid4()) + ".py"
