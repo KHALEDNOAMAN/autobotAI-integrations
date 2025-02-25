@@ -214,7 +214,7 @@ class OpenAIService(AIBaseService):
                 counter += 1
                 try:
                     result = client.chat.completions.create(
-                        messages=messages, model=model, n=1
+                        messages=messages, model=model, n=1,response_format={ "type": "json_object" }
                     )
                     print("result is ",result)
                     if result.choices[0].message.content:
