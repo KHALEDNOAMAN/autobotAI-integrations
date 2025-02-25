@@ -155,7 +155,7 @@ class PythonHTTPService(BaseService):
                         ),
                         ignore_ssl=payload_task.creds.envs.get(
                             "PYTHON_HTTP_IGNORE_SSL"
-                        ),
+                        ).lower() == "true",
                     )
                 },
                 "params": self.prepare_params(payload_task.params),
@@ -167,6 +167,6 @@ class PythonHTTPService(BaseService):
         creds = {
             "PYTHON_HTTP_API_URL": self.integration.api_url,
             "PYTHON_HTTP_HEADERS": json.dumps(self.integration.headers_json),
-            "PYTHON_HTTP_IGNORE_SSL": self.integration.ignore_ssl,
+            "PYTHON_HTTP_IGNORE_SSL": str(self.integration.ignore_ssl),
         }
         return SDKCreds(envs=creds)

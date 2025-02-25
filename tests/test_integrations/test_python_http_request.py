@@ -3,7 +3,7 @@ import pytest
 from autobotAI_integrations.handlers.task_handler import handle_task
 from autobotAI_integrations.integrations import integration_service_factory
 
-coralogix_python_code = r"""
+coralogix_python_code = """
 import traceback
 
 def executor(context):
@@ -11,8 +11,9 @@ def executor(context):
     try:
         client = context["clients"]["python_http_requests"]
         # method: str, endpoint: str, headers: dict = dict()
-        url = client.request("GET","",{"public" : "abc"})
-        print(url)
+        response = client.request("GET","/integrations")
+        print(response.json())
+        return response.json()
     except Exception as e:
         print(traceback.format_exc())
     return {"success": True}
@@ -26,7 +27,7 @@ class TestClassPythonHTTP:
         tokens = {
             "api_url": get_keys["PYTHON_HTTP_API_URL"],
             "headers_json": get_keys["PYTHON_HTTP_HEADERS"],
-            "ignore_ssl" : get_keys["PYTHON_HTTP_IGNORE_SSL"]
+            "ignore_ssl" : str(get_keys["PYTHON_HTTP_IGNORE_SSL"])
         }
         integration = sample_integration_dict("python_http_requests", tokens)
         task = sample_python_task(
@@ -34,13 +35,15 @@ class TestClassPythonHTTP:
         )
         result = handle_task(task)
         test_result_format(result)
+        
         print(result.model_dump_json(indent=2))
+        assert False
 
     def test_integration_active(self, get_keys, sample_integration_dict):
         tokens = {
             "api_url": get_keys["PYTHON_HTTP_API_URL"],
             "headers_json": get_keys["PYTHON_HTTP_HEADERS"],
-            "ignore_ssl" : get_keys["PYTHON_HTTP_IGNORE_SSL"]
+            "ignore_ssl" : str(get_keys["PYTHON_HTTP_IGNORE_SSL"])
         }
         integration = sample_integration_dict("python_http_requests", tokens)
         service = integration_service_factory.get_service(None, integration)
@@ -50,7 +53,7 @@ class TestClassPythonHTTP:
         tokens = {
             "api_url": get_keys["PYTHON_HTTP_API_URL"][:-3],
             "headers_json": get_keys["PYTHON_HTTP_HEADERS"],
-            "ignore_ssl" : get_keys["PYTHON_HTTP_IGNORE_SSL"]
+            "ignore_ssl" : str(get_keys["PYTHON_HTTP_IGNORE_SSL"])
         }
         integration = sample_integration_dict("python_http_requests", tokens)
         service = integration_service_factory.get_service(None, integration)
