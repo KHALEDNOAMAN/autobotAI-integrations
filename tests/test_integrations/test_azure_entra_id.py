@@ -6,27 +6,27 @@ from autobotAI_integrations.integrations import integration_service_factory
 azure_entra_id_python_code = """
 # Import your modules here
 import json
-import asyncio
-
 # **Security Note:** Client-related modules should not be directly imported here.
 # Instead, they are passed as arguments and retrieved from a secure configuration.
 
 
-def executor(context):
-    async def me(client):
-        res = []
-        users = await client.users.get()
-        if users and users.value:
-            for user in users.value:
-                res.append({
-                    "id": user.id,
-                    "displayName": user.display_name,
-                    "userPrincipalName": user.user_principal_name
-                })
-        return res
+async def executor(context):
     clients = context["clients"]
     client = clients["msgraph"]
-    return asyncio.run(me(client))
+
+    res = []
+    users = await client.users.get()
+    if users and users.value:
+        for user in users.value:
+            res.append(
+                {
+                    "id": user.id,
+                    "displayName": user.display_name,
+                    "userPrincipalName": user.user_principal_name,
+                }
+            )
+
+    return res
 """
 
 
@@ -41,7 +41,7 @@ class TestClassAzure_entra_id:
         tokens = {
             "tenant_id": get_keys["AZURE_TENANT_ID"],
             "client_id": get_keys["AZURE_CLIENT_ID"],
-            "client_secret": get_keys["AZURE_CLIENT_SECRET"]
+            "client_secret": get_keys["AZURE_CLIENT_SECRET"],
         }
         integration = sample_integration_dict("azure_entra_id", tokens)
         azure_entra_id_query = "select * from azuread_user"

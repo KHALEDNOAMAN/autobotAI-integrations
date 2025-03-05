@@ -1,11 +1,20 @@
-from typing import Type, Union
+import importlib
+from typing import List, Optional, Type, Union
 from pydantic import Field
+import requests
 
 from autobotAI_integrations import BaseService, list_of_unique_elements, PayloadTask
-from autobotAI_integrations.models import *
-
-import importlib, requests
 from azure.identity import ClientSecretCredential
+
+from autobotAI_integrations.models import (
+    BaseSchema,
+    CLICreds,
+    ConnectionInterfaces,
+    IntegrationCategory,
+    SDKClient,
+    SDKCreds,
+    SteampipeCreds,
+)
 
 
 class AzureEntraIdIntegration(BaseSchema):
@@ -21,7 +30,6 @@ class AzureEntraIdIntegration(BaseSchema):
 
 
 class AzureEntraIdService(BaseService):
-
     def __init__(self, ctx: dict, integration: Union[AzureEntraIdIntegration, dict]):
         """
         Integration should have all the data regarding the integration
@@ -122,17 +130,14 @@ class AzureEntraIdService(BaseService):
         clients_classes = {}
         for client in client_definitions:
             try:
-                client_module = importlib.import_module(
-                    client.module, package=None
-                )
+                client_module = importlib.import_module(client.module, package=None)
                 if hasattr(client_module, client.class_name):
                     cls = getattr(client_module, client.class_name)
                     try:
                         clients_classes[client.name] = cls(
-                            credentials=credential,
-                            scopes=scopes
+                            credentials=credential, scopes=scopes
                         )
-                    except BaseException as e:
+                    except BaseException:
                         clients_classes[client.name] = cls(credentials=credential)
             except BaseException as e:
                 print(e)
@@ -165,5 +170,5 @@ class AzureEntraIdService(BaseService):
         return {
             "AZURE_TENANT_ID": self.integration.tenant_id,
             "AZURE_CLIENT_ID": self.integration.client_id,
-            "AZURE_CLIENT_SECRET": self.integration.client_secret
+            "AZURE_CLIENT_SECRET": self.integration.client_secret,
         }
