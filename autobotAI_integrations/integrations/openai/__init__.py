@@ -213,9 +213,9 @@ class OpenAIService(AIBaseService):
             while counter < 5:
                 counter += 1
                 try:
-                    kwargs = {"messages": messages, "model": model, "n": 1}
-                    if params != "get_code":
-                        kwargs["response_format"] = {"type": "json_object"}
+                    kwargs = {"messages": messages, "model": model}
+                    # if params != "get_code":
+                    #     kwargs["response_format"] = {"type": "json_object"}
                     result = client.chat.completions.create(**kwargs)
                     print("result is ",result)
                     if result.choices[0].message.content:
