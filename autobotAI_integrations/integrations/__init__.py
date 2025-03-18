@@ -31,7 +31,11 @@ class IntegrationServiceFactory:
 
     def get_service_details(self, q=None):
         details_list = []
-        for integration_type in list(self._services.keys()):
+        if q and q.get("integration_type"):
+            integration_types = [q["integration_type"]]
+        else:
+            integration_types = list(self._services.keys())
+        for integration_type in integration_types:
             srvic_cls = integration_service_factory.get_service_cls(integration_type)
             integration_schema = srvic_cls.get_schema()
             temp = srvic_cls.get_details()
