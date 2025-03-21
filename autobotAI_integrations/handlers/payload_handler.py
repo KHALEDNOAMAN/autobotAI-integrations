@@ -1,4 +1,4 @@
-from autobotAI_integrations.payload_schema import Payload, JobResult
+from autobotAI_integrations.payload_schema import Payload, JobResult, PayloadTaskContext
 from .task_handler import handle_task
 import requests
 import tempfile
@@ -23,8 +23,11 @@ def handle_payload(
         if payload.common_params:
             task.params = task.params or []
             task.params = task.params.extend(payload.common_params)
+        if payload.common_context:
+            task.context = PayloadTaskContext(**task.context.model_dump(), **payload.common_context.model_dump())
         results.task_results.append(handle_task(task))
         del task.params
+        del task.context
 
     logger.info("All tasks completed!")
 
