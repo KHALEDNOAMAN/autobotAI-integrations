@@ -128,6 +128,7 @@ class Payload(BaseModel):
     api_key: Optional[str] = None
     api_url: Optional[str] = None
     job_size: Optional[JobSizes] = JobSizes.MEDIUM.value
+    common_params: Optional[List] = None
 
 
 class ResponseError(BaseModel):

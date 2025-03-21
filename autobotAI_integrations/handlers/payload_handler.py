@@ -20,7 +20,11 @@ def handle_payload(
 
     for task in payload.tasks:
         logger.debug("Running Task: {}".format(task.task_id))
+        if payload.common_params:
+            task.params = task.params or []
+            task.params = task.params.extend(payload.common_params)
         results.task_results.append(handle_task(task))
+        del task.params
 
     logger.info("All tasks completed!")
 
