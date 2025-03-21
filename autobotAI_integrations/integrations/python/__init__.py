@@ -68,7 +68,7 @@ class PythonService(BaseService):
             "compliance_supported": False,
             "supported_interfaces": cls.supported_connection_interfaces(),
             "python_code_sample": cls.get_code_sample(),
-            # "isAutoIntegrated": True,
+            "isAutoIntegrated": True,
         }
 
     def build_python_exec_combinations_hook(
