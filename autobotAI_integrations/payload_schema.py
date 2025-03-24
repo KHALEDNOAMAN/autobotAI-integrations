@@ -124,6 +124,10 @@ class PayloadTask(BaseModel):
                     return sub_cls(**creds)
         return creds
 
+class ProcessedPayloadTask(PayloadTask):
+    context: PayloadTaskContext
+
+
 class Payload(BaseModel):
     job_id: str
     state: Optional[dict] = None
