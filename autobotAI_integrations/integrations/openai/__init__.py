@@ -1,6 +1,5 @@
 import importlib
 import os
-import uuid
 from typing import List, Optional, Dict, Any
 from pydantic import Field
 import requests
@@ -16,11 +15,13 @@ from autobotAI_integrations import (
     ConnectionInterfaces,
     PayloadTask,
     SDKClient,
-    list_of_unique_elements,
 )
 from openai import OpenAI
 
 from langchain_openai import ChatOpenAI
+from pydantic_ai import Agent, Tool
+from pydantic_ai.models.openai import OpenAIModel
+from pydantic_ai.providers.openai import OpenAIProvider
 
 from autobotAI_integrations.models import IntegrationCategory
 from autobotAI_integrations.utils.logging_config import logger
@@ -37,7 +38,6 @@ class OpenAIIntegration(BaseSchema):
 
 
 class OpenAIService(AIBaseService):
-
     def __init__(self, ctx, integration: OpenAIIntegration):
         if isinstance(integration, dict):
             integration = OpenAIIntegration(**integration)
@@ -52,7 +52,7 @@ class OpenAIService(AIBaseService):
                     "model": "gpt-3.5-turbo",
                     "messages": [{"role": "user", "content": "Say this is a test!"}],
                     "temperature": 0.7,
-                }
+                },
             )
             if response.status_code == 200:
                 return {"success": True}
@@ -186,17 +186,30 @@ class OpenAIService(AIBaseService):
 
     def generate_cli_creds(self) -> CLICreds:
         pass
-    
-    
+
+    def get_pydantic_agent(
+        self, model: str, tools: List[Tool], system_prompt: str, options: dict = {}
+    ):
+        model = OpenAIModel(
+            model_name=model,
+            provider=OpenAIProvider(api_key=self.integration.api_key),
+        )
+        return Agent(model, system_prompt=system_prompt, tools=tools, **options)
+
     def langchain_authenticator(self, model):
         llm = ChatOpenAI(
-            temperature=0,
-            model_name=model,
-            openai_api_key=self.integration.api_key
+            temperature=0, model_name=model, openai_api_key=self.integration.api_key
         )
         return llm
 
-    def prompt_executor(self, model=None, prompt="",params=None, options: dict = {}, messages: List[Dict[str, Any]] = []):
+    def prompt_executor(
+        self,
+        model=None,
+        prompt="",
+        params=None,
+        options: dict = {},
+        messages: List[Dict[str, Any]] = [],
+    ):
         logger.info(f"Executing prompt: {prompt}")
         client = OpenAI(api_key=self.integration.api_key)
         if model:
@@ -217,7 +230,7 @@ class OpenAIService(AIBaseService):
                     if params != "get_code":
                         kwargs["response_format"] = {"type": "json_object"}
                     result = client.chat.completions.create(**kwargs)
-                    print("result is ",result)
+                    print("result is ", result)
                     if result.choices[0].message.content:
                         return result.choices[0].message.content
                 except:
