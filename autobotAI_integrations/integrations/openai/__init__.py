@@ -227,7 +227,7 @@ class OpenAIService(AIBaseService):
                 counter += 1
                 try:
                     kwargs = {"messages": messages, "model": model}
-                    if params != "get_code":
+                    if params != "get_code" and params!="approval":
                         kwargs["response_format"] = {"type": "json_object"}
                     result = client.chat.completions.create(**kwargs)
                     print("result is ", result)
