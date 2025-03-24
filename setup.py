@@ -32,7 +32,8 @@ setup(
         "snowflake-connector-python",
         "opensearch-py",
         "langchain_aws>=0.2.10",
-        "langchain_openai>=0.2.14"
+        "langchain_openai>=0.2.14",
+        "pydantic-ai>=0.0.36",
     ],
     package_data={
         "": [
