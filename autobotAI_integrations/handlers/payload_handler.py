@@ -22,7 +22,7 @@ def handle_payload(
         logger.debug("Running Task: {}".format(task.task_id))
         if payload.common_params:
             task.params = task.params or []
-            task.params = task.params.extend(payload.common_params)
+            task.params.extend(payload.common_params)
         if payload.common_context:
             task.context = PayloadTaskContext(**task.context.model_dump(), **payload.common_context.model_dump())
         results.task_results.append(handle_task(task))
