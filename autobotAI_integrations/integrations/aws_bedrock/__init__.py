@@ -349,8 +349,13 @@ class AWSBedrockService(AIBaseService):
         request = self._get_bedrock_model_request(model, prompt, **options)
         client = self._get_aws_client("bedrock-runtime")
         try:
+            kwargs = {"modelId": model, "body": request}
+            if params != "get_code" and params != "approval":
+                kwargs["accept"] = "application/json"
+            response = client.invoke_model(**kwargs)    
+                
             # Invoke the model with the request.
-            response = client.invoke_model(modelId=model, body=request)
+            # response = client.invoke_model(modelId=model, body=request,accept="application/json")
 
         except (ClientError, Exception) as e:
             print(f"ERROR: Can't invoke '{model}'. Reason: {e}")
