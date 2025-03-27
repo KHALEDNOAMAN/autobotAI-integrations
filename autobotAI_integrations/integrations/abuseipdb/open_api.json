@@ -1,0 +1,354 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "AbuseIPDB API",
+        "version": "v2",
+        "description": "An API for reporting and checking IP addresses against the AbuseIPDB database, \nenabling users to contribute to and query a global repository of malicious IP activity.\n"
+    },
+    "servers": [
+        {
+            "url": "https://api.abuseipdb.com/api/v2",
+            "description": "Production server"
+        }
+    ],
+    "paths": {
+        "/report": {
+            "post": {
+                "summary": "Report an IP address",
+                "description": "Submit a report of a malicious IP address, including details such as categories of abuse,\ncomments, and an optional timestamp.\n",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "required": [
+                                    "ip",
+                                    "categories"
+                                ],
+                                "properties": {
+                                    "ip": {
+                                        "type": "string",
+                                        "description": "The IP address to report (e.g., \"127.0.0.1\")."
+                                    },
+                                    "categories": {
+                                        "type": "string",
+                                        "description": "A comma-separated list of category IDs (e.g., \"18,22\")."
+                                    },
+                                    "comment": {
+                                        "type": "string",
+                                        "description": "Additional details about the reported activity."
+                                    },
+                                    "timestamp": {
+                                        "type": "string",
+                                        "format": "date-time",
+                                        "description": "The event timestamp in ISO 8601 format (e.g., \"2023-10-18T11:25:11-04:00\")."
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful response",
+                        "headers": {
+                            "X-RateLimit-Limit": {
+                                "schema": {
+                                    "type": "integer"
+                                },
+                                "description": "The total number of requests allowed per day."
+                            },
+                            "X-RateLimit-Remaining": {
+                                "schema": {
+                                    "type": "integer"
+                                },
+                                "description": "The number of requests remaining for the current day."
+                            },
+                            "X-RateLimit-Reset": {
+                                "schema": {
+                                    "type": "integer"
+                                },
+                                "description": "The epoch timestamp when the rate limit resets."
+                            }
+                        },
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object",
+                                            "properties": {
+                                                "ipAddress": {
+                                                    "type": "string",
+                                                    "description": "The reported IP address."
+                                                },
+                                                "abuseConfidenceScore": {
+                                                    "type": "integer",
+                                                    "description": "The updated confidence score after the report."
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request (e.g., invalid parameters)",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "429": {
+                        "description": "Rate limit exceeded",
+                        "headers": {
+                            "Retry-After": {
+                                "schema": {
+                                    "type": "integer"
+                                },
+                                "description": "Seconds to wait before retrying."
+                            }
+                        },
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/check": {
+            "get": {
+                "summary": "Check an IP address",
+                "description": "Retrieve information about an IP address, including its abuse history and confidence score.\n",
+                "parameters": [
+                    {
+                        "name": "ipAddress",
+                        "in": "query",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "values": "8.8.8.8",
+                        "description": "The IP address to check (e.g., \"127.0.0.1\")."
+                    },
+                    {
+                        "name": "maxAgeInDays",
+                        "in": "query",
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "description": "Maximum age of reports to include, in days (e.g., 90)."
+                    },
+                    {
+                        "name": "verbose",
+                        "in": "query",
+                        "schema": {
+                            "type": "boolean"
+                        },
+                        "description": "If present, includes detailed report information."
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful response",
+                        "headers": {
+                            "X-RateLimit-Limit": {
+                                "schema": {
+                                    "type": "integer"
+                                },
+                                "description": "The total number of requests allowed per day."
+                            },
+                            "X-RateLimit-Remaining": {
+                                "schema": {
+                                    "type": "integer"
+                                },
+                                "description": "The number of requests remaining for the current day."
+                            },
+                            "X-RateLimit-Reset": {
+                                "schema": {
+                                    "type": "integer"
+                                },
+                                "description": "The epoch timestamp when the rate limit resets."
+                            }
+                        },
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object",
+                                            "properties": {
+                                                "ipAddress": {
+                                                    "type": "string",
+                                                    "description": "The queried IP address."
+                                                },
+                                                "isPublic": {
+                                                    "type": "boolean",
+                                                    "description": "Whether the IP is public."
+                                                },
+                                                "ipVersion": {
+                                                    "type": "integer",
+                                                    "description": "IP version (4 or 6)."
+                                                },
+                                                "isWhitelisted": {
+                                                    "type": "boolean",
+                                                    "description": "Whether the IP is whitelisted."
+                                                },
+                                                "abuseConfidenceScore": {
+                                                    "type": "integer",
+                                                    "description": "Confidence score of abuse (0-100)."
+                                                },
+                                                "countryCode": {
+                                                    "type": "string",
+                                                    "nullable": true,
+                                                    "description": "ISO 3166-1 alpha-2 country code."
+                                                },
+                                                "usageType": {
+                                                    "type": "string",
+                                                    "nullable": true,
+                                                    "description": "Type of IP usage (e.g., \"Fixed Line ISP\")."
+                                                },
+                                                "isp": {
+                                                    "type": "string",
+                                                    "nullable": true,
+                                                    "description": "Internet Service Provider name."
+                                                },
+                                                "domain": {
+                                                    "type": "string",
+                                                    "nullable": true,
+                                                    "description": "Associated domain name."
+                                                },
+                                                "hostnames": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "string"
+                                                    },
+                                                    "description": "List of hostnames associated with the IP."
+                                                },
+                                                "totalReports": {
+                                                    "type": "integer",
+                                                    "description": "Total number of reports filed."
+                                                },
+                                                "numDistinctUsers": {
+                                                    "type": "integer",
+                                                    "description": "Number of distinct users who reported the IP."
+                                                },
+                                                "lastReportedAt": {
+                                                    "type": "string",
+                                                    "format": "date-time",
+                                                    "description": "Timestamp of the most recent report."
+                                                },
+                                                "reports": {
+                                                    "type": "array",
+                                                    "description": "Detailed reports (included if verbose is set).",
+                                                    "items": {
+                                                        "type": "object",
+                                                        "properties": {
+                                                            "reportedAt": {
+                                                                "type": "string",
+                                                                "format": "date-time",
+                                                                "description": "Timestamp of the report."
+                                                            },
+                                                            "comment": {
+                                                                "type": "string",
+                                                                "description": "Reporter's comment."
+                                                            },
+                                                            "categories": {
+                                                                "type": "array",
+                                                                "items": {
+                                                                    "type": "integer"
+                                                                },
+                                                                "description": "Category IDs of the reported abuse."
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request (e.g., invalid IP address)",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "429": {
+                        "description": "Rate limit exceeded",
+                        "headers": {
+                            "Retry-After": {
+                                "schema": {
+                                    "type": "integer"
+                                },
+                                "description": "Seconds to wait before retrying."
+                            }
+                        },
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "securitySchemes": {
+            "ApiKeyAuth": {
+                "type": "apiKey",
+                "in": "header",
+                "name": "Key",
+                "description": "API key required for all requests, obtainable from your AbuseIPDB account dashboard."
+            }
+        },
+        "schemas": {
+            "ErrorResponse": {
+                "type": "object",
+                "properties": {
+                    "errors": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "properties": {
+                                "detail": {
+                                    "type": "string",
+                                    "description": "Description of the error."
+                                },
+                                "status": {
+                                    "type": "integer",
+                                    "description": "HTTP status code associated with the error."
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "security": [
+        {
+            "ApiKeyAuth": []
+        }
+    ]
+}

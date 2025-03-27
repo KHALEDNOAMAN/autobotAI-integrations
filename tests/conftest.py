@@ -80,6 +80,30 @@ def executor(context):
 
 
 @pytest.fixture
+def sample_restapi_task(sample_context_data):
+    def _sample_restapi_task(integration: dict, executable: str, params=[]):
+        service = integration_service_factory.get_service(None, integration)
+        integration = service.integration
+        creds = service.generate_rest_api_creds()
+        task_dict = {
+            "task_id": uuid.uuid4().hex,
+            "creds": creds,
+            "connection_interface": ConnectionInterfaces.REST_API,
+            "executable": executable,
+            "clients": [],
+            "params": params,
+            "context": PayloadTaskContext(
+                **sample_context_data,
+                **{"integration": service.integration},
+            ),
+        }
+        task_dump = PayloadTask(**task_dict).model_dump_json()
+        task_dict = json.loads(task_dump)
+        return PayloadTask(**task_dict)
+
+    return _sample_restapi_task
+
+@pytest.fixture
 def sample_steampipe_task(sample_context_data):
     def _sample_steampipe_task(integration: dict, config_str: str = "", query=""):
         service = integration_service_factory.get_service(None, integration)

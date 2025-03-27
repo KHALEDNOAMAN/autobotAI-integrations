@@ -24,6 +24,7 @@ class OpenAPIPathModel(BaseModel):
     summary: Optional[str] = ""
     description: Optional[str] = ""
     parameters: List[OpenAPIPathParams] = []
+    operationId: Optional[str] = Field(default=None, alias="operationId")
 
     def __init__(self,*args ,**kwargs):
         if "method" in kwargs:
