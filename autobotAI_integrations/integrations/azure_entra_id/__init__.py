@@ -11,6 +11,7 @@ from autobotAI_integrations.models import (
     CLICreds,
     ConnectionInterfaces,
     IntegrationCategory,
+    RestAPICreds,
     SDKClient,
     SDKCreds,
     SteampipeCreds,
@@ -160,7 +161,7 @@ class AzureEntraIdService(BaseService):
             ConnectionInterfaces.REST_API,
             ConnectionInterfaces.CLI,
             ConnectionInterfaces.PYTHON_SDK,
-            ConnectionInterfaces.STEAMPIPE,
+            # ConnectionInterfaces.STEAMPIPE,
         ]
 
     def generate_cli_creds(self) -> CLICreds:
@@ -172,3 +173,22 @@ class AzureEntraIdService(BaseService):
             "AZURE_CLIENT_ID": self.integration.client_id,
             "AZURE_CLIENT_SECRET": self.integration.client_secret,
         }
+    
+    def generate_rest_api_creds(self) -> RestAPICreds:
+        try:
+            url = f"https://login.microsoftonline.com/{self.integration.tenant_id}/oauth2/v2.0/token"
+            headers = {"Content-Type": "application/x-www-form-urlencoded"}
+            data = {
+                "client_id": self.integration.client_id,
+                "scope": "https://graph.microsoft.com/.default",
+                "client_secret": self.integration.client_secret,
+                "grant_type": "client_credentials",
+            }
+            response = requests.post(url, headers=headers, data=data).json()
+            return RestAPICreds(
+                base_url="https://graph.microsoft.com",
+                headers={"Authorization": f"Bearer {response.get("access_token")}"},
+            )
+        except Exception as e:
+            raise Exception(f"Error while generating rest api creds: {e}")
+
