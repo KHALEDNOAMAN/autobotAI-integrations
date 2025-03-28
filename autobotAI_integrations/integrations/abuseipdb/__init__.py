@@ -65,7 +65,10 @@ class AbuseIPDBService(BaseService):
 
     @staticmethod
     def supported_connection_interfaces():
-        return [ConnectionInterfaces.STEAMPIPE, ConnectionInterfaces.REST_API]
+        return [
+            # ConnectionInterfaces.STEAMPIPE,
+            ConnectionInterfaces.REST_API
+        ]
 
     def generate_steampipe_creds(self) -> SteampipeCreds:
         creds = {"ABUSEIPDB_API_KEY": self.integration.api_key}
