@@ -187,7 +187,7 @@ class AzureEntraIdService(BaseService):
             response = requests.post(url, headers=headers, data=data).json()
             return RestAPICreds(
                 base_url="https://graph.microsoft.com",
-                headers={"Authorization": f"Bearer {response.get("access_token")}"},
+                headers={"Authorization": f"Bearer {response.get('access_token')}"},
             )
         except Exception as e:
             raise Exception(f"Error while generating rest api creds: {e}")
