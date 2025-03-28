@@ -1,12 +1,13 @@
-from typing import List, Type, Union, Optional
-
-from autobotAI_integrations.models import *
+from typing import Type, Union, Optional
+from pydantic import Field
 from autobotAI_integrations import (
     BaseSchema,
     BaseService,
     ConnectionInterfaces,
 )
 import requests
+
+from autobotAI_integrations.models import IntegrationCategory, RestAPICreds, SteampipeCreds
 
 
 class IPStackIntegrations(BaseSchema):
@@ -31,7 +32,7 @@ class IPStackService(BaseService):
 
     def _test_integration(self) -> dict:
         try:
-            url = f"http://api.ipstack.com/check"
+            url = "http://api.ipstack.com/check"
             response = requests.get(url, params={"access_key": self.integration.api_key})
 
             if response.status_code == 200:
@@ -77,7 +78,7 @@ class IPStackService(BaseService):
     @staticmethod
     def supported_connection_interfaces():
         return [
-            ConnectionInterfaces.STEAMPIPE,
+            # ConnectionInterfaces.STEAMPIPE,
             ConnectionInterfaces.REST_API,
         ]
 
@@ -93,4 +94,11 @@ class IPStackService(BaseService):
             connection_name="ipstack",
             conf_path=conf_path,
             config=config,
+        )
+    
+    def generate_rest_api_creds(self) -> RestAPICreds:
+        return RestAPICreds(
+            base_url="http://api.ipstack.com",
+            headers={},
+            query_params={"access_key": self.integration.api_key},
         )

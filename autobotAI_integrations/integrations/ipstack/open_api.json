@@ -1,0 +1,985 @@
+{
+    "openapi": "3.0.3",
+    "info": {
+        "title": "IPstack",
+        "description": "## **Quickstart Guide**\n\n<video src=\"https://youtube.com/embed/cjP8lsqc1Y0\" width=\"620\" height=\"310\"></video>\n\n### Step 1: Fork the collection\n\nTo get started quickly, you need to fork the IP Stack Postman Collection. Simply click the button below to fork it.\n\n[<img src=\"https://run.pstmn.io/button.svg\">](https://god.gw.postman.com/run-collection/10131015-55145132-244c-448c-8e6f-8780866e4862?action=collection/fork)\n\n### Step 2: Get your API Access Key\n\n1. Go to the [IP Stack](https://ipstack.com/?utm_source=Postman&utm_medium=Referral) website and choose the right subscription plan for your particular project.\n2. Get your personal API Access Key on the [Dashboard](https://ipstack.com/dashboard) to authenticate with the API. Keep it safe! You can reset it at any time in your Account Dashboard.\n    \n\n## Step 3: Make your first API call\n\nIP Stack Postman collection contains all the three endpoint supported by IP Stack API.\n\n1. Standard IP Lookup\n2. Bulk IP Lookup\n3. Requester Lookup\n    \n\nWe recommend you to start with the Standard IP Lookup endpoint as it's primary endpoint. It is used to look up single IPv4 or IPv6 addresses. To call this endpoint, simply attach any IPv4 or IPv6 address to the API's base URL.\n\nCheck out all the widely used API calls with the necessary parameters in the [Standard IP Lookup folder](https://apilayer.postman.co/workspace/APILayer~2b7498b6-6d91-4fa8-817f-608441fe42a8/folder/10131015-594322f8-abae-4135-80d1-2cf544caa60b?action=share&creator=10131015&ctx=documentation).",
+        "version": "1.0.0",
+        "contact": {}
+    },
+    "servers": [
+        {
+            "url": "https://api.ipstack.com"
+        }
+    ],
+    "paths": {
+        "/{ipAddress}": {
+            "get": {
+                "tags": [
+                    "Standard IP Lookup"
+                ],
+                "summary": "Single IP Lookup",
+                "description": "This is the prime endpoint of IPstack API and used to look up single IPv4 or IPv6 addresses. To call this endpoint, simply attach any IPv4 or IPv6 address to the API's base URL.",
+                "operationId": "basicStandardIpLookup",
+                "parameters": [
+                    {
+                        "name": "fields",
+                        "in": "query",
+                        "description": "Set to your preferred output field(s) according to the Specify Output Fields section.",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "hostname",
+                        "in": "query",
+                        "description": "Set to 1 to enable Hostname Lookup.",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "enum": [
+                                1
+                            ]
+                        }
+                    },
+                    {
+                        "name": "security",
+                        "in": "query",
+                        "description": "Set to 1 to enable the Security module.",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "enum": [
+                                1
+                            ]
+                        }
+                    },
+                    {
+                        "name": "language",
+                        "in": "query",
+                        "description": "Set to a 2-letter language code according to the Specify Output Language section to change output language.",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "200 OK – Basic Standard IP Lookup / 101 invalid_access_key / 200 OK – Response wrapped inside a callback / 200 OK – Response in different language / 200 OK – Specific Response with Fields Parameter",
+                        "headers": {
+                            "access-control-allow-headers": {
+                                "schema": {
+                                    "type": "string",
+                                    "example": "*"
+                                }
+                            },
+                            "access-control-allow-methods": {
+                                "schema": {
+                                    "type": "string",
+                                    "example": "GET, POST, HEAD, OPTIONS"
+                                }
+                            },
+                            "access-control-allow-origin": {
+                                "schema": {
+                                    "type": "string",
+                                    "example": "*"
+                                }
+                            },
+                            "date": {
+                                "schema": {
+                                    "type": "string",
+                                    "example": "Thu, 15 Feb 2024 13:23:05 GMT"
+                                }
+                            },
+                            "transfer-encoding": {
+                                "schema": {
+                                    "type": "string",
+                                    "example": "chunked"
+                                }
+                            },
+                            "x-apilayer-transaction-id": {
+                                "schema": {
+                                    "type": "string",
+                                    "example": "6514b602-8a9c-4389-9d49-ac1e95664e36"
+                                }
+                            },
+                            "x-increment-usage": {
+                                "schema": {
+                                    "type": "string",
+                                    "example": "1"
+                                }
+                            },
+                            "x-quota-limit": {
+                                "schema": {
+                                    "type": "string",
+                                    "example": "50000"
+                                }
+                            },
+                            "x-quota-remaining": {
+                                "schema": {
+                                    "type": "string",
+                                    "example": "49995"
+                                }
+                            },
+                            "x-request-time": {
+                                "schema": {
+                                    "type": "string",
+                                    "example": "0.028"
+                                }
+                            }
+                        },
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "city": {
+                                            "type": "string",
+                                            "example": "Los Angeles"
+                                        },
+                                        "connection": {
+                                            "type": "object",
+                                            "properties": {
+                                                "asn": {
+                                                    "type": "number",
+                                                    "example": 25876
+                                                },
+                                                "isp": {
+                                                    "type": "string",
+                                                    "example": "Los Angeles Department of Water & Power"
+                                                }
+                                            }
+                                        },
+                                        "continent_code": {
+                                            "type": "string",
+                                            "example": "NA"
+                                        },
+                                        "continent_name": {
+                                            "type": "string",
+                                            "example": "North America"
+                                        },
+                                        "country_code": {
+                                            "type": "string",
+                                            "example": "US"
+                                        },
+                                        "country_name": {
+                                            "type": "string",
+                                            "example": "United States"
+                                        },
+                                        "currency": {
+                                            "type": "object",
+                                            "properties": {
+                                                "code": {
+                                                    "type": "string",
+                                                    "example": "USD"
+                                                },
+                                                "name": {
+                                                    "type": "string",
+                                                    "example": "US Dollar"
+                                                },
+                                                "plural": {
+                                                    "type": "string",
+                                                    "example": "US dollars"
+                                                },
+                                                "symbol": {
+                                                    "type": "string",
+                                                    "example": "$"
+                                                },
+                                                "symbol_native": {
+                                                    "type": "string",
+                                                    "example": "$"
+                                                }
+                                            }
+                                        },
+                                        "error": {
+                                            "type": "object",
+                                            "properties": {
+                                                "code": {
+                                                    "type": "number",
+                                                    "example": 101
+                                                },
+                                                "info": {
+                                                    "type": "string",
+                                                    "example": "You have not supplied a valid API Access Key. [Technical Support: support@apilayer.com]"
+                                                },
+                                                "type": {
+                                                    "type": "string",
+                                                    "example": "invalid_access_key"
+                                                }
+                                            }
+                                        },
+                                        "ip": {
+                                            "type": "string",
+                                            "example": "134.201.250.155"
+                                        },
+                                        "latitude": {
+                                            "type": "number",
+                                            "example": 34.0655517578125
+                                        },
+                                        "location": {
+                                            "type": "object",
+                                            "properties": {
+                                                "calling_code": {
+                                                    "type": "string",
+                                                    "example": "1"
+                                                },
+                                                "capital": {
+                                                    "type": "string",
+                                                    "example": "Washington D.C."
+                                                },
+                                                "country_flag": {
+                                                    "type": "string",
+                                                    "example": "https://assets.ipstack.com/flags/us.svg"
+                                                },
+                                                "country_flag_emoji": {
+                                                    "type": "string",
+                                                    "example": "🇺🇸"
+                                                },
+                                                "country_flag_emoji_unicode": {
+                                                    "type": "string",
+                                                    "example": "U+1F1FA U+1F1F8"
+                                                },
+                                                "geoname_id": {
+                                                    "type": "number",
+                                                    "example": 5368361
+                                                },
+                                                "is_eu": {
+                                                    "type": "boolean",
+                                                    "example": false
+                                                },
+                                                "languages": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "object",
+                                                        "properties": {
+                                                            "code": {
+                                                                "type": "string",
+                                                                "example": "en"
+                                                            },
+                                                            "name": {
+                                                                "type": "string",
+                                                                "example": "English"
+                                                            },
+                                                            "native": {
+                                                                "type": "string",
+                                                                "example": "English"
+                                                            }
+                                                        }
+                                                    },
+                                                    "example": [
+                                                        {
+                                                            "code": "en",
+                                                            "name": "English",
+                                                            "native": "English"
+                                                        }
+                                                    ]
+                                                }
+                                            }
+                                        },
+                                        "longitude": {
+                                            "type": "number",
+                                            "example": -118.24053955078124
+                                        },
+                                        "region_code": {
+                                            "type": "string",
+                                            "example": "CA"
+                                        },
+                                        "region_name": {
+                                            "type": "string",
+                                            "example": "California"
+                                        },
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "time_zone": {
+                                            "type": "object",
+                                            "properties": {
+                                                "code": {
+                                                    "type": "string",
+                                                    "example": "PST"
+                                                },
+                                                "current_time": {
+                                                    "type": "string",
+                                                    "example": "2024-02-15T05:07:34-08:00"
+                                                },
+                                                "gmt_offset": {
+                                                    "type": "number",
+                                                    "example": -28800
+                                                },
+                                                "id": {
+                                                    "type": "string",
+                                                    "example": "America/Los_Angeles"
+                                                },
+                                                "is_daylight_saving": {
+                                                    "type": "boolean",
+                                                    "example": false
+                                                }
+                                            }
+                                        },
+                                        "type": {
+                                            "type": "string",
+                                            "example": "ipv4"
+                                        },
+                                        "zip": {
+                                            "type": "string",
+                                            "example": "90012"
+                                        }
+                                    }
+                                },
+                                "examples": {
+                                    "101 invalid_access_key": {
+                                        "value": {
+                                            "error": {
+                                                "code": 101,
+                                                "info": "You have not supplied a valid API Access Key. [Technical Support: support@apilayer.com]",
+                                                "type": "invalid_access_key"
+                                            },
+                                            "success": false
+                                        }
+                                    },
+                                    "200 OK – Basic Standard IP Lookup": {
+                                        "value": {
+                                            "city": "Los Angeles",
+                                            "connection": {
+                                                "asn": 25876,
+                                                "isp": "Los Angeles Department of Water & Power"
+                                            },
+                                            "continent_code": "NA",
+                                            "continent_name": "North America",
+                                            "country_code": "US",
+                                            "country_name": "United States",
+                                            "currency": {
+                                                "code": "USD",
+                                                "name": "US Dollar",
+                                                "plural": "US dollars",
+                                                "symbol": "$",
+                                                "symbol_native": "$"
+                                            },
+                                            "ip": "134.201.250.155",
+                                            "latitude": 34.0655517578125,
+                                            "location": {
+                                                "calling_code": "1",
+                                                "capital": "Washington D.C.",
+                                                "country_flag": "https://assets.ipstack.com/flags/us.svg",
+                                                "country_flag_emoji": "🇺🇸",
+                                                "country_flag_emoji_unicode": "U+1F1FA U+1F1F8",
+                                                "geoname_id": 5368361,
+                                                "is_eu": false,
+                                                "languages": [
+                                                    {
+                                                        "code": "en",
+                                                        "name": "English",
+                                                        "native": "English"
+                                                    }
+                                                ]
+                                            },
+                                            "longitude": -118.24053955078124,
+                                            "region_code": "CA",
+                                            "region_name": "California",
+                                            "time_zone": {
+                                                "code": "PST",
+                                                "current_time": "2024-02-15T05:07:34-08:00",
+                                                "gmt_offset": -28800,
+                                                "id": "America/Los_Angeles",
+                                                "is_daylight_saving": false
+                                            },
+                                            "type": "ipv4",
+                                            "zip": "90012"
+                                        }
+                                    },
+                                    "200 OK – Specific Response with Fields Parameter": {
+                                        "value": {
+                                            "zip": "90012"
+                                        }
+                                    },
+                                    "200 OK – Response in different language": {
+                                        "value": {
+                                            "city": "Лос-Анджелес",
+                                            "connection": {
+                                                "asn": 25876,
+                                                "isp": "Los Angeles Department of Water & Power"
+                                            },
+                                            "continent_code": "NA",
+                                            "continent_name": "Северная Америка",
+                                            "country_code": "US",
+                                            "country_name": "Соединенные Штаты",
+                                            "currency": {
+                                                "code": "USD",
+                                                "name": "US Dollar",
+                                                "plural": "US dollars",
+                                                "symbol": "$",
+                                                "symbol_native": "$"
+                                            },
+                                            "ip": "134.201.250.155",
+                                            "latitude": 34.0655517578125,
+                                            "location": {
+                                                "calling_code": "1",
+                                                "capital": "Washington D.C.",
+                                                "country_flag": "https://assets.ipstack.com/flags/us.svg",
+                                                "country_flag_emoji": "🇺🇸",
+                                                "country_flag_emoji_unicode": "U+1F1FA U+1F1F8",
+                                                "geoname_id": 5368361,
+                                                "is_eu": false,
+                                                "languages": [
+                                                    {
+                                                        "code": "en",
+                                                        "name": "English",
+                                                        "native": "English"
+                                                    }
+                                                ]
+                                            },
+                                            "longitude": -118.24053955078124,
+                                            "region_code": "CA",
+                                            "region_name": "Калифорния",
+                                            "time_zone": {
+                                                "code": "PST",
+                                                "current_time": "2024-02-15T05:17:02-08:00",
+                                                "gmt_offset": -28800,
+                                                "id": "America/Los_Angeles",
+                                                "is_daylight_saving": false
+                                            },
+                                            "type": "ipv4",
+                                            "zip": "90012"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/{ipAddresses}": {
+            "get": {
+                "tags": [
+                    "Bulk IP Lookup"
+                ],
+                "summary": "Response wrapped inside a callback",
+                "description": "Specify a JSONP callback \\[Optional\\] function name according to the JSONP Callbacks section.",
+                "operationId": "responseWrappedInsideACallback",
+                "parameters": [
+                    {
+                        "name": "ipAddresses",
+                        "in": "path",
+                        "description": "A comma-separated list of IPv4 or IPv6 addresses; you can also enter a domain URLs to have IPstack resolve the domains to their underlying IP addresses. (Maxmium allowed values: 50)",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "fields",
+                        "in": "query",
+                        "description": "Set to your preferred output field(s) according to the Specify Output Fields section.",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "hostname",
+                        "in": "query",
+                        "description": "Set to 1 to enable Hostname Lookup.",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "enum": [
+                                1
+                            ]
+                        }
+                    },
+                    {
+                        "name": "security",
+                        "in": "query",
+                        "description": "Set to 1 to enable the Security module.",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "enum": [
+                                1
+                            ]
+                        }
+                    },
+                    {
+                        "name": "language",
+                        "in": "query",
+                        "description": "Set to a 2-letter language code according to the Specify Output Language section to change output language.",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "200 OK – Response wrapped inside a callback",
+                        "headers": {
+                            "access-control-allow-headers": {
+                                "schema": {
+                                    "type": "string",
+                                    "example": "*"
+                                }
+                            },
+                            "access-control-allow-methods": {
+                                "schema": {
+                                    "type": "string",
+                                    "example": "GET, POST, HEAD, OPTIONS"
+                                }
+                            },
+                            "access-control-allow-origin": {
+                                "schema": {
+                                    "type": "string",
+                                    "example": "*"
+                                }
+                            },
+                            "date": {
+                                "schema": {
+                                    "type": "string",
+                                    "example": "Mon, 26 Feb 2024 18:03:58 GMT"
+                                }
+                            },
+                            "transfer-encoding": {
+                                "schema": {
+                                    "type": "string",
+                                    "example": "chunked"
+                                }
+                            },
+                            "x-apilayer-transaction-id": {
+                                "schema": {
+                                    "type": "string",
+                                    "example": "d52c0ebc-5f6d-4c20-8393-028c4c92d634"
+                                }
+                            },
+                            "x-increment-usage": {
+                                "schema": {
+                                    "type": "string",
+                                    "example": "1"
+                                }
+                            },
+                            "x-quota-limit": {
+                                "schema": {
+                                    "type": "string",
+                                    "example": "2000000"
+                                }
+                            },
+                            "x-quota-remaining": {
+                                "schema": {
+                                    "type": "string",
+                                    "example": "1999972"
+                                }
+                            },
+                            "x-request-time": {
+                                "schema": {
+                                    "type": "string",
+                                    "example": "0.037"
+                                }
+                            }
+                        },
+                        "content": {
+                            "text/plain": {
+                                "examples": {
+                                    "200 OK – Response wrapped inside a callback": {
+                                        "value": "MY_FUNCTION([{\"ip\": \"134.201.250.155\", \"type\": \"ipv4\", \"continent_code\": \"NA\", \"continent_name\": \"North America\", \"country_code\": \"US\", \"country_name\": \"United States\", \"region_code\": \"CA\", \"region_name\": \"California\", \"city\": \"Los Angeles\", \"zip\": \"90012\", \"latitude\": 34.0655517578125, \"longitude\": -118.24053955078125, \"location\": {\"geoname_id\": 5368361, \"capital\": \"Washington D.C.\", \"languages\": [{\"code\": \"en\", \"name\": \"English\", \"native\": \"English\"}], \"country_flag\": \"https://assets.ipstack.com/flags/us.svg\", \"country_flag_emoji\": \"\\ud83c\\uddfa\\ud83c\\uddf8\", \"country_flag_emoji_unicode\": \"U+1F1FA U+1F1F8\", \"calling_code\": \"1\", \"is_eu\": false}, \"time_zone\": {\"id\": \"America/Los_Angeles\", \"current_time\": \"2024-02-26T10:03:58-08:00\", \"gmt_offset\": -28800, \"code\": \"PST\", \"is_daylight_saving\": false}, \"currency\": {\"code\": \"USD\", \"name\": \"US Dollar\", \"plural\": \"US dollars\", \"symbol\": \"$\", \"symbol_native\": \"$\"}, \"connection\": {\"asn\": 25876, \"isp\": \"Los Angeles Department of Water & Power\"}}, {\"ip\": \"72.229.28.185\", \"type\": \"ipv4\", \"continent_code\": \"NA\", \"continent_name\": \"North America\", \"country_code\": \"US\", \"country_name\": \"United States\", \"region_code\": \"NY\", \"region_name\": \"New York\", \"city\": \"Manhattan\", \"zip\": \"10020\", \"latitude\": 40.7589111328125, \"longitude\": -73.97901916503906, \"location\": {\"geoname_id\": 5125771, \"capital\": \"Washington D.C.\", \"languages\": [{\"code\": \"en\", \"name\": \"English\", \"native\": \"English\"}], \"country_flag\": \"https://assets.ipstack.com/flags/us.svg\", \"country_flag_emoji\": \"\\ud83c\\uddfa\\ud83c\\uddf8\", \"country_flag_emoji_unicode\": \"U+1F1FA U+1F1F8\", \"calling_code\": \"1\", \"is_eu\": false}, \"time_zone\": {\"id\": \"America/New_York\", \"current_time\": \"2024-02-26T13:03:58-05:00\", \"gmt_offset\": -18000, \"code\": \"EST\", \"is_daylight_saving\": false}, \"currency\": {\"code\": \"USD\", \"name\": \"US Dollar\", \"plural\": \"US dollars\", \"symbol\": \"$\", \"symbol_native\": \"$\"}, \"connection\": {\"asn\": 12271, \"isp\": \"Charter Communications Inc\"}}, {\"ip\": \"110.174.165.78\", \"type\": \"ipv4\", \"continent_code\": \"OC\", \"continent_name\": \"Oceania\", \"country_code\": \"AU\", \"country_name\": \"Australia\", \"region_code\": \"NSW\", \"region_name\": \"New South Wales\", \"city\": \"Sydney\", \"zip\": \"1210\", \"latitude\": -33.87070083618164, \"longitude\": 151.20680236816406, \"location\": {\"geoname_id\": 2147714, \"capital\": \"Canberra\", \"languages\": [{\"code\": \"en\", \"name\": \"English\", \"native\": \"English\"}], \"country_flag\": \"https://assets.ipstack.com/flags/au.svg\", \"country_flag_emoji\": \"\\ud83c\\udde6\\ud83c\\uddfa\", \"country_flag_emoji_unicode\": \"U+1F1E6 U+1F1FA\", \"calling_code\": \"61\", \"is_eu\": false}, \"time_zone\": {\"id\": \"Australia/Sydney\", \"current_time\": \"2024-02-27T05:03:58+11:00\", \"gmt_offset\": 39600, \"code\": \"AEDT\", \"is_daylight_saving\": true}, \"currency\": {\"code\": \"AUD\", \"name\": \"Australian Dollar\", \"plural\": \"Australian dollars\", \"symbol\": \"AU$\", \"symbol_native\": \"$\"}, \"connection\": {\"asn\": 7545, \"isp\": \"Tpg Telecom Limited\"}}]);"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/check": {
+            "get": {
+                "tags": [
+                    "Requester IP Lookup"
+                ],
+                "summary": "Check Your IP",
+                "description": "",
+                "operationId": "basicRequesterIpLookup",
+                "parameters": [
+                    {
+                        "name": "fields",
+                        "in": "query",
+                        "description": "Set to your preferred output field(s) according to the Specify Output Fields section.",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "hostname",
+                        "in": "query",
+                        "description": "Set to 1 to enable Hostname Lookup.",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "enum": [
+                                1
+                            ]
+                        }
+                    },
+                    {
+                        "name": "security",
+                        "in": "query",
+                        "description": "Set to 1 to enable the Security module.",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "enum": [
+                                1
+                            ]
+                        }
+                    },
+                    {
+                        "name": "language",
+                        "in": "query",
+                        "description": "Set to a 2-letter language code according to the Specify Output Language section to change output language.",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "200 OK – Requester IP Lookup",
+                        "headers": {
+                            "access-control-allow-headers": {
+                                "schema": {
+                                    "type": "string",
+                                    "example": "*"
+                                }
+                            },
+                            "access-control-allow-methods": {
+                                "schema": {
+                                    "type": "string",
+                                    "example": "GET, POST, HEAD, OPTIONS"
+                                }
+                            },
+                            "access-control-allow-origin": {
+                                "schema": {
+                                    "type": "string",
+                                    "example": "*"
+                                }
+                            },
+                            "date": {
+                                "schema": {
+                                    "type": "string",
+                                    "example": "Mon, 26 Feb 2024 18:06:15 GMT"
+                                }
+                            },
+                            "transfer-encoding": {
+                                "schema": {
+                                    "type": "string",
+                                    "example": "chunked"
+                                }
+                            },
+                            "x-apilayer-transaction-id": {
+                                "schema": {
+                                    "type": "string",
+                                    "example": "4ab0772e-4b20-4594-b3df-135762adb992"
+                                }
+                            },
+                            "x-increment-usage": {
+                                "schema": {
+                                    "type": "string",
+                                    "example": "1"
+                                }
+                            },
+                            "x-quota-limit": {
+                                "schema": {
+                                    "type": "string",
+                                    "example": "2000000"
+                                }
+                            },
+                            "x-quota-remaining": {
+                                "schema": {
+                                    "type": "string",
+                                    "example": "1999971"
+                                }
+                            },
+                            "x-request-time": {
+                                "schema": {
+                                    "type": "string",
+                                    "example": "0.029"
+                                }
+                            }
+                        },
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "city": {
+                                            "type": "string",
+                                            "example": "New Delhi"
+                                        },
+                                        "connection": {
+                                            "type": "object",
+                                            "properties": {
+                                                "asn": {
+                                                    "type": "number",
+                                                    "example": 133275
+                                                },
+                                                "isp": {
+                                                    "type": "string",
+                                                    "example": "Gigantic Infotel Pvt Ltd"
+                                                }
+                                            }
+                                        },
+                                        "continent_code": {
+                                            "type": "string",
+                                            "example": "AS"
+                                        },
+                                        "continent_name": {
+                                            "type": "string",
+                                            "example": "Asia"
+                                        },
+                                        "country_code": {
+                                            "type": "string",
+                                            "example": "IN"
+                                        },
+                                        "country_name": {
+                                            "type": "string",
+                                            "example": "India"
+                                        },
+                                        "currency": {
+                                            "type": "object",
+                                            "properties": {
+                                                "code": {
+                                                    "type": "string",
+                                                    "example": "INR"
+                                                },
+                                                "name": {
+                                                    "type": "string",
+                                                    "example": "Indian Rupee"
+                                                },
+                                                "plural": {
+                                                    "type": "string",
+                                                    "example": "Indian rupees"
+                                                },
+                                                "symbol": {
+                                                    "type": "string",
+                                                    "example": "Rs"
+                                                },
+                                                "symbol_native": {
+                                                    "type": "string",
+                                                    "example": "টকা"
+                                                }
+                                            }
+                                        },
+                                        "ip": {
+                                            "type": "string",
+                                            "example": "137.59.240.169"
+                                        },
+                                        "latitude": {
+                                            "type": "number",
+                                            "example": 28.635299682617188
+                                        },
+                                        "location": {
+                                            "type": "object",
+                                            "properties": {
+                                                "calling_code": {
+                                                    "type": "string",
+                                                    "example": "91"
+                                                },
+                                                "capital": {
+                                                    "type": "string",
+                                                    "example": "New Delhi"
+                                                },
+                                                "country_flag": {
+                                                    "type": "string",
+                                                    "example": "https://assets.ipstack.com/flags/in.svg"
+                                                },
+                                                "country_flag_emoji": {
+                                                    "type": "string",
+                                                    "example": "🇮🇳"
+                                                },
+                                                "country_flag_emoji_unicode": {
+                                                    "type": "string",
+                                                    "example": "U+1F1EE U+1F1F3"
+                                                },
+                                                "geoname_id": {
+                                                    "type": "number",
+                                                    "example": 1261481
+                                                },
+                                                "is_eu": {
+                                                    "type": "boolean",
+                                                    "example": false
+                                                },
+                                                "languages": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "object",
+                                                        "properties": {
+                                                            "code": {
+                                                                "type": "string",
+                                                                "example": "hi"
+                                                            },
+                                                            "name": {
+                                                                "type": "string",
+                                                                "example": "Hindi"
+                                                            },
+                                                            "native": {
+                                                                "type": "string",
+                                                                "example": "हिन्दी"
+                                                            }
+                                                        }
+                                                    },
+                                                    "example": [
+                                                        {
+                                                            "code": "hi",
+                                                            "name": "Hindi",
+                                                            "native": "हिन्दी"
+                                                        },
+                                                        {
+                                                            "code": "en",
+                                                            "name": "English",
+                                                            "native": "English"
+                                                        }
+                                                    ]
+                                                }
+                                            }
+                                        },
+                                        "longitude": {
+                                            "type": "number",
+                                            "example": 77.2249984741211
+                                        },
+                                        "region_code": {
+                                            "type": "string",
+                                            "example": "DL"
+                                        },
+                                        "region_name": {
+                                            "type": "string",
+                                            "example": "Delhi"
+                                        },
+                                        "time_zone": {
+                                            "type": "object",
+                                            "properties": {
+                                                "code": {
+                                                    "type": "string",
+                                                    "example": "IST"
+                                                },
+                                                "current_time": {
+                                                    "type": "string",
+                                                    "example": "2024-02-26T23:36:15+05:30"
+                                                },
+                                                "gmt_offset": {
+                                                    "type": "number",
+                                                    "example": 19800
+                                                },
+                                                "id": {
+                                                    "type": "string",
+                                                    "example": "Asia/Kolkata"
+                                                },
+                                                "is_daylight_saving": {
+                                                    "type": "boolean",
+                                                    "example": false
+                                                }
+                                            }
+                                        },
+                                        "type": {
+                                            "type": "string",
+                                            "example": "ipv4"
+                                        },
+                                        "zip": {
+                                            "type": "string",
+                                            "example": "110001"
+                                        }
+                                    }
+                                },
+                                "examples": {
+                                    "200 OK – Requester IP Lookup": {
+                                        "value": {
+                                            "city": "New Delhi",
+                                            "connection": {
+                                                "asn": 133275,
+                                                "isp": "Gigantic Infotel Pvt Ltd"
+                                            },
+                                            "continent_code": "AS",
+                                            "continent_name": "Asia",
+                                            "country_code": "IN",
+                                            "country_name": "India",
+                                            "currency": {
+                                                "code": "INR",
+                                                "name": "Indian Rupee",
+                                                "plural": "Indian rupees",
+                                                "symbol": "Rs",
+                                                "symbol_native": "টকা"
+                                            },
+                                            "ip": "137.59.240.169",
+                                            "latitude": 28.635299682617188,
+                                            "location": {
+                                                "calling_code": "91",
+                                                "capital": "New Delhi",
+                                                "country_flag": "https://assets.ipstack.com/flags/in.svg",
+                                                "country_flag_emoji": "🇮🇳",
+                                                "country_flag_emoji_unicode": "U+1F1EE U+1F1F3",
+                                                "geoname_id": 1261481,
+                                                "is_eu": false,
+                                                "languages": [
+                                                    {
+                                                        "code": "hi",
+                                                        "name": "Hindi",
+                                                        "native": "हिन्दी"
+                                                    },
+                                                    {
+                                                        "code": "en",
+                                                        "name": "English",
+                                                        "native": "English"
+                                                    }
+                                                ]
+                                            },
+                                            "longitude": 77.2249984741211,
+                                            "region_code": "DL",
+                                            "region_name": "Delhi",
+                                            "time_zone": {
+                                                "code": "IST",
+                                                "current_time": "2024-02-26T23:36:15+05:30",
+                                                "gmt_offset": 19800,
+                                                "id": "Asia/Kolkata",
+                                                "is_daylight_saving": false
+                                            },
+                                            "type": "ipv4",
+                                            "zip": "110001"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "securitySchemes": {
+            "apiKey": {
+                "type": "apiKey",
+                "name": "access_key",
+                "in": "query"
+            }
+        }
+    },
+    "security": [
+        {
+            "apiKey": []
+        }
+    ],
+    "tags": [
+        {
+            "name": "Standard IP Lookup",
+            "description": "The ipstack's primary endpoint is called Standard Lookup and is used to look up single IPv4 or IPv6 addresses. To call this endpoint, simply attach any IPv4 or IPv6 address to the API's base URL."
+        },
+        {
+            "name": "Bulk IP Lookup",
+            "description": "The ipstack API also offers the ability to request data for multiple IPv4 or IPv6 addresses at the same time. In order to process IP addresses in bulk, simply append multiple comma-separated IP addresses to the API's base URL.\n\n> 💡 Note: Bulk IP Lookup Endpoint is only available to users who are on the Professional plan or above."
+        },
+        {
+            "name": "Requester IP Lookup",
+            "description": "The ipstack API also offers a separate API endpoint capable of detecting the IP address which the current API request is coming from. In order to use this endpoint, simply append `check` to the API's base URL and specify your preferred optional parameters.\n\nNote: The Requester IP Lookup endpoint returns the details of the IP address from where the request is coming from. For example, if you make a request from the Postman web app, it will show the details of the Postman server, but if you make a request from the Postman client app, it will show the details of your computer."
+        }
+    ]
+}
