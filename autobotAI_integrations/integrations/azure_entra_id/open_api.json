@@ -119,6 +119,16 @@
                             "https://graph.microsoft.com/.default"
                         ]
                     }
+                ],
+                "parameters": [
+                    {
+                        "name": "GroupId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
                 ]
             }
         },
@@ -155,6 +165,123 @@
                 ]
             }
         },
+        "/v1.0/invitations": {
+            "post": {
+                "tags": [
+                    "Application",
+                    "Users1"
+                ],
+                "summary": "Invite a guest user",
+                "description": "Invite Azure AD B2B Guest User using Delegated Permission",
+                "operationId": "inviteAGuestUser",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "inviteRedirectUrl": {
+                                        "type": "string",
+                                        "example": "https://myapps.microsoft.com"
+                                    },
+                                    "invitedUserDisplayName": {
+                                        "type": "string",
+                                        "example": "<Display Name of Invited User>"
+                                    },
+                                    "invitedUserEmailAddress": {
+                                        "type": "string",
+                                        "example": "<Email Address of Invited User>"
+                                    },
+                                    "invitedUserMessageInfo": {
+                                        "type": "object",
+                                        "properties": {
+                                            "ccRecipients": {
+                                                "type": "array",
+                                                "items": {
+                                                    "type": "object",
+                                                    "properties": {
+                                                        "emailAddress": {
+                                                            "type": "object",
+                                                            "properties": {
+                                                                "address": {
+                                                                    "type": "string",
+                                                                    "example": "<Optional CC Email Address for Invitation>"
+                                                                },
+                                                                "name": {
+                                                                    "type": "string",
+                                                                    "example": "<Optional CC for Invitation>"
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                },
+                                                "example": [
+                                                    {
+                                                        "emailAddress": {
+                                                            "address": "<Optional CC Email Address for Invitation>",
+                                                            "name": "<Optional CC for Invitation>"
+                                                        }
+                                                    }
+                                                ]
+                                            },
+                                            "customizedMessageBody": {
+                                                "type": "string",
+                                                "example": "Hi, you have just been invited to Azure AD with Postman using Microsoft Graph!"
+                                            },
+                                            "messageLanguage": {
+                                                "type": "string",
+                                                "example": "en-US"
+                                            }
+                                        }
+                                    },
+                                    "sendInvitationMessage": {
+                                        "type": "boolean",
+                                        "example": true
+                                    }
+                                }
+                            },
+                            "examples": {
+                                "Invite a guest user": {
+                                    "value": {
+                                        "inviteRedirectUrl": "https://myapps.microsoft.com",
+                                        "invitedUserDisplayName": "<Display Name of Invited User>",
+                                        "invitedUserEmailAddress": "<Email Address of Invited User>",
+                                        "invitedUserMessageInfo": {
+                                            "ccRecipients": [
+                                                {
+                                                    "emailAddress": {
+                                                        "address": "<Optional CC Email Address for Invitation>",
+                                                        "name": "<Optional CC for Invitation>"
+                                                    }
+                                                }
+                                            ],
+                                            "customizedMessageBody": "Hi, you have just been invited to Azure AD with Postman using Microsoft Graph!",
+                                            "messageLanguage": "en-US"
+                                        },
+                                        "sendInvitationMessage": true
+                                    }
+                                },
+                                "Invite guest user": {
+                                    "value": "{ \r\n    \"invitedUserDisplayName\": \"<Display Name of Invited User>\", \r\n    \"invitedUserEmailAddress\": \"<Email Address of Invited User>, \r\n    \"invitedUserMessageInfo\": {\r\n        \"messageLanguage\": \"en-US\",\r\n        \"ccRecipients\": [\r\n             {\r\n                \"emailAddress\": {\r\n                    \"name\": \"<Optional CC for Invitation>\",\r\n                    \"address\": \"<Optional CC Email Address for Invitation>\"\r\n                 }\r\n             }\r\n        ],\r\n        \"customizedMessageBody\": \"Hi, you have just been invited to Azure AD with Postman using Microsoft Graph!\"\r\n     },\r\n    \"sendInvitationMessage\": true, \r\n    \"inviteRedirectUrl\": \"https://myapps.microsoft.com\" \r\n} "
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": ""
+                    }
+                },
+                "security": [
+                    {
+                        "oauth2": [
+                            "https://graph.microsoft.com/.default"
+                        ]
+                    }
+                ]
+            }
+        },
         "/v1.0/users/{UserId}/messages": {
             "get": {
                 "tags": [
@@ -174,6 +301,16 @@
                         "oauth2": [
                             "https://graph.microsoft.com/.default"
                         ]
+                    }
+                ],
+                "parameters": [
+                    {
+                        "name": "UserId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
                     }
                 ]
             }
@@ -197,6 +334,16 @@
                         "oauth2": [
                             "https://graph.microsoft.com/.default"
                         ]
+                    }
+                ],
+                "parameters": [
+                    {
+                        "name": "UserId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
                     }
                 ]
             }
@@ -262,6 +409,16 @@
                             "https://graph.microsoft.com/.default"
                         ]
                     }
+                ],
+                "parameters": [
+                    {
+                        "name": "GroupId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
                 ]
             }
         },
@@ -284,6 +441,16 @@
                         "oauth2": [
                             "https://graph.microsoft.com/.default"
                         ]
+                    }
+                ],
+                "parameters": [
+                    {
+                        "name": "SiteID",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
                     }
                 ]
             }
@@ -348,6 +515,24 @@
                         "oauth2": [
                             "https://graph.microsoft.com/.default"
                         ]
+                    }
+                ],
+                "parameters": [
+                    {
+                        "name": "TeamId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "ChannelId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
                     }
                 ]
             }
@@ -1239,6 +1424,24 @@
                             "https://graph.microsoft.com/.default"
                         ]
                     }
+                ],
+                "parameters": [
+                    {
+                        "name": "UserId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "MessageId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
                 ]
             }
         },
@@ -1283,6 +1486,16 @@
                         "oauth2": [
                             "https://graph.microsoft.com/.default"
                         ]
+                    }
+                ],
+                "parameters": [
+                    {
+                        "name": "SubscriptionId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
                     }
                 ]
             }
@@ -1408,6 +1621,24 @@
                             "https://graph.microsoft.com/.default"
                         ]
                     }
+                ],
+                "parameters": [
+                    {
+                        "name": "GroupId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "UserId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
                 ]
             }
         },
@@ -1431,6 +1662,24 @@
                         "oauth2": [
                             "https://graph.microsoft.com/.default"
                         ]
+                    }
+                ],
+                "parameters": [
+                    {
+                        "name": "GroupId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "ChannelId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
                     }
                 ]
             }
@@ -1456,6 +1705,24 @@
                             "https://graph.microsoft.com/.default"
                         ]
                     }
+                ],
+                "parameters": [
+                    {
+                        "name": "TeamId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "UserId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
                 ]
             }
         },
@@ -1479,6 +1746,32 @@
                         "oauth2": [
                             "https://graph.microsoft.com/.default"
                         ]
+                    }
+                ],
+                "parameters": [
+                    {
+                        "name": "TeamId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "ChannelId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "UserId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
                     }
                 ]
             }
@@ -1539,6 +1832,32 @@
                             "https://graph.microsoft.com/.default"
                         ]
                     }
+                ],
+                "parameters": [
+                    {
+                        "name": "GroupId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "ChannelId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "UserId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
                 ]
             }
         },
@@ -1562,6 +1881,16 @@
                             "https://graph.microsoft.com/.default"
                         ]
                     }
+                ],
+                "parameters": [
+                    {
+                        "name": "GroupId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
                 ]
             }
         },
@@ -1584,6 +1913,16 @@
                         "oauth2": [
                             "https://graph.microsoft.com/.default"
                         ]
+                    }
+                ],
+                "parameters": [
+                    {
+                        "name": "GroupId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
                     }
                 ]
             }
@@ -1670,6 +2009,16 @@
                         "oauth2": [
                             "https://graph.microsoft.com/.default"
                         ]
+                    }
+                ],
+                "parameters": [
+                    {
+                        "name": "TeamId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
                     }
                 ]
             }
@@ -1762,6 +2111,16 @@
                             "https://graph.microsoft.com/.default"
                         ]
                     }
+                ],
+                "parameters": [
+                    {
+                        "name": "GroupId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
                 ]
             }
         },
@@ -1806,6 +2165,16 @@
                         "oauth2": [
                             "https://graph.microsoft.com/.default"
                         ]
+                    }
+                ],
+                "parameters": [
+                    {
+                        "name": "TeamId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
                     }
                 ]
             }
@@ -1872,6 +2241,16 @@
                             "https://graph.microsoft.com/.default"
                         ]
                     }
+                ],
+                "parameters": [
+                    {
+                        "name": "TeamId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
                 ]
             }
         },
@@ -1895,7 +2274,43 @@
                             "https://graph.microsoft.com/.default"
                         ]
                     }
+                ],
+                "parameters": [
+                    {
+                        "name": "TeamId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
                 ]
+            }
+        },
+        "/api/notification": {
+            "post": {
+                "tags": [
+                    "Misc"
+                ],
+                "summary": "Subscription validation",
+                "description": "Allows you to validate whether the notification endpoint you are building properly passed Microsoft Graph Subscription creation validation.\nThe response content type should be text/plain, code 200 OK and the body the information passed by the validationToken query parameter",
+                "operationId": "subscriptionValidation",
+                "parameters": [
+                    {
+                        "name": "validationToken",
+                        "in": "query",
+                        "schema": {
+                            "type": "string",
+                            "example": "something"
+                        },
+                        "description": "random validation token passed by the Microsoft Graph when validating the notificationURL"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": ""
+                    }
+                }
             }
         }
     },
