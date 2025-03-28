@@ -22,6 +22,15 @@
                 "operationId": "basicStandardIpLookup",
                 "parameters": [
                     {
+                        "name": "ipAddress",
+                        "in": "path",
+                        "description": "An IPv4 or IPv6 address",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
                         "name": "fields",
                         "in": "query",
                         "description": "Set to your preferred output field(s) according to the Specify Output Fields section.",
