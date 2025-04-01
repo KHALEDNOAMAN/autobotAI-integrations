@@ -14,8 +14,11 @@ from autobotAI_integrations import (
     PayloadTask,
     SDKClient,
 )
-from slack_sdk import WebClient
-from slack_sdk.webhook import WebhookClient
+try:
+    from slack_sdk import WebClient
+    from slack_sdk.webhook import WebhookClient
+except ImportError:
+    pass
 
 from autobotAI_integrations.models import IntegrationCategory
 from autobotAI_integrations.utils import list_of_unique_elements

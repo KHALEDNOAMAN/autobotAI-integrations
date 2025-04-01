@@ -14,7 +14,10 @@ from autobotAI_integrations import (
     PayloadTask,
     SDKClient,
 )
-from gitlab import Gitlab
+try:
+    from gitlab import Gitlab
+except ImportError:
+    pass
 
 from autobotAI_integrations.models import IntegrationCategory
 

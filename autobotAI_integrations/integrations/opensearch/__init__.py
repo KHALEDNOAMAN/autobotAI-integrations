@@ -13,7 +13,10 @@ from autobotAI_integrations.models import (
 )
 from autobotAI_integrations.payload_schema import PayloadTask
 from autobotAI_integrations.utils.boto3_helper import Boto3Helper
-from opensearchpy import AuthorizationException, OpenSearch, RequestsHttpConnection, AWSV4SignerAuth
+try:
+    from opensearchpy import AuthorizationException, OpenSearch, RequestsHttpConnection, AWSV4SignerAuth
+except ImportError:
+    pass
 from autobotAI_integrations.utils.logging_config import logger
 
 

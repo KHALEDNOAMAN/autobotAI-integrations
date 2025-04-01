@@ -33,7 +33,7 @@ from autobotAI_integrations.utils import (
     get_restapi_validated_params,
 )
 from autobotAI_integrations.utils.security_measures import SecurityError
-from pydantic_ai.tools import Tool
+
 
 class BaseService:
 
@@ -680,5 +680,5 @@ class AIBaseService(BaseService):
     def prompt_executor(self, model=None, prompt=None, options: dict = {}, messages: List[Dict[str, Any]] = []):
         raise NotImplementedError()
     
-    def get_pydantic_agent(self, model: str, tools: List[Tool], system_prompt: str, options: dict = {}):
+    def get_pydantic_agent(self, model: str, tools, system_prompt: str, options: dict = {}):
         raise NotImplementedError()

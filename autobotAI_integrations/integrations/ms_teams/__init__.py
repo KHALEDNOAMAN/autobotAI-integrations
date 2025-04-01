@@ -1,12 +1,15 @@
-from typing import Type, Union
+from typing import List, Optional, Type, Union
 
-import uuid
-import re, pymsteams
+from autobotAI_integrations.models import BaseSchema, CLICreds, ConnectionInterfaces, IntegrationCategory, SDKClient, SDKCreds
+import re
 
-from autobotAI_integrations import BaseService, list_of_unique_elements, PayloadTask, Param
-from autobotAI_integrations.models import *
+from autobotAI_integrations import BaseService, list_of_unique_elements, PayloadTask
 import importlib
 
+try:
+    import pymsteams
+except ImportError:
+    pass
 
 class MsTeamsIntegration(BaseSchema):
     webhook: str

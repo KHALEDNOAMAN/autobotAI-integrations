@@ -1,5 +1,4 @@
 import importlib
-import uuid
 from typing import List, Optional, Union
 
 from pydantic import Field
@@ -9,7 +8,6 @@ from autobotAI_integrations import (
     SteampipeCreds,
     RestAPICreds,
     SDKCreds,
-    CLICreds,
     BaseService,
     ConnectionInterfaces,
     PayloadTask,

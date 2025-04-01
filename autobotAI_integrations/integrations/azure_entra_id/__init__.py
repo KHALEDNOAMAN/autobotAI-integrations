@@ -4,7 +4,6 @@ from pydantic import Field
 import requests
 
 from autobotAI_integrations import BaseService, list_of_unique_elements, PayloadTask
-from azure.identity import ClientSecretCredential
 
 from autobotAI_integrations.models import (
     BaseSchema,
@@ -16,6 +15,10 @@ from autobotAI_integrations.models import (
     SDKCreds,
     SteampipeCreds,
 )
+try:
+    from azure.identity import ClientSecretCredential # type: ignore
+except ImportError:
+    pass
 
 
 class AzureEntraIdIntegration(BaseSchema):

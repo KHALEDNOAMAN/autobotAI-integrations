@@ -12,7 +12,6 @@ from autobotAI_integrations import (
 )
 from autobotAI_integrations.integration_schema import ConnectionTypes
 import importlib
-from kubernetes import config
 
 from autobotAI_integrations.models import IntegrationCategory
 
@@ -66,6 +65,7 @@ class KubernetesService(BaseService):
     def build_python_exec_combinations_hook(
         self, payload_task: PayloadTask, client_definitions: List[SDKClient]
     ) -> list:
+        from kubernetes import config
         kubernetes = importlib.import_module(
             client_definitions[0].import_library_names[0], package=None
         )

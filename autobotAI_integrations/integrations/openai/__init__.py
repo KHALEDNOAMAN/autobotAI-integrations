@@ -16,16 +16,17 @@ from autobotAI_integrations import (
     PayloadTask,
     SDKClient,
 )
-from openai import OpenAI
-
-from langchain_openai import ChatOpenAI
-from pydantic_ai import Agent, Tool
-from pydantic_ai.models.openai import OpenAIModel
-from pydantic_ai.providers.openai import OpenAIProvider
-
 from autobotAI_integrations.models import IntegrationCategory
 from autobotAI_integrations.utils.logging_config import logger
 
+try:
+    from openai import OpenAI
+    from langchain_openai import ChatOpenAI
+    from pydantic_ai import Agent, Tool
+    from pydantic_ai.models.openai import OpenAIModel
+    from pydantic_ai.providers.openai import OpenAIProvider
+except ImportError:
+    pass
 
 class OpenAIIntegration(BaseSchema):
     api_key: str = Field(default=None, exclude=True)

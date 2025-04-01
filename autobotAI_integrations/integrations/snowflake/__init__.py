@@ -14,7 +14,10 @@ from autobotAI_integrations import (
 )
 
 from autobotAI_integrations.models import IntegrationCategory
-from snowflake.connector import connect
+try:
+    from snowflake.connector import connect
+except ImportError:
+    pass
 
 
 class SnowflakeIntegration(BaseSchema):

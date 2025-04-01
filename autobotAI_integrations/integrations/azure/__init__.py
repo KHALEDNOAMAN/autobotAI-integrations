@@ -1,14 +1,25 @@
-from typing import Type, Union
+from typing import List, Optional, Type, Union
 from pydantic import Field
 
-from autobotAI_integrations import BaseService, list_of_unique_elements,PayloadTask
-from autobotAI_integrations.models import *
+from autobotAI_integrations import BaseService, list_of_unique_elements, PayloadTask
 
-import uuid
 import importlib
 
-from azure.identity import ClientSecretCredential
-from azure.mgmt.resource import ResourceManagementClient
+from autobotAI_integrations.models import (
+    BaseSchema,
+    CLICreds,
+    ConnectionInterfaces,
+    IntegrationCategory,
+    SDKClient,
+    SDKCreds,
+    SteampipeCreds,
+)
+
+try:
+    from azure.identity import ClientSecretCredential # type: ignore
+    from azure.mgmt.resource import ResourceManagementClient # type: ignore
+except ImportError:
+    pass
 
 
 class AzureIntegration(BaseSchema):
@@ -30,7 +41,6 @@ class AzureIntegration(BaseSchema):
 
 
 class AzureService(BaseService):
-
     def __init__(self, ctx: dict, integration: Union[AzureIntegration, dict]):
         """
         Integration should have all the data regarding the integration
@@ -112,10 +122,17 @@ class AzureService(BaseService):
 
   ignore_error_codes = ["NoAuthenticationInformation", "InvalidAuthenticationInfo", "AccountIsDisabled", "UnauthorizedOperation", "UnrecognizedClientException", "AuthorizationError", "AuthenticationFailed", "InsufficientAccountPermissions"]
 }"""
-        return SteampipeCreds(envs=creds, plugin_name="azure", connection_name="azure",
-                              conf_path=conf_path, config=config)
+        return SteampipeCreds(
+            envs=creds,
+            plugin_name="azure",
+            connection_name="azure",
+            conf_path=conf_path,
+            config=config,
+        )
 
-    def build_python_exec_combinations_hook(self, payload_task: PayloadTask, client_definitions: List[SDKClient]) -> list:
+    def build_python_exec_combinations_hook(
+        self, payload_task: PayloadTask, client_definitions: List[SDKClient]
+    ) -> list:
         clients_classes = dict()
         credential = ClientSecretCredential(
             tenant_id=payload_task.creds.envs.get("AZURE_TENANT_ID"),
@@ -130,12 +147,12 @@ class AzureService(BaseService):
                     try:
                         clients_classes[client.class_name] = cls(
                             credential=credential,
-                            subscription_id=payload_task.creds.envs.get("AZURE_SUBSCRIPTION_ID"),
+                            subscription_id=payload_task.creds.envs.get(
+                                "AZURE_SUBSCRIPTION_ID"
+                            ),
                         )
-                    except BaseException as e:
-                        clients_classes[client.class_name] = cls(
-                            credential=credential
-                        )
+                    except BaseException:
+                        clients_classes[client.class_name] = cls(credential=credential)
             except BaseException as e:
                 print(e)
                 continue
@@ -143,7 +160,7 @@ class AzureService(BaseService):
             {
                 "clients": clients_classes,
                 "params": self.prepare_params(payload_task.params),
-                "context": payload_task.context
+                "context": payload_task.context,
             }
         ]
 
@@ -157,7 +174,7 @@ class AzureService(BaseService):
             ConnectionInterfaces.REST_API,
             ConnectionInterfaces.CLI,
             ConnectionInterfaces.PYTHON_SDK,
-            ConnectionInterfaces.STEAMPIPE
+            ConnectionInterfaces.STEAMPIPE,
         ]
 
     def generate_cli_creds(self) -> CLICreds:
@@ -167,6 +184,6 @@ class AzureService(BaseService):
         return {
             "AZURE_TENANT_ID": self.integration.tenant_id,
             "AZURE_CLIENT_ID": self.integration.client_id,
-            "AZURE_CLIENT_SECRET":self.integration.client_secret,
+            "AZURE_CLIENT_SECRET": self.integration.client_secret,
             "AZURE_SUBSCRIPTION_ID": self.integration.subscription_id,
         }
