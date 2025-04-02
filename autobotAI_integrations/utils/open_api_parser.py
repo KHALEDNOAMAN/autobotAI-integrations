@@ -298,7 +298,7 @@ class OpenApiParser:
             action_name = re.sub(r"\s+", " ", action_name).strip()
 
             if not action_name:
-                action_name = f"{path.method.upper()} {path.path_url.replace('{base_url}', "")}"
+                action_name = f"{path.method.upper()} {path.path_url.replace('{base_url}', '')}"
 
             actions.append(
                 OpenAPIAction(
