@@ -294,12 +294,13 @@ class OpenApiParser:
                     parameter.values = parameter.example
                 parameters.append(parameter)
 
-            action_name = re.sub(r"[^A-Za-z0-9\- ]", "", str(path.summary))
-            action_name = re.sub(r"\s+", " ", action_name).strip()
-
+            action_name = path.summary
             if not action_name:
-                action_name = f"{path.method.upper()} {path.path_url.replace('{base_url}', '')}"
-
+                action_name = path.method.upper() + " Action " + path.path_url.replace("/", " ").replace("base_url", "")
+            
+            action_name = re.sub(r"[^A-Za-z0-9\- ]", "", str(action_name))
+            action_name = re.sub(r"\s+", " ", action_name).strip()
+            
             actions.append(
                 OpenAPIAction(
                     name=action_name,
