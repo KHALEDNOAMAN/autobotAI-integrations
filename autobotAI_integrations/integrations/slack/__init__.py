@@ -14,12 +14,6 @@ from autobotAI_integrations import (
     PayloadTask,
     SDKClient,
 )
-try:
-    from slack_sdk import WebClient
-    from slack_sdk.webhook import WebhookClient
-except ImportError:
-    pass
-
 from autobotAI_integrations.models import IntegrationCategory
 from autobotAI_integrations.utils import list_of_unique_elements
 from autobotAI_integrations.utils.logging_config import logger
@@ -46,6 +40,7 @@ class SlackService(BaseService):
         super().__init__(ctx, integration)
 
     def _test_integration(self):
+        from slack_sdk import WebClient
         try:
             if self.integration.webhook not in [None, "None"]:
                 response = requests.post(self.integration.webhook)
@@ -71,6 +66,7 @@ class SlackService(BaseService):
         }
 
     def get_integration_specific_details(self):
+        from slack_sdk import WebClient
         try:
             details = {}
             details["integration_id"] = self.integration.accountId
@@ -143,6 +139,8 @@ class SlackService(BaseService):
     def build_python_exec_combinations_hook(
         self, payload_task: PayloadTask, client_definitions: List[SDKClient]
     ) -> list:
+        from slack_sdk import WebClient
+        from slack_sdk.webhook import WebhookClient
         clients = {}
         if payload_task.creds.envs.get("SLACK_WEBHOOK"):
             webhook = WebhookClient(payload_task.creds.envs.get("SLACK_WEBHOOK"))

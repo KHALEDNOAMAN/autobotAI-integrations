@@ -15,10 +15,6 @@ from autobotAI_integrations.models import (
     SDKCreds,
     SteampipeCreds,
 )
-try:
-    from azure.identity import ClientSecretCredential # type: ignore
-except ImportError:
-    pass
 
 
 class AzureEntraIdIntegration(BaseSchema):
@@ -125,6 +121,7 @@ class AzureEntraIdService(BaseService):
     def build_python_exec_combinations_hook(
         self, payload_task: PayloadTask, client_definitions: List[SDKClient]
     ) -> list:
+        from azure.identity import ClientSecretCredential
         credential = ClientSecretCredential(
             tenant_id=payload_task.creds.envs.get("AZURE_TENANT_ID"),
             client_id=payload_task.creds.envs.get("AZURE_CLIENT_ID"),

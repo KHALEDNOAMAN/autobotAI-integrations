@@ -18,11 +18,6 @@ from autobotAI_integrations import (
 from autobotAI_integrations.integrations.gcp import GCPCredentials, GCPService, GCPIntegration
 import uuid
 
-try:
-    from google.oauth2.service_account import Credentials
-except ImportError:
-    pass
-
 
 class GoogleAPIsIntegration(GCPIntegration):
     scopes: List[str] = []
@@ -155,7 +150,7 @@ class GoogleAPIsService(GCPService, BaseService):
     def build_python_exec_combinations_hook(
         self, payload_task: PayloadTask, client_definitions: List[SDKClient]
     ) -> list:
-
+        from google.oauth2.service_account import Credentials
         clients_classes = dict()
         credentials_dict = GCPCredentials.model_validate_json(
             json.loads(payload_task.creds.envs["GOOGLE_APPLICATION_CREDENTIALS"])

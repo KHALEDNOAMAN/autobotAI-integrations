@@ -13,10 +13,6 @@ from autobotAI_integrations.models import (
 )
 from autobotAI_integrations.payload_schema import PayloadTask
 from autobotAI_integrations.utils.boto3_helper import Boto3Helper
-try:
-    from opensearchpy import AuthorizationException, OpenSearch, RequestsHttpConnection, AWSV4SignerAuth
-except ImportError:
-    pass
 from autobotAI_integrations.utils.logging_config import logger
 
 
@@ -93,6 +89,12 @@ class OpensearchService(BaseService):
 
     def _test_integration(self):
         try:
+            from opensearchpy import (
+                AuthorizationException,
+                OpenSearch,
+                RequestsHttpConnection,
+                AWSV4SignerAuth,
+            )
             logger.info(f"Initiating test for integration: {self.integration.accountId}")
             host = self.integration.host_url.split("://")[1]
             use_ssl = self.integration.host_url.split("://")[0] == "https"
@@ -136,6 +138,11 @@ class OpensearchService(BaseService):
     def build_python_exec_combinations_hook(
         self, payload_task: PayloadTask, client_definitions: List[SDKClient]
     ) -> list:
+        from opensearchpy import (
+            OpenSearch,
+            RequestsHttpConnection,
+            AWSV4SignerAuth,
+        )
         host = payload_task.creds.envs.get("OPENSEARCH_HOST_URL").split("://")[1]
         use_ssl = (
             payload_task.creds.envs.get("OPENSEARCH_HOST_URL").split("://")[0]

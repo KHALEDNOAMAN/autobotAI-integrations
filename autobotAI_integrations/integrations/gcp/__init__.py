@@ -13,14 +13,6 @@ from autobotAI_integrations import BaseSchema, SteampipeCreds, SDKCreds, CLICred
     BaseService, ConnectionInterfaces, PayloadTask, SDKClient
 
 from autobotAI_integrations.models import IntegrationCategory
-try:
-    from google.cloud.storage import Client as StorageClient # type: ignore
-    from google.oauth2.service_account import Credentials # type: ignore
-    from google.api_core.exceptions import Forbidden, BadRequest # type: ignore
-    from google.auth.exceptions import RefreshError # type: ignore
-    from google.oauth2 import service_account # type: ignore
-except ImportError:
-    pass
 import os
 import pydantic
 
@@ -97,6 +89,11 @@ class GCPService(BaseService):
 
     def _test_integration(self) -> dict:
         try:
+            from google.cloud.storage import Client as StorageClient # type: ignore
+            from google.oauth2.service_account import Credentials # type: ignore
+            from google.api_core.exceptions import Forbidden, BadRequest # type: ignore
+            from google.auth.exceptions import RefreshError # type: ignore
+
             gcp_creds = self.integration.credentials.model_dump()
             scopes = ["https://www.googleapis.com/auth/cloud-platform"]
             try:
@@ -177,7 +174,7 @@ class GCPService(BaseService):
     def build_python_exec_combinations_hook(
             self, payload_task: PayloadTask, client_definitions: List[SDKClient]
     ) -> list:
-
+        from google.oauth2 import service_account # type: ignore
         clients_classes = dict()
         credentials_dict = GCPCredentials.model_validate_json(
             json.loads(payload_task.creds.envs["GOOGLE_APPLICATION_CREDENTIALS"])

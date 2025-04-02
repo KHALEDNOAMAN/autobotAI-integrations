@@ -15,12 +15,6 @@ from autobotAI_integrations.models import (
     SteampipeCreds,
 )
 
-try:
-    from azure.identity import ClientSecretCredential # type: ignore
-    from azure.mgmt.resource import ResourceManagementClient # type: ignore
-except ImportError:
-    pass
-
 
 class AzureIntegration(BaseSchema):
     tenant_id: Optional[str] = Field(default=None, exclude=True)
@@ -50,6 +44,8 @@ class AzureService(BaseService):
         super().__init__(ctx, integration)
 
     def _test_integration(self) -> dict:
+        from azure.identity import ClientSecretCredential # type: ignore
+        from azure.mgmt.resource import ResourceManagementClient # type: ignore
         try:
             credentials = ClientSecretCredential(
                 tenant_id=self.integration.tenant_id,
@@ -133,6 +129,7 @@ class AzureService(BaseService):
     def build_python_exec_combinations_hook(
         self, payload_task: PayloadTask, client_definitions: List[SDKClient]
     ) -> list:
+        from azure.identity import ClientSecretCredential # type: ignore
         clients_classes = dict()
         credential = ClientSecretCredential(
             tenant_id=payload_task.creds.envs.get("AZURE_TENANT_ID"),

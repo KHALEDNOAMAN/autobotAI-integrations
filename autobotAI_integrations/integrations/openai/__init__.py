@@ -19,14 +19,6 @@ from autobotAI_integrations import (
 from autobotAI_integrations.models import IntegrationCategory
 from autobotAI_integrations.utils.logging_config import logger
 
-try:
-    from openai import OpenAI
-    from langchain_openai import ChatOpenAI
-    from pydantic_ai import Agent, Tool
-    from pydantic_ai.models.openai import OpenAIModel
-    from pydantic_ai.providers.openai import OpenAIProvider
-except ImportError:
-    pass
 
 class OpenAIIntegration(BaseSchema):
     api_key: str = Field(default=None, exclude=True)
@@ -68,6 +60,8 @@ class OpenAIService(AIBaseService):
 
     def get_integration_specific_details(self) -> dict:
         try:
+            # TODO: USE API
+            from openai import OpenAI
             client = OpenAI(api_key=self.integration.api_key)
             models = client.models.list().data
             model_names = []
@@ -189,8 +183,11 @@ class OpenAIService(AIBaseService):
         pass
 
     def get_pydantic_agent(
-        self, model: str, tools: List[Tool], system_prompt: str, options: dict = {}
+        self, model: str, tools, system_prompt: str, options: dict = {}
     ):
+        from pydantic_ai.models.openai import OpenAIModel
+        from pydantic_ai.providers.openai import OpenAIProvider
+        from pydantic_ai import Agent
         model = OpenAIModel(
             model_name=model,
             provider=OpenAIProvider(api_key=self.integration.api_key),
@@ -198,6 +195,7 @@ class OpenAIService(AIBaseService):
         return Agent(model, system_prompt=system_prompt, tools=tools, **options)
 
     def langchain_authenticator(self, model):
+        from langchain_openai import ChatOpenAI
         llm = ChatOpenAI(
             temperature=0, model_name=model, openai_api_key=self.integration.api_key
         )
@@ -211,6 +209,8 @@ class OpenAIService(AIBaseService):
         options: dict = {},
         messages: List[Dict[str, Any]] = [],
     ):
+        from openai import OpenAI
+        
         logger.info(f"Executing prompt: {prompt}")
         client = OpenAI(api_key=self.integration.api_key)
         if model:

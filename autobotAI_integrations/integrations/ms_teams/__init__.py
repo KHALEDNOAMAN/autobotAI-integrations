@@ -6,10 +6,6 @@ import re
 from autobotAI_integrations import BaseService, list_of_unique_elements, PayloadTask
 import importlib
 
-try:
-    import pymsteams
-except ImportError:
-    pass
 
 class MsTeamsIntegration(BaseSchema):
     webhook: str
@@ -32,6 +28,7 @@ class MsTeamsService(BaseService):
         super().__init__(ctx, integration)
 
     def _test_integration(self) -> dict:
+        import pymsteams
         pattern = re.compile(
             "https:\\/\\/[\\w\\-\\.]+\\/webhookb2\\/[\\w\\d\\-\\@]+\\/IncomingWebhook\\/[\\w\\d\\-\\@]+\\/[\\w\\d\\-\\@]+")
         result = pattern.match(self.integration.webhook)
