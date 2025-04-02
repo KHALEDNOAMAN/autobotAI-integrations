@@ -1,5 +1,29 @@
 from setuptools import setup, find_packages
 
+import sys
+
+base_package_data = []
+
+extra_package_data = {
+    "full": [
+        "integrations/*/compliance.json",
+        "integrations/*/open_api.json",
+        "integrations/*/inventory.json",
+        "integrations/*/python_sdk_clients.yml"
+    ],
+    "executable": [
+        "integrations/*/python_sdk_clients.yml",
+    ],
+}
+
+selected_extras = set(sys.argv) & {"full", "executable"}
+
+if "full" in selected_extras:
+    base_package_data.extend(extra_package_data["full"])
+
+if "executable" in selected_extras:
+    base_package_data.extend(extra_package_data["executable"])
+
 setup(
     name="autobotAI_integrations",
     version="1.0.1a05",
@@ -55,12 +79,7 @@ setup(
         ],
     },
     package_data={
-        "": [
-            "integrations/*/inventory.json",
-            "integrations/*/python_sdk_clients.yml",
-            "integrations/*/compliance.json",
-            "integrations/*/open_api.json",
-        ]
+        "": base_package_data
     },
     classifiers=[
         "License :: Other/Proprietary LicenseOperating System :: OS Independent",
