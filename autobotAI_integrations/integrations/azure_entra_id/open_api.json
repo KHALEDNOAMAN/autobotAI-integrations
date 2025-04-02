@@ -14,10 +14,6 @@
     "paths": {
         "/v1.0/sites": {
             "get": {
-                "tags": [
-                    "Application",
-                    "SharePoint1"
-                ],
                 "summary": "Search for site by name",
                 "description": "Search for site by name",
                 "operationId": "searchForSiteByName",
@@ -39,11 +35,6 @@
                         }
                     }
                 ],
-                "responses": {
-                    "200": {
-                        "description": ""
-                    }
-                },
                 "security": [
                     {
                         "oauth2": [
@@ -55,64 +46,39 @@
         },
         "/v1.0/subscriptions": {
             "get": {
-                "tags": [
-                    "Application",
-                    "Subscriptions1"
-                ],
                 "summary": "Get subscriptions",
                 "description": "Get subscriptions",
                 "operationId": "getSubscriptions",
-                "responses": {
-                    "200": {
-                        "description": ""
-                    }
-                },
                 "security": [
                     {
                         "oauth2": [
                             "https://graph.microsoft.com/.default"
                         ]
                     }
-                ]
+                ],
+                "parameters": []
             }
         },
         "/beta/security/labels/retentionLabels": {
             "get": {
-                "tags": [
-                    "Application",
-                    "Security1"
-                ],
                 "summary": "List retentionLabels",
                 "description": "List retentionLabels",
                 "operationId": "listRetentionlabels",
-                "responses": {
-                    "200": {
-                        "description": ""
-                    }
-                },
                 "security": [
                     {
                         "oauth2": [
                             "https://graph.microsoft.com/.default"
                         ]
                     }
-                ]
+                ],
+                "parameters": []
             }
         },
         "/v1.0/groups/{GroupId}": {
             "delete": {
-                "tags": [
-                    "Application",
-                    "Teams1"
-                ],
                 "summary": "Delete team",
                 "description": "Delete team",
                 "operationId": "deleteTeam",
-                "responses": {
-                    "200": {
-                        "description": ""
-                    }
-                },
                 "security": [
                     {
                         "oauth2": [
@@ -134,10 +100,6 @@
         },
         "/v1.0/users": {
             "get": {
-                "tags": [
-                    "Application",
-                    "Users1"
-                ],
                 "summary": "Get users",
                 "description": "Get users",
                 "operationId": "getUsers",
@@ -151,11 +113,6 @@
                         }
                     }
                 ],
-                "responses": {
-                    "200": {
-                        "description": ""
-                    }
-                },
                 "security": [
                     {
                         "oauth2": [
@@ -167,10 +124,6 @@
         },
         "/v1.0/invitations": {
             "post": {
-                "tags": [
-                    "Application",
-                    "Users1"
-                ],
                 "summary": "Invite a guest user",
                 "description": "Invite Azure AD B2B Guest User using Delegated Permission",
                 "operationId": "inviteAGuestUser",
@@ -268,34 +221,21 @@
                         }
                     }
                 },
-                "responses": {
-                    "200": {
-                        "description": ""
-                    }
-                },
                 "security": [
                     {
                         "oauth2": [
                             "https://graph.microsoft.com/.default"
                         ]
                     }
-                ]
+                ],
+                "parameters": []
             }
         },
         "/v1.0/users/{UserId}/messages": {
             "get": {
-                "tags": [
-                    "Application",
-                    "Mail1"
-                ],
                 "summary": "Get a user's messages",
                 "description": "Get a user's messages",
                 "operationId": "getAUserSMessages",
-                "responses": {
-                    "200": {
-                        "description": ""
-                    }
-                },
                 "security": [
                     {
                         "oauth2": [
@@ -317,18 +257,9 @@
         },
         "/v1.0/users/{UserId}/joinedTeams": {
             "get": {
-                "tags": [
-                    "Application",
-                    "Teams1"
-                ],
                 "summary": "Get user's joined teams",
                 "description": "Get user's joined teams",
                 "operationId": "getUserSJoinedTeams",
-                "responses": {
-                    "200": {
-                        "description": ""
-                    }
-                },
                 "security": [
                     {
                         "oauth2": [
@@ -349,12 +280,29 @@
             }
         },
         "/v1.0/teams/{GroupId}/members": {
-            "post": {
-                "tags": [
-                    "Application",
-                    "Teams1",
-                    "Memberships"
+            "get": {
+                "summary": "Get team members",
+                "description": "Get team members",
+                "operationId": "getTeamMembers",
+                "security": [
+                    {
+                        "oauth2": [
+                            "https://graph.microsoft.com/.default"
+                        ]
+                    }
                 ],
+                "parameters": [
+                    {
+                        "name": "GroupId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ]
+            },
+            "post": {
                 "summary": "Add team member",
                 "description": "Add team member",
                 "operationId": "addTeamMember",
@@ -398,11 +346,6 @@
                         }
                     }
                 },
-                "responses": {
-                    "200": {
-                        "description": ""
-                    }
-                },
                 "security": [
                     {
                         "oauth2": [
@@ -424,18 +367,9 @@
         },
         "/v1.0/sites/{SiteID}/drives": {
             "get": {
-                "tags": [
-                    "Application",
-                    "SharePoint1"
-                ],
                 "summary": "Get drives",
                 "description": "Get drives",
                 "operationId": "getDrives",
-                "responses": {
-                    "200": {
-                        "description": ""
-                    }
-                },
                 "security": [
                     {
                         "oauth2": [
@@ -457,10 +391,6 @@
         },
         "/v1.0/teams/{TeamId}/channels/{ChannelId}/members": {
             "post": {
-                "tags": [
-                    "Application",
-                    "Teams1"
-                ],
                 "summary": "Add channel member",
                 "description": "Add channel member",
                 "operationId": "addChannelMember",
@@ -505,11 +435,6 @@
                         }
                     }
                 },
-                "responses": {
-                    "200": {
-                        "description": ""
-                    }
-                },
                 "security": [
                     {
                         "oauth2": [
@@ -539,12 +464,6 @@
         },
         "/beta/external/connections/sampleConnectionId": {
             "patch": {
-                "tags": [
-                    "Application",
-                    "Graph Connectors",
-                    "Connection setup",
-                    "Manage experience settings (beta)"
-                ],
                 "summary": "Add activity settings",
                 "description": "Add activity settings",
                 "operationId": "addActivitySettings",
@@ -679,28 +598,31 @@
                         }
                     }
                 },
-                "responses": {
-                    "200": {
-                        "description": ""
-                    }
-                },
                 "security": [
                     {
                         "oauth2": [
                             "https://graph.microsoft.com/.default"
                         ]
                     }
-                ]
+                ],
+                "parameters": []
             }
         },
         "/v1.0/external/connections/sampleConnectionId/schema": {
-            "post": {
-                "tags": [
-                    "Application",
-                    "Graph Connectors",
-                    "Connection setup",
-                    "Manage schema"
+            "get": {
+                "summary": "Get schema",
+                "description": "Get schema",
+                "operationId": "getSchema",
+                "security": [
+                    {
+                        "oauth2": [
+                            "https://graph.microsoft.com/.default"
+                        ]
+                    }
                 ],
+                "parameters": []
+            },
+            "post": {
                 "summary": "Register schema",
                 "description": "Register schema",
                 "operationId": "registerSchema",
@@ -982,11 +904,6 @@
                         }
                     }
                 },
-                "responses": {
-                    "200": {
-                        "description": ""
-                    }
-                },
                 "security": [
                     {
                         "oauth2": [
@@ -997,12 +914,29 @@
             }
         },
         "/v1.0/external/connections": {
-            "post": {
-                "tags": [
-                    "Application",
-                    "Graph Connectors",
-                    "Connection setup"
+            "get": {
+                "summary": "Get all connections",
+                "description": "Get all connections",
+                "operationId": "getAllConnections",
+                "parameters": [
+                    {
+                        "name": "prefer",
+                        "in": "header",
+                        "schema": {
+                            "type": "string",
+                            "example": "include-unknown-enum-members"
+                        }
+                    }
                 ],
+                "security": [
+                    {
+                        "oauth2": [
+                            "https://graph.microsoft.com/.default"
+                        ]
+                    }
+                ]
+            },
+            "post": {
                 "summary": "Create connection",
                 "description": "Create connection",
                 "operationId": "createConnection",
@@ -1038,35 +972,31 @@
                         }
                     }
                 },
-                "responses": {
-                    "200": {
-                        "description": ""
-                    }
-                },
                 "security": [
                     {
                         "oauth2": [
                             "https://graph.microsoft.com/.default"
                         ]
                     }
-                ]
+                ],
+                "parameters": []
             }
         },
         "/v1.0/external/connections/sampleConnectionId": {
-            "delete": {
-                "tags": [
-                    "Application",
-                    "Graph Connectors",
-                    "Connection setup"
-                ],
-                "summary": "Delete connection",
-                "description": "Delete connection",
-                "operationId": "deleteConnection",
-                "responses": {
-                    "200": {
-                        "description": ""
+            "get": {
+                "summary": "Get connection",
+                "description": "Get connection",
+                "operationId": "getConnection",
+                "parameters": [
+                    {
+                        "name": "prefer",
+                        "in": "header",
+                        "schema": {
+                            "type": "string",
+                            "example": "include-unknown-enum-members"
+                        }
                     }
-                },
+                ],
                 "security": [
                     {
                         "oauth2": [
@@ -1074,40 +1004,38 @@
                         ]
                     }
                 ]
+            },
+            "delete": {
+                "summary": "Delete connection",
+                "description": "Delete connection",
+                "operationId": "deleteConnection",
+                "security": [
+                    {
+                        "oauth2": [
+                            "https://graph.microsoft.com/.default"
+                        ]
+                    }
+                ],
+                "parameters": []
             }
         },
         "/v1.0/external/connections/sampleConnectionId/operations/7a49501d-f8a8-f06f-7435-07fffcb45fbc": {
             "get": {
-                "tags": [
-                    "Application",
-                    "Graph Connectors",
-                    "Connection setup"
-                ],
                 "summary": "Get operation status",
                 "description": "Get operation status",
                 "operationId": "getOperationStatus",
-                "responses": {
-                    "200": {
-                        "description": ""
-                    }
-                },
                 "security": [
                     {
                         "oauth2": [
                             "https://graph.microsoft.com/.default"
                         ]
                     }
-                ]
+                ],
+                "parameters": []
             }
         },
         "/beta/external/connections/sampleConnectionId/items/sampleItemId/addActivities": {
             "post": {
-                "tags": [
-                    "Application",
-                    "Graph Connectors",
-                    "Content sync",
-                    "Manage item activities (beta)"
-                ],
                 "summary": "Add activity",
                 "description": "Add activity",
                 "operationId": "addActivity",
@@ -1193,9 +1121,179 @@
                         }
                     }
                 },
-                "responses": {
-                    "200": {
-                        "description": ""
+                "security": [
+                    {
+                        "oauth2": [
+                            "https://graph.microsoft.com/.default"
+                        ]
+                    }
+                ],
+                "parameters": []
+            }
+        },
+        "/v1.0/external/connections/sampleConnectionId/items/sampleItemId": {
+            "get": {
+                "summary": "Get item",
+                "description": "Get item",
+                "operationId": "getItem",
+                "parameters": [
+                    {
+                        "name": "prefer",
+                        "in": "header",
+                        "schema": {
+                            "type": "string",
+                            "example": "include-unknown-enum-members"
+                        }
+                    }
+                ],
+                "security": [
+                    {
+                        "oauth2": [
+                            "https://graph.microsoft.com/.default"
+                        ]
+                    }
+                ]
+            },
+            "put": {
+                "summary": "Put item",
+                "description": "Put item",
+                "operationId": "putItem",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "acl": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "object",
+                                            "properties": {
+                                                "accessType": {
+                                                    "type": "string",
+                                                    "example": "grant"
+                                                },
+                                                "type": {
+                                                    "type": "string",
+                                                    "example": "everyone"
+                                                },
+                                                "value": {
+                                                    "type": "string",
+                                                    "example": "c5f19b2d-0a77-454a-9b43-abf298c3b34e"
+                                                }
+                                            }
+                                        },
+                                        "example": [
+                                            {
+                                                "accessType": "grant",
+                                                "type": "everyone",
+                                                "value": "c5f19b2d-0a77-454a-9b43-abf298c3b34e"
+                                            }
+                                        ]
+                                    },
+                                    "content": {
+                                        "type": "object",
+                                        "properties": {
+                                            "type": {
+                                                "type": "string",
+                                                "example": "text"
+                                            },
+                                            "value": {
+                                                "type": "string",
+                                                "example": "Empower customers and partners to be more productive by enabling them to bring content and activity information and allow external content to participate in Microsoft Search and OfficeHub experiences so that they find relevant and actionable information across all their applications."
+                                            }
+                                        }
+                                    },
+                                    "properties": {
+                                        "type": "object",
+                                        "properties": {
+                                            "authors": {
+                                                "type": "array",
+                                                "items": {
+                                                    "type": "string",
+                                                    "example": "John Doe"
+                                                },
+                                                "example": [
+                                                    "John Doe"
+                                                ]
+                                            },
+                                            "authors@odata.type": {
+                                                "type": "string",
+                                                "example": "Collection(String)"
+                                            },
+                                            "containerName": {
+                                                "type": "string",
+                                                "example": "Sample container name"
+                                            },
+                                            "containerUrl": {
+                                                "type": "string",
+                                                "example": "https://sampleContainerUrl.com"
+                                            },
+                                            "createdBy": {
+                                                "type": "string",
+                                                "example": "John Doe"
+                                            },
+                                            "createdDateTime": {
+                                                "type": "string",
+                                                "example": "2021-04-27T11:04:00Z"
+                                            },
+                                            "extension": {
+                                                "type": "string",
+                                                "example": "docx"
+                                            },
+                                            "iconUrl": {
+                                                "type": "string",
+                                                "example": "https://contentdepot.blob.core.windows.net/filedepot/sampleIconUrl.png"
+                                            },
+                                            "lastModifiedDate": {
+                                                "type": "string",
+                                                "example": "2021-04-27T11:04:00Z"
+                                            },
+                                            "title": {
+                                                "type": "string",
+                                                "example": "Sample item title"
+                                            },
+                                            "url": {
+                                                "type": "string",
+                                                "example": "https://sampleItemUrl.com"
+                                            }
+                                        }
+                                    }
+                                }
+                            },
+                            "examples": {
+                                "Put item": {
+                                    "value": {
+                                        "acl": [
+                                            {
+                                                "accessType": "grant",
+                                                "type": "everyone",
+                                                "value": "c5f19b2d-0a77-454a-9b43-abf298c3b34e"
+                                            }
+                                        ],
+                                        "content": {
+                                            "type": "text",
+                                            "value": "Empower customers and partners to be more productive by enabling them to bring content and activity information and allow external content to participate in Microsoft Search and OfficeHub experiences so that they find relevant and actionable information across all their applications."
+                                        },
+                                        "properties": {
+                                            "authors": [
+                                                "John Doe"
+                                            ],
+                                            "authors@odata.type": "Collection(String)",
+                                            "containerName": "Sample container name",
+                                            "containerUrl": "https://sampleContainerUrl.com",
+                                            "createdBy": "John Doe",
+                                            "createdDateTime": "2021-04-27T11:04:00Z",
+                                            "extension": "docx",
+                                            "iconUrl": "https://contentdepot.blob.core.windows.net/filedepot/sampleIconUrl.png",
+                                            "lastModifiedDate": "2021-04-27T11:04:00Z",
+                                            "title": "Sample item title",
+                                            "url": "https://sampleItemUrl.com"
+                                        }
+                                    }
+                                }
+                            }
+                        }
                     }
                 },
                 "security": [
@@ -1204,16 +1302,10 @@
                             "https://graph.microsoft.com/.default"
                         ]
                     }
-                ]
-            }
-        },
-        "/v1.0/external/connections/sampleConnectionId/items/sampleItemId": {
-            "delete": {
-                "tags": [
-                    "Application",
-                    "Graph Connectors",
-                    "Content sync"
                 ],
+                "parameters": []
+            },
+            "delete": {
                 "summary": "Delete item",
                 "description": "Delete item",
                 "operationId": "deleteItem",
@@ -1228,35 +1320,31 @@
                         }
                     }
                 },
-                "responses": {
-                    "200": {
-                        "description": ""
-                    }
-                },
                 "security": [
                     {
                         "oauth2": [
                             "https://graph.microsoft.com/.default"
                         ]
                     }
-                ]
+                ],
+                "parameters": []
             }
         },
         "/v1.0/external/connections/sampleConnectionId/groups/graphConnectorGroupId": {
-            "delete": {
-                "tags": [
-                    "Application",
-                    "Graph Connectors",
-                    "Identity Sync"
-                ],
-                "summary": "Delete group",
-                "description": "Delete group",
-                "operationId": "deleteGroup",
-                "responses": {
-                    "200": {
-                        "description": ""
+            "get": {
+                "summary": "Get group",
+                "description": "Get a previously created group under the connection.",
+                "operationId": "getGroup",
+                "parameters": [
+                    {
+                        "name": "prefer",
+                        "in": "header",
+                        "schema": {
+                            "type": "string",
+                            "example": "include-unknown-enum-members"
+                        }
                     }
-                },
+                ],
                 "security": [
                     {
                         "oauth2": [
@@ -1264,15 +1352,23 @@
                         ]
                     }
                 ]
+            },
+            "delete": {
+                "summary": "Delete group",
+                "description": "Delete group",
+                "operationId": "deleteGroup",
+                "security": [
+                    {
+                        "oauth2": [
+                            "https://graph.microsoft.com/.default"
+                        ]
+                    }
+                ],
+                "parameters": []
             }
         },
         "/v1.0/external/connections/sampleConnectionId/groups": {
             "post": {
-                "tags": [
-                    "Application",
-                    "Graph Connectors",
-                    "Identity Sync"
-                ],
                 "summary": "Create group",
                 "description": "Create group under the connection",
                 "operationId": "createGroup",
@@ -1303,27 +1399,18 @@
                         }
                     }
                 },
-                "responses": {
-                    "200": {
-                        "description": ""
-                    }
-                },
                 "security": [
                     {
                         "oauth2": [
                             "https://graph.microsoft.com/.default"
                         ]
                     }
-                ]
+                ],
+                "parameters": []
             }
         },
         "/v1.0/external/connections/sampleConnectionId/groups/graphConnectorGroupId/members/": {
             "post": {
-                "tags": [
-                    "Application",
-                    "Graph Connectors",
-                    "Identity Sync"
-                ],
                 "summary": "Add AAD user as member",
                 "description": "Add AAD user as member",
                 "operationId": "addAadUserAsMember",
@@ -1366,58 +1453,36 @@
                         }
                     }
                 },
-                "responses": {
-                    "200": {
-                        "description": ""
-                    }
-                },
                 "security": [
                     {
                         "oauth2": [
                             "https://graph.microsoft.com/.default"
                         ]
                     }
-                ]
+                ],
+                "parameters": []
             }
         },
         "/v1.0/external/connections/sampleConnectionId/groups/graphConnectorGroupId/members/childGraphConnectorGroupId": {
             "delete": {
-                "tags": [
-                    "Application",
-                    "Graph Connectors",
-                    "Identity Sync"
-                ],
                 "summary": "Remove member",
                 "description": "Remove member",
                 "operationId": "removeMember",
-                "responses": {
-                    "200": {
-                        "description": ""
-                    }
-                },
                 "security": [
                     {
                         "oauth2": [
                             "https://graph.microsoft.com/.default"
                         ]
                     }
-                ]
+                ],
+                "parameters": []
             }
         },
         "/v1.0/users/{UserId}/messages/{MessageId}": {
             "get": {
-                "tags": [
-                    "Application",
-                    "Mail1"
-                ],
                 "summary": "Get a user's message",
                 "description": "Get a user's message",
                 "operationId": "getAUserSMessage",
-                "responses": {
-                    "200": {
-                        "description": ""
-                    }
-                },
                 "security": [
                     {
                         "oauth2": [
@@ -1447,10 +1512,6 @@
         },
         "/v1.0/subscriptions/{SubscriptionId}": {
             "patch": {
-                "tags": [
-                    "Application",
-                    "Subscriptions1"
-                ],
                 "summary": "Update subscription",
                 "description": "Update subscription",
                 "operationId": "updateSubscription",
@@ -1476,11 +1537,6 @@
                         }
                     }
                 },
-                "responses": {
-                    "200": {
-                        "description": ""
-                    }
-                },
                 "security": [
                     {
                         "oauth2": [
@@ -1502,10 +1558,6 @@
         },
         "/beta/subscriptions": {
             "post": {
-                "tags": [
-                    "Application",
-                    "Subscriptions1"
-                ],
                 "summary": "Create subscription",
                 "description": "Create subscription",
                 "operationId": "createSubscription",
@@ -1551,27 +1603,48 @@
                         }
                     }
                 },
-                "responses": {
-                    "200": {
-                        "description": ""
-                    }
-                },
                 "security": [
                     {
                         "oauth2": [
                             "https://graph.microsoft.com/.default"
                         ]
                     }
-                ]
+                ],
+                "parameters": []
             }
         },
         "/v1.0/teams/{GroupId}/members/{UserId}": {
-            "patch": {
-                "tags": [
-                    "Application",
-                    "Teams1",
-                    "Memberships"
+            "get": {
+                "summary": "Get single team member",
+                "description": "Get single team member",
+                "operationId": "getSingleTeamMember",
+                "security": [
+                    {
+                        "oauth2": [
+                            "https://graph.microsoft.com/.default"
+                        ]
+                    }
                 ],
+                "parameters": [
+                    {
+                        "name": "GroupId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "UserId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ]
+            },
+            "patch": {
                 "summary": "Update team member",
                 "description": "Update team member",
                 "operationId": "updateTeamMember",
@@ -1610,11 +1683,6 @@
                         }
                     }
                 },
-                "responses": {
-                    "200": {
-                        "description": ""
-                    }
-                },
                 "security": [
                     {
                         "oauth2": [
@@ -1644,19 +1712,9 @@
         },
         "/v1.0/teams/{GroupId}/channels/{ChannelId}/members": {
             "get": {
-                "tags": [
-                    "Application",
-                    "Teams1",
-                    "Memberships"
-                ],
                 "summary": "Get channel members",
                 "description": "Get channel members",
                 "operationId": "getChannelMembers",
-                "responses": {
-                    "200": {
-                        "description": ""
-                    }
-                },
                 "security": [
                     {
                         "oauth2": [
@@ -1686,19 +1744,9 @@
         },
         "/v1.0/teams/{TeamId}/members/{UserId}": {
             "delete": {
-                "tags": [
-                    "Application",
-                    "Teams1",
-                    "Memberships"
-                ],
                 "summary": "Remove team member",
                 "description": "Remove team member",
                 "operationId": "removeTeamMember",
-                "responses": {
-                    "200": {
-                        "description": ""
-                    }
-                },
                 "security": [
                     {
                         "oauth2": [
@@ -1728,19 +1776,9 @@
         },
         "/v1.0/teams/{TeamId}/channels/{ChannelId}members/{UserId}": {
             "delete": {
-                "tags": [
-                    "Application",
-                    "Teams1",
-                    "Memberships"
-                ],
                 "summary": "Remove channel member",
                 "description": "Remove channel member",
                 "operationId": "removeChannelMember",
-                "responses": {
-                    "200": {
-                        "description": ""
-                    }
-                },
                 "security": [
                     {
                         "oauth2": [
@@ -1778,11 +1816,6 @@
         },
         "/v1.0/teams/{GroupId}/channels/{ChannelId}/members/{UserId}": {
             "patch": {
-                "tags": [
-                    "Application",
-                    "Teams1",
-                    "Memberships"
-                ],
                 "summary": "Update channel member",
                 "description": "Update channel member",
                 "operationId": "updateChannelMember",
@@ -1819,11 +1852,6 @@
                                 }
                             }
                         }
-                    }
-                },
-                "responses": {
-                    "200": {
-                        "description": ""
                     }
                 },
                 "security": [
@@ -1863,18 +1891,9 @@
         },
         "/v1.0/teams/{GroupId}/primaryChannel": {
             "get": {
-                "tags": [
-                    "Application",
-                    "Teams1"
-                ],
                 "summary": "Get primary channel",
                 "description": "Get primary channel",
                 "operationId": "getPrimaryChannel",
-                "responses": {
-                    "200": {
-                        "description": ""
-                    }
-                },
                 "security": [
                     {
                         "oauth2": [
@@ -1896,18 +1915,9 @@
         },
         "/v1.0/teams/{GroupId}/channels": {
             "get": {
-                "tags": [
-                    "Application",
-                    "Teams1"
-                ],
                 "summary": "Get team channels",
                 "description": "Get team channels",
                 "operationId": "getTeamChannels",
-                "responses": {
-                    "200": {
-                        "description": ""
-                    }
-                },
                 "security": [
                     {
                         "oauth2": [
@@ -1928,11 +1938,29 @@
             }
         },
         "/v1.0/teams/{TeamId}": {
-            "patch": {
-                "tags": [
-                    "Application",
-                    "Teams1"
+            "get": {
+                "summary": "Get team",
+                "description": "Get team",
+                "operationId": "getTeam",
+                "security": [
+                    {
+                        "oauth2": [
+                            "https://graph.microsoft.com/.default"
+                        ]
+                    }
                 ],
+                "parameters": [
+                    {
+                        "name": "TeamId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ]
+            },
+            "patch": {
                 "summary": "Update team",
                 "description": "Update team",
                 "operationId": "updateTeam",
@@ -1999,11 +2027,6 @@
                         }
                     }
                 },
-                "responses": {
-                    "200": {
-                        "description": ""
-                    }
-                },
                 "security": [
                     {
                         "oauth2": [
@@ -2025,10 +2048,6 @@
         },
         "/v1.0/groups/{GroupId}/team": {
             "put": {
-                "tags": [
-                    "Application",
-                    "Teams1"
-                ],
                 "summary": "Create team from group",
                 "description": "Create team from group",
                 "operationId": "createTeamFromGroup",
@@ -2100,11 +2119,6 @@
                         }
                     }
                 },
-                "responses": {
-                    "200": {
-                        "description": ""
-                    }
-                },
                 "security": [
                     {
                         "oauth2": [
@@ -2126,10 +2140,6 @@
         },
         "/v1.0/teams/{TeamId}/archive": {
             "post": {
-                "tags": [
-                    "Application",
-                    "Teams1"
-                ],
                 "summary": "Archive team",
                 "description": "Archive team",
                 "operationId": "archiveTeam",
@@ -2155,11 +2165,6 @@
                         }
                     }
                 },
-                "responses": {
-                    "200": {
-                        "description": ""
-                    }
-                },
                 "security": [
                     {
                         "oauth2": [
@@ -2181,10 +2186,6 @@
         },
         "/v1.0/teams/{TeamId}/clone": {
             "post": {
-                "tags": [
-                    "Application",
-                    "Teams1"
-                ],
                 "summary": "Clone team",
                 "description": "Clone team",
                 "operationId": "cloneTeam",
@@ -2230,11 +2231,6 @@
                         }
                     }
                 },
-                "responses": {
-                    "200": {
-                        "description": ""
-                    }
-                },
                 "security": [
                     {
                         "oauth2": [
@@ -2256,18 +2252,9 @@
         },
         "/v1.0/teams/{TeamId}/unarchive": {
             "post": {
-                "tags": [
-                    "Application",
-                    "Teams1"
-                ],
                 "summary": "Unarchive team",
                 "description": "Unarchive team",
                 "operationId": "unarchiveTeam",
-                "responses": {
-                    "200": {
-                        "description": ""
-                    }
-                },
                 "security": [
                     {
                         "oauth2": [
@@ -2285,32 +2272,6 @@
                         }
                     }
                 ]
-            }
-        },
-        "/api/notification": {
-            "post": {
-                "tags": [
-                    "Misc"
-                ],
-                "summary": "Subscription validation",
-                "description": "Allows you to validate whether the notification endpoint you are building properly passed Microsoft Graph Subscription creation validation.\nThe response content type should be text/plain, code 200 OK and the body the information passed by the validationToken query parameter",
-                "operationId": "subscriptionValidation",
-                "parameters": [
-                    {
-                        "name": "validationToken",
-                        "in": "query",
-                        "schema": {
-                            "type": "string",
-                            "example": "something"
-                        },
-                        "description": "random validation token passed by the Microsoft Graph when validating the notificationURL"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": ""
-                    }
-                }
             }
         }
     },

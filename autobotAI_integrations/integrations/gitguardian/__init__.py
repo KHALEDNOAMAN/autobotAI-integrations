@@ -1,20 +1,12 @@
 import importlib
+import requests
 from typing import List, Optional, Union
 
 from pydantic import Field
-import requests
 
-from autobotAI_integrations import (
-    BaseSchema,
-    SteampipeCreds,
-    RestAPICreds,
-    SDKCreds,
-    CLICreds,
-    BaseService,
-    ConnectionInterfaces,
-    PayloadTask,
-    SDKClient,
-)
+from autobotAI_integrations import BaseSchema, SteampipeCreds, RestAPICreds, SDKCreds, CLICreds, \
+    BaseService, ConnectionInterfaces, PayloadTask, SDKClient
+
 from autobotAI_integrations.models import IntegrationCategory
 
 
@@ -64,7 +56,7 @@ class GitGuardianService(BaseService):
             ConnectionInterfaces.REST_API,
             ConnectionInterfaces.CLI,
             ConnectionInterfaces.PYTHON_SDK,
-            ConnectionInterfaces.STEAMPIPE,
+            # ConnectionInterfaces.STEAMPIPE
         ]
 
     def _test_integration(self):
@@ -116,12 +108,10 @@ class GitGuardianService(BaseService):
         )
 
     def generate_rest_api_creds(self) -> RestAPICreds:
-        headers = {"Authorization": f"Token {str(self.integration.token)}"}
-        return RestAPICreds(
-            api_url=self.integration.base_url,
-            token=str(self.integration.token),
-            headers=headers,
-        )
+        headers = {
+            "authorization": f"Token {str(self.integration.token)}"
+        }
+        return RestAPICreds(base_url=self.integration.base_url.strip("/v1/"), headers=headers)
 
     def generate_python_sdk_creds(self) -> SDKCreds:
         envs = {

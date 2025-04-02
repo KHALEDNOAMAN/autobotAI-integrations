@@ -239,7 +239,10 @@ def executor(context):
                 try:
                     # prevents the reinstallation of the same package for different tasks
                     subprocess.check_call(
-                        ["pip", "show", " ".join(client.pip_package_names)],
+                        [
+                            python_exec, "-m", "pip", "show", " ".join(client.pip_package_names)
+                        ],
+                        env={**os.environ, "PYTHONPATH": f"/tmp/{idx}/"}
                     )
                     logger.info(f"Requirements already installed for {client.pip_package_names}")
                 except subprocess.CalledProcessError:
