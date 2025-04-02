@@ -53,6 +53,7 @@ class RestAPICreds(BaseCreds):
     token: Optional[str] = None
     headers: dict = {}
     query_params: dict = dict()
+    verify_ssl: bool = True
 
 
 class Client(BaseModel):

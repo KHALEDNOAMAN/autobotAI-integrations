@@ -528,6 +528,7 @@ def executor(context):
         params: Optional[Dict[str, Any]] = None,
         json_data: Optional[Dict[str, Any]] = None,
         timeout: int = 10,
+        verify_ssl: bool = True
     ) -> Union[Dict[str, Any], List[Dict[str, Any]]]:
 
         logger.info(f"Making {method} request to {url}")
@@ -541,6 +542,7 @@ def executor(context):
                 params=params if params else None,
                 json=json_data if json_data else None,
                 timeout=timeout,
+                verify=verify_ssl
             )
 
             logger.info(f"Response Status Code: {response.status_code}")
@@ -625,6 +627,7 @@ def executor(context):
                 },
                 json_data=params.get("json_data", None),
                 timeout=params.get("timeout", 10),
+                verify_ssl=payload_task.creds.verify_ssl,
             )
             logger.debug(f"Response: {response}")
 

@@ -63,7 +63,8 @@ setup(
         ]
     },
     classifiers=[
-        "License :: Other/Proprietary LicenseOperating System :: OS Independent",
+        "License :: Other/Proprietary License",
+        "Operating System :: OS Independent",
         "Programming Language :: Python :: 3.10",
     ],
     python_requires=">=3.10",
