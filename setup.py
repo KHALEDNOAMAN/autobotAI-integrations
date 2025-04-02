@@ -20,7 +20,6 @@ setup(
         "python-dotenv",
         "pymsteams",
         "google-cloud-storage",
-        "pygitguardian",
         "azure-mgmt-resource",
         "python-gitlab",
         "openai",

@@ -1,13 +1,16 @@
+import base64
 from enum import Enum
 from typing import List, Optional, Type, Union
 
 import boto3
 from pydantic import Field, field_validator
 from autobotAI_integrations import BaseService
+from autobotAI_integrations.integration_schema import ConnectionTypes
 from autobotAI_integrations.models import (
     BaseSchema,
     ConnectionInterfaces,
     IntegrationCategory,
+    RestAPICreds,
     SDKClient,
     SDKCreds,
 )
@@ -52,12 +55,17 @@ class OpensearchIntegration(BaseSchema):
     )
 
     def use_dependency(self, dependency: dict):
-        self.roleArn = dependency.get("roleArn")
-        self.access_key = dependency.get("access_key")
-        self.secret_key = dependency.get("secret_key")
-        self.session_token = dependency.get("session_token")
-        self.externalId = dependency.get("externalId")
-        self.account_id = dependency.get("account_id")
+        if dependency.get("cspName") == "aws":
+            self.roleArn = dependency.get("roleArn")
+            self.access_key = dependency.get("access_key")
+            self.secret_key = dependency.get("secret_key")
+            self.session_token = dependency.get("session_token")
+            self.externalId = dependency.get("externalId")
+            self.account_id = dependency.get("account_id")
+        elif dependency.get("cspName") == "linux":
+            self.connection_type = ConnectionTypes.AGENT
+            self.agent_ids = dependency.get("agent_ids")
+            self.account_id = dependency.get("accountId")
 
     @field_validator("host_url", mode="before")
     @classmethod
@@ -113,6 +121,8 @@ class OpensearchService(BaseService):
                     pool_maxsize=20,
                 )
             elif self.integration.auth_type == OpensearchAuthTypes.DIRECT_AUTH.value:
+                if self.connection_type == ConnectionTypes.AGENT:
+                    return {"success": True}
                 auth = (self.integration.username, self.integration.password)
                 client = OpenSearch(
                     hosts=[{"host": host, "port": self.integration.port}],
@@ -277,6 +287,16 @@ class OpensearchService(BaseService):
                             "placeholder": "Enter your password",
                             "required": True,
                         },
+                        {
+                            "name": "integration_id",
+                            "type": "select",
+                            "integrationType": "linux",
+                            "dataType": "integration",
+                            "label": "Integration Id",
+                            "placeholder": "Enter Integration Id",
+                            "description": "Select the agent hosting OpenSearch for managed integration, or choose 'None' to establish a direct connection.",
+                            "required": False,
+                        },
                     ],
                 },
             ],
@@ -296,6 +316,7 @@ class OpensearchService(BaseService):
     def supported_connection_interfaces():
         return [
             ConnectionInterfaces.PYTHON_SDK,
+            ConnectionInterfaces.REST_API
         ]
 
     def generate_python_sdk_creds(self) -> SDKCreds:
@@ -329,3 +350,17 @@ class OpensearchService(BaseService):
                 "OPENSEARCH_PASSWORD": self.integration.password,
             }
         return SDKCreds(envs=envs)
+    
+    def generate_rest_api_creds(self) -> RestAPICreds:
+        encoded_credentials = base64.b64encode(
+            f"{self.integration.username}:{self.integration.password}".encode("utf-8")
+        ).decode("utf-8")
+        return RestAPICreds(
+            base_url=f"{self.integration.host_url}:{self.integration.port}",
+            headers={
+                "Authorization": f"Basic {encoded_credentials}",
+                "Accept": "application/json",
+                "Content-Type": "application/json",
+            },
+            verify_ssl=self.integration.host_url.split("://")[0] == "https",
+        ) 

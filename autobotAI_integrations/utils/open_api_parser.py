@@ -176,24 +176,42 @@ class OpenApiParser:
                 )
             self.security = securitySchemas
 
-    def _parse_component_schema(self, schema):
+    def _parse_component_schema(self, schema, visited: Optional[set] = None):
+        if visited is None:
+            visited = set()
 
+        if schema is None:
+            return "Unknown"
+        
+        # If this schema is already being processed, return a placeholder to break the cycle
+        schema_id = id(schema)
+        if schema_id in visited:
+            return schema
+        
+        visited.add(schema_id)
+
+        if schema.get("$ref"):
+            ref_schema = self._get_reference_to_dict(schema["$ref"])
+            return self._parse_component_schema(ref_schema, visited)
+        
         if schema.get("type") == "object":
             _schema = {}
             for property_name, property_value in schema.get("properties", {}).items():
                 if property_value.get("readOnly"):
                     continue
                 if property_value.get("$ref"):
-                    property_value = self._get_reference_to_dict(property_value["$ref"])
-                    _schema[property_name] = self._parse_component_schema(
-                        property_value
-                    )
+                    _schema[property_name] = self._parse_component_schema(property_value, visited)
                 else:
                     _schema[property_name] = property_value.get("type")
         elif schema.get("type") == "array":
-            _schema = [self._parse_component_schema(schema.get("items"))]
+            _schema = [self._parse_component_schema(schema.get("items"), visited)]
         else:
             _schema = schema.get("type")
+        
+        # Remove from visited to allow separate branches to process the same schema independently if needed
+        visited.remove(schema_id)
+        if _schema is None:
+            return schema
         return _schema
 
     def parse_file(self, file_path: str):
