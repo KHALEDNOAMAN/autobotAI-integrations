@@ -554,18 +554,13 @@ def executor(context):
             # Check if the response content is JSON
             if response.headers.get("Content-Type", "").startswith("application/json"):
                 try:
-                    try:
-                        return response.json() 
-                    except json.decoder.JSONDecodeError:
-                        # Handle multiple JSON objects separated by '\n'
-                        if "\n" in response.text:
-                            json_objects = response.text.strip().split("\n")
-                            return [json.loads(obj) for obj in json_objects if obj.strip()]
-                        else:
-                            raise ValueError("Unexpected JSON structure")
+                    return response.json()
                 except json.decoder.JSONDecodeError:
                     logger.error("Failed to decode JSON response")
-                    return {"abAI-client-error": "Invalid JSON response", "text": response.text}
+                    return {
+                        "abAI-client-error": "Invalid JSON response",
+                        "text": response.text,
+                    }
                 except ValueError:
                     logger.error("Unexpected JSON structure")
                     return {
@@ -578,6 +573,8 @@ def executor(context):
                     results = response.json()
                     return results
                 except json.decoder.JSONDecodeError:
+                    if response.text == "None" or not response.text or response.text == "null":
+                        return []
                     logger.error("Response is not JSON")
                     return {
                         "abAI-client-error": "Non-JSON response",

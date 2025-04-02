@@ -121,7 +121,7 @@ class OpensearchService(BaseService):
                     pool_maxsize=20,
                 )
             elif self.integration.auth_type == OpensearchAuthTypes.DIRECT_AUTH.value:
-                if self.connection_type == ConnectionTypes.AGENT:
+                if self.integration.connection_type == ConnectionTypes.AGENT:
                     return {"success": True}
                 auth = (self.integration.username, self.integration.password)
                 client = OpenSearch(

@@ -41,6 +41,8 @@ class OpenApiParser:
             return parameter["type"]
         elif parameter.get('in', "query") == "path":
             return "string"
+        else:
+            return "object"
 
     def _extract_parameter_default(self, parameter: dict):
         """parses the data type of the parameter"""
@@ -90,12 +92,17 @@ class OpenApiParser:
             for parameter in method_details["parameters"]:
                 parameter = self._resolve_reference(parameter)
                 try:
+                    parameter_type = self._extract_parameter_type(parameter)
+                    if isinstance(parameter_type ,list):
+                        parameter_type = parameter_type[0]
                     parameters_list.append(
-                        OpenAPIPathParams(**{
-                            "type": self._extract_parameter_type(parameter),
-                            "values": self._extract_parameter_default(parameter),
-                            **parameter,
-                        })
+                        OpenAPIPathParams(
+                            **{
+                                "type": parameter_type,
+                                "values": self._extract_parameter_default(parameter),
+                                **parameter,
+                            }
+                        )
                     )
                 except Exception as e:
                     print(e)
