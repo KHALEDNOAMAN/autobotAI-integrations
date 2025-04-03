@@ -36,6 +36,7 @@ class IntegrationSchema(BaseModel):
     indexFailures: int = 0
     isUnauthorized: bool = False
     lastUsed: Optional[str] = None
+    dependent_integration_id:  Optional[str] = None # required when one integration is derived from another
     resource_type: str = 'integration'
 
     def __init__(self, **kwargs: Any):

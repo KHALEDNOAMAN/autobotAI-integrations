@@ -65,7 +65,7 @@ class OpensearchIntegration(BaseSchema):
         elif dependency.get("cspName") == "linux":
             self.connection_type = ConnectionTypes.AGENT
             self.agent_ids = dependency.get("agent_ids")
-            self.externalId = dependency.get("accountId")
+            self.dependent_integration_id = dependency.get("accountId")
 
     @field_validator("host_url", mode="before")
     @classmethod
