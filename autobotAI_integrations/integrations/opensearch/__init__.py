@@ -1,9 +1,10 @@
 import base64
 from enum import Enum
 from typing import List, Optional, Type, Union
+from urllib.parse import urlparse, urlunparse
 
 import boto3
-from pydantic import Field, field_validator
+from pydantic import Field, field_validator, model_validator
 from autobotAI_integrations import BaseService
 from autobotAI_integrations.integration_schema import ConnectionTypes
 from autobotAI_integrations.models import (
@@ -33,7 +34,7 @@ class OpensearchIntegration(BaseSchema):
     host_url: str = Field(default=None, description="base url", exclude=True)
 
     # On-premise Opensearch
-    port: int = 443
+    port: Optional[int] = Field(default=None, exclude=True)
     username: Optional[str] = Field(default=None, exclude=True)
     password: Optional[str] = Field(default=None, exclude=True)
 
@@ -70,6 +71,38 @@ class OpensearchIntegration(BaseSchema):
     @classmethod
     def validate_host_url(cls, host_url):
         return host_url.strip("/")
+
+    @model_validator(mode="before")
+    @classmethod
+    def validate_host_and_port(cls, values):
+        host_url = values.get("host_url")
+        port = values.get("port")
+
+        if host_url:
+
+            parsed_url = urlparse(host_url)
+
+            if not port and parsed_url.port:
+                values["port"] = parsed_url.port
+
+            # Remove port from host_url if it exists
+            cleaned_netloc = parsed_url.hostname
+            cleaned_url = urlunparse(
+                (
+                    parsed_url.scheme,
+                    cleaned_netloc,
+                    parsed_url.path,
+                    parsed_url.params,
+                    parsed_url.query,
+                    parsed_url.fragment,
+                )
+            )
+            values["host_url"] = cleaned_url
+
+            if not parsed_url.scheme or not parsed_url.netloc:
+                raise ValueError("Invalid host_url format")
+
+        return values
 
 
 class OpensearchService(BaseService):
@@ -273,14 +306,7 @@ class OpensearchService(BaseService):
                             "name": "host_url",
                             "type": "text/url",
                             "label": "Host URL",
-                            "placeholder": "Enter the host URL",
-                            "required": True,
-                        },
-                        {
-                            "name": "port",
-                            "type": "number",
-                            "label": "Port",
-                            "placeholder": "Enter the port number (e.g., 9200)",
+                            "placeholder": "Enter the OpenSearch host URL:PORT (e.g., http://localhost:9200)",
                             "required": True,
                         },
                         {
