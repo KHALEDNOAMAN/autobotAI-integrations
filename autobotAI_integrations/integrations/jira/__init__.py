@@ -13,7 +13,6 @@ from autobotAI_integrations import (
     PayloadTask,
     SDKClient,
 )
-from jira import JIRA
 
 from autobotAI_integrations.models import IntegrationCategory
 
@@ -42,6 +41,7 @@ class JiraService(BaseService):
 
     def _test_integration(self):
         try:
+            from jira import JIRA
             jira_cloud_options = {"server": self.integration.base_url}
             jira_cloud = JIRA(
                 options=jira_cloud_options,
@@ -57,6 +57,7 @@ class JiraService(BaseService):
 
     def get_integration_specific_details(self) -> dict:
         try:
+            from jira import JIRA
             jira_cloud_options = {"server": self.integration.base_url}
             jira_cloud = JIRA(
                 options=jira_cloud_options,
