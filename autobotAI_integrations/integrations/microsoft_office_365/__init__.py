@@ -1,11 +1,11 @@
-from typing import Type, Union
+from typing import List, Optional, Type, Union
 from pydantic import Field
 
 from autobotAI_integrations import BaseService, list_of_unique_elements, PayloadTask
-from autobotAI_integrations.models import *
+from autobotAI_integrations.models import BaseSchema, CLICreds, ConnectionInterfaces, IntegrationCategory, SDKClient, SDKCreds, SteampipeCreds
 
-import importlib, requests
-from azure.identity import ClientSecretCredential
+import importlib
+import requests
 
 
 class MicrosoftIntegration(BaseSchema):
@@ -135,6 +135,7 @@ class MicrosoftService(BaseService):
     def build_python_exec_combinations_hook(
         self, payload_task: PayloadTask, client_definitions: List[SDKClient]
     ) -> list:
+        from azure.identity import ClientSecretCredential
         credential = ClientSecretCredential(
             tenant_id=payload_task.creds.envs.get("AZURE_TENANT_ID"),
             client_id=payload_task.creds.envs.get("AZURE_CLIENT_ID"),
