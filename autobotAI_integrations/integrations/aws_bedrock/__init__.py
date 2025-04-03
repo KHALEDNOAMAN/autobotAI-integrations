@@ -17,10 +17,6 @@ from autobotAI_integrations import (
 from autobotAI_integrations.models import  CLICreds, ConnectionInterfaces, IntegrationCategory, BaseSchema, SDKClient, SDKCreds
 from autobotAI_integrations.utils.boto3_helper import Boto3Helper
 from autobotAI_integrations.utils.logging_config import logger
-from langchain_aws import BedrockLLM
-from pydantic_ai import Agent, Tool
-from pydantic_ai.models.bedrock import BedrockConverseModel
-from pydantic_ai.providers.bedrock import BedrockProvider
 
 
 class AWSBedrockIntegration(BaseSchema):
@@ -312,6 +308,7 @@ class AWSBedrockService(AIBaseService):
         #     service_name="bedrock-runtime",
         #     region_name=self.integration.region
         # )
+        from langchain_aws import BedrockLLM
 
         llm = BedrockLLM(
             region_name=self.integration.region,
@@ -322,8 +319,11 @@ class AWSBedrockService(AIBaseService):
         return llm
 
     def get_pydantic_agent(
-        self, model: str, tools: List[Tool], system_prompt: str, options: dict = {}
+        self, model: str, tools, system_prompt: str, options: dict = {}
     ):
+        from pydantic_ai.models.bedrock import BedrockConverseModel
+        from pydantic_ai.providers.bedrock import BedrockProvider
+        from pydantic_ai.agent import Agent
         credentials = self._temp_credentials()
         model = BedrockConverseModel(
             model_name=model,
