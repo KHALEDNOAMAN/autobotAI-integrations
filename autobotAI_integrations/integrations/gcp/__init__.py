@@ -1,23 +1,18 @@
 import uuid
-from typing import Dict, List, Type, Union
+from typing import List, Optional, Type, Union
 import importlib
 from pathlib import Path
 import json
 
-from google.oauth2 import service_account
-from pydantic import Field, field_validator
+from pydantic import BaseModel, ConfigDict, Field, field_validator
 from functools import wraps
 
 from autobotAI_integrations import list_of_unique_elements
-from autobotAI_integrations.models import *
-from autobotAI_integrations.models import List
-from autobotAI_integrations import BaseSchema, SteampipeCreds, RestAPICreds, SDKCreds, CLICreds, \
+
+from autobotAI_integrations import BaseSchema, SteampipeCreds, SDKCreds, CLICreds, \
     BaseService, ConnectionInterfaces, PayloadTask, SDKClient
 
-from google.cloud.storage import Client as StorageClient
-from google.oauth2.service_account import Credentials
-from google.api_core.exceptions import Forbidden, BadRequest
-from google.auth.exceptions import RefreshError
+from autobotAI_integrations.models import IntegrationCategory
 import os
 import pydantic
 
@@ -94,6 +89,11 @@ class GCPService(BaseService):
 
     def _test_integration(self) -> dict:
         try:
+            from google.cloud.storage import Client as StorageClient # type: ignore
+            from google.oauth2.service_account import Credentials # type: ignore
+            from google.api_core.exceptions import Forbidden, BadRequest # type: ignore
+            from google.auth.exceptions import RefreshError # type: ignore
+
             gcp_creds = self.integration.credentials.model_dump()
             scopes = ["https://www.googleapis.com/auth/cloud-platform"]
             try:
@@ -174,7 +174,7 @@ class GCPService(BaseService):
     def build_python_exec_combinations_hook(
             self, payload_task: PayloadTask, client_definitions: List[SDKClient]
     ) -> list:
-
+        from google.oauth2 import service_account # type: ignore
         clients_classes = dict()
         credentials_dict = GCPCredentials.model_validate_json(
             json.loads(payload_task.creds.envs["GOOGLE_APPLICATION_CREDENTIALS"])

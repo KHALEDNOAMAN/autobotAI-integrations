@@ -6,7 +6,9 @@ from pydantic import Field
 
 from autobotAI_integrations import BaseSchema, SteampipeCreds, RestAPICreds, SDKCreds, CLICreds, \
     BaseService, ConnectionInterfaces, PayloadTask, SDKClient
+
 from autobotAI_integrations.models import IntegrationCategory
+
 
 class GitGuardianIntegration(BaseSchema):
     base_url: str = "https://api.gitguardian.com/v1/"
@@ -20,7 +22,6 @@ class GitGuardianIntegration(BaseSchema):
 
 
 class GitGuardianService(BaseService):
-
     def __init__(self, ctx: dict, integration: Union[GitGuardianIntegration, dict]):
         """
         Integration should have all the data regarding the integration
@@ -71,9 +72,12 @@ class GitGuardianService(BaseService):
         except Exception as e:
             return {"success": False, "error": str(e)}
 
-    def build_python_exec_combinations_hook(self, payload_task: PayloadTask,
-                                            client_definitions: List[SDKClient]) -> list:
-        gitguardian = importlib.import_module(client_definitions[0].import_library_names[0], package=None)
+    def build_python_exec_combinations_hook(
+        self, payload_task: PayloadTask, client_definitions: List[SDKClient]
+    ) -> list:
+        gitguardian = importlib.import_module(
+            client_definitions[0].import_library_names[0], package=None
+        )
         return [
             {
                 "clients": {
@@ -95,8 +99,13 @@ class GitGuardianService(BaseService):
   plugin = "francois2metz/gitguardian"
 }
 """
-        return SteampipeCreds(envs=envs, plugin_name="francois2metz/gitguardian", connection_name="gitguardian",
-                              conf_path=conf_path, config=config)
+        return SteampipeCreds(
+            envs=envs,
+            plugin_name="francois2metz/gitguardian",
+            connection_name="gitguardian",
+            conf_path=conf_path,
+            config=config,
+        )
 
     def generate_rest_api_creds(self) -> RestAPICreds:
         headers = {

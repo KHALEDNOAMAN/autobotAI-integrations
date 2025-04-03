@@ -1,13 +1,19 @@
-import uuid
-from typing import List, Type, Union
+from typing import List, Optional, Type, Union
 import importlib
-import platform, subprocess
+import platform
+import subprocess
 
 from autobotAI_integrations import list_of_unique_elements
-from autobotAI_integrations.models import *
-from autobotAI_integrations.models import List
-from autobotAI_integrations import BaseSchema, SDKCreds, CLICreds, \
-    BaseService, ConnectionInterfaces, PayloadTask, SDKClient
+from autobotAI_integrations import (
+    BaseSchema,
+    SDKCreds,
+    CLICreds,
+    BaseService,
+    ConnectionInterfaces,
+    PayloadTask,
+    SDKClient,
+)
+from autobotAI_integrations.models import IntegrationCategory
 
 
 class GitIntegration(BaseSchema):
@@ -18,7 +24,6 @@ class GitIntegration(BaseSchema):
 
 
 class GitService(BaseService):
-
     def __init__(self, ctx: dict, integration: Union[GitIntegration, dict]):
         """
         Integration should have all the data regarding the integration
@@ -31,16 +36,15 @@ class GitService(BaseService):
         if not self._is_git_installed():
             self._install_git_with_python()
             if not self._is_git_installed():
-                return {"success": False, "error": str("git is not installed on machine")}
+                return {
+                    "success": False,
+                    "error": str("git is not installed on machine"),
+                }
         return {"success": True}
 
     @staticmethod
     def get_forms():
-        return {
-            "label": "Git Integration",
-            "type": "form",
-            "children": []
-        }
+        return {"label": "Git Integration", "type": "form", "children": []}
 
     @staticmethod
     def get_schema() -> Type[BaseSchema]:
@@ -60,7 +64,12 @@ class GitService(BaseService):
         """Checks if Git is installed on the system."""
         try:
             # Attempt to run the git version command
-            subprocess.run(["git", "--version"], check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+            subprocess.run(
+                ["git", "--version"],
+                check=True,
+                stdout=subprocess.DEVNULL,
+                stderr=subprocess.DEVNULL,
+            )
             return True
         except subprocess.CalledProcessError:
             return False
@@ -69,43 +78,53 @@ class GitService(BaseService):
         """Installs Git using the appropriate package manager based on OS."""
         os_name = platform.system()
         if os_name == "Linux":
-            package_manager = subprocess.check_output(
-                "which apt-get || which yum || which dnf",
-                shell=True
-            ).decode("utf-8").strip()
-            if package_manager:
-                subprocess.run(
-                    [package_manager.split()[0],"install", "git"]
+            package_manager = (
+                subprocess.check_output(
+                    "which apt-get || which yum || which dnf", shell=True
                 )
+                .decode("utf-8")
+                .strip()
+            )
+            if package_manager:
+                subprocess.run([package_manager.split()[0], "install", "git"])
             else:
                 print("Error: Could not identify a suitable package manager for Linux.")
         elif os_name == "Darwin":  # macOS
-            if subprocess.run(
-                ["brew", "--version"],
-                check=True,
-                stdout=subprocess.DEVNULL,
-                stderr=subprocess.DEVNULL
-            ) == 0:
+            if (
+                subprocess.run(
+                    ["brew", "--version"],
+                    check=True,
+                    stdout=subprocess.DEVNULL,
+                    stderr=subprocess.DEVNULL,
+                )
+                == 0
+            ):
                 subprocess.run(["brew", "install", "git"])
             else:
-                print("Error: Could not install Git using Homebrew. Consider manual installation.")
+                print(
+                    "Error: Could not install Git using Homebrew. Consider manual installation."
+                )
         else:
-            print(f"Warning: Installing Git on {os_name} is not supported through this script. Consider manual installation.")
+            print(
+                f"Warning: Installing Git on {os_name} is not supported through this script. Consider manual installation."
+            )
 
     def build_python_exec_combinations_hook(
-            self, payload_task: PayloadTask, client_definitions: List[SDKClient]
+        self, payload_task: PayloadTask, client_definitions: List[SDKClient]
     ) -> list:
         if not self._is_git_installed():
             self._install_git_with_python()
 
-        client = importlib.import_module(client_definitions[0].import_library_names[0], package=None)
+        client = importlib.import_module(
+            client_definitions[0].import_library_names[0], package=None
+        )
         return [
             {
                 "clients": {
                     "git": client,
                 },
                 "params": self.prepare_params(payload_task.params),
-                "context": payload_task.context
+                "context": payload_task.context,
             }
         ]
 

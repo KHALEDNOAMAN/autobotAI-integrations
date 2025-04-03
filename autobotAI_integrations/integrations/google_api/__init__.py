@@ -1,23 +1,20 @@
 import re
-from typing import List, Type, Union
+from typing import List, Optional, Type, Union
 import importlib
 import json
 
 from pydantic import field_validator
 import urllib.parse
 
-from autobotAI_integrations.models import *
-from autobotAI_integrations.models import List, SDKCreds
+from autobotAI_integrations.models import ConnectionInterfaces, SDKCreds
 from autobotAI_integrations import (
     BaseSchema,
     BaseService,
-    SDKCreds,
     SteampipeCreds,
     PayloadTask,
     SDKClient,
 )
 
-from google.oauth2.service_account import Credentials
 from autobotAI_integrations.integrations.gcp import GCPCredentials, GCPService, GCPIntegration
 import uuid
 
@@ -153,7 +150,7 @@ class GoogleAPIsService(GCPService, BaseService):
     def build_python_exec_combinations_hook(
         self, payload_task: PayloadTask, client_definitions: List[SDKClient]
     ) -> list:
-
+        from google.oauth2.service_account import Credentials
         clients_classes = dict()
         credentials_dict = GCPCredentials.model_validate_json(
             json.loads(payload_task.creds.envs["GOOGLE_APPLICATION_CREDENTIALS"])
