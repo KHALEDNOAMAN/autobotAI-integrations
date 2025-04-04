@@ -238,12 +238,20 @@ def executor(context):
                 logger.info(f"Installing {client.pip_package_names} with python_exec {python_exec} and exec_mode {exec_mode}")
                 try:
                     # prevents the reinstallation of the same package for different tasks
-                    subprocess.check_call(
-                        [
-                            python_exec, "-m", "pip", "show", " ".join(client.pip_package_names)
-                        ],
-                        env={**os.environ, "PYTHONPATH": f"/tmp/{idx}/"}
-                    )
+                    if exec_mode == "frozen":
+                        subprocess.check_call(
+                            [
+                                python_exec, "-m", "pip", "show", " ".join(client.pip_package_names)
+                            ],
+                            env={**os.environ, "PYTHONPATH": f"/tmp/{idx}/"}
+                        )
+                        sys.path.insert(1,  f"/tmp/{idx}/") 
+                    else:
+                        subprocess.check_call(
+                            [
+                                "pip", "show", " ".join(client.pip_package_names)
+                            ],
+                        )       
                     logger.info(f"Requirements already installed for {client.pip_package_names}")
                 except subprocess.CalledProcessError:
                     subprocess.check_call(
