@@ -245,12 +245,13 @@ def executor(context):
                             ],
                             env={**os.environ, "PYTHONPATH": f"/tmp/{idx}/"}
                         )
+                        sys.path.insert(1,  f"/tmp/{idx}/") 
                     else:
                         subprocess.check_call(
                             [
                                 "pip", "show", " ".join(client.pip_package_names)
                             ],
-                        )    
+                        )       
                     logger.info(f"Requirements already installed for {client.pip_package_names}")
                 except subprocess.CalledProcessError:
                     subprocess.check_call(
