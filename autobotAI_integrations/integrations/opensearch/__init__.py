@@ -271,6 +271,7 @@ class OpensearchService(BaseService):
                             "name": "integration_id",
                             "type": "select",
                             "dataType": "integration",
+                            "integrationType": "aws",
                             "label": "Integration Id",
                             "placeholder": "Enter Integration Id",
                             "description": "Select Account you want to install this integration",
