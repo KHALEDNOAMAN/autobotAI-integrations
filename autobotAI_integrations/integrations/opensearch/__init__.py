@@ -84,6 +84,12 @@ class OpensearchIntegration(BaseSchema):
 
             if not port and parsed_url.port:
                 values["port"] = parsed_url.port
+            elif not port:
+                # Set default ports based on scheme
+                if parsed_url.scheme == 'https':
+                    values["port"] = 443
+                elif parsed_url.scheme == 'http':
+                    values["port"] = 80
 
             # Remove port from host_url if it exists
             cleaned_netloc = parsed_url.hostname
