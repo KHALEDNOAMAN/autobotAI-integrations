@@ -350,7 +350,7 @@ class AWSBedrockService(AIBaseService):
         client = self._get_aws_client("bedrock-runtime")
         try:
             kwargs = {"modelId": model, "body": request}
-            if params != "get_code" and params != "approval":
+            if params != "get_code" and params != "approval" and params!="chat":
                 kwargs["accept"] = "application/json"
             response = client.invoke_model(**kwargs)    
                 
