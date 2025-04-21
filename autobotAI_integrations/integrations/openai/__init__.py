@@ -70,6 +70,11 @@ class OpenAIService(AIBaseService):
             return {
                 "integration_id": self.integration.accountId,
                 "models": model_names,
+                "embedding_models": [
+                    "text-embedding-3-small",
+                    "text-embedding-3-large",
+                    "text-embedding-ada-002",
+                ],
             }
         except Exception as e:
             return {"error": "Details can not be fetched"}

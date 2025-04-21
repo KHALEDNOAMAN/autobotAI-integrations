@@ -125,6 +125,11 @@ class AWSBedrockService(AIBaseService):
                 "integration_id": self.integration.accountId,
                 "models": available_models_list,
                 "available_regions": regions,
+                "embedding_models": [
+                    "cohere.embed-english-v3",
+                    "amazon.titan-embed-text-v2:0",
+                    "cohere.embed-multilingual-v3",
+                ],
             }
 
         except Exception as e:
