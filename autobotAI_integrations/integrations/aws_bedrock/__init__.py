@@ -340,6 +340,24 @@ class AWSBedrockService(AIBaseService):
             ),
         )
         return Agent(model, system_prompt=system_prompt, tools=tools, **options)
+    
+    def load_embedding_model(self, model_name: str):
+        """
+        Returns Langchaain Embedding model object and model dimensions as tuple
+        """
+        from langchain_aws.embeddings import BedrockEmbeddings
+        credentials = self._temp_credentials()
+        embedding_model = BedrockEmbeddings(
+            model_id=model_name,
+            aws_access_key_id=credentials["AWS_ACCESS_KEY_ID"],
+            aws_secret_access_key=credentials["AWS_SECRET_ACCESS_KEY"],
+            aws_session_token=credentials["AWS_SESSION_TOKEN"],
+            region_name=self.integration.region,
+        )
+        query = "This is my query"
+        result = embedding_model.embed_query(query)
+        dimensions = len(result)
+        return embedding_model, dimensions
 
     def prompt_executor(
         self,

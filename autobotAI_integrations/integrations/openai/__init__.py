@@ -205,6 +205,19 @@ class OpenAIService(AIBaseService):
             temperature=0, model_name=model, openai_api_key=self.integration.api_key
         )
         return llm
+    
+    def load_embedding_model(self, model_name: str):
+        """
+        Returns Langchaain Embedding model object and model dimensions as tuple
+        """
+        from langchain_openai import OpenAIEmbeddings
+        embedding_model = OpenAIEmbeddings(
+            model=model_name, openai_api_key=self.integration.api_key
+        )
+        query = "This is my query"
+        result = embedding_model.embed_query(query)
+        dimensions = len(result)
+        return embedding_model, dimensions
 
     def prompt_executor(
         self,
