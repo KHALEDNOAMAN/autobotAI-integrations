@@ -92,26 +92,18 @@ class AWSBedrockService(AIBaseService):
 
     def get_integration_specific_details(self) -> dict:
         try:
+            # TODO: SOME MODEL USES INFERENCE PROFILE, WHICH REQUIRES ARN OR ID, NOT MODEL ID
+            # HANDLE PROPERLY TO MAKE THOSE MODEL AVAILABLE
             available_models = {
                 model["modelId"]
                 for model in self._get_aws_client("bedrock").list_foundation_models()[
                     "modelSummaries"
                 ]
+                # MODEL WHICH REPLIES IN TEXT
+                if "TEXT" in model["outputModalities"]
+                # MODEL WHICH ARE AVAILABLE ON DEMAND (NOT INFERENCE OR PROVISIONED)
+                and "ON_DEMAND" in model["inferenceTypesSupported"]
             }
-
-            models_to_check = {
-                "amazon.titan-text-express-v1",
-                "meta.llama3-8b-instruct-v1:0",
-                "meta.llama3-70b-instruct-v1:0",
-                "meta.llama3-3-70b-instruct-v1:0",
-                "meta.llama3-2-11b-instruct-v1:0",
-                "meta.llama3-2-1b-instruct-v1:0",
-                "meta.llama3-2-3b-instruct-v1:0",
-                "meta.llama3-2-90b-instruct-v1:0",
-                "mistral.mistral-7b-instruct-v0:2",
-            }
-
-            available_models_list = list(models_to_check.intersection(available_models))
 
             regions = [
                 region["RegionName"]
@@ -123,7 +115,7 @@ class AWSBedrockService(AIBaseService):
 
             return {
                 "integration_id": self.integration.accountId,
-                "models": available_models_list,
+                "models": available_models,
                 "available_regions": regions,
                 "embedding_models": [
                     "cohere.embed-english-v3",
