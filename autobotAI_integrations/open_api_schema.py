@@ -8,6 +8,7 @@ from autobotAI_integrations.payload_schema import OpenAPIPathParams
 class OpenAPIAction(BaseModel):
     resource_type: str = "action"
     name: str
+    description: str = ""
     root_user_id: str = None
     user_id: str = None
     code: str

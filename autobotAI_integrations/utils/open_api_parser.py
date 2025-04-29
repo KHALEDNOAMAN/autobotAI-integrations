@@ -304,7 +304,9 @@ class OpenApiParser:
             actions.append(
                 OpenAPIAction(
                     name=action_name,
-                    description=path.description,
+                    description=path.description
+                    if path.description
+                    else path.summary,
                     code=path.path_url,
                     integration_type=integration_type,
                     parameters_definition=parameters,
