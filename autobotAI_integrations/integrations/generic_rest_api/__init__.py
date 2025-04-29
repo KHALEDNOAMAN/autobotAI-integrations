@@ -1,7 +1,7 @@
 import base64
 from enum import Enum
 from typing import Optional, Type, Union
-
+from urllib.parse import urljoin, urlparse
 from pydantic import Field
 import requests
 from autobotAI_integrations import BaseService
@@ -25,6 +25,7 @@ class GenericRestAPIIntegration(BaseSchema):
     # No Auth
     api_url: str
     auth_type: Union[APIAuthType, str] = APIAuthType.NO_AUTH
+    healthcheck_get_api_path: Optional[str] = Field(default=None, exclude=True)
 
     # Bearer Token
     token: Optional[str] = Field(default=None, description="Bearer token", exclude=True)
@@ -58,6 +59,9 @@ class GenericRestAPIService(BaseService):
 
     def _test_integration(self) -> dict:
         try:
+            urlparse(self.integration.api_url)
+            if self.integration.healthcheck_get_api_path is None:  
+                return {"success": True}
             parameters = {}
             if self.integration.auth_type == APIAuthType.BEARER_TOKEN.value:
                 parameters["headers"] = {
@@ -76,7 +80,8 @@ class GenericRestAPIService(BaseService):
                     parameters["params"] = {
                         self.integration.api_key_name: self.integration.api_key_value
                     }
-            response = requests.get(url=self.integration.api_url, **parameters)
+            test_url = self.integration.api_url.rstrip('/') + '/' + self.integration.healthcheck_get_api_path.lstrip('/')
+            response = requests.get(url=test_url, **parameters)
             response.raise_for_status()
             if response.status_code == 200 or response.status_code == 201:
                 return {"success": True}
@@ -136,6 +141,14 @@ class GenericRestAPIService(BaseService):
                             "placeholder": "Bearer Token",
                             "required": True,
                         },
+                        {
+                            "name": "healthcheck_get_api_path",
+                            "type": "text",
+                            "label": "GET API Path for Testing",
+                            "placeholder": '/healthcheck',
+                            "description": "Specify a GET API path to test the integration. If left empty, no periodic verification will be performed.",
+                            "required": False,
+                        }
                     ],
                 },
                 {
@@ -164,6 +177,14 @@ class GenericRestAPIService(BaseService):
                             "placeholder": "Password",
                             "required": True,
                         },
+                        {
+                            "name": "healthcheck_get_api_path",
+                            "type": "text",
+                            "label": "GET API Path for Testing",
+                            "placeholder": '/healthcheck',
+                            "description": "Specify a GET API path to test the integration. If left empty, no periodic verification will be performed.",
+                            "required": False,
+                        }
                     ],
                 },
                 {
@@ -203,6 +224,14 @@ class GenericRestAPIService(BaseService):
                             ],
                             "required": True,
                         },
+                        {
+                            "name": "healthcheck_get_api_path",
+                            "type": "text",
+                            "label": "GET API Path for Testing",
+                            "placeholder": '/healthcheck',
+                            "description": "Specify a GET API path to test the integration. If left empty, no periodic verification will be performed.",
+                            "required": False,
+                        }
                     ],
                 },
             ],

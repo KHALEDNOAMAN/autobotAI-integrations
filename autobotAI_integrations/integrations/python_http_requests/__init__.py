@@ -1,6 +1,7 @@
 import json
 from typing import List, Optional, Type, Union, Dict
 
+from urllib.parse import urljoin, urlparse
 from pydantic import Field, field_validator
 import requests
 from autobotAI_integrations import BaseService
@@ -18,6 +19,7 @@ from .http_requests_client import HTTPRequestClient
 class PythonHTTPRequestIntegration(BaseSchema):
     api_url: str = Field(default=None, exclude=True)
     headers_json: Dict[str, str] = Field(default=dict(), exclude=True)
+    healthcheck_get_api_path: Optional[str] = Field(default=None, exclude=True)
     ignore_ssl: bool = False
     name: Optional[str] = "Python HTTP REST API"
     category: Optional[str] = IntegrationCategory.OTHERS.value
@@ -66,12 +68,14 @@ class PythonHTTPService(BaseService):
 
     def _test_integration(self) -> dict:
         try:
-            response = requests.get(
-                self.integration.api_url,
+            urlparse(self.integration.api_url)
+            if self.integration.healthcheck_get_api_path is None:  
+                return {"success": True}
+            test_url = self.integration.api_url.rstrip('/') + '/' + self.integration.healthcheck_get_api_path.lstrip('/')
+            response = requests.get(test_url,
                 headers=self.integration.headers_json,
                 verify=self.integration.ignore_ssl,
             )
-
             if response.status_code == 200:
                 return {"success": True}
             else:
@@ -101,28 +105,38 @@ class PythonHTTPService(BaseService):
                     "name": "api_url",
                     "type": "text/url",
                     "label": "API URL",
-                    "placeholder": "default: HTTP Integration",
-                    "description": "Enter your domain api url",
+                    "placeholder": "e.g., https://api.example.com",
+                    "description": "Enter the base URL of your API endpoint.",
                     "required": True,
                 },
                 {
                     "name": "ignore_ssl",
                     "type": "select",
-                    "label": "Ignore SSL ",
+                    "label": "Ignore SSL",
                     "placeholder": "default: 'False'",
+                    "description": "Select whether to ignore SSL certificate validation.",
                     "options": [
-                        {"label": "True", "value": "True"},
-                        {"label": "False", "value": "False"},
+                    {"label": "True", "value": "True"},
+                    {"label": "False", "value": "False"},
                     ],
                     "required": False,
                 },
                 {
                     "name": "headers_json",
                     "type": "textarea",
-                    "label": "Header KV",
-                    "placeholder": r'{"Authorization": "Bearer ABC" }',
+                    "label": "Headers (Key-Value)",
+                    "placeholder": r'{"Authorization": "Bearer ABC"}',
+                    "description": "Provide the request headers in JSON format.",
                     "required": True,
                 },
+                {
+                    "name": "healthcheck_get_api_path",
+                    "type": "text",
+                    "label": "GET API Path for Testing",
+                    "placeholder": r'/healthcheck',
+                    "description": "Specify a GET API path to test the integration. If left empty, no periodic verification will be performed.",
+                    "required": False,
+                }
             ],
         }
 
