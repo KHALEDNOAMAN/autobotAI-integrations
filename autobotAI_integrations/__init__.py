@@ -536,9 +536,8 @@ def executor(context):
         params: Optional[Dict[str, Any]] = None,
         json_data: Optional[Dict[str, Any]] = None,
         timeout: int = 10,
-        verify_ssl: bool = True
+        verify_ssl: bool = True,
     ) -> Union[Dict[str, Any], List[Dict[str, Any]]]:
-
         logger.info(f"Making {method} request to {url}")
         logger.debug(f"Headers: {headers}, Params: {params}, JSON: {json_data}")
 
@@ -550,7 +549,7 @@ def executor(context):
                 params=params if params else None,
                 json=json_data if json_data else None,
                 timeout=timeout,
-                verify=verify_ssl
+                verify=verify_ssl,
             )
 
             logger.info(f"Response Status Code: {response.status_code}")
@@ -559,8 +558,18 @@ def executor(context):
             # Check for HTTP errors
             response.raise_for_status()
 
-            # Check if the response content is JSON
-            if response.headers.get("Content-Type", "").startswith("application/json"):
+            # Handle no content responses (204)
+            if response.status_code == 204:
+                return {}
+
+            # If response is empty but successful
+            if not response.content:
+                return {}
+
+            content_type = response.headers.get("Content-Type", "").lower()
+
+            # Check if the response content is JSON (more flexible check)
+            if "application/json" in content_type:
                 try:
                     return response.json()
                 except json.decoder.JSONDecodeError:
@@ -578,14 +587,25 @@ def executor(context):
             else:
                 # Handle non-JSON responses
                 try:
-                    results = response.json()
-                    return results
-                except json.decoder.JSONDecodeError:
-                    if response.text == "None" or not response.text or response.text == "null":
-                        return []
-                    logger.error("Response is not JSON")
+                    # Try to parse as JSON even if content-type is not JSON
+                    # (some APIs might send incorrect content-type)
+                    if response.text and response.text.strip():
+                        try:
+                            return response.json()
+                        except json.decoder.JSONDecodeError:
+                            pass
+
+                    # Handle empty or null responses
+                    if not response.text or response.text.strip() in ["None", "null"]:
+                        return {}
+
+                    # If it's not JSON and not empty, return as text
+                    return {"content": response.text, "content_type": content_type}
+
+                except Exception as e:
+                    logger.error(f"Error processing response: {str(e)}")
                     return {
-                        "abAI-client-error": "Non-JSON response",
+                        "abAI-client-error": "Error processing response",
                         "text": response.text,
                     }
 
@@ -596,6 +616,10 @@ def executor(context):
         except requests.exceptions.ConnectionError:
             logger.error("Connection error occurred")
             return {"abAI-client-error": "Connection error"}
+
+        except requests.exceptions.TooManyRedirects:
+            logger.error("Too many redirects")
+            return {"abAI-client-error": "Too many redirects"}
 
         except requests.exceptions.RequestException as e:
             logger.error(f"Request failed: {e}")
@@ -635,6 +659,13 @@ def executor(context):
                 verify_ssl=payload_task.creds.verify_ssl,
             )
             logger.debug(f"Response: {response}")
+
+            # In the response handling section:
+            if isinstance(response, dict) and not response:
+                response = {
+                    "status": "success",
+                    "message": "Operation completed successfully",
+                }
 
             if isinstance(response, dict) and response.get("abAI-client-error"):
                 errors.append(
