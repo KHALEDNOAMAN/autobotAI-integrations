@@ -104,7 +104,6 @@ class AWSBedrockService(AIBaseService):
                 # MODEL WHICH ARE AVAILABLE ON DEMAND (NOT INFERENCE OR PROVISIONED)
                 and "ON_DEMAND" in model["inferenceTypesSupported"]
             }
-
             regions = [
                 region["RegionName"]
                 for region in self._get_aws_client("ec2").describe_regions()["Regions"]
