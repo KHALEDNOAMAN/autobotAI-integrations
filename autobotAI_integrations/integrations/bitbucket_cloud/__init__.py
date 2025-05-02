@@ -75,33 +75,33 @@ class BitBucketCloudService(BaseService):
     @staticmethod
     def get_forms():
         return {
-            "label": "BitbucketCloud",
+            "label": "Bitbucket Cloud",
             "type": "form",
             "children": [
                 {
                     "name": "base_url",
                     "type": "text/url",
-                    "label": "BitbucketCloud Base URL",
-                    "placeholder": "Enter Base URL default: https://api.bitbucketCloud.com",
-                    "description": "BitbucketCloud Base URL if Using Enterprise Version",
+                    "label": "Base URL",
+                    "placeholder": "e.g., https://api.bitbucket.org/2.0 (default)",
+                    "description": "Specify the Bitbucket Cloud API endpoint. Use a custom URL only if you're connecting to a Bitbucket Enterprise instance.",
                     "required": False,
                 },
                 {
                     "name": "username",
                     "type": "text",
-                    "label": "BitbucketCloud Username",
-                    "placeholder": "Enter your BitbucketCloud username",
-                    "description": "Your BitbucketCloud username for authentication",
+                    "label": "Username",
+                    "placeholder": "e.g., your Bitbucket Cloud username",
+                    "description": "The Bitbucket Cloud account username used for API authentication.",
                     "required": True,
                 },
                 {
                     "name": "password",
-                    "type": "password",
-                    "label": "BitbucketCloud Password or App Password",
-                    "placeholder": "Enter your BitbucketCloud password or app password",
-                    "description": "Your BitbucketCloud password or app password for authentication",
+                    "type": "text/password",
+                    "label": "App Password",
+                    "placeholder": "Enter your Bitbucket App password",
+                    "description": "Provide an App password with 'account:read' permission. Required for authenticating your Bitbucket Cloud account securely.",
                     "required": True,
-                }
+                },
             ],
         }
 
