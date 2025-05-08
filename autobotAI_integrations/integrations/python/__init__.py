@@ -16,6 +16,7 @@ class Forms:
 
 
 class PythonIntegration(BaseSchema):
+    packages: Optional[str] = None
     category: Optional[str] = IntegrationCategory.OTHERS.value
     description: Optional[str] = (
         "Python is a programming language that lets you work more quickly and integrate your systems more effectively."
@@ -52,7 +53,20 @@ class PythonService(BaseService):
             "label": "Python",
             "type": "form",
             "children": [
-                {"label": "Base Integration Creator", "type": "form", "children": []}
+                {
+                    "label": "Base Integration Creator",
+                    "type": "form",
+                    "children": [
+                        {
+                            "name": "packages",
+                            "type": "textarea",
+                            "label": "Python Packages",
+                            "placeholder": "e.g.,\nrequests\npandas>=1.5.0\nnumpy",
+                            "description": "Provide the Python packages you want to use with this integration. You can paste the contents of your requirements.txt or list each package manually on a new line.",
+                            "required": False,
+                        }
+                    ],
+                }
             ],
         }
 
