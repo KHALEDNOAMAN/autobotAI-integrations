@@ -247,7 +247,7 @@ def executor(context):
             else:
                 logger.warning(f"User packages are not a valid string.")
 
-        logger.info(f"Integration: {integration.cspName}\nUser Packages: {user_packages}\nClient Defs: {client_definitions}")
+        logger.debug(f"Integration: {integration.cspName}\nUser Packages: {user_packages}\nClient Defs: {client_definitions}")
 
         # Collect all unique packages
         all_packages = set(user_packages)
