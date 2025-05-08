@@ -230,61 +230,64 @@ def executor(context):
                 raise RuntimeError("Python executable not found on the system.")
         else:
             python_exec = sys.executable
-            exec_mode = "source"  
-
+            exec_mode = "source"
 
         # Extract user packages for python integration
         user_packages = []
         integration = payload_task.context.integration
 
         if getattr(integration, "cspName", "").lower() == "python":
-            user_packages_raw = getattr(integration, "packages", "")
+            user_packages_raw = getattr(integration, "packages", None)
 
-            if isinstance(user_packages_raw, str):
+            if isinstance(user_packages_raw, str) and user_packages_raw.strip().lower() not in ("", "none", "null"):
                 user_packages = [
                     line.strip() for line in user_packages_raw.splitlines()
                     if line.strip() and not line.strip().startswith("#")
                 ]
             else:
-                logger.warning("User packages are not a valid string.")
+                logger.warning(f"User packages are not a valid string.")
 
-        for client in client_definitions:
-            if user_packages:
-                client.pip_package_names = list(set(client.pip_package_names or []) | set(user_packages))         
+        logger.info(f"Integration: {integration.cspName}\nUser Packages: {user_packages}\nClient Defs: {client_definitions}")
+
+        # Collect all unique packages
+        all_packages = set(user_packages)
+        if client_definitions:
+            for client in client_definitions:
+                if client.pip_package_names:
+                    all_packages.update(client.pip_package_names)
+
+        logger.info(f"All packages to install: {list(all_packages)}")
+        if not all_packages:
+            logger.info("No python packages to install.")
 
         # Installation dir by 'idx' to prevent packages co-interference
-        for idx, client in enumerate(client_definitions):
-            if client.pip_package_names and not set(client.pip_package_names).issubset(current_installation):
-                logger.info(f"Installing {client.pip_package_names} with python_exec {python_exec} and exec_mode {exec_mode}")
-                try:
-                    # prevents the reinstallation of the same package for different tasks
-                    if exec_mode == "frozen":
-                        subprocess.check_call(
-                            [
-                                python_exec, "-m", "pip", "show", " ".join(client.pip_package_names)
-                            ],
-                            env={**os.environ, "PYTHONPATH": f"/tmp/{idx}/"}
-                        )
-                        sys.path.insert(1,  f"/tmp/{idx}/") 
-                    else:
-                        subprocess.check_call(
-                            [
-                                "pip", "show", " ".join(client.pip_package_names)
-                            ],
-                        )       
-                    logger.info(f"Requirements already installed for {client.pip_package_names}")
-                except subprocess.CalledProcessError:
+        # install all collected python packages
+        for idx, package in enumerate(all_packages):
+            if package in current_installation:
+                continue
+
+            logger.info(f"Installing package '{package}' in /tmp/{idx}/")
+            try:
+                # prevents the reinstallation of the same package for different tasks
+                if exec_mode == "frozen":
                     subprocess.check_call(
-                        [
-                             python_exec, "-m",
-                            "pip", "install", " ".join(client.pip_package_names),
-                            "-t", f"/tmp/{idx}/", "--no-cache-dir", "--upgrade"
-                        ]
+                        [python_exec, "-m", "pip", "show", package],
+                        env={**os.environ, "PYTHONPATH": f"/tmp/{idx}/"}
                     )
-                    sys.path.insert(1,  f"/tmp/{idx}/")
-                    current_installation.update(client.pip_package_names)
-                except Exception as e:
-                    logger.exception(f"Error occurred while installing packages: {e}")
+                    sys.path.insert(1, f"/tmp/{idx}/")
+                else:
+                    subprocess.check_call(["pip", "show", package])
+                logger.info(f"Python package '{package}' already installed.")
+
+            except subprocess.CalledProcessError:
+                subprocess.check_call([
+                    python_exec, "-m", "pip", "install", package,
+                    "-t", f"/tmp/{idx}/", "--no-cache-dir", "--upgrade"
+                ])
+                sys.path.insert(1, f"/tmp/{idx}/")
+                current_installation.add(package)
+            except Exception as e:
+                logger.exception(f"Error occurred while installing python package '{package}': {e}")
 
         return self.build_python_exec_combinations_hook(payload_task, client_definitions)
 
