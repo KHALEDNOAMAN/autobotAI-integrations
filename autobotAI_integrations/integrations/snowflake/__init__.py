@@ -14,7 +14,6 @@ from autobotAI_integrations import (
 )
 
 from autobotAI_integrations.models import IntegrationCategory
-from snowflake.connector import connect
 
 
 class SnowflakeIntegration(BaseSchema):
@@ -46,6 +45,7 @@ class SnowflakeService(BaseService):
 
     def _test_integration(self):
         try:
+            from snowflake.connector import connect
             connection = connect(
                 user=self.integration.username,
                 password=self.integration.password,

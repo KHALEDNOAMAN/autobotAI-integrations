@@ -9,7 +9,7 @@ from autobotAI_integrations import (
     AIBaseService,
 )
 import importlib
-import ollama
+
 import requests
 
 from autobotAI_integrations.models import (
@@ -57,6 +57,8 @@ class OllamaService(AIBaseService):
 
     def get_integration_specific_details(self) -> dict:
         try:
+            # TODO: Fetch through API
+            import ollama
             client = ollama.Client(self.integration.base_url)
             models = [model.get("model") for model in client.list()["models"]]
             return {

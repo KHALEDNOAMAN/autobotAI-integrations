@@ -110,7 +110,7 @@ class GithubService(BaseService):
             ConnectionInterfaces.REST_API,
             ConnectionInterfaces.CLI,
             ConnectionInterfaces.PYTHON_SDK, 
-            ConnectionInterfaces.STEAMPIPE
+            # ConnectionInterfaces.STEAMPIPE
         ]
 
     def build_python_exec_combinations_hook(self, payload_task: PayloadTask,
@@ -147,7 +147,12 @@ class GithubService(BaseService):
                               conf_path=conf_path, config=config)
 
     def generate_rest_api_creds(self) -> RestAPICreds:
-        pass
+        return RestAPICreds(
+            base_url=self.integration.base_url,
+            headers={
+                "Authorization": f"Bearer {self.integration.token}",
+            },
+        )
 
     def generate_python_sdk_creds(self) -> SDKCreds:
         envs = {

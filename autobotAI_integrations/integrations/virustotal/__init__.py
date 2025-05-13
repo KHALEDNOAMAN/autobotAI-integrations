@@ -1,12 +1,18 @@
 import base64
 import importlib
 from typing import List, Optional, Type, Union
-import uuid
 
 from pydantic import Field
 import requests
 from autobotAI_integrations import BaseService
-from autobotAI_integrations.models import BaseSchema, CLICreds, ConnectionInterfaces, IntegrationCategory, SDKClient, SDKCreds, SteampipeCreds
+from autobotAI_integrations.models import (
+    BaseSchema,
+    ConnectionInterfaces,
+    IntegrationCategory,
+    SDKClient,
+    SDKCreds,
+    SteampipeCreds,
+)
 from autobotAI_integrations.payload_schema import PayloadTask
 from autobotAI_integrations.utils import list_of_unique_elements
 
@@ -22,7 +28,6 @@ class VirusTotalIntegration(BaseSchema):
 
 
 class VirusTotalService(BaseService):
-
     def __init__(self, ctx: dict, integration: Union[VirusTotalIntegration, dict]):
         """
         Integration should have all the data regarding the integration

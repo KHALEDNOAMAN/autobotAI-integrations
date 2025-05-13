@@ -1,11 +1,20 @@
-from typing import Type, Union
+import importlib
+from typing import List, Optional, Type, Union
 from pydantic import Field
+import requests
 
 from autobotAI_integrations import BaseService, list_of_unique_elements, PayloadTask
-from autobotAI_integrations.models import *
 
-import importlib, requests
-from azure.identity import ClientSecretCredential
+from autobotAI_integrations.models import (
+    BaseSchema,
+    CLICreds,
+    ConnectionInterfaces,
+    IntegrationCategory,
+    RestAPICreds,
+    SDKClient,
+    SDKCreds,
+    SteampipeCreds,
+)
 
 
 class AzureEntraIdIntegration(BaseSchema):
@@ -21,7 +30,6 @@ class AzureEntraIdIntegration(BaseSchema):
 
 
 class AzureEntraIdService(BaseService):
-
     def __init__(self, ctx: dict, integration: Union[AzureEntraIdIntegration, dict]):
         """
         Integration should have all the data regarding the integration
@@ -113,6 +121,7 @@ class AzureEntraIdService(BaseService):
     def build_python_exec_combinations_hook(
         self, payload_task: PayloadTask, client_definitions: List[SDKClient]
     ) -> list:
+        from azure.identity import ClientSecretCredential
         credential = ClientSecretCredential(
             tenant_id=payload_task.creds.envs.get("AZURE_TENANT_ID"),
             client_id=payload_task.creds.envs.get("AZURE_CLIENT_ID"),
@@ -122,17 +131,14 @@ class AzureEntraIdService(BaseService):
         clients_classes = {}
         for client in client_definitions:
             try:
-                client_module = importlib.import_module(
-                    client.module, package=None
-                )
+                client_module = importlib.import_module(client.module, package=None)
                 if hasattr(client_module, client.class_name):
                     cls = getattr(client_module, client.class_name)
                     try:
                         clients_classes[client.name] = cls(
-                            credentials=credential,
-                            scopes=scopes
+                            credentials=credential, scopes=scopes
                         )
-                    except BaseException as e:
+                    except BaseException:
                         clients_classes[client.name] = cls(credentials=credential)
             except BaseException as e:
                 print(e)
@@ -155,7 +161,7 @@ class AzureEntraIdService(BaseService):
             ConnectionInterfaces.REST_API,
             ConnectionInterfaces.CLI,
             ConnectionInterfaces.PYTHON_SDK,
-            ConnectionInterfaces.STEAMPIPE,
+            # ConnectionInterfaces.STEAMPIPE,
         ]
 
     def generate_cli_creds(self) -> CLICreds:
@@ -165,5 +171,24 @@ class AzureEntraIdService(BaseService):
         return {
             "AZURE_TENANT_ID": self.integration.tenant_id,
             "AZURE_CLIENT_ID": self.integration.client_id,
-            "AZURE_CLIENT_SECRET": self.integration.client_secret
+            "AZURE_CLIENT_SECRET": self.integration.client_secret,
         }
+    
+    def generate_rest_api_creds(self) -> RestAPICreds:
+        try:
+            url = f"https://login.microsoftonline.com/{self.integration.tenant_id}/oauth2/v2.0/token"
+            headers = {"Content-Type": "application/x-www-form-urlencoded"}
+            data = {
+                "client_id": self.integration.client_id,
+                "scope": "https://graph.microsoft.com/.default",
+                "client_secret": self.integration.client_secret,
+                "grant_type": "client_credentials",
+            }
+            response = requests.post(url, headers=headers, data=data).json()
+            return RestAPICreds(
+                base_url="https://graph.microsoft.com",
+                headers={"Authorization": f"Bearer {response.get('access_token')}"},
+            )
+        except Exception as e:
+            raise Exception(f"Error while generating rest api creds: {e}")
+

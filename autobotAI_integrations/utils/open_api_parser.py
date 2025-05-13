@@ -1,6 +1,5 @@
 import re
 from typing import List, Optional
-import uuid
 import yaml
 import json
 from autobotAI_integrations.open_api_schema import OpenAPIAction, OpenAPIPathModel, OpenAPISchema
@@ -17,11 +16,12 @@ class OpenApiParser:
         self.components: Optional[dict] = dict()
         self.open_api_schema: Optional[OpenAPISchema] = None
 
-    def _parse_version_type(self):
-        if self._parsed_dict.get("openapi"):
-            self.version = "openapi {}".format(self._parsed_dict.get("openapi"))
-        elif self._parsed_dict.get("swagger"):
-            self.version = "swagger {}".format(self._parsed_dict.get("openapi"))
+    def _parse_version_type(self) -> None:
+        """Determine the type and version of the API specification."""
+        if "openapi" in self._parsed_dict:
+            self.version = f"openapi {self._parsed_dict['openapi']}"
+        elif "swagger" in self._parsed_dict:
+            self.version = f"swagger {self._parsed_dict['swagger']}"
         else:
             self.version = "unknown"
 
@@ -33,7 +33,7 @@ class OpenApiParser:
         else:
             self.base_url = "{base_url}"
 
-    def _parse_param_data_type(self, parameter: dict):
+    def _extract_parameter_type(self, parameter: dict):
         """parses the data type of the parameter"""
         if "schema" in parameter and "type" in parameter["schema"]:
             return parameter["schema"]["type"]
@@ -41,33 +41,37 @@ class OpenApiParser:
             return parameter["type"]
         elif parameter.get('in', "query") == "path":
             return "string"
+        else:
+            return "object"
 
-    def _parse_param_default(self, parameter: dict):
+    def _extract_parameter_default(self, parameter: dict):
         """parses the data type of the parameter"""
         if "schema" in parameter and "default" in parameter["schema"]:
             return parameter["schema"]["default"]
         elif "default" in parameter:
             return parameter["default"]
 
-    def _create_body_parameter(self, request_body: dict) -> dict:
-        open_api_path_param = {
+    def _generate_body_parameter(self, request_body: dict) -> dict:
+        """Generate a parameter object for the request body."""
+        param = {
             "name": "body",
             "in": "body",
-            "type": "object",
-            "description": "Request body",
+            "description": request_body.get("description", "Request body"),
+            "required": request_body.get("required", True),
         }
-        open_api_path_param["required"] = request_body.get("required", True)
-        # Supports only json for now
         if request_body.get("content", {}).get("application/json"):
-            open_api_path_param["type"] = "json"
-            schema = request_body["content"]["application/json"].get("schema")
+            schema = request_body["content"]["application/json"].get("schema", {})
+            param["type"] = schema.get("type", "object")
             if "$ref" in schema:
-                open_api_path_param["example"] = self.components.get(
-                    schema["$ref"].split("/")[-1]
-                )
+                ref_name = schema["$ref"].split("/")[-1]
+                param["example"] = self.components.get(ref_name)
             elif "example" in schema:
-                open_api_path_param["example"] = schema["example"]
-        return OpenAPIPathParams(**open_api_path_param)
+                param["example"] = schema["example"]
+            elif param["type"] == "object":
+                param["example"] = schema.get("properties", {})
+        else:
+            param["type"] = "object"  # Fallback for unspecified content types
+        return OpenAPIPathParams(**param)
 
     def _generate_path_parameters(
         self, method_details: dict
@@ -88,19 +92,24 @@ class OpenApiParser:
             for parameter in method_details["parameters"]:
                 parameter = self._resolve_reference(parameter)
                 try:
+                    parameter_type = self._extract_parameter_type(parameter)
+                    if isinstance(parameter_type ,list):
+                        parameter_type = parameter_type[0]
                     parameters_list.append(
-                        OpenAPIPathParams(**{
-                            "type": self._parse_param_data_type(parameter),
-                            "values": self._parse_param_default(parameter),
-                            **parameter,
-                        })
+                        OpenAPIPathParams(
+                            **{
+                                "type": parameter_type,
+                                "values": self._extract_parameter_default(parameter),
+                                **parameter,
+                            }
+                        )
                     )
                 except Exception as e:
                     print(e)
                     continue
         if method_details.get("requestBody"):
             parameters_list.append(
-                self._create_body_parameter(method_details["requestBody"])
+                self._generate_body_parameter(method_details["requestBody"])
             )
         return parameters_list
 
@@ -131,17 +140,25 @@ class OpenApiParser:
                 value = value.get(key)
         return value
 
-    def _resolve_reference(self, data):
+    def _resolve_reference(self, data, visited: Optional[set] = None):
+        """Recursively resolve references in the specification data."""
+        if visited is None:
+            visited = set()
         if isinstance(data, dict):
             if "$ref" in data:
-                ref_data = self._get_reference_to_dict(data["$ref"])
-                del data["$ref"]
-                data.update(ref_data)
-            for k, val in data.items():
-                data[k] = self._resolve_reference(val)
+                ref = data["$ref"]
+                if ref in visited:
+                    return data  # Avoid circular reference
+                visited.add(ref)
+                ref_data = self._get_reference_to_dict(ref)
+                if ref_data is not None:
+                    del data["$ref"]
+                    data.update(ref_data)
+            for key, value in data.items():
+                data[key] = self._resolve_reference(value, visited)
             return data
         elif isinstance(data, list):
-            return [self._resolve_reference(item) for item in data]
+            return [self._resolve_reference(item, visited) for item in data]
         else:
             return data
 
@@ -166,24 +183,42 @@ class OpenApiParser:
                 )
             self.security = securitySchemas
 
-    def _parse_component_schema(self, schema):
+    def _parse_component_schema(self, schema, visited: Optional[set] = None):
+        if visited is None:
+            visited = set()
 
+        if schema is None:
+            return "Unknown"
+        
+        # If this schema is already being processed, return a placeholder to break the cycle
+        schema_id = id(schema)
+        if schema_id in visited:
+            return schema
+        
+        visited.add(schema_id)
+
+        if schema.get("$ref"):
+            ref_schema = self._get_reference_to_dict(schema["$ref"])
+            return self._parse_component_schema(ref_schema, visited)
+        
         if schema.get("type") == "object":
             _schema = {}
             for property_name, property_value in schema.get("properties", {}).items():
                 if property_value.get("readOnly"):
                     continue
                 if property_value.get("$ref"):
-                    property_value = self._get_reference_to_dict(property_value["$ref"])
-                    _schema[property_name] = self._parse_component_schema(
-                        property_value
-                    )
+                    _schema[property_name] = self._parse_component_schema(property_value, visited)
                 else:
                     _schema[property_name] = property_value.get("type")
         elif schema.get("type") == "array":
-            _schema = [self._parse_component_schema(schema.get("items"))]
+            _schema = [self._parse_component_schema(schema.get("items"), visited)]
         else:
             _schema = schema.get("type")
+        
+        # Remove from visited to allow separate branches to process the same schema independently if needed
+        visited.remove(schema_id)
+        if _schema is None:
+            return schema
         return _schema
 
     def parse_file(self, file_path: str):
@@ -228,7 +263,6 @@ class OpenApiParser:
         actions = []
         for path in self.paths:
             parameters = []
-            # Adding Method parameter
             parameters.append(
                 OpenAPIPathParams(**{
                     "name": "method",
@@ -247,22 +281,32 @@ class OpenApiParser:
                     and parameter.name.lower() == "authorization"
                 ):
                     continue
-                elif getattr(parameter, 'in_', None) == "path" and parameter.name == "base_url":
+                elif (
+                    getattr(parameter, "in_", None) == "path"
+                    and parameter.name == "base_url"
+                ):
                     continue
-
-                if getattr(parameter, "in_", None) == "body" and not parameter.values:
-                    if parameter.example:
-                        parameter.values = parameter.example
+                if (
+                    getattr(parameter, "in_", None) == "body"
+                    and not parameter.values
+                    and parameter.example
+                ):
+                    parameter.values = parameter.example
                 parameters.append(parameter)
 
-            action_name = re.sub(r"[^A-Za-z0-9\- ]", "", str(path.summary))
-            action_name = re.sub(r"\s+", " ", action_name).strip()
+            action_name = path.summary
             if not action_name:
-                action_name = path.method.upper() + " Action" + str(uuid.uuid4().hex[:5])
+                action_name = path.method.upper() + " Action " + path.path_url.replace("/", " ").replace("base_url", "")
+            
+            action_name = re.sub(r"[^A-Za-z0-9\- ]", "", str(action_name))
+            action_name = re.sub(r"\s+", " ", action_name).strip()
+            
             actions.append(
                 OpenAPIAction(
                     name=action_name,
-                    description=path.description,
+                    description=path.description
+                    if path.description
+                    else path.summary,
                     code=path.path_url,
                     integration_type=integration_type,
                     parameters_definition=parameters,

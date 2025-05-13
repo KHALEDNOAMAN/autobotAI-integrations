@@ -1,21 +1,20 @@
+import base64
 import importlib
-import uuid
 from typing import List, Optional, Union
 
 from pydantic import Field
+import requests
 
 from autobotAI_integrations import (
     BaseSchema,
     SteampipeCreds,
     RestAPICreds,
     SDKCreds,
-    CLICreds,
     BaseService,
     ConnectionInterfaces,
     PayloadTask,
     SDKClient,
 )
-from jira import JIRA
 
 from autobotAI_integrations.models import IntegrationCategory
 
@@ -44,21 +43,22 @@ class JiraService(BaseService):
 
     def _test_integration(self):
         try:
-            jira_cloud_options = {"server": self.integration.base_url}
-            jira_cloud = JIRA(
-                options=jira_cloud_options,
-                basic_auth=(
-                    self.integration.username,
-                    self.integration.token or self.integration.personal_access_token,
-                ),
-            )
-            my_account = jira_cloud.myself()
+            token = self.integration.token or self.integration.personal_access_token
+            url = f"{self.integration.base_url.rstrip('/')}/rest/api/3/myself"
+            response = requests.get(url, auth=(self.integration.username, token))
+            response.raise_for_status()
             return {"success": True}
-        except BaseException as e:
-            return {"success": False, "error": str(e.text)}
+        except Exception as e:
+            error_message = getattr(e, "response", None)
+            if error_message is not None and hasattr(error_message, "text"):
+                error_message = error_message.text
+            else:
+                error_message = str(e)
+            return {"success": False, "error": error_message}
 
     def get_integration_specific_details(self) -> dict:
         try:
+            from jira import JIRA
             jira_cloud_options = {"server": self.integration.base_url}
             jira_cloud = JIRA(
                 options=jira_cloud_options,
@@ -121,7 +121,7 @@ class JiraService(BaseService):
         return [
             ConnectionInterfaces.REST_API,
             ConnectionInterfaces.PYTHON_SDK,
-            ConnectionInterfaces.STEAMPIPE,
+            # ConnectionInterfaces.STEAMPIPE,
         ]
 
     def build_python_exec_combinations_hook(
@@ -162,9 +162,6 @@ class JiraService(BaseService):
             config=config_str,
         )
 
-    def generate_rest_api_creds(self) -> RestAPICreds:
-        pass
-
     def generate_python_sdk_creds(self) -> SDKCreds:
         envs = self._temp_credentials()
         return SDKCreds(envs=envs)
@@ -179,3 +176,19 @@ class JiraService(BaseService):
         else:
             envs["JIRA_PERSONAL_ACCESS_TOKEN"] = self.integration.personal_access_token
         return envs
+    
+    def generate_rest_api_creds(self) -> RestAPICreds:
+        encoded_credentials = base64.b64encode(
+            f"{self.integration.username}:{self.integration.token or self.integration.personal_access_token}".encode(
+                "utf-8"
+            )
+        ).decode("utf-8")
+        return RestAPICreds(
+            base_url=self.integration.base_url.rstrip("/"),
+            headers={
+                "Authorization": f"Basic {encoded_credentials}",
+                "Accept": "application/json",
+                "Content-Type": "application/json",
+            },
+            verify_ssl=self.integration.base_url.split("://")[0] == "https",
+        )

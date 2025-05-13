@@ -7,11 +7,24 @@
 **Clients and resources**: [visit](./docs/clients_and_resources.md)
 
 ## Installation 
+There is three types of installation available for this repo,
 
-To install the `autobotAI-integrations` package, use the following command:
+1. Basic installation: This installation supports REST API, STEAMPIPE Execution, And AWS (python included).
+To install use the following command:
 
 ```sh
 pip install git+https://github.com/shunyeka-spl/autobotAI-integrations
+```
+
+2. Python Executable Installation: This installation allows you to run all python integrations executable 
+
+```sh
+pip install "autobotAI-integrations[executable] @ git+https://github.com/shunyeka-spl/autobotAI-integrations@{INTEGRATION_BRANCH}"
+```
+
+3. Full Installation: To Install the whole package use the following command.
+```sh
+pip install "autobotAI-integrations[full] @ git+https://github.com/shunyeka-spl/autobotAI-integrations@{INTEGRATION_BRANCH}"
 ```
 
 ### Prerequisites

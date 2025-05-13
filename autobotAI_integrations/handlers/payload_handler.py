@@ -1,7 +1,7 @@
-from autobotAI_integrations.payload_schema import Payload, JobResult
+from autobotAI_integrations.payload_schema import Payload, JobResult, PayloadTaskContext
 from .task_handler import handle_task
 import requests
-import tempfile
+from io import BytesIO
 from autobotAI_integrations.utils.logging_config import logger
 
 
@@ -20,12 +20,19 @@ def handle_payload(
 
     for task in payload.tasks:
         logger.debug("Running Task: {}".format(task.task_id))
+        if payload.common_params:
+            task.params = task.params or []
+            task.params.extend(payload.common_params)
+        if payload.common_context:
+            task.context = PayloadTaskContext(**task.context.model_dump(), **payload.common_context.model_dump())
         results.task_results.append(handle_task(task))
+        del task.params
+        del task.context
 
     logger.info("All tasks completed!")
 
     if payload.output_url is not None:
-        result_file = tempfile.NamedTemporaryFile()
+        result_file = BytesIO()
         result_file.write(bytes(results.model_dump_json(), encoding="utf-8"))
         result_file.seek(0)
         files = {'file': result_file}
@@ -34,7 +41,7 @@ def handle_payload(
             data=payload.output_url['fields'],
             files=files
         )
-        result_file.close()
+        
 
         if response.status_code == 204:
             logger.info("File uploaded successfully!")

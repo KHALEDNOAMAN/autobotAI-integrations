@@ -34,14 +34,15 @@ class JobSizes(str, Enum):
     def __str__(self):
         return self.value
 
-
-class PayloadTaskContext(BaseModel):
-    integration: SerializeAsAny[IntegrationSchema]
+class PayloadCommonContext(BaseModel):
     global_variables: dict = {}  # Global Variables defined by User, this will be store in secret manager
     integration_variables: dict = {}  # Secret manager variables stored for the specific Integration.
     integration_group_vars: dict = {}  # Secret manager variables stored for the specific Integration Group.
     execution_details: ExecutionDetails
     node_steps: dict
+
+class PayloadTaskSpecificContext(BaseModel):
+    integration: SerializeAsAny[IntegrationSchema]
 
     @field_validator('integration', mode='before')
     @classmethod
@@ -53,6 +54,9 @@ class PayloadTaskContext(BaseModel):
                     if dir_name == integration['cspName']:
                         return subclass(**integration)
         return integration
+
+class PayloadTaskContext(PayloadCommonContext, PayloadTaskSpecificContext):
+    pass
 
 class Param(BaseModel):
     params_type: str = Field(alias="type")
@@ -108,7 +112,7 @@ class PayloadTask(BaseModel):
     clients: Optional[List[str]] = None
     params: Optional[List[Union[OpenAPIPathParams, Param]]] = []
     node_details: Optional[Any] = None
-    context: PayloadTaskContext
+    context: Union[PayloadTaskSpecificContext, PayloadTaskContext]
     externalExecutable: bool = True
 
     @field_validator('creds', mode='before')
@@ -120,6 +124,10 @@ class PayloadTask(BaseModel):
                     return sub_cls(**creds)
         return creds
 
+class ProcessedPayloadTask(PayloadTask):
+    context: PayloadTaskContext
+
+
 class Payload(BaseModel):
     job_id: str
     state: Optional[dict] = None
@@ -128,6 +136,8 @@ class Payload(BaseModel):
     api_key: Optional[str] = None
     api_url: Optional[str] = None
     job_size: Optional[JobSizes] = JobSizes.MEDIUM.value
+    common_params: Optional[List[Union[OpenAPIPathParams, Param]]] = []
+    common_context: PayloadCommonContext
 
 
 class ResponseError(BaseModel):

@@ -1,10 +1,12 @@
 import json
 from typing import List, Optional, Type, Union, Dict
 
+
 from urllib.parse import urljoin, urlparse
 from pydantic import Field, field_validator
 import requests
 from autobotAI_integrations import BaseService
+from autobotAI_integrations.integration_schema import ConnectionTypes
 from autobotAI_integrations.models import (
     BaseSchema,
     ConnectionInterfaces,
@@ -21,11 +23,18 @@ class PythonHTTPRequestIntegration(BaseSchema):
     headers_json: Dict[str, str] = Field(default=dict(), exclude=True)
     healthcheck_get_api_path: Optional[str] = Field(default=None, exclude=True)
     ignore_ssl: bool = False
+
     name: Optional[str] = "Python HTTP REST API"
     category: Optional[str] = IntegrationCategory.OTHERS.value
     description: Optional[str] = (
         "This is a simple example of an OpenAPI definition using all HTTP methods with various parameter types."
     )
+
+    def use_dependency(self, dependency: dict):
+        if dependency.get("cspName") == "linux":
+            self.connection_type = ConnectionTypes.AGENT
+            self.agent_ids = dependency.get("agent_ids")
+            self.dependent_integration_id = dependency.get("accountId")
 
     @field_validator("ignore_ssl", mode="before")
     @classmethod
@@ -68,6 +77,8 @@ class PythonHTTPService(BaseService):
 
     def _test_integration(self) -> dict:
         try:
+            if self.integration.connection_type == ConnectionTypes.AGENT:
+                return {"success": True}
             urlparse(self.integration.api_url)
             if self.integration.healthcheck_get_api_path is None:  
                 return {"success": True}
@@ -116,8 +127,8 @@ class PythonHTTPService(BaseService):
                     "placeholder": "default: 'False'",
                     "description": "Select whether to ignore SSL certificate validation.",
                     "options": [
-                    {"label": "True", "value": "True"},
-                    {"label": "False", "value": "False"},
+                        {"label": "True", "value": "True"},
+                        {"label": "False", "value": "False"},
                     ],
                     "required": False,
                 },
@@ -133,10 +144,20 @@ class PythonHTTPService(BaseService):
                     "name": "healthcheck_get_api_path",
                     "type": "text",
                     "label": "GET API Path for Testing",
-                    "placeholder": r'/healthcheck',
+                    "placeholder": r"/healthcheck",
                     "description": "Specify a GET API path to test the integration. If left empty, no periodic verification will be performed.",
                     "required": False,
-                }
+                },
+                {
+                    "name": "integration_id",
+                    "type": "select",
+                    "integrationType": "linux",
+                    "dataType": "integration",
+                    "label": "Integration Id",
+                    "placeholder": "Enter Integration Id",
+                    "description": "Select the agent hosting OpenSearch for managed integration, or choose 'None' to establish a direct connection.",
+                    "required": False,
+                },
             ],
         }
 

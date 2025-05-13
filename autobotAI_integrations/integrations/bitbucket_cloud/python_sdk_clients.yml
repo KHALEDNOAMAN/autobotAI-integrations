@@ -1,0 +1,5 @@
+- name: bitbucket_cloud
+  import_library_names:
+    - atlassian.bitbucket
+  pip_package_names:
+    - atlassian-python-api

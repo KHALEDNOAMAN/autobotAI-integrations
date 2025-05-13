@@ -14,7 +14,6 @@ from autobotAI_integrations import (
     PayloadTask,
     SDKClient,
 )
-from gitlab import Gitlab
 
 from autobotAI_integrations.models import IntegrationCategory
 
@@ -40,6 +39,7 @@ class GitlabService(BaseService):
         super().__init__(ctx, integration)
 
     def _test_integration(self):
+        from gitlab import Gitlab
         try:
             if str(self.integration.base_url) not in ["None", None]:
                 gitlab = Gitlab(

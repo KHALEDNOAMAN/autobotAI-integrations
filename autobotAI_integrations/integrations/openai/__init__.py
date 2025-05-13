@@ -1,7 +1,6 @@
 import importlib
 import os
-import uuid
-from typing import List, Optional
+from typing import List, Optional, Dict, Any
 from pydantic import Field
 import requests
 from pathlib import Path
@@ -16,12 +15,7 @@ from autobotAI_integrations import (
     ConnectionInterfaces,
     PayloadTask,
     SDKClient,
-    list_of_unique_elements,
 )
-from openai import OpenAI
-
-from langchain_openai import ChatOpenAI
-
 from autobotAI_integrations.models import IntegrationCategory
 from autobotAI_integrations.utils.logging_config import logger
 
@@ -37,7 +31,6 @@ class OpenAIIntegration(BaseSchema):
 
 
 class OpenAIService(AIBaseService):
-
     def __init__(self, ctx, integration: OpenAIIntegration):
         if isinstance(integration, dict):
             integration = OpenAIIntegration(**integration)
@@ -52,7 +45,7 @@ class OpenAIService(AIBaseService):
                     "model": "gpt-3.5-turbo",
                     "messages": [{"role": "user", "content": "Say this is a test!"}],
                     "temperature": 0.7,
-                }
+                },
             )
             if response.status_code == 200:
                 return {"success": True}
@@ -67,6 +60,8 @@ class OpenAIService(AIBaseService):
 
     def get_integration_specific_details(self) -> dict:
         try:
+            # TODO: USE API
+            from openai import OpenAI
             client = OpenAI(api_key=self.integration.api_key)
             models = client.models.list().data
             model_names = []
@@ -75,6 +70,11 @@ class OpenAIService(AIBaseService):
             return {
                 "integration_id": self.integration.accountId,
                 "models": model_names,
+                "embedding_models": [
+                    "text-embedding-3-small",
+                    "text-embedding-3-large",
+                    "text-embedding-ada-002",
+                ],
             }
         except Exception as e:
             return {"error": "Details can not be fetched"}
@@ -186,17 +186,49 @@ class OpenAIService(AIBaseService):
 
     def generate_cli_creds(self) -> CLICreds:
         pass
-    
-    
-    def langchain_authenticator(self, model):
-        llm = ChatOpenAI(
-            temperature=0,
+
+    def get_pydantic_agent(
+        self, model: str, tools, system_prompt: str, options: dict = {}
+    ):
+        from pydantic_ai.models.openai import OpenAIModel
+        from pydantic_ai.providers.openai import OpenAIProvider
+        from pydantic_ai import Agent
+        model = OpenAIModel(
             model_name=model,
-            openai_api_key=self.integration.api_key
+            provider=OpenAIProvider(api_key=self.integration.api_key),
+        )
+        return Agent(model, system_prompt=system_prompt, tools=tools, **options)
+
+    def langchain_authenticator(self, model):
+        from langchain_openai import ChatOpenAI
+        llm = ChatOpenAI(
+            temperature=0, model_name=model, openai_api_key=self.integration.api_key
         )
         return llm
+    
+    def load_embedding_model(self, model_name: str):
+        """
+        Returns Langchaain Embedding model object and model dimensions as tuple
+        """
+        from langchain_openai import OpenAIEmbeddings
+        embedding_model = OpenAIEmbeddings(
+            model=model_name, openai_api_key=self.integration.api_key
+        )
+        query = "This is my query"
+        result = embedding_model.embed_query(query)
+        dimensions = len(result)
+        return embedding_model, dimensions
 
-    def prompt_executor(self, model=None, prompt="",params=None, options: dict = {}):
+    def prompt_executor(
+        self,
+        model=None,
+        prompt="",
+        params=None,
+        options: dict = {},
+        messages: List[Dict[str, Any]] = [],
+    ):
+        from openai import OpenAI
+        
         logger.info(f"Executing prompt: {prompt}")
         client = OpenAI(api_key=self.integration.api_key)
         if model:
@@ -209,13 +241,15 @@ class OpenAIService(AIBaseService):
             if "max_tokens" in options:
                 message["max_tokens"] = options["max_tokens"]
             counter = 0
+            messages.append(message)
             while counter < 5:
                 counter += 1
                 try:
-                    result = client.chat.completions.create(
-                        messages=[message], model=model
-                    )
-                    print("result is ",result)
+                    kwargs = {"messages": messages, "model": model}
+                    if params != "get_code" and params != "approval" and params!="chat" and params!="params":
+                        kwargs["response_format"] = {"type": "json_object"}
+                    result = client.chat.completions.create(**kwargs)
+                    print("result is ", result)
                     if result.choices[0].message.content:
                         return result.choices[0].message.content
                 except:

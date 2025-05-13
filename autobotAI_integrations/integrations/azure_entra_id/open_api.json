@@ -1,0 +1,2365 @@
+{
+    "openapi": "3.0.3",
+    "info": {
+        "title": "Microsoft Graph",
+        "description": "[Microsoft Graph](https://learn.microsoft.com/en-us/graph/overview) is the unified API for modern work. It is the gateway to data and intelligence in Microsoft 365. Use the wealth of data in Microsoft Graph to build apps for organizations and consumers that interact with millions of users.\n\n. In app-only access, the app calls Microsoft Graph with its own identity, without a signed in user.\n\nIn this collection, you can try out application API calls.\n\n# To Get Started\n\n[Fork this collection](https://www.postman.com/microsoftgraph/workspace/microsoft-graph/collection/455214-085f7047-1bec-4570-9ed0-3a7253be148c/fork) into your workspace to get started with the Microsoft Graph APIs. For more details on how to use Postman with the Microsoft Graph APIs, see our step-by-step guide [here](https://www.postman.com/microsoftgraph/workspace/microsoft-graph/folder/455214-22cdc431-705b-42ab-91d0-4d63ee1bc05c).\n\n# Microsoft Graph API documentation\n\nSee the full API documentation [here](https://learn.microsoft.com/en-us/graph/).",
+        "version": "1.0.0",
+        "contact": {}
+    },
+    "servers": [
+        {
+            "url": "https://graph.microsoft.com"
+        }
+    ],
+    "paths": {
+        "/v1.0/sites": {
+            "get": {
+                "summary": "Search for site by name",
+                "description": "Search for site by name",
+                "operationId": "searchForSiteByName",
+                "parameters": [
+                    {
+                        "name": "search",
+                        "in": "query",
+                        "schema": {
+                            "type": "string",
+                            "example": "contoso"
+                        }
+                    },
+                    {
+                        "name": "prefer",
+                        "in": "header",
+                        "schema": {
+                            "type": "string",
+                            "example": "apiversion=2.1"
+                        }
+                    }
+                ],
+                "security": [
+                    {
+                        "oauth2": [
+                            "https://graph.microsoft.com/.default"
+                        ]
+                    }
+                ]
+            }
+        },
+        "/v1.0/subscriptions": {
+            "get": {
+                "summary": "Get subscriptions",
+                "description": "Get subscriptions",
+                "operationId": "getSubscriptions",
+                "security": [
+                    {
+                        "oauth2": [
+                            "https://graph.microsoft.com/.default"
+                        ]
+                    }
+                ],
+                "parameters": []
+            }
+        },
+        "/beta/security/labels/retentionLabels": {
+            "get": {
+                "summary": "List retentionLabels",
+                "description": "List retentionLabels",
+                "operationId": "listRetentionlabels",
+                "security": [
+                    {
+                        "oauth2": [
+                            "https://graph.microsoft.com/.default"
+                        ]
+                    }
+                ],
+                "parameters": []
+            }
+        },
+        "/v1.0/groups/{GroupId}": {
+            "delete": {
+                "summary": "Delete team",
+                "description": "Delete team",
+                "operationId": "deleteTeam",
+                "security": [
+                    {
+                        "oauth2": [
+                            "https://graph.microsoft.com/.default"
+                        ]
+                    }
+                ],
+                "parameters": [
+                    {
+                        "name": "GroupId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ]
+            }
+        },
+        "/v1.0/users": {
+            "get": {
+                "summary": "Get users",
+                "description": "Get users",
+                "operationId": "getUsers",
+                "parameters": [
+                    {
+                        "name": "$filter",
+                        "in": "query",
+                        "schema": {
+                            "type": "string",
+                            "example": "Department eq 'Finance'"
+                        }
+                    }
+                ],
+                "security": [
+                    {
+                        "oauth2": [
+                            "https://graph.microsoft.com/.default"
+                        ]
+                    }
+                ]
+            }
+        },
+        "/v1.0/invitations": {
+            "post": {
+                "summary": "Invite a guest user",
+                "description": "Invite Azure AD B2B Guest User using Delegated Permission",
+                "operationId": "inviteAGuestUser",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "inviteRedirectUrl": {
+                                        "type": "string",
+                                        "example": "https://myapps.microsoft.com"
+                                    },
+                                    "invitedUserDisplayName": {
+                                        "type": "string",
+                                        "example": "<Display Name of Invited User>"
+                                    },
+                                    "invitedUserEmailAddress": {
+                                        "type": "string",
+                                        "example": "<Email Address of Invited User>"
+                                    },
+                                    "invitedUserMessageInfo": {
+                                        "type": "object",
+                                        "properties": {
+                                            "ccRecipients": {
+                                                "type": "array",
+                                                "items": {
+                                                    "type": "object",
+                                                    "properties": {
+                                                        "emailAddress": {
+                                                            "type": "object",
+                                                            "properties": {
+                                                                "address": {
+                                                                    "type": "string",
+                                                                    "example": "<Optional CC Email Address for Invitation>"
+                                                                },
+                                                                "name": {
+                                                                    "type": "string",
+                                                                    "example": "<Optional CC for Invitation>"
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                },
+                                                "example": [
+                                                    {
+                                                        "emailAddress": {
+                                                            "address": "<Optional CC Email Address for Invitation>",
+                                                            "name": "<Optional CC for Invitation>"
+                                                        }
+                                                    }
+                                                ]
+                                            },
+                                            "customizedMessageBody": {
+                                                "type": "string",
+                                                "example": "Hi, you have just been invited to Azure AD with Postman using Microsoft Graph!"
+                                            },
+                                            "messageLanguage": {
+                                                "type": "string",
+                                                "example": "en-US"
+                                            }
+                                        }
+                                    },
+                                    "sendInvitationMessage": {
+                                        "type": "boolean",
+                                        "example": true
+                                    }
+                                }
+                            },
+                            "examples": {
+                                "Invite a guest user": {
+                                    "value": {
+                                        "inviteRedirectUrl": "https://myapps.microsoft.com",
+                                        "invitedUserDisplayName": "<Display Name of Invited User>",
+                                        "invitedUserEmailAddress": "<Email Address of Invited User>",
+                                        "invitedUserMessageInfo": {
+                                            "ccRecipients": [
+                                                {
+                                                    "emailAddress": {
+                                                        "address": "<Optional CC Email Address for Invitation>",
+                                                        "name": "<Optional CC for Invitation>"
+                                                    }
+                                                }
+                                            ],
+                                            "customizedMessageBody": "Hi, you have just been invited to Azure AD with Postman using Microsoft Graph!",
+                                            "messageLanguage": "en-US"
+                                        },
+                                        "sendInvitationMessage": true
+                                    }
+                                },
+                                "Invite guest user": {
+                                    "value": "{ \r\n    \"invitedUserDisplayName\": \"<Display Name of Invited User>\", \r\n    \"invitedUserEmailAddress\": \"<Email Address of Invited User>, \r\n    \"invitedUserMessageInfo\": {\r\n        \"messageLanguage\": \"en-US\",\r\n        \"ccRecipients\": [\r\n             {\r\n                \"emailAddress\": {\r\n                    \"name\": \"<Optional CC for Invitation>\",\r\n                    \"address\": \"<Optional CC Email Address for Invitation>\"\r\n                 }\r\n             }\r\n        ],\r\n        \"customizedMessageBody\": \"Hi, you have just been invited to Azure AD with Postman using Microsoft Graph!\"\r\n     },\r\n    \"sendInvitationMessage\": true, \r\n    \"inviteRedirectUrl\": \"https://myapps.microsoft.com\" \r\n} "
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "oauth2": [
+                            "https://graph.microsoft.com/.default"
+                        ]
+                    }
+                ],
+                "parameters": []
+            }
+        },
+        "/v1.0/users/{UserId}/messages": {
+            "get": {
+                "summary": "Get a user's messages",
+                "description": "Get a user's messages",
+                "operationId": "getAUserSMessages",
+                "security": [
+                    {
+                        "oauth2": [
+                            "https://graph.microsoft.com/.default"
+                        ]
+                    }
+                ],
+                "parameters": [
+                    {
+                        "name": "UserId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ]
+            }
+        },
+        "/v1.0/users/{UserId}/joinedTeams": {
+            "get": {
+                "summary": "Get user's joined teams",
+                "description": "Get user's joined teams",
+                "operationId": "getUserSJoinedTeams",
+                "security": [
+                    {
+                        "oauth2": [
+                            "https://graph.microsoft.com/.default"
+                        ]
+                    }
+                ],
+                "parameters": [
+                    {
+                        "name": "UserId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ]
+            }
+        },
+        "/v1.0/teams/{GroupId}/members": {
+            "get": {
+                "summary": "Get team members",
+                "description": "Get team members",
+                "operationId": "getTeamMembers",
+                "security": [
+                    {
+                        "oauth2": [
+                            "https://graph.microsoft.com/.default"
+                        ]
+                    }
+                ],
+                "parameters": [
+                    {
+                        "name": "GroupId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ]
+            },
+            "post": {
+                "summary": "Add team member",
+                "description": "Add team member",
+                "operationId": "addTeamMember",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "@odata.type": {
+                                        "type": "string",
+                                        "example": "#microsoft.graph.aadUserConversationMember"
+                                    },
+                                    "roles": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "string",
+                                            "example": "owner"
+                                        },
+                                        "example": [
+                                            "owner"
+                                        ]
+                                    },
+                                    "user@odata.bind": {
+                                        "type": "string",
+                                        "example": "https://graph.microsoft.com/v1.0/users/a82083e7-cc7c-48a4-9ed1-ce70e42f7453"
+                                    }
+                                }
+                            },
+                            "examples": {
+                                "Add team member": {
+                                    "value": {
+                                        "@odata.type": "#microsoft.graph.aadUserConversationMember",
+                                        "roles": [
+                                            "owner"
+                                        ],
+                                        "user@odata.bind": "https://graph.microsoft.com/v1.0/users/a82083e7-cc7c-48a4-9ed1-ce70e42f7453"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "oauth2": [
+                            "https://graph.microsoft.com/.default"
+                        ]
+                    }
+                ],
+                "parameters": [
+                    {
+                        "name": "GroupId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ]
+            }
+        },
+        "/v1.0/sites/{SiteID}/drives": {
+            "get": {
+                "summary": "Get drives",
+                "description": "Get drives",
+                "operationId": "getDrives",
+                "security": [
+                    {
+                        "oauth2": [
+                            "https://graph.microsoft.com/.default"
+                        ]
+                    }
+                ],
+                "parameters": [
+                    {
+                        "name": "SiteID",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ]
+            }
+        },
+        "/v1.0/teams/{TeamId}/channels/{ChannelId}/members": {
+            "post": {
+                "summary": "Add channel member",
+                "description": "Add channel member",
+                "operationId": "addChannelMember",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "description": {
+                                        "type": "string",
+                                        "example": "My Sample Team\u2019s Description"
+                                    },
+                                    "displayName": {
+                                        "type": "string",
+                                        "example": "My Sample Team"
+                                    },
+                                    "template@odata.bind": {
+                                        "type": "string",
+                                        "example": "https://graph.microsoft.com/v1.0/teamsTemplates('standard')"
+                                    }
+                                }
+                            },
+                            "examples": {
+                                "Add channel member": {
+                                    "value": {
+                                        "@odata.type": "#microsoft.graph.aadUserConversationMember",
+                                        "roles": [
+                                            "owner"
+                                        ],
+                                        "user@odata.bind": "https://graph.microsoft.com/v1.0/users/8b081ef6-4792-4def-b2c9-c363a1bf41d5"
+                                    }
+                                },
+                                "Create team": {
+                                    "value": {
+                                        "description": "My Sample Team\u2019s Description",
+                                        "displayName": "My Sample Team",
+                                        "template@odata.bind": "https://graph.microsoft.com/v1.0/teamsTemplates('standard')"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "oauth2": [
+                            "https://graph.microsoft.com/.default"
+                        ]
+                    }
+                ],
+                "parameters": [
+                    {
+                        "name": "TeamId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "ChannelId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ]
+            }
+        },
+        "/beta/external/connections/sampleConnectionId": {
+            "patch": {
+                "summary": "Add activity settings",
+                "description": "Add activity settings",
+                "operationId": "addActivitySettings",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "searchSettings": {
+                                        "type": "object",
+                                        "properties": {
+                                            "searchResultTemplates": {
+                                                "type": "array",
+                                                "items": {
+                                                    "type": "object",
+                                                    "properties": {
+                                                        "id": {
+                                                            "type": "string",
+                                                            "example": "graphApiMrt01"
+                                                        },
+                                                        "layout": {
+                                                            "type": "object",
+                                                            "properties": {
+                                                                "$schema": {
+                                                                    "type": "string",
+                                                                    "example": "http://adaptivecards.io/schemas/adaptive-card.json"
+                                                                },
+                                                                "body": {
+                                                                    "type": "array",
+                                                                    "items": {
+                                                                        "type": "object",
+                                                                        "properties": {
+                                                                            "text": {
+                                                                                "type": "string",
+                                                                                "example": "[${title}](${url})"
+                                                                            },
+                                                                            "type": {
+                                                                                "type": "string",
+                                                                                "example": "TextBlock"
+                                                                            }
+                                                                        }
+                                                                    },
+                                                                    "example": [
+                                                                        {
+                                                                            "text": "[${title}](${url})",
+                                                                            "type": "TextBlock"
+                                                                        }
+                                                                    ]
+                                                                },
+                                                                "type": {
+                                                                    "type": "string",
+                                                                    "example": "AdaptiveCard"
+                                                                },
+                                                                "version": {
+                                                                    "type": "string",
+                                                                    "example": "1.2"
+                                                                }
+                                                            }
+                                                        },
+                                                        "priority": {
+                                                            "type": "number",
+                                                            "example": 10000
+                                                        }
+                                                    }
+                                                },
+                                                "example": [
+                                                    {
+                                                        "id": "graphApiMrt01",
+                                                        "layout": {
+                                                            "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+                                                            "body": [
+                                                                {
+                                                                    "text": "[${title}](${url})",
+                                                                    "type": "TextBlock"
+                                                                }
+                                                            ],
+                                                            "type": "AdaptiveCard",
+                                                            "version": "1.2"
+                                                        },
+                                                        "priority": 10000
+                                                    }
+                                                ]
+                                            }
+                                        }
+                                    }
+                                }
+                            },
+                            "examples": {
+                                "Add activity settings": {
+                                    "value": {
+                                        "activitySettings": {
+                                            "urlToItemResolvers": [
+                                                {
+                                                    "itemId": "{fileid}",
+                                                    "priority": 1,
+                                                    "urlMatchInfo": {
+                                                        "baseUrls": [
+                                                            "https: //www.contoso.com/files"
+                                                        ],
+                                                        "urlPattern": "/file/(?<fileid>[a-zA-Z0-9]+)"
+                                                    }
+                                                }
+                                            ]
+                                        }
+                                    }
+                                },
+                                "Add search settings": {
+                                    "value": {
+                                        "searchSettings": {
+                                            "searchResultTemplates": [
+                                                {
+                                                    "id": "graphApiMrt01",
+                                                    "layout": {
+                                                        "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+                                                        "body": [
+                                                            {
+                                                                "text": "[${title}](${url})",
+                                                                "type": "TextBlock"
+                                                            }
+                                                        ],
+                                                        "type": "AdaptiveCard",
+                                                        "version": "1.2"
+                                                    },
+                                                    "priority": 10000
+                                                }
+                                            ]
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "oauth2": [
+                            "https://graph.microsoft.com/.default"
+                        ]
+                    }
+                ],
+                "parameters": []
+            }
+        },
+        "/v1.0/external/connections/sampleConnectionId/schema": {
+            "get": {
+                "summary": "Get schema",
+                "description": "Get schema",
+                "operationId": "getSchema",
+                "security": [
+                    {
+                        "oauth2": [
+                            "https://graph.microsoft.com/.default"
+                        ]
+                    }
+                ],
+                "parameters": []
+            },
+            "post": {
+                "summary": "Register schema",
+                "description": "Register schema",
+                "operationId": "registerSchema",
+                "parameters": [
+                    {
+                        "name": "prefer",
+                        "in": "header",
+                        "schema": {
+                            "type": "string",
+                            "example": "respond-async"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "baseType": {
+                                        "type": "string",
+                                        "example": "microsoft.graph.externalItem"
+                                    },
+                                    "properties": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "object",
+                                            "properties": {
+                                                "aliases": {
+                                                    "type": "array",
+                                                    "items": {},
+                                                    "example": []
+                                                },
+                                                "isQueryable": {
+                                                    "type": "boolean",
+                                                    "example": false
+                                                },
+                                                "isRetrievable": {
+                                                    "type": "boolean",
+                                                    "example": true
+                                                },
+                                                "isSearchable": {
+                                                    "type": "boolean",
+                                                    "example": false
+                                                },
+                                                "labels": {
+                                                    "type": "array",
+                                                    "items": {},
+                                                    "example": []
+                                                },
+                                                "name": {
+                                                    "type": "string",
+                                                    "example": "id"
+                                                },
+                                                "type": {
+                                                    "type": "string",
+                                                    "example": "string"
+                                                }
+                                            }
+                                        },
+                                        "example": [
+                                            {
+                                                "aliases": [],
+                                                "isQueryable": false,
+                                                "isRetrievable": true,
+                                                "isSearchable": false,
+                                                "labels": [],
+                                                "name": "id",
+                                                "type": "string"
+                                            },
+                                            {
+                                                "aliases": [],
+                                                "isQueryable": true,
+                                                "isRetrievable": true,
+                                                "isSearchable": true,
+                                                "labels": [
+                                                    "title"
+                                                ],
+                                                "name": "title",
+                                                "type": "string"
+                                            },
+                                            {
+                                                "aliases": [],
+                                                "isQueryable": true,
+                                                "isRetrievable": true,
+                                                "isSearchable": true,
+                                                "labels": [],
+                                                "name": "extension",
+                                                "type": "string"
+                                            },
+                                            {
+                                                "aliases": [],
+                                                "isQueryable": true,
+                                                "isRetrievable": true,
+                                                "isSearchable": true,
+                                                "labels": [
+                                                    "createdBy"
+                                                ],
+                                                "name": "createdBy",
+                                                "type": "string"
+                                            },
+                                            {
+                                                "aliases": [],
+                                                "isQueryable": true,
+                                                "isRetrievable": true,
+                                                "isSearchable": false,
+                                                "labels": [
+                                                    "createdDateTime"
+                                                ],
+                                                "name": "createdDateTime",
+                                                "type": "dateTime"
+                                            },
+                                            {
+                                                "aliases": [],
+                                                "isQueryable": true,
+                                                "isRetrievable": true,
+                                                "isSearchable": false,
+                                                "labels": [],
+                                                "name": "lastModifiedBy",
+                                                "type": "string"
+                                            },
+                                            {
+                                                "aliases": [],
+                                                "isQueryable": true,
+                                                "isRetrievable": true,
+                                                "isSearchable": false,
+                                                "labels": [
+                                                    "lastModifiedDateTime"
+                                                ],
+                                                "name": "lastModifiedDate",
+                                                "type": "dateTime"
+                                            },
+                                            {
+                                                "aliases": [],
+                                                "isQueryable": false,
+                                                "isRetrievable": true,
+                                                "isSearchable": false,
+                                                "labels": [
+                                                    "url"
+                                                ],
+                                                "name": "url",
+                                                "type": "string"
+                                            },
+                                            {
+                                                "aliases": [],
+                                                "isQueryable": false,
+                                                "isRetrievable": true,
+                                                "isSearchable": false,
+                                                "labels": [],
+                                                "name": "description",
+                                                "type": "string"
+                                            },
+                                            {
+                                                "aliases": [],
+                                                "isQueryable": false,
+                                                "isRetrievable": true,
+                                                "isSearchable": false,
+                                                "labels": [
+                                                    "authors"
+                                                ],
+                                                "name": "authors",
+                                                "type": "stringCollection"
+                                            }
+                                        ]
+                                    }
+                                }
+                            },
+                            "examples": {
+                                "Register schema": {
+                                    "value": {
+                                        "baseType": "microsoft.graph.externalItem",
+                                        "properties": [
+                                            {
+                                                "aliases": [],
+                                                "isQueryable": false,
+                                                "isRetrievable": true,
+                                                "isSearchable": false,
+                                                "labels": [],
+                                                "name": "id",
+                                                "type": "string"
+                                            },
+                                            {
+                                                "aliases": [],
+                                                "isQueryable": true,
+                                                "isRetrievable": true,
+                                                "isSearchable": true,
+                                                "labels": [
+                                                    "title"
+                                                ],
+                                                "name": "title",
+                                                "type": "string"
+                                            },
+                                            {
+                                                "aliases": [],
+                                                "isQueryable": true,
+                                                "isRetrievable": true,
+                                                "isSearchable": true,
+                                                "labels": [],
+                                                "name": "extension",
+                                                "type": "string"
+                                            },
+                                            {
+                                                "aliases": [],
+                                                "isQueryable": true,
+                                                "isRetrievable": true,
+                                                "isSearchable": true,
+                                                "labels": [
+                                                    "createdBy"
+                                                ],
+                                                "name": "createdBy",
+                                                "type": "string"
+                                            },
+                                            {
+                                                "aliases": [],
+                                                "isQueryable": true,
+                                                "isRetrievable": true,
+                                                "isSearchable": false,
+                                                "labels": [
+                                                    "createdDateTime"
+                                                ],
+                                                "name": "createdDateTime",
+                                                "type": "dateTime"
+                                            },
+                                            {
+                                                "aliases": [],
+                                                "isQueryable": true,
+                                                "isRetrievable": true,
+                                                "isSearchable": false,
+                                                "labels": [],
+                                                "name": "lastModifiedBy",
+                                                "type": "string"
+                                            },
+                                            {
+                                                "aliases": [],
+                                                "isQueryable": true,
+                                                "isRetrievable": true,
+                                                "isSearchable": false,
+                                                "labels": [
+                                                    "lastModifiedDateTime"
+                                                ],
+                                                "name": "lastModifiedDate",
+                                                "type": "dateTime"
+                                            },
+                                            {
+                                                "aliases": [],
+                                                "isQueryable": false,
+                                                "isRetrievable": true,
+                                                "isSearchable": false,
+                                                "labels": [
+                                                    "url"
+                                                ],
+                                                "name": "url",
+                                                "type": "string"
+                                            },
+                                            {
+                                                "aliases": [],
+                                                "isQueryable": false,
+                                                "isRetrievable": true,
+                                                "isSearchable": false,
+                                                "labels": [],
+                                                "name": "description",
+                                                "type": "string"
+                                            },
+                                            {
+                                                "aliases": [],
+                                                "isQueryable": false,
+                                                "isRetrievable": true,
+                                                "isSearchable": false,
+                                                "labels": [
+                                                    "authors"
+                                                ],
+                                                "name": "authors",
+                                                "type": "stringCollection"
+                                            }
+                                        ]
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "oauth2": [
+                            "https://graph.microsoft.com/.default"
+                        ]
+                    }
+                ]
+            }
+        },
+        "/v1.0/external/connections": {
+            "get": {
+                "summary": "Get all connections",
+                "description": "Get all connections",
+                "operationId": "getAllConnections",
+                "parameters": [
+                    {
+                        "name": "prefer",
+                        "in": "header",
+                        "schema": {
+                            "type": "string",
+                            "example": "include-unknown-enum-members"
+                        }
+                    }
+                ],
+                "security": [
+                    {
+                        "oauth2": [
+                            "https://graph.microsoft.com/.default"
+                        ]
+                    }
+                ]
+            },
+            "post": {
+                "summary": "Create connection",
+                "description": "Create connection",
+                "operationId": "createConnection",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "description": {
+                                        "type": "string",
+                                        "example": "Sample connection description"
+                                    },
+                                    "id": {
+                                        "type": "string",
+                                        "example": "sampleConnectionId"
+                                    },
+                                    "name": {
+                                        "type": "string",
+                                        "example": "Sample connection"
+                                    }
+                                }
+                            },
+                            "examples": {
+                                "Create connection": {
+                                    "value": {
+                                        "description": "Sample connection description",
+                                        "id": "sampleConnectionId",
+                                        "name": "Sample connection"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "oauth2": [
+                            "https://graph.microsoft.com/.default"
+                        ]
+                    }
+                ],
+                "parameters": []
+            }
+        },
+        "/v1.0/external/connections/sampleConnectionId": {
+            "get": {
+                "summary": "Get connection",
+                "description": "Get connection",
+                "operationId": "getConnection",
+                "parameters": [
+                    {
+                        "name": "prefer",
+                        "in": "header",
+                        "schema": {
+                            "type": "string",
+                            "example": "include-unknown-enum-members"
+                        }
+                    }
+                ],
+                "security": [
+                    {
+                        "oauth2": [
+                            "https://graph.microsoft.com/.default"
+                        ]
+                    }
+                ]
+            },
+            "delete": {
+                "summary": "Delete connection",
+                "description": "Delete connection",
+                "operationId": "deleteConnection",
+                "security": [
+                    {
+                        "oauth2": [
+                            "https://graph.microsoft.com/.default"
+                        ]
+                    }
+                ],
+                "parameters": []
+            }
+        },
+        "/v1.0/external/connections/sampleConnectionId/operations/7a49501d-f8a8-f06f-7435-07fffcb45fbc": {
+            "get": {
+                "summary": "Get operation status",
+                "description": "Get operation status",
+                "operationId": "getOperationStatus",
+                "security": [
+                    {
+                        "oauth2": [
+                            "https://graph.microsoft.com/.default"
+                        ]
+                    }
+                ],
+                "parameters": []
+            }
+        },
+        "/beta/external/connections/sampleConnectionId/items/sampleItemId/addActivities": {
+            "post": {
+                "summary": "Add activity",
+                "description": "Add activity",
+                "operationId": "addActivity",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "activities": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "object",
+                                            "properties": {
+                                                "performedBy": {
+                                                    "type": "object",
+                                                    "properties": {
+                                                        "id": {
+                                                            "type": "string",
+                                                            "example": "7a49501d-f8a8-f06f-7435-07fffcb45fbc"
+                                                        },
+                                                        "type": {
+                                                            "type": "string",
+                                                            "example": "user"
+                                                        }
+                                                    }
+                                                },
+                                                "startDateTime": {
+                                                    "type": "string",
+                                                    "example": "2021-04-13T06:37:12.6402005Z"
+                                                },
+                                                "type": {
+                                                    "type": "string",
+                                                    "example": "viewed"
+                                                }
+                                            }
+                                        },
+                                        "example": [
+                                            {
+                                                "performedBy": {
+                                                    "id": "7a49501d-f8a8-f06f-7435-07fffcb45fbc",
+                                                    "type": "user"
+                                                },
+                                                "startDateTime": "2021-04-13T06:37:12.6402005Z",
+                                                "type": "viewed"
+                                            },
+                                            {
+                                                "performedBy": {
+                                                    "id": "efd46234-a7ef-4c38-818e-79b692995ec1",
+                                                    "type": "user"
+                                                },
+                                                "startDateTime": "2021-04-13T06:37:12.6402005Z",
+                                                "type": "modified"
+                                            }
+                                        ]
+                                    }
+                                }
+                            },
+                            "examples": {
+                                "Add activity": {
+                                    "value": {
+                                        "activities": [
+                                            {
+                                                "performedBy": {
+                                                    "id": "7a49501d-f8a8-f06f-7435-07fffcb45fbc",
+                                                    "type": "user"
+                                                },
+                                                "startDateTime": "2021-04-13T06:37:12.6402005Z",
+                                                "type": "viewed"
+                                            },
+                                            {
+                                                "performedBy": {
+                                                    "id": "efd46234-a7ef-4c38-818e-79b692995ec1",
+                                                    "type": "user"
+                                                },
+                                                "startDateTime": "2021-04-13T06:37:12.6402005Z",
+                                                "type": "modified"
+                                            }
+                                        ]
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "oauth2": [
+                            "https://graph.microsoft.com/.default"
+                        ]
+                    }
+                ],
+                "parameters": []
+            }
+        },
+        "/v1.0/external/connections/sampleConnectionId/items/sampleItemId": {
+            "get": {
+                "summary": "Get item",
+                "description": "Get item",
+                "operationId": "getItem",
+                "parameters": [
+                    {
+                        "name": "prefer",
+                        "in": "header",
+                        "schema": {
+                            "type": "string",
+                            "example": "include-unknown-enum-members"
+                        }
+                    }
+                ],
+                "security": [
+                    {
+                        "oauth2": [
+                            "https://graph.microsoft.com/.default"
+                        ]
+                    }
+                ]
+            },
+            "put": {
+                "summary": "Put item",
+                "description": "Put item",
+                "operationId": "putItem",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "acl": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "object",
+                                            "properties": {
+                                                "accessType": {
+                                                    "type": "string",
+                                                    "example": "grant"
+                                                },
+                                                "type": {
+                                                    "type": "string",
+                                                    "example": "everyone"
+                                                },
+                                                "value": {
+                                                    "type": "string",
+                                                    "example": "c5f19b2d-0a77-454a-9b43-abf298c3b34e"
+                                                }
+                                            }
+                                        },
+                                        "example": [
+                                            {
+                                                "accessType": "grant",
+                                                "type": "everyone",
+                                                "value": "c5f19b2d-0a77-454a-9b43-abf298c3b34e"
+                                            }
+                                        ]
+                                    },
+                                    "content": {
+                                        "type": "object",
+                                        "properties": {
+                                            "type": {
+                                                "type": "string",
+                                                "example": "text"
+                                            },
+                                            "value": {
+                                                "type": "string",
+                                                "example": "Empower customers and partners to be more productive by enabling them to bring content and activity information and allow external content to participate in Microsoft Search and OfficeHub experiences so that they find relevant and actionable information across all their applications."
+                                            }
+                                        }
+                                    },
+                                    "properties": {
+                                        "type": "object",
+                                        "properties": {
+                                            "authors": {
+                                                "type": "array",
+                                                "items": {
+                                                    "type": "string",
+                                                    "example": "John Doe"
+                                                },
+                                                "example": [
+                                                    "John Doe"
+                                                ]
+                                            },
+                                            "authors@odata.type": {
+                                                "type": "string",
+                                                "example": "Collection(String)"
+                                            },
+                                            "containerName": {
+                                                "type": "string",
+                                                "example": "Sample container name"
+                                            },
+                                            "containerUrl": {
+                                                "type": "string",
+                                                "example": "https://sampleContainerUrl.com"
+                                            },
+                                            "createdBy": {
+                                                "type": "string",
+                                                "example": "John Doe"
+                                            },
+                                            "createdDateTime": {
+                                                "type": "string",
+                                                "example": "2021-04-27T11:04:00Z"
+                                            },
+                                            "extension": {
+                                                "type": "string",
+                                                "example": "docx"
+                                            },
+                                            "iconUrl": {
+                                                "type": "string",
+                                                "example": "https://contentdepot.blob.core.windows.net/filedepot/sampleIconUrl.png"
+                                            },
+                                            "lastModifiedDate": {
+                                                "type": "string",
+                                                "example": "2021-04-27T11:04:00Z"
+                                            },
+                                            "title": {
+                                                "type": "string",
+                                                "example": "Sample item title"
+                                            },
+                                            "url": {
+                                                "type": "string",
+                                                "example": "https://sampleItemUrl.com"
+                                            }
+                                        }
+                                    }
+                                }
+                            },
+                            "examples": {
+                                "Put item": {
+                                    "value": {
+                                        "acl": [
+                                            {
+                                                "accessType": "grant",
+                                                "type": "everyone",
+                                                "value": "c5f19b2d-0a77-454a-9b43-abf298c3b34e"
+                                            }
+                                        ],
+                                        "content": {
+                                            "type": "text",
+                                            "value": "Empower customers and partners to be more productive by enabling them to bring content and activity information and allow external content to participate in Microsoft Search and OfficeHub experiences so that they find relevant and actionable information across all their applications."
+                                        },
+                                        "properties": {
+                                            "authors": [
+                                                "John Doe"
+                                            ],
+                                            "authors@odata.type": "Collection(String)",
+                                            "containerName": "Sample container name",
+                                            "containerUrl": "https://sampleContainerUrl.com",
+                                            "createdBy": "John Doe",
+                                            "createdDateTime": "2021-04-27T11:04:00Z",
+                                            "extension": "docx",
+                                            "iconUrl": "https://contentdepot.blob.core.windows.net/filedepot/sampleIconUrl.png",
+                                            "lastModifiedDate": "2021-04-27T11:04:00Z",
+                                            "title": "Sample item title",
+                                            "url": "https://sampleItemUrl.com"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "oauth2": [
+                            "https://graph.microsoft.com/.default"
+                        ]
+                    }
+                ],
+                "parameters": []
+            },
+            "delete": {
+                "summary": "Delete item",
+                "description": "Delete item",
+                "operationId": "deleteItem",
+                "requestBody": {
+                    "content": {
+                        "text/plain": {
+                            "examples": {
+                                "Delete item": {
+                                    "value": ""
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "oauth2": [
+                            "https://graph.microsoft.com/.default"
+                        ]
+                    }
+                ],
+                "parameters": []
+            }
+        },
+        "/v1.0/external/connections/sampleConnectionId/groups/graphConnectorGroupId": {
+            "get": {
+                "summary": "Get group",
+                "description": "Get a previously created group under the connection.",
+                "operationId": "getGroup",
+                "parameters": [
+                    {
+                        "name": "prefer",
+                        "in": "header",
+                        "schema": {
+                            "type": "string",
+                            "example": "include-unknown-enum-members"
+                        }
+                    }
+                ],
+                "security": [
+                    {
+                        "oauth2": [
+                            "https://graph.microsoft.com/.default"
+                        ]
+                    }
+                ]
+            },
+            "delete": {
+                "summary": "Delete group",
+                "description": "Delete group",
+                "operationId": "deleteGroup",
+                "security": [
+                    {
+                        "oauth2": [
+                            "https://graph.microsoft.com/.default"
+                        ]
+                    }
+                ],
+                "parameters": []
+            }
+        },
+        "/v1.0/external/connections/sampleConnectionId/groups": {
+            "post": {
+                "summary": "Create group",
+                "description": "Create group under the connection",
+                "operationId": "createGroup",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "displayName": {
+                                        "type": "string",
+                                        "example": "Display name of group sampleExternalGroupId"
+                                    },
+                                    "id": {
+                                        "type": "string",
+                                        "example": "graphConnectorGroupId"
+                                    }
+                                }
+                            },
+                            "examples": {
+                                "Create group": {
+                                    "value": {
+                                        "displayName": "Display name of group sampleExternalGroupId",
+                                        "id": "graphConnectorGroupId"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "oauth2": [
+                            "https://graph.microsoft.com/.default"
+                        ]
+                    }
+                ],
+                "parameters": []
+            }
+        },
+        "/v1.0/external/connections/sampleConnectionId/groups/graphConnectorGroupId/members/": {
+            "post": {
+                "summary": "Add AAD user as member",
+                "description": "Add AAD user as member",
+                "operationId": "addAadUserAsMember",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "id": {
+                                        "type": "string",
+                                        "example": "childGraphConnectorGroupId"
+                                    },
+                                    "type": {
+                                        "type": "string",
+                                        "example": "externalGroup"
+                                    }
+                                }
+                            },
+                            "examples": {
+                                "Add AAD group as member": {
+                                    "value": {
+                                        "id": "e42f427c-f33f-4389-afd8-db432ff6a338",
+                                        "type": "group"
+                                    }
+                                },
+                                "Add AAD user as member": {
+                                    "value": {
+                                        "id": "e42f427c-f33f-4389-afd8-db432ff6a338",
+                                        "type": "user"
+                                    }
+                                },
+                                "Add connector group as member": {
+                                    "value": {
+                                        "id": "childGraphConnectorGroupId",
+                                        "type": "externalGroup"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "oauth2": [
+                            "https://graph.microsoft.com/.default"
+                        ]
+                    }
+                ],
+                "parameters": []
+            }
+        },
+        "/v1.0/external/connections/sampleConnectionId/groups/graphConnectorGroupId/members/childGraphConnectorGroupId": {
+            "delete": {
+                "summary": "Remove member",
+                "description": "Remove member",
+                "operationId": "removeMember",
+                "security": [
+                    {
+                        "oauth2": [
+                            "https://graph.microsoft.com/.default"
+                        ]
+                    }
+                ],
+                "parameters": []
+            }
+        },
+        "/v1.0/users/{UserId}/messages/{MessageId}": {
+            "get": {
+                "summary": "Get a user's message",
+                "description": "Get a user's message",
+                "operationId": "getAUserSMessage",
+                "security": [
+                    {
+                        "oauth2": [
+                            "https://graph.microsoft.com/.default"
+                        ]
+                    }
+                ],
+                "parameters": [
+                    {
+                        "name": "UserId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "MessageId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ]
+            }
+        },
+        "/v1.0/subscriptions/{SubscriptionId}": {
+            "patch": {
+                "summary": "Update subscription",
+                "description": "Update subscription",
+                "operationId": "updateSubscription",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "expirationDateTime": {
+                                        "type": "string",
+                                        "example": "2019-05-19T12:41:53.2962802Z"
+                                    }
+                                }
+                            },
+                            "examples": {
+                                "Update subscription": {
+                                    "value": {
+                                        "expirationDateTime": "2019-05-19T12:41:53.2962802Z"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "oauth2": [
+                            "https://graph.microsoft.com/.default"
+                        ]
+                    }
+                ],
+                "parameters": [
+                    {
+                        "name": "SubscriptionId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ]
+            }
+        },
+        "/beta/subscriptions": {
+            "post": {
+                "summary": "Create subscription",
+                "description": "Create subscription",
+                "operationId": "createSubscription",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "changeType": {
+                                        "type": "string",
+                                        "example": "created,updated"
+                                    },
+                                    "clientState": {
+                                        "type": "string",
+                                        "example": "secretClientState"
+                                    },
+                                    "expirationDateTime": {
+                                        "type": "string",
+                                        "example": "{{expirationDateTime}}"
+                                    },
+                                    "notificationUrl": {
+                                        "type": "string",
+                                        "example": "{{notificationUrl}}"
+                                    },
+                                    "resource": {
+                                        "type": "string",
+                                        "example": "{{resourcePath}}"
+                                    }
+                                }
+                            },
+                            "examples": {
+                                "Create subscription": {
+                                    "value": {
+                                        "changeType": "created,updated",
+                                        "clientState": "secretClientState",
+                                        "expirationDateTime": "{{expirationDateTime}}",
+                                        "notificationUrl": "{{notificationUrl}}",
+                                        "resource": "{{resourcePath}}"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "oauth2": [
+                            "https://graph.microsoft.com/.default"
+                        ]
+                    }
+                ],
+                "parameters": []
+            }
+        },
+        "/v1.0/teams/{GroupId}/members/{UserId}": {
+            "get": {
+                "summary": "Get single team member",
+                "description": "Get single team member",
+                "operationId": "getSingleTeamMember",
+                "security": [
+                    {
+                        "oauth2": [
+                            "https://graph.microsoft.com/.default"
+                        ]
+                    }
+                ],
+                "parameters": [
+                    {
+                        "name": "GroupId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "UserId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ]
+            },
+            "patch": {
+                "summary": "Update team member",
+                "description": "Update team member",
+                "operationId": "updateTeamMember",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "@odata.type": {
+                                        "type": "string",
+                                        "example": "#microsoft.graph.aadUserConversationMember"
+                                    },
+                                    "roles": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "string",
+                                            "example": "owner"
+                                        },
+                                        "example": [
+                                            "owner"
+                                        ]
+                                    }
+                                }
+                            },
+                            "examples": {
+                                "Update team member": {
+                                    "value": {
+                                        "@odata.type": "#microsoft.graph.aadUserConversationMember",
+                                        "roles": [
+                                            "owner"
+                                        ]
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "oauth2": [
+                            "https://graph.microsoft.com/.default"
+                        ]
+                    }
+                ],
+                "parameters": [
+                    {
+                        "name": "GroupId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "UserId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ]
+            }
+        },
+        "/v1.0/teams/{GroupId}/channels/{ChannelId}/members": {
+            "get": {
+                "summary": "Get channel members",
+                "description": "Get channel members",
+                "operationId": "getChannelMembers",
+                "security": [
+                    {
+                        "oauth2": [
+                            "https://graph.microsoft.com/.default"
+                        ]
+                    }
+                ],
+                "parameters": [
+                    {
+                        "name": "GroupId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "ChannelId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ]
+            }
+        },
+        "/v1.0/teams/{TeamId}/members/{UserId}": {
+            "delete": {
+                "summary": "Remove team member",
+                "description": "Remove team member",
+                "operationId": "removeTeamMember",
+                "security": [
+                    {
+                        "oauth2": [
+                            "https://graph.microsoft.com/.default"
+                        ]
+                    }
+                ],
+                "parameters": [
+                    {
+                        "name": "TeamId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "UserId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ]
+            }
+        },
+        "/v1.0/teams/{TeamId}/channels/{ChannelId}members/{UserId}": {
+            "delete": {
+                "summary": "Remove channel member",
+                "description": "Remove channel member",
+                "operationId": "removeChannelMember",
+                "security": [
+                    {
+                        "oauth2": [
+                            "https://graph.microsoft.com/.default"
+                        ]
+                    }
+                ],
+                "parameters": [
+                    {
+                        "name": "TeamId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "ChannelId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "UserId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ]
+            }
+        },
+        "/v1.0/teams/{GroupId}/channels/{ChannelId}/members/{UserId}": {
+            "patch": {
+                "summary": "Update channel member",
+                "description": "Update channel member",
+                "operationId": "updateChannelMember",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "@odata.type": {
+                                        "type": "string",
+                                        "example": "#microsoft.graph.aadUserConversationMember"
+                                    },
+                                    "roles": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "string",
+                                            "example": "owner"
+                                        },
+                                        "example": [
+                                            "owner"
+                                        ]
+                                    }
+                                }
+                            },
+                            "examples": {
+                                "Update channel member": {
+                                    "value": {
+                                        "@odata.type": "#microsoft.graph.aadUserConversationMember",
+                                        "roles": [
+                                            "owner"
+                                        ]
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "oauth2": [
+                            "https://graph.microsoft.com/.default"
+                        ]
+                    }
+                ],
+                "parameters": [
+                    {
+                        "name": "GroupId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "ChannelId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "UserId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ]
+            }
+        },
+        "/v1.0/teams/{GroupId}/primaryChannel": {
+            "get": {
+                "summary": "Get primary channel",
+                "description": "Get primary channel",
+                "operationId": "getPrimaryChannel",
+                "security": [
+                    {
+                        "oauth2": [
+                            "https://graph.microsoft.com/.default"
+                        ]
+                    }
+                ],
+                "parameters": [
+                    {
+                        "name": "GroupId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ]
+            }
+        },
+        "/v1.0/teams/{GroupId}/channels": {
+            "get": {
+                "summary": "Get team channels",
+                "description": "Get team channels",
+                "operationId": "getTeamChannels",
+                "security": [
+                    {
+                        "oauth2": [
+                            "https://graph.microsoft.com/.default"
+                        ]
+                    }
+                ],
+                "parameters": [
+                    {
+                        "name": "GroupId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ]
+            }
+        },
+        "/v1.0/teams/{TeamId}": {
+            "get": {
+                "summary": "Get team",
+                "description": "Get team",
+                "operationId": "getTeam",
+                "security": [
+                    {
+                        "oauth2": [
+                            "https://graph.microsoft.com/.default"
+                        ]
+                    }
+                ],
+                "parameters": [
+                    {
+                        "name": "TeamId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ]
+            },
+            "patch": {
+                "summary": "Update team",
+                "description": "Update team",
+                "operationId": "updateTeam",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "funSettings": {
+                                        "type": "object",
+                                        "properties": {
+                                            "allowGiphy": {
+                                                "type": "boolean",
+                                                "example": true
+                                            },
+                                            "giphyContentRating": {
+                                                "type": "string",
+                                                "example": "strict"
+                                            }
+                                        }
+                                    },
+                                    "memberSettings": {
+                                        "type": "object",
+                                        "properties": {
+                                            "allowCreateUpdateChannels": {
+                                                "type": "boolean",
+                                                "example": true
+                                            }
+                                        }
+                                    },
+                                    "messagingSettings": {
+                                        "type": "object",
+                                        "properties": {
+                                            "allowUserDeleteMessages": {
+                                                "type": "boolean",
+                                                "example": true
+                                            },
+                                            "allowUserEditMessages": {
+                                                "type": "boolean",
+                                                "example": true
+                                            }
+                                        }
+                                    }
+                                }
+                            },
+                            "examples": {
+                                "Update team": {
+                                    "value": {
+                                        "funSettings": {
+                                            "allowGiphy": true,
+                                            "giphyContentRating": "strict"
+                                        },
+                                        "memberSettings": {
+                                            "allowCreateUpdateChannels": true
+                                        },
+                                        "messagingSettings": {
+                                            "allowUserDeleteMessages": true,
+                                            "allowUserEditMessages": true
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "oauth2": [
+                            "https://graph.microsoft.com/.default"
+                        ]
+                    }
+                ],
+                "parameters": [
+                    {
+                        "name": "TeamId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ]
+            }
+        },
+        "/v1.0/groups/{GroupId}/team": {
+            "put": {
+                "summary": "Create team from group",
+                "description": "Create team from group",
+                "operationId": "createTeamFromGroup",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "funSettings": {
+                                        "type": "object",
+                                        "properties": {
+                                            "allowGiphy": {
+                                                "type": "boolean",
+                                                "example": true
+                                            },
+                                            "giphyContentRating": {
+                                                "type": "string",
+                                                "example": "strict"
+                                            }
+                                        }
+                                    },
+                                    "memberSettings": {
+                                        "type": "object",
+                                        "properties": {
+                                            "allowCreatePrivateChannels": {
+                                                "type": "boolean",
+                                                "example": true
+                                            },
+                                            "allowCreateUpdateChannels": {
+                                                "type": "boolean",
+                                                "example": true
+                                            }
+                                        }
+                                    },
+                                    "messagingSettings": {
+                                        "type": "object",
+                                        "properties": {
+                                            "allowUserDeleteMessages": {
+                                                "type": "boolean",
+                                                "example": true
+                                            },
+                                            "allowUserEditMessages": {
+                                                "type": "boolean",
+                                                "example": true
+                                            }
+                                        }
+                                    }
+                                }
+                            },
+                            "examples": {
+                                "Create team from group": {
+                                    "value": {
+                                        "funSettings": {
+                                            "allowGiphy": true,
+                                            "giphyContentRating": "strict"
+                                        },
+                                        "memberSettings": {
+                                            "allowCreatePrivateChannels": true,
+                                            "allowCreateUpdateChannels": true
+                                        },
+                                        "messagingSettings": {
+                                            "allowUserDeleteMessages": true,
+                                            "allowUserEditMessages": true
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "oauth2": [
+                            "https://graph.microsoft.com/.default"
+                        ]
+                    }
+                ],
+                "parameters": [
+                    {
+                        "name": "GroupId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ]
+            }
+        },
+        "/v1.0/teams/{TeamId}/archive": {
+            "post": {
+                "summary": "Archive team",
+                "description": "Archive team",
+                "operationId": "archiveTeam",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "shouldSetSpoSiteReadOnlyForMembers": {
+                                        "type": "boolean",
+                                        "example": true
+                                    }
+                                }
+                            },
+                            "examples": {
+                                "Archive team": {
+                                    "value": {
+                                        "shouldSetSpoSiteReadOnlyForMembers": true
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "oauth2": [
+                            "https://graph.microsoft.com/.default"
+                        ]
+                    }
+                ],
+                "parameters": [
+                    {
+                        "name": "TeamId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ]
+            }
+        },
+        "/v1.0/teams/{TeamId}/clone": {
+            "post": {
+                "summary": "Clone team",
+                "description": "Clone team",
+                "operationId": "cloneTeam",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "description": {
+                                        "type": "string",
+                                        "example": "Self help community for library"
+                                    },
+                                    "displayName": {
+                                        "type": "string",
+                                        "example": "Library Assist"
+                                    },
+                                    "mailNickname": {
+                                        "type": "string",
+                                        "example": "libassist"
+                                    },
+                                    "partsToClone": {
+                                        "type": "string",
+                                        "example": "apps,tabs,settings,channels,members"
+                                    },
+                                    "visibility": {
+                                        "type": "string",
+                                        "example": "public"
+                                    }
+                                }
+                            },
+                            "examples": {
+                                "Clone team": {
+                                    "value": {
+                                        "description": "Self help community for library",
+                                        "displayName": "Library Assist",
+                                        "mailNickname": "libassist",
+                                        "partsToClone": "apps,tabs,settings,channels,members",
+                                        "visibility": "public"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "oauth2": [
+                            "https://graph.microsoft.com/.default"
+                        ]
+                    }
+                ],
+                "parameters": [
+                    {
+                        "name": "TeamId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ]
+            }
+        },
+        "/v1.0/teams/{TeamId}/unarchive": {
+            "post": {
+                "summary": "Unarchive team",
+                "description": "Unarchive team",
+                "operationId": "unarchiveTeam",
+                "security": [
+                    {
+                        "oauth2": [
+                            "https://graph.microsoft.com/.default"
+                        ]
+                    }
+                ],
+                "parameters": [
+                    {
+                        "name": "TeamId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ]
+            }
+        }
+    },
+    "components": {
+        "securitySchemes": {
+            "bearerAuth": {
+                "type": "http",
+                "scheme": "bearer"
+            },
+            "oauth2": {
+                "type": "oauth2",
+                "flows": {
+                    "authorizationCode": {
+                        "authorizationUrl": "https://login.microsoftonline.com/{{TenantID}}/oauth2/v2.0/authorize",
+                        "tokenUrl": "https://login.microsoftonline.com/{{TenantID}}/oauth2/v2.0/token",
+                        "scopes": {
+                            "https://graph.microsoft.com/.default": "https://graph.microsoft.com/.default"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "tags": [
+        {
+            "name": "Application",
+            "description": "## Application Permissions\n\nBefore the Microsoft identity platform can authorize your app to access data through Microsoft Graph, the app must be granted the privileges that it needs.\n\nOne way to grant an app the privileges it needs to access and work with your data through Microsoft Graph is by assigning it Microsoft Graph permissions.\n\nThis folder contains the APIs that require [application](https://learn.microsoft.com/en-us/graph/permissions-overview?tabs=http#application-permissions) permissions. They're permissions that allow the application to act with its own identity, without a signed-in user present.\n\n# To Get Started\n\nYou will need to set up app-only authorization for this folder. Click [here ](https://www.postman.com/microsoftgraph/workspace/microsoft-graph/folder/455214-1db05515-e045-482a-8d70-9eb21b651c0b) to follow the step-by-step guide to run your first app-only request.\n\nAfter your application is authenticated, you can decide which Microsoft Graph [permissions](https://learn.microsoft.com/en-us/graph/permissions-overview?tabs=http) to add to your Azure Active Directory application based on the access scenario and the operations you want to perform.\n\nTo find the right permissions, check the Permissions section of the relevant [API reference]"
+        },
+        {
+            "name": "Set up app-only authentication",
+            "description": "This folder describes how you can use app-only (application) authentication with Postman for Microsoft Graph to run requests without a signed-in user.\n\n# Prerequisite\n\nComplete the setup instructions in the **Get started** folder, before you can continue with this tutorial."
+        },
+        {
+            "name": "Step 1: Get an application access token",
+            "description": "The first time you run a request as an application authentication flow, you need to get an access token:\n\n1. Select the **Application** folder.\n    \n2. Select the **Authorization** tab.\n3. In the **Configure New Token** section, leave all the fields as preconfigured, including the **Grant type** that is set to `Client Credentials`.\n4. Scroll down on the right and select **Get New Access Token**.\n5. Select **Proceed**, and then select the **Use Token** button.\n    \n\nYou have now a valid access token to use for application requests."
+        },
+        {
+            "name": "Graph Connectors",
+            "description": "This folder contains app-only requests to set up and use Graph connectors.\n\nMicrosoft Graph connectors offer an intuitive way to bring content from external services into Microsoft Graph, enabling external data to power Microsoft 365 intelligent experiences such as [Microsoft Search](https://learn.microsoft.com/en-us/microsoftsearch/connectors-overview).\n\nTo learn more, see:\n\n- [Use Postman with the Microsoft Graph connectors API - Microsoft Graph | Microsoft Learn](https://learn.microsoft.com/en-us/graph/connecting-external-content-connectors-api-postman#step-6-create-a-new-connection)\n    \n- [Microsoft Graph connectors overview - Microsoft Graph | Microsoft Learn](https://learn.microsoft.com/en-us/graph/connecting-external-content-connectors-overview)"
+        },
+        {
+            "name": "Connection setup"
+        },
+        {
+            "name": "Manage experience settings (beta)"
+        },
+        {
+            "name": "Manage schema"
+        },
+        {
+            "name": "Content sync"
+        },
+        {
+            "name": "Manage item activities (beta)"
+        },
+        {
+            "name": "Identity Sync"
+        },
+        {
+            "name": "Mail1",
+            "description": "This folder contains app-only requests around accessing a user's messages with their user ID.\n\nTo learn more, see:\n\n- [Outlook mail API overview - Microsoft Graph | Microsoft Learn](https://learn.microsoft.com/en-us/graph/outlook-mail-concept-overview?view=graph-rest-1.0)\n- [message resource type - Microsoft Graph v1.0 | Microsoft Learn](https://learn.microsoft.com/en-us/graph/api/resources/message?view=graph-rest-1.0)"
+        },
+        {
+            "name": "SharePoint1",
+            "description": "This folder contains app-only requests around accessing an organizations SharePoint sites and associated drives.\n\nTo learn more, see:\n\n- [Working with SharePoint sites in Microsoft Graph - Microsoft Graph v1.0 | Microsoft Learn.](https://learn.microsoft.com/en-us/graph/api/resources/sharepoint?view=graph-rest-1.0)"
+        },
+        {
+            "name": "Subscriptions1",
+            "description": "This folder contains app-only requests around getting the organizations subscriptions.\n\nTo learn more, see:\n\n- [subscription resource type - Microsoft Graph v1.0 | Microsoft Learn](https://learn.microsoft.com/en-us/graph/api/resources/subscription?view=graph-rest-1.0)."
+        },
+        {
+            "name": "Teams1",
+            "description": "This folder contains app-only requests around managing and creating teams and memberships.\n\nTo learn more, see:\n\n- [Overview for using Microsoft Teams, Shifts, and Viva Learning to foster teamwork - Microsoft Graph | Microsoft Learn](https://learn.microsoft.com/en-us/graph/teams-concept-overview)\n- [Use the Microsoft Graph API to work with Microsoft Teams - Microsoft Graph v1.0 | Microsoft Learn](https://learn.microsoft.com/en-us/graph/api/resources/teams-api-overview?view=graph-rest-1.0)\n- [](https://learn.microsoft.com/en-us/graph/teams-create-group-and-team#add-or-manage-members)[Create teams and manage members using the Microsoft Teams API - Microsoft Graph | Microsoft Learn](https://learn.microsoft.com/en-us/graph/teams-create-group-and-team)"
+        },
+        {
+            "name": "Memberships",
+            "description": "This folder contains app-only requests around managing and updating team memberships.\n\nTo learn more, see:\n\n- [Create teams and manage members using the Microsoft Teams API - Microsoft Graph | Microsoft Learn](https://learn.microsoft.com/en-us/graph/teams-create-group-and-team#add-or-manage-members)"
+        },
+        {
+            "name": "Users1",
+            "description": "This folder contains app-only requests around getting users and inviting an external user to the organization.\n\nTo learn more, see:\n\n- [Users in Microsoft Graph - Microsoft Graph | Microsoft Learn](https://learn.microsoft.com/en-us/graph/azuread-users-concept-overview)\n- [Working with users in Microsoft Graph - Microsoft Graph v1.0 | Microsoft Learn](https://learn.microsoft.com/en-us/graph/api/resources/users?view=graph-rest-1.0)\n    \n- [Create invitation - Microsoft Graph v1.0 | Microsoft Learn](https://learn.microsoft.com/en-us/graph/api/invitation-post?view=graph-rest-1.0&tabs=http)"
+        },
+        {
+            "name": "Security1",
+            "description": "This folder contains app-only requests using the Microsoft Graph security API to list retention labels.\n\nTo learn more, see:\n\n- [Use the Microsoft Graph security API - Microsoft Graph v1.0 | Microsoft Learn](https://learn.microsoft.com/en-us/graph/api/resources/security-api-overview?view=graph-rest-1.0)\n- [Microsoft Graph security API overview - Microsoft Graph | Microsoft Learn](https://learn.microsoft.com/en-us/graph/security-concept-overview)\n    \n- [retentionLabel resource type - Microsoft Graph beta | Microsoft Learn](https://learn.microsoft.com/en-us/graph/api/resources/security-retentionlabel?view=graph-rest-beta)"
+        },
+        {
+            "name": "Misc"
+        }
+    ]
+}

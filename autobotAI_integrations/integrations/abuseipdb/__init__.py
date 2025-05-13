@@ -7,7 +7,7 @@ from autobotAI_integrations import (
 import requests
 from pydantic import Field
 
-from autobotAI_integrations.models import IntegrationCategory, SteampipeCreds
+from autobotAI_integrations.models import IntegrationCategory, RestAPICreds, SteampipeCreds
 
 
 class AbuseIPDBIntegration(BaseSchema):
@@ -65,7 +65,10 @@ class AbuseIPDBService(BaseService):
 
     @staticmethod
     def supported_connection_interfaces():
-        return [ConnectionInterfaces.STEAMPIPE, ConnectionInterfaces.REST_API]
+        return [
+            # ConnectionInterfaces.STEAMPIPE,
+            ConnectionInterfaces.REST_API
+        ]
 
     def generate_steampipe_creds(self) -> SteampipeCreds:
         creds = {"ABUSEIPDB_API_KEY": self.integration.api_key}
@@ -80,4 +83,13 @@ class AbuseIPDBService(BaseService):
             connection_name="abuseipdb",
             conf_path=conf_path,
             config=config,
+        )
+    
+    def generate_rest_api_creds(self) -> RestAPICreds:
+        return RestAPICreds(
+            base_url="https://api.abuseipdb.com/api/v2",
+            headers={
+                "Key": self.integration.api_key,
+                "Accept": "application/json",
+            },
         )

@@ -1,4 +1,5 @@
 import importlib
+import shutil
 import os
 import subprocess
 import sys
@@ -219,28 +220,74 @@ def executor(context):
     def build_python_exec_combinations(self, payload_task: PayloadTask):
         client_definitions = self.find_client_definitions(payload_task.clients)
         current_installation = set()
+
+        # Check if running in a frozen state (e.g., bundled with PyInstaller for linux integration).
+        if getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS'):
+            # attempt to locate the system's Python executable.
+            python_exec = shutil.which("python3") or shutil.which("python")
+            exec_mode = "frozen"
+            if not python_exec:
+                raise RuntimeError("Python executable not found on the system.")
+        else:
+            python_exec = sys.executable
+            exec_mode = "source"
+
+        # Extract user packages for python integration
+        user_packages = []
+        integration = payload_task.context.integration
+
+        if getattr(integration, "cspName", "").lower() == "python":
+            user_packages_raw = getattr(integration, "packages", None)
+
+            if isinstance(user_packages_raw, str) and user_packages_raw.strip().lower() not in ("", "none", "null"):
+                user_packages = [
+                    line.strip() for line in user_packages_raw.splitlines()
+                    if line.strip() and not line.strip().startswith("#")
+                ]
+            else:
+                logger.warning(f"User packages are not a valid string.")
+
+        logger.debug(f"Integration: {integration.cspName}\nUser Packages: {user_packages}\nClient Defs: {client_definitions}")
+
+        # Collect all unique packages
+        all_packages = set(user_packages)
+        if client_definitions:
+            for client in client_definitions:
+                if client.pip_package_names:
+                    all_packages.update(client.pip_package_names)
+
+        logger.info(f"All packages to install: {list(all_packages)}")
+        if not all_packages:
+            logger.info("No python packages to install.")
+
         # Installation dir by 'idx' to prevent packages co-interference
-        for idx, client in enumerate(client_definitions):
-            if client.pip_package_names and not set(client.pip_package_names).issubset(current_installation):
-                logger.info(f"Installing {client.pip_package_names}")
-                try:
-                    # prevents the reinstallation of the same package for different tasks
+        # install all collected python packages
+        for idx, package in enumerate(all_packages):
+            if package in current_installation:
+                continue
+
+            logger.info(f"Installing package '{package}' in /tmp/{idx}/")
+            try:
+                # prevents the reinstallation of the same package for different tasks
+                if exec_mode == "frozen":
                     subprocess.check_call(
-                        ["pip", "show", " ".join(client.pip_package_names)],
+                        [python_exec, "-m", "pip", "show", package],
+                        env={**os.environ, "PYTHONPATH": f"/tmp/{idx}/"}
                     )
-                    logger.info(f"Requirements already installed for {client.pip_package_names}")
-                except subprocess.CalledProcessError:
-                    subprocess.check_call(
-                        [
-                            sys.executable, "-m",
-                            "pip", "install", " ".join(client.pip_package_names),
-                            "-t", f"/tmp/{idx}/", "--no-cache-dir", "--upgrade"
-                        ]
-                    )
-                    sys.path.insert(1,  f"/tmp/{idx}/")
-                    current_installation.update(client.pip_package_names)
-                except Exception as e:
-                    logger.exception(f"Error occurred while installing packages: {e}")
+                    sys.path.insert(1, f"/tmp/{idx}/")
+                else:
+                    subprocess.check_call(["pip", "show", package])
+                logger.info(f"Python package '{package}' already installed.")
+
+            except subprocess.CalledProcessError:
+                subprocess.check_call([
+                    python_exec, "-m", "pip", "install", package,
+                    "-t", f"/tmp/{idx}/", "--no-cache-dir", "--upgrade"
+                ])
+                sys.path.insert(1, f"/tmp/{idx}/")
+                current_installation.add(package)
+            except Exception as e:
+                logger.exception(f"Error occurred while installing python package '{package}': {e}")
 
         return self.build_python_exec_combinations_hook(payload_task, client_definitions)
 
@@ -512,8 +559,8 @@ def executor(context):
         params: Optional[Dict[str, Any]] = None,
         json_data: Optional[Dict[str, Any]] = None,
         timeout: int = 10,
+        verify_ssl: bool = True,
     ) -> Union[Dict[str, Any], List[Dict[str, Any]]]:
-
         logger.info(f"Making {method} request to {url}")
         logger.debug(f"Headers: {headers}, Params: {params}, JSON: {json_data}")
 
@@ -525,6 +572,7 @@ def executor(context):
                 params=params if params else None,
                 json=json_data if json_data else None,
                 timeout=timeout,
+                verify=verify_ssl,
             )
 
             logger.info(f"Response Status Code: {response.status_code}")
@@ -533,21 +581,26 @@ def executor(context):
             # Check for HTTP errors
             response.raise_for_status()
 
-            # Check if the response content is JSON
-            if response.headers.get("Content-Type", "").startswith("application/json"):
+            # Handle no content responses (204)
+            if response.status_code == 204:
+                return {}
+
+            # If response is empty but successful
+            if not response.content:
+                return {}
+
+            content_type = response.headers.get("Content-Type", "").lower()
+
+            # Check if the response content is JSON (more flexible check)
+            if "application/json" in content_type:
                 try:
-                    try:
-                        return response.json() 
-                    except json.decoder.JSONDecodeError:
-                        # Handle multiple JSON objects separated by '\n'
-                        if "\n" in response.text:
-                            json_objects = response.text.strip().split("\n")
-                            return [json.loads(obj) for obj in json_objects if obj.strip()]
-                        else:
-                            raise ValueError("Unexpected JSON structure")
+                    return response.json()
                 except json.decoder.JSONDecodeError:
                     logger.error("Failed to decode JSON response")
-                    return {"abAI-client-error": "Invalid JSON response", "text": response.text}
+                    return {
+                        "abAI-client-error": "Invalid JSON response",
+                        "text": response.text,
+                    }
                 except ValueError:
                     logger.error("Unexpected JSON structure")
                     return {
@@ -557,12 +610,25 @@ def executor(context):
             else:
                 # Handle non-JSON responses
                 try:
-                    results = response.json()
-                    return results
-                except json.decoder.JSONDecodeError:
-                    logger.error("Response is not JSON")
+                    # Try to parse as JSON even if content-type is not JSON
+                    # (some APIs might send incorrect content-type)
+                    if response.text and response.text.strip():
+                        try:
+                            return response.json()
+                        except json.decoder.JSONDecodeError:
+                            pass
+
+                    # Handle empty or null responses
+                    if not response.text or response.text.strip() in ["None", "null"]:
+                        return {}
+
+                    # If it's not JSON and not empty, return as text
+                    return {"content": response.text, "content_type": content_type}
+
+                except Exception as e:
+                    logger.error(f"Error processing response: {str(e)}")
                     return {
-                        "abAI-client-error": "Non-JSON response",
+                        "abAI-client-error": "Error processing response",
                         "text": response.text,
                     }
 
@@ -573,6 +639,10 @@ def executor(context):
         except requests.exceptions.ConnectionError:
             logger.error("Connection error occurred")
             return {"abAI-client-error": "Connection error"}
+
+        except requests.exceptions.TooManyRedirects:
+            logger.error("Too many redirects")
+            return {"abAI-client-error": "Too many redirects"}
 
         except requests.exceptions.RequestException as e:
             logger.error(f"Request failed: {e}")
@@ -609,8 +679,16 @@ def executor(context):
                 },
                 json_data=params.get("json_data", None),
                 timeout=params.get("timeout", 10),
+                verify_ssl=payload_task.creds.verify_ssl,
             )
             logger.debug(f"Response: {response}")
+
+            # In the response handling section:
+            if isinstance(response, dict) and not response:
+                response = {
+                    "status": "success",
+                    "message": "Operation completed successfully",
+                }
 
             if isinstance(response, dict) and response.get("abAI-client-error"):
                 errors.append(
@@ -664,5 +742,14 @@ class AIBaseService(BaseService):
     def langchain_authenticator(self,model):
         raise NotImplementedError()
 
-    def prompt_executor(self, model=None, prompt=None, options: dict = {}):
+    def prompt_executor(self, model=None, prompt=None, options: dict = {}, messages: List[Dict[str, Any]] = []):
+        raise NotImplementedError()
+    
+    def get_pydantic_agent(self, model: str, tools, system_prompt: str, options: dict = {}):
+        raise NotImplementedError()
+    
+    def load_embedding_model(self, model_name: str):
+        """
+        Returns Langchaain Embedding model object and model dimensions as tuple
+        """
         raise NotImplementedError()

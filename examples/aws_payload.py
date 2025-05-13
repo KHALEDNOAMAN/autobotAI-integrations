@@ -113,13 +113,14 @@ def generate_aws_python_payload(aws_json=aws_json):
         "connection_interface": ConnectionInterfaces.PYTHON_SDK,
         "executable": '\ndef executor(context):\n    clients = context[\'clients\']\n    exec_details = context[\'execution_details\']\n    integration_details = context[\'integration\']  ### AccountId, ProjectName, SubscriptionId etc\n    s3_client = context[\'clients\']["s3"]\n    buckets = s3_client.list_buckets()["Buckets"]\n    for bucket in buckets:\n        bucket["name"] = bucket.pop("Name")\n        bucket["id"] = bucket["name"]\n    return buckets\n',
         "clients": ["s3"],
-        "params": [Param(**param)],
+        "params": [],
         "node_details": {"filter_resources": False},
         "context": PayloadTaskContext(**context, **{"integration": aws_integration}),
     }
     payload_dict = {
         "job_id": uuid.uuid4().hex,
         "tasks": [PayloadTask(**aws_python_task)],
+        "common_params": [Param(**param)]
     }
     payload = Payload(**payload_dict)
     return payload
@@ -128,7 +129,14 @@ if __name__ == '__main__':
     aws_steampipe_payload = generate_aws_steampipe_payload(aws_json)
     aws_python_payload = generate_aws_python_payload(aws_json)
     print(handle_task(aws_steampipe_payload.tasks[0]))
+    if aws_steampipe_payload.common_params:
+        aws_steampipe_payload.tasks[0].params = aws_steampipe_payload.tasks[0].params or []
+        aws_steampipe_payload.tasks[0].params = aws_steampipe_payload.tasks[0].params.extend(aws_steampipe_payload.common_params)
     handle_payload(aws_steampipe_payload, print_output=True)
 
+
     print(handle_task(aws_python_payload.tasks[0]))
+    if aws_python_payload.common_params:
+        aws_python_payload.tasks[0].params = aws_python_payload.tasks[0].params or []
+        aws_python_payload.tasks[0].params = aws_python_payload.tasks[0].params.extend(aws_python_payload.common_params)
     handle_payload(aws_python_payload, print_output=True)

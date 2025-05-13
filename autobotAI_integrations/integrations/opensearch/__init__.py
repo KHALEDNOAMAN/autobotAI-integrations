@@ -1,19 +1,22 @@
+import base64
 from enum import Enum
 from typing import List, Optional, Type, Union
+from urllib.parse import urlparse, urlunparse
 
 import boto3
-from pydantic import Field, field_validator
+from pydantic import Field, field_validator, model_validator
 from autobotAI_integrations import BaseService
+from autobotAI_integrations.integration_schema import ConnectionTypes
 from autobotAI_integrations.models import (
     BaseSchema,
     ConnectionInterfaces,
     IntegrationCategory,
+    RestAPICreds,
     SDKClient,
     SDKCreds,
 )
 from autobotAI_integrations.payload_schema import PayloadTask
 from autobotAI_integrations.utils.boto3_helper import Boto3Helper
-from opensearchpy import AuthorizationException, OpenSearch, RequestsHttpConnection, AWSV4SignerAuth
 from autobotAI_integrations.utils.logging_config import logger
 
 
@@ -31,7 +34,7 @@ class OpensearchIntegration(BaseSchema):
     host_url: str = Field(default=None, description="base url", exclude=True)
 
     # On-premise Opensearch
-    port: int = 443
+    port: Optional[int] = Field(default=None, exclude=True)
     username: Optional[str] = Field(default=None, exclude=True)
     password: Optional[str] = Field(default=None, exclude=True)
 
@@ -52,17 +55,60 @@ class OpensearchIntegration(BaseSchema):
     )
 
     def use_dependency(self, dependency: dict):
-        self.roleArn = dependency.get("roleArn")
-        self.access_key = dependency.get("access_key")
-        self.secret_key = dependency.get("secret_key")
-        self.session_token = dependency.get("session_token")
-        self.externalId = dependency.get("externalId")
-        self.account_id = dependency.get("account_id")
+        if dependency.get("cspName") == "aws":
+            self.roleArn = dependency.get("roleArn")
+            self.access_key = dependency.get("access_key")
+            self.secret_key = dependency.get("secret_key")
+            self.session_token = dependency.get("session_token")
+            self.externalId = dependency.get("externalId")
+            self.account_id = dependency.get("account_id")
+        elif dependency.get("cspName") == "linux":
+            self.connection_type = ConnectionTypes.AGENT
+            self.agent_ids = dependency.get("agent_ids")
+            self.dependent_integration_id = dependency.get("accountId")
 
     @field_validator("host_url", mode="before")
     @classmethod
     def validate_host_url(cls, host_url):
         return host_url.strip("/")
+
+    @model_validator(mode="before")
+    @classmethod
+    def validate_host_and_port(cls, values):
+        host_url = values.get("host_url")
+        port = values.get("port")
+
+        if host_url:
+
+            parsed_url = urlparse(host_url)
+
+            if not port and parsed_url.port:
+                values["port"] = parsed_url.port
+            elif not port:
+                # Set default ports based on scheme
+                if parsed_url.scheme == 'https':
+                    values["port"] = 443
+                elif parsed_url.scheme == 'http':
+                    values["port"] = 80
+
+            # Remove port from host_url if it exists
+            cleaned_netloc = parsed_url.hostname
+            cleaned_url = urlunparse(
+                (
+                    parsed_url.scheme,
+                    cleaned_netloc,
+                    parsed_url.path,
+                    parsed_url.params,
+                    parsed_url.query,
+                    parsed_url.fragment,
+                )
+            )
+            values["host_url"] = cleaned_url
+
+            if not parsed_url.scheme or not parsed_url.netloc:
+                raise ValueError("Invalid host_url format")
+
+        return values
 
 
 class OpensearchService(BaseService):
@@ -90,6 +136,12 @@ class OpensearchService(BaseService):
 
     def _test_integration(self):
         try:
+            from opensearchpy import (
+                AuthorizationException,
+                OpenSearch,
+                RequestsHttpConnection,
+                AWSV4SignerAuth,
+            )
             logger.info(f"Initiating test for integration: {self.integration.accountId}")
             host = self.integration.host_url.split("://")[1]
             use_ssl = self.integration.host_url.split("://")[0] == "https"
@@ -113,6 +165,8 @@ class OpensearchService(BaseService):
                     pool_maxsize=20,
                 )
             elif self.integration.auth_type == OpensearchAuthTypes.DIRECT_AUTH.value:
+                if self.integration.connection_type == ConnectionTypes.AGENT:
+                    return {"success": True}
                 auth = (self.integration.username, self.integration.password)
                 client = OpenSearch(
                     hosts=[{"host": host, "port": self.integration.port}],
@@ -133,6 +187,11 @@ class OpensearchService(BaseService):
     def build_python_exec_combinations_hook(
         self, payload_task: PayloadTask, client_definitions: List[SDKClient]
     ) -> list:
+        from opensearchpy import (
+            OpenSearch,
+            RequestsHttpConnection,
+            AWSV4SignerAuth,
+        )
         host = payload_task.creds.envs.get("OPENSEARCH_HOST_URL").split("://")[1]
         use_ssl = (
             payload_task.creds.envs.get("OPENSEARCH_HOST_URL").split("://")[0]
@@ -212,6 +271,7 @@ class OpensearchService(BaseService):
                             "name": "integration_id",
                             "type": "select",
                             "dataType": "integration",
+                            "integrationType": "aws",
                             "label": "Integration Id",
                             "placeholder": "Enter Integration Id",
                             "description": "Select Account you want to install this integration",
@@ -253,14 +313,7 @@ class OpensearchService(BaseService):
                             "name": "host_url",
                             "type": "text/url",
                             "label": "Host URL",
-                            "placeholder": "Enter the host URL",
-                            "required": True,
-                        },
-                        {
-                            "name": "port",
-                            "type": "number",
-                            "label": "Port",
-                            "placeholder": "Enter the port number (e.g., 9200)",
+                            "placeholder": "Enter the OpenSearch host URL:PORT (e.g., http://localhost:9200)",
                             "required": True,
                         },
                         {
@@ -277,6 +330,16 @@ class OpensearchService(BaseService):
                             "placeholder": "Enter your password",
                             "required": True,
                         },
+                        {
+                            "name": "integration_id",
+                            "type": "select",
+                            "integrationType": "linux",
+                            "dataType": "integration",
+                            "label": "Integration Id",
+                            "placeholder": "Enter Integration Id",
+                            "description": "Select the agent hosting OpenSearch for managed integration, or choose 'None' to establish a direct connection.",
+                            "required": False,
+                        },
                     ],
                 },
             ],
@@ -286,16 +349,11 @@ class OpensearchService(BaseService):
     def get_schema() -> Type[BaseSchema]:
         return OpensearchIntegration
 
-    @classmethod
-    def get_details(cls):
-        details = super().get_details()
-        details["preview"] = True
-        return details
-
     @staticmethod
     def supported_connection_interfaces():
         return [
             ConnectionInterfaces.PYTHON_SDK,
+            ConnectionInterfaces.REST_API
         ]
 
     def generate_python_sdk_creds(self) -> SDKCreds:
@@ -329,3 +387,17 @@ class OpensearchService(BaseService):
                 "OPENSEARCH_PASSWORD": self.integration.password,
             }
         return SDKCreds(envs=envs)
+    
+    def generate_rest_api_creds(self) -> RestAPICreds:
+        encoded_credentials = base64.b64encode(
+            f"{self.integration.username}:{self.integration.password}".encode("utf-8")
+        ).decode("utf-8")
+        return RestAPICreds(
+            base_url=f"{self.integration.host_url}:{self.integration.port}",
+            headers={
+                "Authorization": f"Basic {encoded_credentials}",
+                "Accept": "application/json",
+                "Content-Type": "application/json",
+            },
+            verify_ssl=self.integration.host_url.split("://")[0] == "https",
+        ) 

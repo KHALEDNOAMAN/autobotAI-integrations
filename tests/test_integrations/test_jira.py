@@ -4,64 +4,68 @@ import pytest
 from autobotAI_integrations.handlers.task_handler import handle_task
 from autobotAI_integrations.integrations import integration_service_factory
 
-github_python_code = """
+jira_python_code = """
+import traceback
+
 def executor(context):
-    gh = context["clients"]["github"]
-    result = []
-    for repo in gh.get_user().get_repos():
-        details = {
-            "name": repo.name,
-            "url": repo.url,
-            "stars_count": repo.stargazers_count,
+    print("in execute")
+    jira = context["clients"]['jira']    
+    try:
+        results = []
+        projects = jira.projects()
+        for project in projects:
+            results.append({
+                "name": project.name,
+                "key": project.key
+            })
+    except JiraApiError as e:
+        print(f"Got an error: {e.response['error']}")
+        return {
+            "success": False
         }
-        result.append({
-            "id": repo.id,
-            "details": details,
-        })
-    return [{"result": result}]
+    else:
+        return results
 """
 
 
-class TestClassGithub:
-    def test_github_steampipe_task(
-        self,
-        get_keys,
-        sample_integration_dict,
-        sample_steampipe_task,
-        test_result_format,
-    ):
-        tokens = {"token": get_keys["GITHUB_TOKEN"]}
-        integration = sample_integration_dict("github", tokens)
-        github_query = "select * from github_my_repository"
-        task = sample_steampipe_task(integration, query=github_query)
-        result = handle_task(task)
-        test_result_format(result)
-
-    def test_github_python_task(
+class TestClassJira:
+    def test_jira_python_task(
         self, get_keys, sample_integration_dict, sample_python_task, test_result_format
     ):
-        tokens = {"token": get_keys["GITHUB_TOKEN"]}
-        integration = sample_integration_dict("github", tokens)
+        tokens = {
+            "username": get_keys["JIRA_USER"],
+            "base_url": get_keys["JIRA_URL"],
+            "token": get_keys["JIRA_TOKEN"],
+        }
+        integration = sample_integration_dict("jira", tokens)
         task = sample_python_task(
-            integration, code=github_python_code, clients=["github"]
+            integration, code=jira_python_code, clients=["jira"]
         )
         result = handle_task(task)
         test_result_format(result)
 
     def test_integration_active(self, get_keys, sample_integration_dict):
-        tokens = {"token": get_keys["GITHUB_TOKEN"]}
-        integration = sample_integration_dict("github", tokens)
+        tokens = {
+            "username": get_keys["JIRA_USER"],
+            "base_url": get_keys["JIRA_URL"],
+            "token": get_keys["JIRA_TOKEN"],
+        }
+        integration = sample_integration_dict("jira", tokens)
         service = integration_service_factory.get_service(None, integration)
         res = service.is_active()
         assert res["success"]
-        tokens = {"token": get_keys["GITHUB_TOKEN"][:-2]}
-        integration = sample_integration_dict("github", tokens)
+        tokens = {
+            "username": get_keys["JIRA_USER"],
+            "base_url": get_keys["JIRA_URL"],
+            "token": get_keys["JIRA_TOKEN"][:-2],
+        }
+        integration = sample_integration_dict("jira", tokens)
         service = integration_service_factory.get_service(None, integration)
         res = service.is_active()
         assert not res["success"]
 
     def test_actions_generation(self, get_keys):
-        service = integration_service_factory.get_service_cls("github")
+        service = integration_service_factory.get_service_cls("jira")
         actions = service.get_all_rest_api_actions()
         for action in actions:
             assert action.name is not None
@@ -69,22 +73,22 @@ class TestClassGithub:
             print(action.model_dump_json(indent=2))
         assert len(actions) > 0
 
-    # "Get a repository"
+    "Get all projects"
     def test_actions_run(
         self, get_keys, sample_restapi_task, test_result_format, sample_integration_dict
     ):
-        tokens = {"token": get_keys["GITHUB_TOKEN"]}
-        integration = sample_integration_dict("github", tokens)
+        tokens = {
+            "username": get_keys["JIRA_USER"],
+            "base_url": get_keys["JIRA_URL"],
+            "token": get_keys["JIRA_TOKEN"],
+        }
+        integration = sample_integration_dict("jira", tokens)
         service = integration_service_factory.get_service(None, integration)
         actions = service.get_all_rest_api_actions()
         for action in actions:
-            if action.name == "Get a repository":
+            # print(action.name)
+            if action.name == "Get all projects":
                 params = action.parameters_definition
-                for param in params:
-                    if param.name == "owner":
-                        param.values = "<ownervalue>"
-                    if param.name == "repo":
-                        param.values = "<repo-value>"
                 action.parameters_definition = params
                 try:
                     task = sample_restapi_task(
