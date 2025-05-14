@@ -79,14 +79,6 @@ class BitBucketCloudService(BaseService):
             "type": "form",
             "children": [
                 {
-                    "name": "base_url",
-                    "type": "text/url",
-                    "label": "Base URL",
-                    "placeholder": "e.g., https://api.bitbucket.org/2.0 (default)",
-                    "description": "Specify the Bitbucket Cloud API endpoint. Use a custom URL only if you're connecting to a Bitbucket Enterprise instance.",
-                    "required": False,
-                },
-                {
                     "name": "username",
                     "type": "text",
                     "label": "Username",
