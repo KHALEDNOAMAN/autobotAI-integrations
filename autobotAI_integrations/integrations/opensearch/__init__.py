@@ -37,6 +37,7 @@ class OpensearchIntegration(BaseSchema):
     port: Optional[int] = Field(default=None, exclude=True)
     username: Optional[str] = Field(default=None, exclude=True)
     password: Optional[str] = Field(default=None, exclude=True)
+    verify_cert: bool = Field(default=True)
 
     # AWS Opensearch Service
     region: Optional[str] = None
@@ -160,7 +161,7 @@ class OpensearchService(BaseService):
                     hosts=[{"host": host, "port": self.integration.port}],
                     http_auth=auth,
                     use_ssl=use_ssl,
-                    verify_certs=use_ssl,
+                    verify_certs=self.integration.verify_cert,
                     connection_class=RequestsHttpConnection,
                     pool_maxsize=20,
                 )
@@ -172,7 +173,7 @@ class OpensearchService(BaseService):
                     hosts=[{"host": host, "port": self.integration.port}],
                     http_auth=auth,
                     use_ssl=use_ssl,
-                    verify_certs=use_ssl,
+                    verify_certs=self.integration.verify_cert,
                 )
             else:
                 return {"success": False, "error": "Invalid Authentication Method."}
@@ -219,7 +220,7 @@ class OpensearchService(BaseService):
                 hosts=[{"host": host, "port": self.integration.port}],
                 http_auth=auth,
                 use_ssl=use_ssl,
-                verify_certs=use_ssl,
+                verify_certs=self.integration.verify_cert,
                 connection_class=RequestsHttpConnection,
                 pool_maxsize=20,
             )
@@ -237,7 +238,7 @@ class OpensearchService(BaseService):
                 ],
                 http_auth=auth,
                 use_ssl=use_ssl,
-                verify_certs=use_ssl,
+                verify_certs=self.integration.verify_cert,
             )
         return [
             {
@@ -302,6 +303,17 @@ class OpensearchService(BaseService):
                             "placeholder": "example: us-east-1",
                             "required": True,
                         },
+                        {
+                            "name": "verify_cert",
+                            "type": "select",
+                            "label": "Verify SSL Certificate",
+                            "description": "Enable/disable SSL certificate verification",
+                            "options": [
+                                {"label": "True", "value": True},
+                                {"label": "False", "value": False},
+                            ],
+                            "default": True,
+                        },
                     ],
                 },
                 {
@@ -339,6 +351,18 @@ class OpensearchService(BaseService):
                             "placeholder": "Enter Integration Id",
                             "description": "Select the agent hosting OpenSearch for managed integration, or choose 'None' to establish a direct connection.",
                             "required": False,
+                        },
+                        {
+                            "name": "verify_cert",
+                            "type": "select",
+                            "label": "Verify SSL Certificate",
+                            "placeholder": "Default: True",
+                            "description": "Enable/disable SSL certificate verification",
+                            "options": [
+                                {"label": "True", "value": True},
+                                {"label": "False", "value": False},
+                            ],
+                            "default": True,
                         },
                     ],
                 },
@@ -399,5 +423,5 @@ class OpensearchService(BaseService):
                 "Accept": "application/json",
                 "Content-Type": "application/json",
             },
-            verify_ssl=self.integration.host_url.split("://")[0] == "https",
+            verify_ssl=self.integration.verify_cert,
         ) 
