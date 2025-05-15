@@ -35,7 +35,6 @@ class OpensearchIntegration(BaseSchema):
 
     # On-premise Opensearch
     port: Optional[int] = Field(default=None, exclude=True)
-    ignore_ssl: bool = False
     username: Optional[str] = Field(default=None, exclude=True)
     password: Optional[str] = Field(default=None, exclude=True)
 
@@ -145,7 +144,7 @@ class OpensearchService(BaseService):
             )
             logger.info(f"Initiating test for integration: {self.integration.accountId}")
             host = self.integration.host_url.split("://")[1]
-            use_ssl = not self.integration.ignore_ssl
+            use_ssl = self.integration.host_url.split("://")[0] == "https"
             client = None
             if self.integration.auth_type == OpensearchAuthTypes.AWS_CONFIG.value:
                 service = "es" if AWSOpensearchType.AWS_OPENSEARCH_SERVICE.value == self.integration.opensearch_type else "aoss"
@@ -194,7 +193,10 @@ class OpensearchService(BaseService):
             AWSV4SignerAuth,
         )
         host = payload_task.creds.envs.get("OPENSEARCH_HOST_URL").split("://")[1]
-        use_ssl = not self.integration.ignore_ssl
+        use_ssl = (
+            payload_task.creds.envs.get("OPENSEARCH_HOST_URL").split("://")[0]
+            == "https"
+        )
         client = None
         if self.integration.auth_type == OpensearchAuthTypes.AWS_CONFIG.value:
             service = (
@@ -300,18 +302,6 @@ class OpensearchService(BaseService):
                             "placeholder": "example: us-east-1",
                             "required": True,
                         },
-                        {
-                            "name": "ignore_ssl",
-                            "type": "select",
-                            "label": "Ignore SSL",
-                            "placeholder": "default: 'False'",
-                            "description": "Select whether to ignore SSL certificate validation.",
-                            "options": [
-                                {"label": "True", "value": "True"},
-                                {"label": "False", "value": "False"},
-                            ],
-                            "required": False,
-                        },
                     ],
                 },
                 {
@@ -339,18 +329,6 @@ class OpensearchService(BaseService):
                             "label": "Password",
                             "placeholder": "Enter your password",
                             "required": True,
-                        },
-                        {
-                            "name": "ignore_ssl",
-                            "type": "select",
-                            "label": "Ignore SSL",
-                            "placeholder": "default: 'False'",
-                            "description": "Select whether to ignore SSL certificate validation.",
-                            "options": [
-                                {"label": "True", "value": "True"},
-                                {"label": "False", "value": "False"},
-                            ],
-                            "required": False,
                         },
                         {
                             "name": "integration_id",
@@ -421,5 +399,5 @@ class OpensearchService(BaseService):
                 "Accept": "application/json",
                 "Content-Type": "application/json",
             },
-            verify_ssl=not self.integration.ignore_ssl,
-        )
+            verify_ssl=self.integration.host_url.split("://")[0] == "https",
+        ) 
