@@ -35,9 +35,9 @@ class OpensearchIntegration(BaseSchema):
 
     # On-premise Opensearch
     port: Optional[int] = Field(default=None, exclude=True)
-    ignore_ssl: bool = False
     username: Optional[str] = Field(default=None, exclude=True)
     password: Optional[str] = Field(default=None, exclude=True)
+    verify_cert: bool = Field(default=True)
 
     # AWS Opensearch Service
     region: Optional[str] = None
@@ -145,7 +145,7 @@ class OpensearchService(BaseService):
             )
             logger.info(f"Initiating test for integration: {self.integration.accountId}")
             host = self.integration.host_url.split("://")[1]
-            use_ssl = not self.integration.ignore_ssl
+            use_ssl = self.integration.host_url.split("://")[0] == "https"
             client = None
             if self.integration.auth_type == OpensearchAuthTypes.AWS_CONFIG.value:
                 service = "es" if AWSOpensearchType.AWS_OPENSEARCH_SERVICE.value == self.integration.opensearch_type else "aoss"
@@ -161,7 +161,7 @@ class OpensearchService(BaseService):
                     hosts=[{"host": host, "port": self.integration.port}],
                     http_auth=auth,
                     use_ssl=use_ssl,
-                    verify_certs=use_ssl,
+                    verify_certs=self.integration.verify_cert,
                     connection_class=RequestsHttpConnection,
                     pool_maxsize=20,
                 )
@@ -173,7 +173,7 @@ class OpensearchService(BaseService):
                     hosts=[{"host": host, "port": self.integration.port}],
                     http_auth=auth,
                     use_ssl=use_ssl,
-                    verify_certs=use_ssl,
+                    verify_certs=self.integration.verify_cert,
                 )
             else:
                 return {"success": False, "error": "Invalid Authentication Method."}
@@ -194,7 +194,10 @@ class OpensearchService(BaseService):
             AWSV4SignerAuth,
         )
         host = payload_task.creds.envs.get("OPENSEARCH_HOST_URL").split("://")[1]
-        use_ssl = not self.integration.ignore_ssl
+        use_ssl = (
+            payload_task.creds.envs.get("OPENSEARCH_HOST_URL").split("://")[0]
+            == "https"
+        )
         client = None
         if self.integration.auth_type == OpensearchAuthTypes.AWS_CONFIG.value:
             service = (
@@ -217,7 +220,7 @@ class OpensearchService(BaseService):
                 hosts=[{"host": host, "port": self.integration.port}],
                 http_auth=auth,
                 use_ssl=use_ssl,
-                verify_certs=use_ssl,
+                verify_certs=self.integration.verify_cert,
                 connection_class=RequestsHttpConnection,
                 pool_maxsize=20,
             )
@@ -235,7 +238,7 @@ class OpensearchService(BaseService):
                 ],
                 http_auth=auth,
                 use_ssl=use_ssl,
-                verify_certs=use_ssl,
+                verify_certs=self.integration.verify_cert,
             )
         return [
             {
@@ -301,16 +304,15 @@ class OpensearchService(BaseService):
                             "required": True,
                         },
                         {
-                            "name": "ignore_ssl",
+                            "name": "verify_cert",
                             "type": "select",
-                            "label": "Ignore SSL",
-                            "placeholder": "default: 'False'",
-                            "description": "Select whether to ignore SSL certificate validation.",
+                            "label": "Verify SSL Certificate",
+                            "description": "Enable/disable SSL certificate verification",
                             "options": [
-                                {"label": "True", "value": "True"},
-                                {"label": "False", "value": "False"},
+                                {"label": "True", "value": True},
+                                {"label": "False", "value": False},
                             ],
-                            "required": False,
+                            "default": True,
                         },
                     ],
                 },
@@ -341,18 +343,6 @@ class OpensearchService(BaseService):
                             "required": True,
                         },
                         {
-                            "name": "ignore_ssl",
-                            "type": "select",
-                            "label": "Ignore SSL",
-                            "placeholder": "default: 'False'",
-                            "description": "Select whether to ignore SSL certificate validation.",
-                            "options": [
-                                {"label": "True", "value": "True"},
-                                {"label": "False", "value": "False"},
-                            ],
-                            "required": False,
-                        },
-                        {
                             "name": "integration_id",
                             "type": "select",
                             "integrationType": "linux",
@@ -361,6 +351,18 @@ class OpensearchService(BaseService):
                             "placeholder": "Enter Integration Id",
                             "description": "Select the agent hosting OpenSearch for managed integration, or choose 'None' to establish a direct connection.",
                             "required": False,
+                        },
+                        {
+                            "name": "verify_cert",
+                            "type": "select",
+                            "label": "Verify SSL Certificate",
+                            "placeholder": "Default: True",
+                            "description": "Enable/disable SSL certificate verification",
+                            "options": [
+                                {"label": "True", "value": True},
+                                {"label": "False", "value": False},
+                            ],
+                            "default": True,
                         },
                     ],
                 },
@@ -421,5 +423,5 @@ class OpensearchService(BaseService):
                 "Accept": "application/json",
                 "Content-Type": "application/json",
             },
-            verify_ssl=not self.integration.ignore_ssl,
-        )
+            verify_ssl=self.integration.verify_cert,
+        ) 
