@@ -92,18 +92,31 @@ class AWSBedrockService(AIBaseService):
 
     def get_integration_specific_details(self) -> dict:
         try:
-            # TODO: SOME MODEL USES INFERENCE PROFILE, WHICH REQUIRES ARN OR ID, NOT MODEL ID
-            # HANDLE PROPERLY TO MAKE THOSE MODEL AVAILABLE
-            available_models = {
+            available_models = list({
                 model["modelId"]
                 for model in self._get_aws_client("bedrock").list_foundation_models()[
                     "modelSummaries"
                 ]
                 # MODEL WHICH REPLIES IN TEXT
                 if "TEXT" in model["outputModalities"]
-                # MODEL WHICH ARE AVAILABLE ON DEMAND (NOT INFERENCE OR PROVISIONED)
+                # MODEL WHICH ARE AVAILABLE ON DEMAND (NOT PROVISIONED)
                 and "ON_DEMAND" in model["inferenceTypesSupported"]
-            }
+            })
+            inference_prefix = None
+            if self.integration.region.startswith("us"):
+                inference_prefix = "us"
+            elif self.integration.region.startswith("ap"):
+                inference_prefix = "apac"
+            elif self.integration.region.startswith("eu"):
+                inference_prefix = "eu"
+            if inference_prefix:
+                available_models += [
+                    inference_prefix +"."+ model["modelId"]
+                    for model in self._get_aws_client("bedrock").list_foundation_models()[
+                        "modelSummaries"
+                    ]
+                    if "INFERENCE_PROFILE" in model["inferenceTypesSupported"]
+                ]
             regions = [
                 region["RegionName"]
                 for region in self._get_aws_client("ec2").describe_regions()["Regions"]
