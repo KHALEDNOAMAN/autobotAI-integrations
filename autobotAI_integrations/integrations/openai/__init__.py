@@ -206,18 +206,30 @@ class OpenAIService(AIBaseService):
         )
         return llm
     
-    def load_embedding_model(self, model_name: str):
+    def load_llama_index_embedding_model(self, model_name: str, **kwargs):
         """
-        Returns Langchaain Embedding model object and model dimensions as tuple
+        Returns Llama Index Embedding model object and model dimensions as tuple
         """
-        from langchain_openai import OpenAIEmbeddings
-        embedding_model = OpenAIEmbeddings(
-            model=model_name, openai_api_key=self.integration.api_key
+        from llama_index.embeddings.openai import OpenAIEmbedding
+
+        embed_model = OpenAIEmbedding(
+            api_key=self.integration.api_key, model=model_name, **kwargs
         )
-        query = "This is my query"
-        result = embedding_model.embed_query(query)
-        dimensions = len(result)
-        return embedding_model, dimensions
+
+        embeddings = embed_model.get_text_embedding(
+            "Open AI new Embeddings models is great."
+        )
+
+        dimensions = len(embeddings)
+
+        return embed_model, dimensions
+
+    
+    def load_llama_index_llm(self, model, **kwargs):
+        from llama_index.llms.openai import OpenAI
+        
+        llm = OpenAI(api_key=self.integration.api_key, model=model, **kwargs)
+        return llm
 
     def prompt_executor(
         self,

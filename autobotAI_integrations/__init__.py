@@ -748,8 +748,14 @@ class AIBaseService(BaseService):
     def get_pydantic_agent(self, model: str, tools, system_prompt: str, options: dict = {}):
         raise NotImplementedError()
     
-    def load_embedding_model(self, model_name: str):
+    def load_llama_index_embedding_model(self, model_name: str,**kwargs):
         """
         Returns Langchaain Embedding model object and model dimensions as tuple
+        """
+        raise NotImplementedError()
+    
+    def load_llama_index_llm(self, model: str, **kwargs):
+        """
+        Returns Langchaain LLM model object
         """
         raise NotImplementedError()
