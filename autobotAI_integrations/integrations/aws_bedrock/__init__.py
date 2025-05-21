@@ -368,9 +368,9 @@ class AWSBedrockService(AIBaseService):
         return embed_model, dimensions
     
     def load_llama_index_llm(self, model, **kwargs):
-        from llama_index.llms.bedrock import Bedrock
+        from autobotAI_integrations.lib.llama_index_llms_bedrock_converse import BedrockConverse
         credentials = self._temp_credentials()
-        llm = Bedrock(
+        llm = BedrockConverse(
             model=model,
             aws_access_key_id=credentials["AWS_ACCESS_KEY_ID"],
             aws_secret_access_key=credentials["AWS_SECRET_ACCESS_KEY"],
