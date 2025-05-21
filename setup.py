@@ -29,6 +29,11 @@ setup(
         ],
         "full": [
             # Put you dependency here if it is only used in backend (core) through api
+            "boto3",
+            "botocore",
+            "pydantic",
+            "PyYAML",
+            "pydash",
             "PyGithub",
             "kubernetes",
             "google-auth",
