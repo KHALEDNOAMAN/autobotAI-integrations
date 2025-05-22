@@ -345,23 +345,40 @@ class AWSBedrockService(AIBaseService):
         )
         return Agent(model, system_prompt=system_prompt, tools=tools, **options)
     
-    def load_embedding_model(self, model_name: str):
+    def load_llama_index_embedding_model(self, model_name: str, **kwargs):
         """
         Returns Langchaain Embedding model object and model dimensions as tuple
         """
-        from langchain_aws.embeddings import BedrockEmbeddings
+        from llama_index.embeddings.bedrock import BedrockEmbedding
         credentials = self._temp_credentials()
-        embedding_model = BedrockEmbeddings(
-            model_id=model_name,
+        embed_model = BedrockEmbedding(
+            model_name=model_name,
             aws_access_key_id=credentials["AWS_ACCESS_KEY_ID"],
             aws_secret_access_key=credentials["AWS_SECRET_ACCESS_KEY"],
             aws_session_token=credentials["AWS_SESSION_TOKEN"],
             region_name=self.integration.region,
+            **kwargs,
         )
-        query = "This is my query"
-        result = embedding_model.embed_query(query)
-        dimensions = len(result)
-        return embedding_model, dimensions
+        embeddings = embed_model.get_text_embedding(
+            "Bedrock new Embeddings models is great."
+        )
+
+        dimensions = len(embeddings)
+
+        return embed_model, dimensions
+    
+    def load_llama_index_llm(self, model, **kwargs):
+        from autobotAI_integrations.patches.llama_index_llms_bedrock_converse import BedrockConverse
+        credentials = self._temp_credentials()
+        llm = BedrockConverse(
+            model=model,
+            aws_access_key_id=credentials["AWS_ACCESS_KEY_ID"],
+            aws_secret_access_key=credentials["AWS_SECRET_ACCESS_KEY"],
+            aws_session_token=credentials["AWS_SESSION_TOKEN"],
+            region_name=self.integration.region,
+            **kwargs
+        )
+        return llm
 
     def prompt_executor(
         self,
