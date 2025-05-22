@@ -37,9 +37,10 @@ from llama_index.core.base.llms.generic_utils import (
 from llama_index.core.llms.function_calling import FunctionCallingLLM, ToolSelection
 from llama_index.core.llms.utils import parse_partial_json
 from llama_index.core.types import BaseOutputParser, PydanticProgramMode
-from utils import (
+from .utils import (
     bedrock_modelname_to_context_size,
     converse_with_retry,
+    converse_with_retry_async,
     force_single_tool_call,
     is_bedrock_function_calling_model,
     join_two_dicts,
@@ -156,6 +157,7 @@ class BedrockConverse(FunctionCallingLLM):
 
     _config: Any = PrivateAttr()
     _client: Any = PrivateAttr()
+    _asession: Any = PrivateAttr()
     _boto_client_kwargs: Any = PrivateAttr()
 
     def __init__(
@@ -254,9 +256,10 @@ class BedrockConverse(FunctionCallingLLM):
                 else botocore_config
             )
             session = boto3.Session(**session_kwargs)
+            self._asession = session  # Use boto3 session instead of aioboto3
         except ImportError:
             raise ImportError(
-                "boto3 package not found, install with"
+                "boto3 package not found, install with "
                 "'pip install boto3'"
             )
 
@@ -314,12 +317,12 @@ class BedrockConverse(FunctionCallingLLM):
     def _get_content_and_tool_calls(
         self, response: Optional[Dict[str, Any]] = None, content: Dict[str, Any] = None
     ) -> Tuple[str, Dict[str, Any], List[str], List[str]]:
-        assert (
-            response is not None or content is not None
-        ), f"Either response or content must be provided. Got response: {response}, content: {content}"
-        assert (
-            response is None or content is None
-        ), f"Only one of response or content should be provided. Got response: {response}, content: {content}"
+        assert response is not None or content is not None, (
+            f"Either response or content must be provided. Got response: {response}, content: {content}"
+        )
+        assert response is None or content is None, (
+            f"Only one of response or content should be provided. Got response: {response}, content: {content}"
+        )
         tool_calls = []
         tool_call_ids = []
         status = []
@@ -429,17 +432,27 @@ class BedrockConverse(FunctionCallingLLM):
                             # Handle the input field specially - concatenate partial JSON strings
                             if "input" in tool_use_delta:
                                 if "input" in current_tool_call:
-                                    current_tool_call["input"] += tool_use_delta["input"]
+                                    current_tool_call["input"] += tool_use_delta[
+                                        "input"
+                                    ]
                                 else:
                                     current_tool_call["input"] = tool_use_delta["input"]
 
                                 # Remove input from the delta to prevent it from being processed again
-                                tool_use_without_input = {k: v for k, v in tool_use_delta.items() if k != "input"}
+                                tool_use_without_input = {
+                                    k: v
+                                    for k, v in tool_use_delta.items()
+                                    if k != "input"
+                                }
                                 if tool_use_without_input:
-                                    current_tool_call = join_two_dicts(current_tool_call, tool_use_without_input)
+                                    current_tool_call = join_two_dicts(
+                                        current_tool_call, tool_use_without_input
+                                    )
                             else:
                                 # For other fields, use the normal joining
-                                current_tool_call = join_two_dicts(current_tool_call, tool_use_delta)
+                                current_tool_call = join_two_dicts(
+                                    current_tool_call, tool_use_delta
+                                )
 
                     yield ChatResponse(
                         message=ChatMessage(
@@ -447,7 +460,9 @@ class BedrockConverse(FunctionCallingLLM):
                             content=content.get("text", ""),
                             additional_kwargs={
                                 "tool_calls": tool_calls,
-                                "tool_call_id": [tc.get("toolUseId", "") for tc in tool_calls],
+                                "tool_call_id": [
+                                    tc.get("toolUseId", "") for tc in tool_calls
+                                ],
                                 "status": [],  # Will be populated when tool results come in
                             },
                         ),
@@ -470,7 +485,9 @@ class BedrockConverse(FunctionCallingLLM):
                             content=content.get("text", ""),
                             additional_kwargs={
                                 "tool_calls": tool_calls,
-                                "tool_call_id": [tc.get("toolUseId", "") for tc in tool_calls],
+                                "tool_call_id": [
+                                    tc.get("toolUseId", "") for tc in tool_calls
+                                ],
                                 "status": [],  # Will be populated when tool results come in
                             },
                         ),
@@ -485,6 +502,83 @@ class BedrockConverse(FunctionCallingLLM):
     ) -> CompletionResponseGen:
         stream_complete_fn = stream_chat_to_completion_decorator(self.stream_chat)
         return stream_complete_fn(prompt, **kwargs)
+
+    @llm_chat_callback()
+    async def achat(
+        self, messages: Sequence[ChatMessage], **kwargs: Any
+    ) -> ChatResponse:
+        # For async compatibility, we'll use the synchronous version
+        # convert Llama Index messages to AWS Bedrock Converse messages
+        converse_messages, system_prompt = messages_to_converse_messages(messages)
+        all_kwargs = self._get_all_kwargs(**kwargs)
+
+        # invoke LLM in AWS Bedrock Converse with retry using synchronous client
+        response = converse_with_retry_async(
+            session=self._asession,
+            config=self._config,
+            messages=converse_messages,
+            system_prompt=system_prompt,
+            max_retries=self.max_retries,
+            stream=False,
+            guardrail_identifier=self.guardrail_identifier,
+            guardrail_version=self.guardrail_version,
+            trace=self.trace,
+            boto_client_kwargs=self._boto_client_kwargs,
+            **all_kwargs,
+        )
+
+        content, tool_calls, tool_call_ids, status = self._get_content_and_tool_calls(
+            response
+        )
+
+        return ChatResponse(
+            message=ChatMessage(
+                role=MessageRole.ASSISTANT,
+                content=content,
+                additional_kwargs={
+                    "tool_calls": tool_calls,
+                    "tool_call_id": tool_call_ids,
+                    "status": status,
+                },
+            ),
+            raw=dict(response),
+            additional_kwargs=self._get_response_token_counts(dict(response)),
+        )
+
+    @llm_completion_callback()
+    async def acomplete(
+        self, prompt: str, formatted: bool = False, **kwargs: Any
+    ) -> CompletionResponse:
+        # Use the synchronous complete method instead
+        return self.complete(prompt, formatted=formatted, **kwargs)
+
+    @llm_chat_callback()
+    async def astream_chat(
+        self, messages: Sequence[ChatMessage], **kwargs: Any
+    ) -> ChatResponseAsyncGen:
+        # Use the synchronous stream_chat method instead
+        # This is a workaround to avoid using aioboto3
+        chat_response_gen = self.stream_chat(messages, **kwargs)
+        
+        async def gen() -> ChatResponseAsyncGen:
+            # Convert the synchronous generator to an async generator
+            for response in chat_response_gen:
+                yield response
+                
+        return gen()
+
+    @llm_completion_callback()
+    async def astream_complete(
+        self, prompt: str, formatted: bool = False, **kwargs: Any
+    ) -> CompletionResponseAsyncGen:
+        # Use the synchronous stream_complete method and wrap it in an async generator
+        completion_gen = self.stream_complete(prompt, formatted=formatted, **kwargs)
+        
+        async def gen() -> CompletionResponseAsyncGen:
+            for response in completion_gen:
+                yield response
+                
+        return gen()
 
     def _prepare_chat_with_tools(
         self,
@@ -550,10 +644,7 @@ class BedrockConverse(FunctionCallingLLM):
 
         tool_selections = []
         for tool_call in tool_calls:
-            if (
-                "toolUseId" not in tool_call
-                or "name" not in tool_call
-            ):
+            if "toolUseId" not in tool_call or "name" not in tool_call:
                 raise ValueError("Invalid tool call.")
 
             # handle empty inputs

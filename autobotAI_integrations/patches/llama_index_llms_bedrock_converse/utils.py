@@ -160,8 +160,30 @@ def __merge_common_role_msgs(
     messages: Sequence[Dict[str, Any]],
 ) -> Sequence[Dict[str, Any]]:
     """Merge consecutive messages with the same role."""
-    postprocessed_messages: Sequence[Dict[str, Any]] = []
+    postprocessed_messages: List[Dict[str, Any]] = []
+    
+    # Calculate total content size to check if we need to truncate
+    total_content_size = 0
     for message in messages:
+        if "content" in message and isinstance(message["content"], list):
+            for content_item in message["content"]:
+                if isinstance(content_item, dict) and "text" in content_item:
+                    total_content_size += len(content_item["text"])
+    
+    # If total content is too large, we need to be more aggressive with truncation
+    max_content_per_message = 8000
+    if total_content_size > 100000:  # If total content is over 100KB
+        max_content_per_message = 2000  # More aggressive truncation
+        logger.warning(f"Total content size ({total_content_size} chars) is very large, applying aggressive truncation")
+    
+    for message in messages:
+        # Apply truncation if needed before merging
+        if "content" in message and isinstance(message["content"], list):
+            for content_item in message["content"]:
+                if isinstance(content_item, dict) and "text" in content_item and isinstance(content_item["text"], str):
+                    if len(content_item["text"]) > max_content_per_message:
+                        content_item["text"] = content_item["text"][:max_content_per_message] + "... [truncated]"
+        
         if (
             postprocessed_messages
             and postprocessed_messages[-1]["role"] == message["role"]
@@ -169,6 +191,7 @@ def __merge_common_role_msgs(
             postprocessed_messages[-1]["content"] += message["content"]
         else:
             postprocessed_messages.append(message)
+    
     return postprocessed_messages
 
 
@@ -177,16 +200,28 @@ def _content_block_to_bedrock_format(
 ) -> Optional[Dict[str, Any]]:
     """Convert content block to AWS Bedrock Converse API required format."""
     if isinstance(block, TextBlock):
+        # Truncate text if it's too long to prevent "Input is too long" errors
+        text = block.text
+        if text and len(text) > 8000:
+            text = text[:8000] + "... [truncated]"
         return {
-            "text": block.text,
+            "text": text,
         }
     elif isinstance(block, DocumentBlock):
         if not block.data:
             file_buffer = block.resolve_document()
             with file_buffer as f:
                 data = f.read()
+                # Limit document size
+                if len(data) > 100000:  # 100KB limit
+                    data = data[:100000]
+                    logger.warning(f"Document truncated to 100KB: {block.title}")
         else:
             data = base64.b64decode(block.data)
+            # Limit document size
+            if len(data) > 100000:  # 100KB limit
+                data = data[:100000]
+                logger.warning(f"Document truncated to 100KB: {block.title}")
         title = block.title
         # NOTE: At the time of writing, "txt" format works for all file types
         # The API then infers the format from the file type based on the bytes
@@ -204,6 +239,9 @@ def _content_block_to_bedrock_format(
         # The image will be passed to the API in its raw binary form
         img_format = __get_img_format_from_image_mimetype(block.image_mimetype)
         raw_image_bytes = block.resolve_image(as_base64=False).read()
+        # Limit image size if needed
+        if len(raw_image_bytes) > 1000000:  # 1MB limit
+            logger.warning("Image too large, may cause API issues")
         return {"image": {"format": img_format, "source": {"bytes": raw_image_bytes}}}
     elif isinstance(block, AudioBlock):
         logger.warning("Audio blocks are not supported in Bedrock Converse API.")
@@ -248,16 +286,27 @@ def messages_to_converse_messages(
     converse_messages = []
     system_prompt = ""
     for message in messages:
+        # Truncate message content if it's too long
         if message.role == MessageRole.SYSTEM:
-            system_prompt += message.content + "\n"
+            # Limit system prompt to 8000 chars to prevent overflow
+            if message.content and len(message.content) > 8000:
+                truncated_content = message.content[:8000] + "... [truncated]"
+                system_prompt += truncated_content + "\n"
+            else:
+                system_prompt += message.content + "\n"
         elif message.role in [MessageRole.FUNCTION, MessageRole.TOOL]:
             # convert tool output to the AWS Bedrock Converse format
+            # Truncate tool result content if needed
+            tool_content = message.content
+            if tool_content and len(tool_content) > 8000:
+                tool_content = tool_content[:8000] + "... [truncated]"
+                
             content = {
                 "toolResult": {
                     "toolUseId": message.additional_kwargs["tool_call_id"],
                     "content": [
                         {
-                            "text": message.content or "",
+                            "text": tool_content or "",
                         },
                     ],
                 }
@@ -278,6 +327,10 @@ def messages_to_converse_messages(
                     role=message.role,
                 )
                 if bedrock_format_block:
+                    # Truncate text content if needed
+                    if "text" in bedrock_format_block and isinstance(bedrock_format_block["text"], str):
+                        if len(bedrock_format_block["text"]) > 8000:
+                            bedrock_format_block["text"] = bedrock_format_block["text"][:8000] + "... [truncated]"
                     content.append(bedrock_format_block)
 
             if content:
@@ -300,6 +353,9 @@ def messages_to_converse_messages(
             assert "name" in tool_call, f"`name` not found in {tool_call}"
             tool_input = tool_call["input"] if tool_call["input"] else {}
             if isinstance(tool_input, str):
+                # Truncate tool input if it's a long string
+                if len(tool_input) > 8000:
+                    tool_input = tool_input[:8000] + "... [truncated]"
                 tool_input = json.loads(tool_input)
             content.append(
                 {
@@ -367,11 +423,51 @@ def _create_retry_decorator(client: Any, max_retries: int) -> Callable[[Any], An
             "Please `pip install boto3`"
         ) from e
 
+    # Define a custom retry condition that includes ThrottlingException but excludes ValidationException with "Input is too long"
+    def retry_condition(exception):
+        if isinstance(exception, client.exceptions.ThrottlingException):
+            return True
+        if isinstance(exception, client.exceptions.ValidationException) and "Input is too long" in str(exception):
+            # Don't retry for "Input is too long" errors, as they need special handling
+            return False
+        # Don't retry for other exceptions
+        return False
+
     return retry(
         reraise=True,
         stop=stop_after_attempt(max_retries),
         wait=wait_exponential(multiplier=1, min=min_seconds, max=max_seconds),
-        retry=(retry_if_exception_type(client.exceptions.ThrottlingException)),
+        retry=retry_condition,
+        before_sleep=before_sleep_log(logger, logging.WARNING),
+    )
+
+
+def _create_retry_decorator_async(max_retries: int) -> Callable[[Any], Any]:
+    min_seconds = 4
+    max_seconds = 10
+    # Wait 2^x * 1 second between each retry starting with
+    # 4 seconds, then up to 10 seconds, then 10 seconds afterwards
+    try:
+        import boto3  # noqa
+    except ImportError as e:
+        raise ImportError(
+            "You must install the `boto3` package to use Bedrock."
+            "Please `pip install boto3`"
+        ) from e
+
+    # Define a custom retry condition that excludes ValidationException with "Input is too long"
+    def retry_if_not_input_too_long(exception):
+        if "Input is too long" in str(exception):
+            # Don't retry for "Input is too long" errors, as they need special handling
+            return False
+        # Retry for all other exceptions
+        return True
+
+    return retry(
+        reraise=True,
+        stop=stop_after_attempt(max_retries),
+        wait=wait_exponential(multiplier=1, min=min_seconds, max=max_seconds),
+        retry=retry_if_not_input_too_long,
         before_sleep=before_sleep_log(logger, logging.WARNING),
     )
 
@@ -392,16 +488,41 @@ def converse_with_retry(
 ) -> Any:
     """Use tenacity to retry the completion call."""
     retry_decorator = _create_retry_decorator(client=client, max_retries=max_retries)
+    
+    # Process messages to prevent "Input is too long" errors
+    processed_messages = []
+    for msg in messages:
+        processed_msg = msg.copy()
+        if "content" in processed_msg and isinstance(processed_msg["content"], list):
+            processed_content = []
+            for content_item in processed_msg["content"]:
+                if isinstance(content_item, dict):
+                    processed_content_item = content_item.copy()
+                    # Truncate text content if it's too long
+                    if "text" in processed_content_item and isinstance(processed_content_item["text"], str):
+                        if len(processed_content_item["text"]) > 8000:  # Arbitrary limit to prevent overflow
+                            processed_content_item["text"] = processed_content_item["text"][:8000] + "... [truncated]"
+                    processed_content.append(processed_content_item)
+                else:
+                    processed_content.append(content_item)
+            processed_msg["content"] = processed_content
+        processed_messages.append(processed_msg)
+    
     converse_kwargs = {
         "modelId": model,
-        "messages": messages,
+        "messages": processed_messages,
         "inferenceConfig": {
             "maxTokens": max_tokens,
             "temperature": temperature,
         },
     }
+    
+    # Truncate system prompt if needed
     if system_prompt:
+        if len(system_prompt) > 8000:
+            system_prompt = system_prompt[:8000] + "... [truncated]"
         converse_kwargs["system"] = [{"text": system_prompt}]
+        
     if tool_config := kwargs.get("tools"):
         converse_kwargs["toolConfig"] = tool_config
     if guardrail_identifier and guardrail_version:
@@ -421,9 +542,145 @@ def converse_with_retry(
 
     @retry_decorator
     def _conversion_with_retry(**kwargs: Any) -> Any:
-        if stream:
-            return client.converse_stream(**kwargs)
-        return client.converse(**kwargs)
+        try:
+            if stream:
+                return client.converse_stream(**kwargs)
+            return client.converse(**kwargs)
+        except Exception as e:
+            if "Input is too long" in str(e):
+                # If input is too long, try with a more aggressive truncation
+                if "messages" in kwargs:
+                    for msg in kwargs["messages"]:
+                        if "content" in msg and isinstance(msg["content"], list):
+                            for content_item in msg["content"]:
+                                if isinstance(content_item, dict) and "text" in content_item:
+                                    content_item["text"] = content_item["text"][:1000] + "... [heavily truncated]"
+                    # Try again with truncated messages
+                    if stream:
+                        return client.converse_stream(**kwargs)
+                    return client.converse(**kwargs)
+            # If it's not an input length issue or truncation didn't help, re-raise
+            raise
+
+    return _conversion_with_retry(**converse_kwargs)
+
+
+def converse_with_retry_async(
+    session: Any,
+    config: Any,
+    model: str,
+    messages: Sequence[Dict[str, Any]],
+    max_retries: int = 3,
+    system_prompt: Optional[str] = None,
+    max_tokens: int = 1000,
+    temperature: float = 0.1,
+    stream: bool = False,
+    guardrail_identifier: Optional[str] = None,
+    guardrail_version: Optional[str] = None,
+    trace: Optional[str] = None,
+    boto_client_kwargs: Optional[Dict[str, Any]] = None,
+    **kwargs: Any,
+) -> Any:
+    """Use synchronous boto3 client instead of async for compatibility."""
+    import boto3
+    
+    retry_decorator = _create_retry_decorator_async(max_retries=max_retries)
+    
+    # Process messages to prevent "Input is too long" errors
+    processed_messages = []
+    for msg in messages:
+        processed_msg = msg.copy()
+        if "content" in processed_msg and isinstance(processed_msg["content"], list):
+            processed_content = []
+            for content_item in processed_msg["content"]:
+                if isinstance(content_item, dict):
+                    processed_content_item = content_item.copy()
+                    # Truncate text content if it's too long
+                    if "text" in processed_content_item and isinstance(processed_content_item["text"], str):
+                        if len(processed_content_item["text"]) > 8000:  # Arbitrary limit to prevent overflow
+                            processed_content_item["text"] = processed_content_item["text"][:8000] + "... [truncated]"
+                    processed_content.append(processed_content_item)
+                else:
+                    processed_content.append(content_item)
+            processed_msg["content"] = processed_content
+        processed_messages.append(processed_msg)
+    
+    converse_kwargs = {
+        "modelId": model,
+        "messages": processed_messages,
+        "inferenceConfig": {
+            "maxTokens": max_tokens,
+            "temperature": temperature,
+        },
+    }
+    
+    # Truncate system prompt if needed
+    if system_prompt:
+        if len(system_prompt) > 8000:
+            system_prompt = system_prompt[:8000] + "... [truncated]"
+        converse_kwargs["system"] = [{"text": system_prompt}]
+        
+    if tool_config := kwargs.get("tools"):
+        converse_kwargs["toolConfig"] = tool_config
+    if guardrail_identifier and guardrail_version:
+        converse_kwargs["guardrailConfig"] = {}
+        converse_kwargs["guardrailConfig"]["guardrailIdentifier"] = guardrail_identifier
+        converse_kwargs["guardrailConfig"]["guardrailVersion"] = guardrail_version
+        if trace:
+            converse_kwargs["guardrailConfig"]["trace"] = trace
+    converse_kwargs = join_two_dicts(
+        converse_kwargs,
+        {
+            k: v
+            for k, v in kwargs.items()
+            if k not in ["tools", "guardrail_identifier", "guardrail_version", "trace"]
+        },
+    )
+    _boto_client_kwargs = {}
+    if boto_client_kwargs is not None:
+        _boto_client_kwargs.update(boto_client_kwargs)
+
+    # Create a synchronous boto3 client instead of async
+    session_kwargs = {}
+    if hasattr(session, "_session"):
+        # Extract session parameters if available
+        if session._session.get_credentials():
+            creds = session._session.get_credentials()
+            session_kwargs["aws_access_key_id"] = creds.access_key
+            session_kwargs["aws_secret_access_key"] = creds.secret_key
+            if creds.token:
+                session_kwargs["aws_session_token"] = creds.token
+        if session._session.region_name:
+            session_kwargs["region_name"] = session._session.region_name
+    
+    boto3_session = boto3.Session(**session_kwargs)
+    client = boto3_session.client(
+        "bedrock-runtime",
+        config=config,
+        **_boto_client_kwargs,
+    )
+
+    @retry_decorator
+    def _conversion_with_retry(**kwargs: Any) -> Any:
+        try:
+            if stream:
+                return client.converse_stream(**kwargs)
+            return client.converse(**kwargs)
+        except client.exceptions.ValidationException as e:
+            if "Input is too long" in str(e):
+                # If input is too long, try with a more aggressive truncation
+                if "messages" in kwargs:
+                    for msg in kwargs["messages"]:
+                        if "content" in msg and isinstance(msg["content"], list):
+                            for content_item in msg["content"]:
+                                if isinstance(content_item, dict) and "text" in content_item:
+                                    content_item["text"] = content_item["text"][:1000] + "... [heavily truncated]"
+                    # Try again with truncated messages
+                    if stream:
+                        return client.converse_stream(**kwargs)
+                    return client.converse(**kwargs)
+            # If it's not an input length issue or truncation didn't help, re-raise
+            raise
 
     return _conversion_with_retry(**converse_kwargs)
 
