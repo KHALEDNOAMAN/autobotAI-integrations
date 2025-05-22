@@ -368,7 +368,7 @@ class AWSBedrockService(AIBaseService):
         return embed_model, dimensions
     
     def load_llama_index_llm(self, model, **kwargs):
-        from autobotAI_integrations.lib.llama_index_llms_bedrock_converse import BedrockConverse
+        from autobotAI_integrations.patches.llama_index_llms_bedrock_converse import BedrockConverse
         credentials = self._temp_credentials()
         llm = BedrockConverse(
             model=model,
