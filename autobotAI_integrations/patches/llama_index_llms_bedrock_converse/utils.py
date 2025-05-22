@@ -377,7 +377,7 @@ def messages_to_converse_messages(
     return __merge_common_role_msgs(converse_messages), system_prompt.strip()
 
 
-def tools_to_converse_tools(tools: List["BaseTool"]) -> Dict[str, Any]:
+def tools_to_converse_tools(tools: List["BaseTool"]) -> Dict[str, Any]:  # noqa: F821
     """
     Converts a list of tools to AWS Bedrock Converse tools.
 
