@@ -759,3 +759,17 @@ class AIBaseService(BaseService):
         Returns Langchaain LLM model object
         """
         raise NotImplementedError()
+    
+    def check_context_length(self, data: str, model_name: str) -> dict:
+        llm = self.load_llama_index_llm(model_name)
+        context_window = llm.metadata.context_window
+
+        # Estimate token count (rough approximation: 4 chars ≈ 1 token)
+        estimated_tokens = len(data) // 3 #To be safe
+
+        return {
+            "text_length": len(data),
+            "estimated_tokens": estimated_tokens,
+            "model_context_window": context_window,
+            "is_within_limit": estimated_tokens < context_window,
+        }
