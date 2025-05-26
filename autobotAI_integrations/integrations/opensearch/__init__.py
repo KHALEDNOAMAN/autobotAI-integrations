@@ -164,6 +164,7 @@ class OpensearchService(BaseService):
                     verify_certs=self.integration.verify_cert,
                     connection_class=RequestsHttpConnection,
                     pool_maxsize=20,
+                    timepout=3,
                 )
             elif self.integration.auth_type == OpensearchAuthTypes.DIRECT_AUTH.value:
                 if self.integration.connection_type == ConnectionTypes.AGENT:
@@ -174,6 +175,7 @@ class OpensearchService(BaseService):
                     http_auth=auth,
                     use_ssl=use_ssl,
                     verify_certs=self.integration.verify_cert,
+                    timeout=3
                 )
             else:
                 return {"success": False, "error": "Invalid Authentication Method."}

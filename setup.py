@@ -15,6 +15,7 @@ setup(
         "PyYAML",
         "pydash",
         "requests",
+        "tenacity"
     ],
     extras_require={
         "executable": [
@@ -49,9 +50,14 @@ setup(
             "jira",
             "snowflake-connector-python",
             "opensearch-py",
-            "langchain_aws>=0.2.10",
+            "langchain_aws==0.2.23",
             "langchain_openai>=0.2.14",
             "pydantic-ai>=0.0.36",
+            "llama-index",
+            "llama-index-llms-openai",
+            "llama-index-llms-bedrock",
+            "llama-index-embeddings-openai",
+            "llama-index-embeddings-bedrock",            
         ],
     },
     package_data={

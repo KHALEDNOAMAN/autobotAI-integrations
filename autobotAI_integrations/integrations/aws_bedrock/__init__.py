@@ -92,18 +92,31 @@ class AWSBedrockService(AIBaseService):
 
     def get_integration_specific_details(self) -> dict:
         try:
-            # TODO: SOME MODEL USES INFERENCE PROFILE, WHICH REQUIRES ARN OR ID, NOT MODEL ID
-            # HANDLE PROPERLY TO MAKE THOSE MODEL AVAILABLE
-            available_models = {
+            available_models = list({
                 model["modelId"]
                 for model in self._get_aws_client("bedrock").list_foundation_models()[
                     "modelSummaries"
                 ]
                 # MODEL WHICH REPLIES IN TEXT
                 if "TEXT" in model["outputModalities"]
-                # MODEL WHICH ARE AVAILABLE ON DEMAND (NOT INFERENCE OR PROVISIONED)
+                # MODEL WHICH ARE AVAILABLE ON DEMAND (NOT PROVISIONED)
                 and "ON_DEMAND" in model["inferenceTypesSupported"]
-            }
+            })
+            inference_prefix = None
+            if self.integration.region.startswith("us"):
+                inference_prefix = "us"
+            elif self.integration.region.startswith("ap"):
+                inference_prefix = "apac"
+            elif self.integration.region.startswith("eu"):
+                inference_prefix = "eu"
+            if inference_prefix:
+                available_models += [
+                    inference_prefix +"."+ model["modelId"]
+                    for model in self._get_aws_client("bedrock").list_foundation_models()[
+                        "modelSummaries"
+                    ]
+                    if "INFERENCE_PROFILE" in model["inferenceTypesSupported"]
+                ]
             regions = [
                 region["RegionName"]
                 for region in self._get_aws_client("ec2").describe_regions()["Regions"]
@@ -332,23 +345,40 @@ class AWSBedrockService(AIBaseService):
         )
         return Agent(model, system_prompt=system_prompt, tools=tools, **options)
     
-    def load_embedding_model(self, model_name: str):
+    def load_llama_index_embedding_model(self, model_name: str, **kwargs):
         """
         Returns Langchaain Embedding model object and model dimensions as tuple
         """
-        from langchain_aws.embeddings import BedrockEmbeddings
+        from llama_index.embeddings.bedrock import BedrockEmbedding
         credentials = self._temp_credentials()
-        embedding_model = BedrockEmbeddings(
-            model_id=model_name,
+        embed_model = BedrockEmbedding(
+            model_name=model_name,
             aws_access_key_id=credentials["AWS_ACCESS_KEY_ID"],
             aws_secret_access_key=credentials["AWS_SECRET_ACCESS_KEY"],
             aws_session_token=credentials["AWS_SESSION_TOKEN"],
             region_name=self.integration.region,
+            **kwargs,
         )
-        query = "This is my query"
-        result = embedding_model.embed_query(query)
-        dimensions = len(result)
-        return embedding_model, dimensions
+        embeddings = embed_model.get_text_embedding(
+            "Bedrock new Embeddings models is great."
+        )
+
+        dimensions = len(embeddings)
+
+        return embed_model, dimensions
+    
+    def load_llama_index_llm(self, model, **kwargs):
+        from autobotAI_integrations.patches.llama_index_llms_bedrock_converse import BedrockConverse
+        credentials = self._temp_credentials()
+        llm = BedrockConverse(
+            model=model,
+            aws_access_key_id=credentials["AWS_ACCESS_KEY_ID"],
+            aws_secret_access_key=credentials["AWS_SECRET_ACCESS_KEY"],
+            aws_session_token=credentials["AWS_SESSION_TOKEN"],
+            region_name=self.integration.region,
+            **kwargs
+        )
+        return llm
 
     def prompt_executor(
         self,
