@@ -2,7 +2,7 @@ import json
 from typing import List, Optional, Type, Union, Dict
 
 
-from urllib.parse import urljoin, urlparse
+from urllib.parse import urlparse
 from pydantic import Field, field_validator
 import requests
 from autobotAI_integrations import BaseService
