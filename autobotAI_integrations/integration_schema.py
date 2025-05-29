@@ -53,7 +53,7 @@ class IntegrationSchema(BaseModel):
         for field in cls.model_fields:
             annotation = cls.model_fields[field].annotation                        
             if annotation == str or (get_origin(annotation) in [Optional, Union] and str in get_args(annotation)):
-                if field in values:
+                if field in values and values[field] is not None:
                     values[field] = str(values[field])
         return values
 

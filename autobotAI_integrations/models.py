@@ -45,6 +45,12 @@ class SteampipeCreds(BaseCreds):
     config: Optional[str] = None
     tables: list = []
 
+class RestAPIRequestBodyType(str, Enum):
+    JSON = 'json'
+    FORM_DATA = 'form_data'
+
+    def __str__(self):
+        return self.value
 
 class RestAPICreds(BaseCreds):
     connection_interface: ClassVar[ConnectionInterfaces] = ConnectionInterfaces.REST_API
@@ -54,6 +60,7 @@ class RestAPICreds(BaseCreds):
     headers: dict = {}
     query_params: dict = dict()
     verify_ssl: bool = True
+    request_body_type: RestAPIRequestBodyType = RestAPIRequestBodyType.JSON
 
 
 class Client(BaseModel):

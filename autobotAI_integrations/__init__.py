@@ -558,11 +558,12 @@ def executor(context):
         headers: Optional[Dict[str, str]] = None,
         params: Optional[Dict[str, Any]] = None,
         json_data: Optional[Dict[str, Any]] = None,
+        form_data: Optional[Dict[str, Any]] = None,
         timeout: int = 10,
         verify_ssl: bool = True,
     ) -> Union[Dict[str, Any], List[Dict[str, Any]]]:
         logger.info(f"Making {method} request to {url}")
-        logger.debug(f"Headers: {headers}, Params: {params}, JSON: {json_data}")
+        logger.debug(f"Headers: {headers}, Params: {params}, JSON: {json_data}, Form Data: {form_data}")
 
         try:
             response = requests.request(
@@ -571,6 +572,7 @@ def executor(context):
                 headers=headers if headers else None,
                 params=params if params else None,
                 json=json_data if json_data else None,
+                data=form_data if form_data else None,
                 timeout=timeout,
                 verify=verify_ssl,
             )
@@ -665,6 +667,10 @@ def executor(context):
             logger.info(f"Request URL: {request_url}")
 
             logger.info("Making request..")
+
+            if payload_task.creds.request_body_type == RestAPIRequestBodyType.FORM_DATA.value:  # noqa: F405
+                params["form_data"] = params.get("json_data", None)
+                params["json_data"] = None
             response = self.rest_api_processor(
                 url=request_url,
                 method=params.get("method", "GET"),
@@ -678,6 +684,7 @@ def executor(context):
                     **params.get("query_parameters", None),
                 },
                 json_data=params.get("json_data", None),
+                form_data=params.get("form_data", None),
                 timeout=params.get("timeout", 10),
                 verify_ssl=payload_task.creds.verify_ssl,
             )
