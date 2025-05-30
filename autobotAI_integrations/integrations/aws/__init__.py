@@ -152,7 +152,7 @@ class AWSService(BaseService):
             regions = [region['RegionName'] for region in ec2_client.describe_regions()["Regions"]]
             return {
                 "integration_id": self.integration.accountId,
-                "available_regions": regions
+                "activeRegions": regions
             }
         except Exception as e:
             logger.error(e)
