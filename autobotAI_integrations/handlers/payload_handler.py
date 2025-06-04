@@ -2,7 +2,7 @@ from autobotAI_integrations.payload_schema import Payload, JobResult, PayloadTas
 from .task_handler import handle_task
 import requests
 from io import BytesIO
-from autobotAI_integrations.utils.logging_config import logger
+from autobotAI_integrations.utils.logging_config import logger, set_unset_log_ids
 
 
 def handle_payload(
@@ -10,7 +10,8 @@ def handle_payload(
 ):
     if isinstance(payload, dict):
         payload = Payload(**payload)
-
+    if (getattr(payload, "extra_details") or {}).get("exc_id"):
+        set_unset_log_ids(logger, "Preserve", (getattr(payload, "extra_details") or {}).get("exc_id"))
     logger.info(f"Started handle_payload with Payload Id: {payload.job_id}")
 
     if not isinstance(payload, Payload):
@@ -49,7 +50,7 @@ def handle_payload(
             logger.error(f"Error uploading file: {response.status_code}")
 
     if print_output:
-        print(results.model_dump_json(indent=2))
+        logger.info(results.model_dump_json(indent=2))
 
     if return_results:
         return {

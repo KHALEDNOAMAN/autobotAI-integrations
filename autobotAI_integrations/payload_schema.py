@@ -1,5 +1,5 @@
 from enum import Enum
-from typing import List, Optional, Any, Union
+from typing import List, Optional, Any, Union, Dict
 
 from pydantic import BaseModel, ConfigDict, SerializeAsAny, field_validator, Field, model_validator
 
@@ -114,6 +114,7 @@ class PayloadTask(BaseModel):
     node_details: Optional[Any] = None
     context: Union[PayloadTaskSpecificContext, PayloadTaskContext]
     externalExecutable: bool = True
+    extra_details: Optional[Dict[str, Any]] = {}
 
     @field_validator('creds', mode='before')
     @classmethod
@@ -138,6 +139,7 @@ class Payload(BaseModel):
     job_size: Optional[JobSizes] = JobSizes.MEDIUM.value
     common_params: Optional[List[Union[OpenAPIPathParams, Param]]] = []
     common_context: PayloadCommonContext
+    extra_details: Optional[Dict[str, Any]] = {}
 
 
 class ResponseError(BaseModel):

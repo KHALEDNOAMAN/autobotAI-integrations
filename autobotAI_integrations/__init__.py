@@ -158,7 +158,7 @@ def executor(context):
         base_path = os.path.dirname(inspect.getfile(cls))
         if integration_type!=None:
             base_path = base_path + f'/integrations/{integration_type}'
-            print("base path is ",base_path)
+            logger.info("base path is %s", base_path)
         with open(path.join(base_path, ".", 'python_sdk_clients.yml')) as f:
             return yaml.safe_load(f)
 

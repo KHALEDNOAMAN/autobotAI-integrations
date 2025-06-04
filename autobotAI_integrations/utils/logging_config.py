@@ -1,27 +1,51 @@
 import logging
-import logging.config
 import os
-import sys
+from sys import stdout
+from typing import Optional
 
-DEBUG = os.getenv("DEBUG", None)
+LOG_LEVEL = os.environ.get("LOG_LEVEL", "DEBUG" if os.getenv("DEBUG", None) else "INFO")
+logger = logging.getLogger()
 
+class MultiLineFormatter(logging.Formatter):
+    def format(self, record):
+        super().format(record)
+        prefix = self.formatMessage(record).split(record.getMessage())[0]
+        return "\n".join(prefix + line for line in record.getMessage().splitlines())
 
-def setup_logging():
-    # Remove existing handlers to avoid duplicate or ignored handlers
-    for handler in logging.root.handlers[:]:
-        logging.root.removeHandler(handler)
+def set_log_format(unformatted_logger):
+    FORMAT = "[%(asctime)s] %(levelname)s in %(module)s/%(filename)s:%(funcName)s:%(lineno)d for [%(req_id)s] [%(bot_exc_id)s]-- %(message)s"
+    unformatted_logger.setLevel(getattr(logging, LOG_LEVEL, logging.INFO))
+    handler = logging.StreamHandler(stdout)
+    handler.setFormatter(MultiLineFormatter(FORMAT))
+    for old_handler in unformatted_logger.handlers:
+        unformatted_logger.removeHandler(old_handler)
+    unformatted_logger.addHandler(handler)
+    set_unset_log_ids(unformatted_logger, None, None)
 
-    # Configure logging based on environment
-    log_level = logging.DEBUG if DEBUG else logging.INFO
-    logging.basicConfig(
-        level=log_level,
-        format="%(asctime)s - %(levelname)s - %(message)s",
-        handlers=[
-            logging.StreamHandler(sys.stdout),
-        ],
-    )
-    return logging
+def set_unset_log_ids(unformatted_logger, req_id: Optional[str] = "Preserve", bot_exc_id: Optional[str] = "Preserve" ):
+    """
+    set_unset_log_ids: Used to set the logging requestIds and BotExecIds
+    Use set_unset_log_ids(logger, None, None) to reset the logger
+    """
+    class LogFilter(logging.Filter):
+        def filter(self, record):
+            if not req_id and not bot_exc_id:
+                record.req_id = "System"
+                record.bot_exc_id = "AutobotAI"
+            else:
+                if req_id and req_id != "Preserve":
+                    if req_id:
+                        record.req_id = str(req_id)
+                    else:
+                        record.req_id = "System"
+                if bot_exc_id and bot_exc_id != "Preserve":
+                    if bot_exc_id:
+                        record.bot_exc_id = str(bot_exc_id)
+                    else:
+                        record.bot_exc_id = "AutobotAI"
+            return True
+    if not req_id and not bot_exc_id:
+        unformatted_logger.filters = []
+    unformatted_logger.addFilter(LogFilter())
 
-
-# Call setup_logging when this module is imported
-logger = setup_logging()
+set_log_format(logger)
