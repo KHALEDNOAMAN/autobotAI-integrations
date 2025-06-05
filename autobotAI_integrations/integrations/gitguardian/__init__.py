@@ -12,7 +12,7 @@ from autobotAI_integrations.models import IntegrationCategory
 
 class GitGuardianIntegration(BaseSchema):
     base_url: str = "https://api.gitguardian.com/v1/"
-    token: str = Field(default=None, exclude=True)
+    token: Optional[str] = Field(default=None, exclude=True)
 
     name: Optional[str] = "GitGuardian"
     category: Optional[str] = IntegrationCategory.SECURITY_TOOLS.value
