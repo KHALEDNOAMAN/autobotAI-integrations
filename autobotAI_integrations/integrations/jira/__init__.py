@@ -22,8 +22,8 @@ from autobotAI_integrations.models import IntegrationCategory
 class JiraIntegration(BaseSchema):
     base_url: str = Field(default="https://jira.atlassian.com")
     username: str = Field(default=None, exclude=True)
-    token: str = Field(default=None, exclude=True)
-    personal_access_token: str = Field(default=None, exclude=True)
+    token: Optional[str] = Field(default=None, exclude=True)
+    personal_access_token: Optional[str] = Field(default=None, exclude=True)
 
     category: Optional[str] = IntegrationCategory.NOTIFICATIONS_AND_COMMUNICATIONS.value
     description: Optional[str] = (

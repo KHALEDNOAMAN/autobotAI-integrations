@@ -19,7 +19,7 @@ from .http_requests_client import HTTPRequestClient
 
 
 class PythonHTTPRequestIntegration(BaseSchema):
-    api_url: str = Field(default=None, exclude=True)
+    api_url: Optional[str] = Field(default=None, exclude=True)
     headers_json: Dict[str, str] = Field(default=dict(), exclude=True)
     healthcheck_get_api_path: Optional[str] = Field(default=None, exclude=True)
     ignore_ssl: bool = False
