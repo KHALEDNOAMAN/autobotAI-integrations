@@ -98,7 +98,7 @@ class MISPService(BaseService):
                 {
                     "name": "integration_id",
                     "type": "select",
-                    "integrationType": ["linux", "kubernetes"],
+                    "integrationType": "linux,kubernetes",
                     "dataType": "integration",
                     "label": "Integration Id",
                     "placeholder": "Enter Integration Id",
