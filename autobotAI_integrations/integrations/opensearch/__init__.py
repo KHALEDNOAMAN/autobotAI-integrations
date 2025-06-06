@@ -274,7 +274,7 @@ class OpensearchService(BaseService):
                             "name": "integration_id",
                             "type": "select",
                             "dataType": "integration",
-                            "integrationType": "aws",
+                            "integrationType": ["aws"],
                             "label": "Integration Id",
                             "placeholder": "Enter Integration Id",
                             "description": "Select Account you want to install this integration",
@@ -347,7 +347,7 @@ class OpensearchService(BaseService):
                         {
                             "name": "integration_id",
                             "type": "select",
-                            "integrationType": "linux",
+                            "integrationType": ["linux", "kubernetes"],
                             "dataType": "integration",
                             "label": "Integration Id",
                             "placeholder": "Enter Integration Id",

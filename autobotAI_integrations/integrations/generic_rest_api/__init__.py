@@ -144,7 +144,7 @@ class GenericRestAPIService(BaseService):
                         {
                             "name": "integration_id",
                             "type": "select",
-                            "integrationType": "linux",
+                            "integrationType": ["linux", "kubernetes"],
                             "dataType": "integration",
                             "label": "Integration Id",
                             "placeholder": "Enter Integration Id",
@@ -195,7 +195,7 @@ class GenericRestAPIService(BaseService):
                         {
                             "name": "integration_id",
                             "type": "select",
-                            "integrationType": "linux",
+                            "integrationType": ["linux", "kubernetes"],
                             "dataType": "integration",
                             "label": "Integration Id",
                             "placeholder": "Enter Integration Id",
@@ -253,7 +253,7 @@ class GenericRestAPIService(BaseService):
                         {
                             "name": "integration_id",
                             "type": "select",
-                            "integrationType": "linux",
+                            "integrationType": ["linux", "kubernetes"],
                             "dataType": "integration",
                             "label": "Integration Id",
                             "placeholder": "Enter Integration Id",
@@ -322,7 +322,7 @@ class GenericRestAPIService(BaseService):
                         {
                             "name": "integration_id",
                             "type": "select",
-                            "integrationType": "linux",
+                            "integrationType": ["linux", "kubernetes"],
                             "dataType": "integration",
                             "label": "Integration Id",
                             "placeholder": "Enter Integration Id",

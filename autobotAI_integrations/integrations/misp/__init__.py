@@ -95,6 +95,16 @@ class MISPService(BaseService):
                     ],
                     "default": True,
                 },
+                {
+                    "name": "integration_id",
+                    "type": "select",
+                    "integrationType": ["linux", "kubernetes"],
+                    "dataType": "integration",
+                    "label": "Integration Id",
+                    "placeholder": "Enter Integration Id",
+                    "description": "Select the agent hosting OpenSearch for managed integration, or choose 'None' to establish a direct connection.",
+                    "required": False,
+                },
             ],
         }
 
