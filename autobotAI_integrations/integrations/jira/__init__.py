@@ -138,7 +138,7 @@ class JiraService(BaseService):
                         options=jira_cloud_options,
                         basic_auth=(
                             payload_task.creds.envs["JIRA_USER"],
-                            payload_task.creds.envs["JIRA_TOKEN"] or payload_task.creds.envs["JIRA_PERSONAL_ACCESS_TOKEN"],
+                            payload_task.creds.envs.get("JIRA_TOKEN", None) or payload_task.creds.envs.get("JIRA_PERSONAL_ACCESS_TOKEN", None),
                         ),
                     )
                 },
