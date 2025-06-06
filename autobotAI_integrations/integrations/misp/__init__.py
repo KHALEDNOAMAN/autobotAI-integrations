@@ -3,6 +3,7 @@ from typing import Optional, Type, Union
 from pydantic import Field
 import requests
 from autobotAI_integrations import BaseService
+from autobotAI_integrations.integration_schema import ConnectionTypes
 from autobotAI_integrations.models import (
     BaseSchema,
     ConnectionInterfaces,
@@ -13,12 +14,19 @@ from autobotAI_integrations.models import (
 class MISPIntegration(BaseSchema):
     base_url: Optional[str] = Field(default=None, description="base url")
     token: Optional[str] = Field(default=None, description="token", exclude=True)
+    verify_cert: bool = Field(default=True)
 
     name: Optional[str] = "MISP"
     category: Optional[str] = IntegrationCategory.SECURITY_TOOLS.value
     description: Optional[str] = (
         "MISP (Malware Information Sharing Platform) is an open-source threat intelligence platform designed for sharing, storing, and correlating cyber threat data among organizations and security professionals."
     )
+
+    def use_dependency(self, dependency: dict):
+        if dependency.get("cspName") in ["linux", "kubernetes"]:
+            self.connection_type = ConnectionTypes.AGENT
+            self.agent_ids = dependency.get("agent_ids")
+            self.dependent_integration_id = dependency.get("accountId")
 
 
 class MISPService(BaseService):
@@ -33,6 +41,8 @@ class MISPService(BaseService):
 
     def _test_integration(self):
         try:
+            if self.integration.connection_type == ConnectionTypes.AGENT:
+                return {"success": True}
             response = requests.get(
                 url=self.integration.base_url,
                 headers={
@@ -72,7 +82,29 @@ class MISPService(BaseService):
                     "label": "API Key",
                     "placeholder": "Your API KEY",
                     "required": True,
-                }
+                },
+                {
+                    "name": "verify_cert",
+                    "type": "select",
+                    "label": "Verify SSL Certificate",
+                    "placeholder": "Default: True",
+                    "description": "Enable/disable SSL certificate verification",
+                    "options": [
+                        {"label": "True", "value": True},
+                        {"label": "False", "value": False},
+                    ],
+                    "default": True,
+                },
+                {
+                    "name": "integration_id",
+                    "type": "select",
+                    "integrationType": "linux,kubernetes",
+                    "dataType": "integration",
+                    "label": "Integration Id",
+                    "placeholder": "Enter Integration Id",
+                    "description": "Select the agent hosting OpenSearch for managed integration, or choose 'None' to establish a direct connection.",
+                    "required": False,
+                },
             ],
         }
 
@@ -97,4 +129,5 @@ class MISPService(BaseService):
                 "Accept": "application/json",
                 "Content-Type": "application/json",
             },
+            verify_ssl=self.integration.verify_cert,
         )

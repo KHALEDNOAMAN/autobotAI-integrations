@@ -63,7 +63,7 @@ class OpensearchIntegration(BaseSchema):
             self.session_token = dependency.get("session_token")
             self.externalId = dependency.get("externalId")
             self.account_id = dependency.get("account_id")
-        elif dependency.get("cspName") == "linux":
+        elif dependency.get("cspName") in ["linux", "kubernetes"]:
             self.connection_type = ConnectionTypes.AGENT
             self.agent_ids = dependency.get("agent_ids")
             self.dependent_integration_id = dependency.get("accountId")
@@ -347,7 +347,7 @@ class OpensearchService(BaseService):
                         {
                             "name": "integration_id",
                             "type": "select",
-                            "integrationType": "linux",
+                            "integrationType": "linux,kubernetes",
                             "dataType": "integration",
                             "label": "Integration Id",
                             "placeholder": "Enter Integration Id",
