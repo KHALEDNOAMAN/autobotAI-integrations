@@ -22,8 +22,8 @@ from autobotAI_integrations.models import IntegrationCategory
 
 class BitBucketCloudIntegration(BaseSchema):
     base_url: str = Field(default="https://api.bitbucket.org/2.0")
-    username: str = Field(default=None, exclude=True)
-    password: str = Field(default=None, exclude=True)
+    username: Optional[str] = Field(default=None, exclude=True)
+    password: Optional[str] = Field(default=None, exclude=True)
 
     name: Optional[str] = "BitBucket Cloud"
     category: Optional[str] = IntegrationCategory.CODE_REPOSITORY.value
