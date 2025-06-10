@@ -20,7 +20,7 @@ from autobotAI_integrations.models import IntegrationCategory
 
 class GitlabIntegration(BaseSchema):
     base_url: str = Field(default="https://gitlab.com/", exclude=True)
-    token: str = Field(default=None, exclude=True)
+    token: Optional[str] = Field(default=None, exclude=True)
 
     name: Optional[str] = "GitLab"
     category: Optional[str] = IntegrationCategory.CODE_REPOSITORY.value

@@ -16,7 +16,7 @@ from autobotAI_integrations.payload_schema import PayloadTask
 
 
 class ElasticsearchIntegration(BaseSchema):
-    base_url: str = Field(default=None, description="base url", exclude=True)
+    base_url: Optional[str] = Field(default=None, description="base url", exclude=True)
     token: Optional[str] = Field(default=None, description="token", exclude=True)
 
     name: Optional[str] = "Elasticsearch"

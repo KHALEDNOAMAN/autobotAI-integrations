@@ -19,7 +19,7 @@ from .http_requests_client import HTTPRequestClient
 
 
 class PythonHTTPRequestIntegration(BaseSchema):
-    api_url: str = Field(default=None, exclude=True)
+    api_url: Optional[str] = Field(default=None, exclude=True)
     headers_json: Dict[str, str] = Field(default=dict(), exclude=True)
     healthcheck_get_api_path: Optional[str] = Field(default=None, exclude=True)
     ignore_ssl: bool = False
@@ -31,7 +31,7 @@ class PythonHTTPRequestIntegration(BaseSchema):
     )
 
     def use_dependency(self, dependency: dict):
-        if dependency.get("cspName") == "linux":
+        if dependency.get("cspName") in ["linux", "kubernetes"]:
             self.connection_type = ConnectionTypes.AGENT
             self.agent_ids = dependency.get("agent_ids")
             self.dependent_integration_id = dependency.get("accountId")
@@ -61,8 +61,6 @@ class PythonHTTPRequestIntegration(BaseSchema):
         except Exception:
             raise ValueError("Invalid headers passed !")
 
-    # @field_validator JSON
-
 
 class PythonHTTPService(BaseService):
     def __init__(
@@ -85,7 +83,7 @@ class PythonHTTPService(BaseService):
             test_url = self.integration.api_url.rstrip('/') + '/' + self.integration.healthcheck_get_api_path.lstrip('/')
             response = requests.get(test_url,
                 headers=self.integration.headers_json,
-                verify=self.integration.ignore_ssl,
+                verify=not self.integration.ignore_ssl,
             )
             if response.status_code == 200:
                 return {"success": True}
@@ -127,8 +125,8 @@ class PythonHTTPService(BaseService):
                     "placeholder": "default: 'False'",
                     "description": "Select whether to ignore SSL certificate validation.",
                     "options": [
-                        {"label": "True", "value": "True"},
-                        {"label": "False", "value": "False"},
+                        {"label": "True", "value": True},
+                        {"label": "False", "value": False},
                     ],
                     "required": False,
                 },
@@ -151,11 +149,11 @@ class PythonHTTPService(BaseService):
                 {
                     "name": "integration_id",
                     "type": "select",
-                    "integrationType": "linux",
+                    "integrationType": "linux,kubernetes",
                     "dataType": "integration",
-                    "label": "Integration Id",
+                    "label": "Route Through Agent (Optional)",
                     "placeholder": "Enter Integration Id",
-                    "description": "Select the agent hosting OpenSearch for managed integration, or choose 'None' to establish a direct connection.",
+                    "description": "Select an integration with a Linux or Kubernetes agent to route this connection through it. Leave blank/None to connect directly.",
                     "required": False,
                 },
             ],

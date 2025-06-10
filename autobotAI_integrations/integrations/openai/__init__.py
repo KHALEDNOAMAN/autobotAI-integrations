@@ -21,7 +21,7 @@ from autobotAI_integrations.utils.logging_config import logger
 
 
 class OpenAIIntegration(BaseSchema):
-    api_key: str = Field(default=None, exclude=True)
+    api_key: Optional[str] = Field(default=None, exclude=True)
 
     name: Optional[str] = "OpenAI"
     category: Optional[str] = IntegrationCategory.AI.value

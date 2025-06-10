@@ -18,6 +18,7 @@ class HTTPRequestClient:
         for i in headers:
             if i not in preset_keys:
                 combined_headers[i] = headers[i]
-
-        response = self.session.request(method, url, headers=combined_headers,verify=self.ignore_ssl,**kwargs)
+        
+        verify_ssl = not self.ignore_ssl
+        response = self.session.request(method, url, headers=combined_headers, verify=verify_ssl, **kwargs)
         return response
