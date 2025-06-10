@@ -4,7 +4,8 @@ from sys import stdout
 from typing import Optional
 
 LOG_LEVEL = os.environ.get("LOG_LEVEL", "DEBUG" if os.getenv("DEBUG", None) else "INFO")
-logger = logging.getLogger()
+logger = logging.getLogger("AutobotAI-Integrations")
+logger.propagate = False
 
 class MultiLineFormatter(logging.Formatter):
     def format(self, record):
