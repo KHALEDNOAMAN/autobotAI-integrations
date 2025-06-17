@@ -55,6 +55,12 @@ class DevRevService(BaseService):
                 }
         except Exception as e:
             return {"success": False, "error": str(e)}
+    
+    @classmethod
+    def get_details(cls):
+        details = super().get_details()
+        details["preview"] = True
+        return details
 
     @staticmethod
     def get_forms():
