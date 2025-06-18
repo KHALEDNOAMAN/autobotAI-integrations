@@ -27,6 +27,10 @@ jobs:
         mv steampipe ~/.local/bin/
         echo "$HOME/.local/bin" >> $GITHUB_PATH
         steampipe plugin install steampipe
+    
+    - name: Symlink steampipe to /usr/local/bin
+      run: |
+        sudo ln -s ~/.local/bin/steampipe /usr/local/bin/steampipe || sudo cp ~/.local/bin/steampipe /usr/local/bin/steampipe
 
     - name: Install dependencies
       run: |
