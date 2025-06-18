@@ -22,7 +22,8 @@ jobs:
     - name: Install Steampipe
       run: |
         mkdir -p ~/.local/bin
-        curl -fsSL https://steampipe.io/install/steampipe.sh | bash -s -- -b ~/.local/bin
+        export STEAMPIPE_INSTALL_DIR="$HOME/.local/bin"
+        curl -fsSL https://steampipe.io/install/steampipe.sh | bash
         echo "$HOME/.local/bin" >> $GITHUB_PATH
         steampipe plugin install steampipe
       
