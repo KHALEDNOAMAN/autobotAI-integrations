@@ -48,6 +48,36 @@ class TestTaskHandlerClass:
         if integration["cspName"] == "git":
             assert os.path.exists(cloned_path)
         test_result_format(result)
+    
+    def test_rest_api_task(
+        self, sample_integration_dict, sample_restapi_task, test_result_format
+    ):
+        integration = sample_integration_dict(
+            "generic_rest_api",
+            {
+                "api_url": "https://jsonplaceholder.typicode.com",
+            },
+        )
+        # default args: code:str, clients:list
+        task = sample_restapi_task(
+            integration,
+            "{base_url}/posts",
+            params=[
+                {
+                    "type": "str",
+                    "name": "method",
+                    "required": True,
+                    "values": "GET",
+                    "in": "method",
+                    "description": "HTTP Method",
+                }
+            ],
+        )
+        result = handle_task(task)
+        cloned_path = os.path.join(os.path.abspath(os.getcwd()), "tree")
+        if integration["cspName"] == "generic_rest_api":
+            assert os.path.exists(cloned_path)
+        test_result_format(result)
 
     def test_compliance_task(self):
         pass

@@ -25,7 +25,10 @@ def handle_payload(
             task.params = task.params or []
             task.params.extend(payload.common_params)
         if payload.common_context:
-            task.context = PayloadTaskContext(**task.context.model_dump(), **payload.common_context.model_dump())
+            task_context_dict = task.context.model_dump()
+            common_context_dict = payload.common_context.model_dump()
+            task_context_dict.update(common_context_dict)
+            task.context = PayloadTaskContext(**task_context_dict)
         results.task_results.append(handle_task(task))
         del task.params
         del task.context
