@@ -1,0 +1,5 @@
+- name: trendmicro_vision_one
+  import_library_names:
+    - pytmv1
+  pip_package_names:
+    - pytmv1

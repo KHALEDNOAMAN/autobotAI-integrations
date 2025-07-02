@@ -22,43 +22,45 @@ def executor(context):
     clients = context["clients"]
 
     # Placeholder for retrieving the integration-specific client if needed
-    client = clients["cloudflare"]  # Supports only one client
+    client = clients["trendmicro_vision_one"]  # Supports only one client
 
     # User's Python code execution logic goes here
     # (Replace this comment with the your actual code)
 
-    # Example: Code to fetch account details (for illustration purposes only)
+    # Example: Code to get workbench alerts (for illustration purposes only)
     # result = []
     # try:
-    #     accounts = client.accounts.list()
-    #     for account in accounts:
-    #         account_details = {
-    #             "id": account.id,
-    #             "name": account.name,
-    #             "type": account.type if hasattr(account, 'type') else 'unknown'
+    #     alerts = client.workbench.get_alerts()
+    #     for alert in alerts:
+    #         alert_details = {
+    #             "id": alert.id,
+    #             "severity": alert.severity,
+    #             "created_date_time": alert.created_date_time,
+    #             "description": alert.description
     #         }
     #         result.append({
-    #             "account_id": account.id,
-    #             "details": account_details
+    #             "alert_id": alert.id,
+    #             "details": alert_details
     #         })
     # except Exception as e:
     #     result.append({"error": str(e)})
     # return result  # Replace with your actual return logic
 
-    # Example: Code to list zones (for illustration purposes only)
+    # Example: Code to get endpoint information (for illustration purposes only)
     # result = []
     # try:
-    #     zones = client.zones.list()
-    #     for zone in zones:
-    #         zone_details = {
-    #             "id": zone.id,
-    #             "name": zone.name,
-    #             "status": zone.status,
-    #             "name_servers": zone.name_servers if hasattr(zone, 'name_servers') else []
+    #     endpoints = client.endpoint.get_endpoint_info()
+    #     for endpoint in endpoints:
+    #         endpoint_details = {
+    #             "agent_guid": endpoint.agent_guid,
+    #             "login_account": endpoint.login_account,
+    #             "endpoint_name": endpoint.endpoint_name,
+    #             "mac_address": endpoint.mac_address,
+    #             "ip": endpoint.ip
     #         }
     #         result.append({
-    #             "zone_id": zone.id,
-    #             "details": zone_details
+    #             "endpoint_id": endpoint.agent_guid,
+    #             "details": endpoint_details
     #         })
     # except Exception as e:
     #     result.append({"error": str(e)})

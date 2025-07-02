@@ -87,7 +87,7 @@ class AWSBedrockService(AIBaseService):
             self.integration.account_id = account_id
             return {"success": True}
         except ClientError as e:
-            logger.error(traceback.format_exc())
+            logger.deubg(traceback.format_exc())
             return {"success": False, "error": "Integration Failed!"}
 
     def get_integration_specific_details(self) -> dict:
@@ -137,8 +137,7 @@ class AWSBedrockService(AIBaseService):
             }
 
         except Exception as e:
-            logger.error(f"Error fetching integration details: {e}")
-            logger.debug(traceback.format_exc())
+            logger.warn(f"Error fetching integration details: {e}")
             return {"error": "Details cannot be fetched"}
 
     @staticmethod
@@ -402,13 +401,13 @@ class AWSBedrockService(AIBaseService):
             # response = client.invoke_model(modelId=model, body=request,accept="application/json")
 
         except (ClientError, Exception) as e:
-            print(f"ERROR: Can't invoke '{model}'. Reason: {e}")
+            logger.error(f"Can't invoke '{model}'. Reason: {e}")
             return json.dumps({"error": f"Can't invoke '{model}'. Reason: {str(e)}"})
 
         # Decode the response body.
         model_response = json.loads(response["body"].read())
         if params != "":
-            print("model response is ", model_response["generation"])
+            logger.info("model response is %s", model_response["generation"])
             return model_response["generation"]
         else:
             return json.loads(model_response["generation"])

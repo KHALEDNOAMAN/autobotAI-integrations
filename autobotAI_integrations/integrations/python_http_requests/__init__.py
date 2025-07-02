@@ -5,7 +5,7 @@ from typing import List, Optional, Type, Union, Dict
 from urllib.parse import urlparse
 from pydantic import Field, field_validator
 import requests
-from autobotAI_integrations import BaseService
+from autobotAI_integrations import BaseService, logger
 from autobotAI_integrations.integration_schema import ConnectionTypes
 from autobotAI_integrations.models import (
     BaseSchema,
@@ -56,7 +56,7 @@ class PythonHTTPRequestIntegration(BaseSchema):
         try:
             return json.loads(headers_json)
         except json.JSONDecodeError:
-            print(headers_json)
+            logger.error("Headers Json: %s", headers_json)
             raise json.JSONDecodeError
         except Exception:
             raise ValueError("Invalid headers passed !")

@@ -97,7 +97,6 @@ class AWSService(BaseService):
             ]
             return {"success": True}
         except ClientError as e:
-            logger.error(e)
             logger.debug(e.response)
             logger.debug(traceback.format_exc())
             return {"success": False, "error": str(e)}
@@ -152,13 +151,12 @@ class AWSService(BaseService):
             regions = [region['RegionName'] for region in ec2_client.describe_regions()["Regions"]]
             return {
                 "integration_id": self.integration.accountId,
-                "available_regions": regions
+                "activeRegions": regions
             }
         except Exception as e:
-            logger.error(e)
-            logger.debug(traceback.format_exc())
+            logger.warn("Details cannot be fetched")
             return {
-                "error": "Details can not be fetched"
+                "error": "Details cannot be fetched"
             }
 
     @staticmethod
@@ -210,7 +208,7 @@ class AWSService(BaseService):
             active_regions = self.integration.activeRegions
             if not active_regions:
                 active_regions = self.get_integration_specific_details()["available_regions"]
-                print(active_regions)
+                logger.info("Active Regions: %s", active_regions)
             for region in active_regions:
                 built_clients["regional"].setdefault(region, {})
                 for client in regional_clients:
@@ -218,7 +216,7 @@ class AWSService(BaseService):
                         built_clients["regional"][region][client.name] = boto3.client(client.name, region_name=region,
                                                                                       **creds)
                     except ImportError:
-                        print(f"Failed create client for {client['name']}")
+                        logger.exception(f"Failed create client for {client['name']}")
         combinations = []
         if built_clients["regional"]:
             for region in built_clients["regional"]:

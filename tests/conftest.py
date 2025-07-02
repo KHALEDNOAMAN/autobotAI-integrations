@@ -4,7 +4,7 @@ import pytest
 from dotenv import dotenv_values
 from autobotAI_integrations.integrations import integration_service_factory
 from autobotAI_integrations.models import ConnectionInterfaces
-from autobotAI_integrations.payload_schema import Payload, PayloadTask, PayloadTaskContext, TaskResult
+from autobotAI_integrations.payload_schema import Payload, PayloadTask, PayloadTaskContext, PayloadTaskSpecificContext, TaskResult
 import json
 
 @pytest.fixture
@@ -153,11 +153,12 @@ def test_result_format():
 
 
 @pytest.fixture
-def sample_payload():
+def sample_payload(sample_context_data):
     def _sample_payload(tasks: List[PayloadTask]):
         payload = {
             "job_id": str(uuid.uuid4().hex),
             "tasks": [task for task in tasks],
+            "common_context": sample_context_data,
         }
         payload = Payload(**payload).model_dump()
         json_payload = json.dumps(payload)

@@ -2,3 +2,7 @@
   name: bedrock
 - is_regional: true
   name: bedrock-runtime
+- is_regional: true
+  name: bedrock-agent
+- is_regional: true
+  name: bedrock-agent-runtime

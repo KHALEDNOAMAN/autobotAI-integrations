@@ -261,7 +261,7 @@ class OpenAIService(AIBaseService):
                     if params != "get_code" and params != "approval" and params!="chat" and params!="params":
                         kwargs["response_format"] = {"type": "json_object"}
                     result = client.chat.completions.create(**kwargs)
-                    print("result is ", result)
+                    logger.info("result is %s", result)
                     if result.choices[0].message.content:
                         return result.choices[0].message.content
                 except:

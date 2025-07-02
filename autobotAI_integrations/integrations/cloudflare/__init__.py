@@ -1,13 +1,19 @@
-from typing import Type, Union
+import importlib
+from typing import Optional, Type, Union, List
 from enum import Enum
-
-from autobotAI_integrations.models import *
 from autobotAI_integrations import (
     BaseSchema,
     BaseService,
     ConnectionInterfaces,
+    RestAPICreds,
+    SDKCreds,
+    PayloadTask,
+    SDKClient,
 )
 import requests
+from pydantic import Field
+
+from autobotAI_integrations.models import IntegrationCategory, SteampipeCreds
 
 class CloudflareAuthTypes(str, Enum):
     TOKEN_INTEGRATION = "token_integration"
@@ -116,21 +122,12 @@ class CloudflareService(BaseService):
     def get_schema() -> Type[BaseSchema]:
         return CloudflareIntegration
 
-    @classmethod
-    def get_details(cls):
-        return {
-            "clients": [],
-            "supported_executor": "ecs",
-            "compliance_supported": False,
-            "supported_interfaces": cls.supported_connection_interfaces(),
-        }
-
     @staticmethod
     def supported_connection_interfaces():
         return [
-            ConnectionInterfaces.STEAMPIPE,
             ConnectionInterfaces.REST_API,
-            ConnectionInterfaces.CLI,
+            ConnectionInterfaces.PYTHON_SDK,
+            # ConnectionInterfaces.STEAMPIPE,
         ]
 
     def generate_steampipe_creds(self) -> SteampipeCreds:
@@ -155,3 +152,54 @@ class CloudflareService(BaseService):
             conf_path=conf_path,
             config=config,
         )
+
+    def generate_rest_api_creds(self) -> RestAPICreds:
+        headers = {"Content-Type": "application/json"}
+        
+        if self.integration.token not in ["None", None]:
+            headers["Authorization"] = f"Bearer {self.integration.token}"
+        else:
+            headers["X-Auth-Email"] = self.integration.email
+            headers["X-Auth-Key"] = self.integration.api_key
+            
+        return RestAPICreds(
+            base_url="https://api.cloudflare.com/client/v4",
+            headers=headers,
+        )
+
+    def generate_python_sdk_creds(self) -> SDKCreds:
+        envs = {}
+        
+        if self.integration.token not in ["None", None]:
+            envs["CLOUDFLARE_API_TOKEN"] = self.integration.token
+        else:
+            envs["CLOUDFLARE_EMAIL"] = self.integration.email
+            envs["CLOUDFLARE_API_KEY"] = self.integration.api_key
+            
+        return SDKCreds(envs=envs)
+
+    def build_python_exec_combinations_hook(self, payload_task: PayloadTask,
+                                            client_definitions: List[SDKClient]) -> list:
+        cloudflare = importlib.import_module(
+            client_definitions[0].import_library_names[0], package=None
+        )
+        # Initialize Cloudflare client based on available credentials
+        if payload_task.creds.envs.get("CLOUDFLARE_API_TOKEN"):
+            cloudflare_client = cloudflare.Cloudflare(
+                api_token=payload_task.creds.envs.get("CLOUDFLARE_API_TOKEN")
+            )
+        else:
+            cloudflare_client = cloudflare.Cloudflare(
+                api_email=payload_task.creds.envs.get("CLOUDFLARE_EMAIL"),
+                api_key=payload_task.creds.envs.get("CLOUDFLARE_API_KEY"),
+            )
+            
+        return [
+            {
+                "clients": {
+                    "cloudflare": cloudflare_client,
+                },
+                "params": self.prepare_params(payload_task.params),
+                "context": payload_task.context
+            }
+        ]

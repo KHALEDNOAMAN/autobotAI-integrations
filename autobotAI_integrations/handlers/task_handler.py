@@ -8,11 +8,13 @@ from autobotAI_integrations.payload_schema import (
     ResponseDebugInfo,
     ResponseError,
 )
-from autobotAI_integrations.utils.logging_config import logger
+from autobotAI_integrations.utils.logging_config import logger, set_unset_log_ids
 import json
 
 
 def handle_task(task: PayloadTask) -> TaskResult:
+    if (getattr(task, "extra_details") or {}).get("exc_id"):
+        set_unset_log_ids(logger, "Preserve", (getattr(task, "extra_details") or {}).get("exc_id"))
     logger.info("Started handle_task with Task Id: {}".format(task.task_id))
     if not isinstance(task, PayloadTask):
         logger.error("Task must be of type PayloadTask")
