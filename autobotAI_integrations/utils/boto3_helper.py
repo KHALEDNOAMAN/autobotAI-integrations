@@ -130,7 +130,7 @@ class Boto3Helper:
                 RoleArn=self.csp['roleArn'],
                 RoleSessionName=arn[13:25] + arn[31:],
                 ExternalId=self.csp['externalId'],
-                DurationSeconds=3600
+                DurationSeconds=10800 # 3 Hours
             )
 
         else:
