@@ -1,5 +1,7 @@
 from datetime import datetime, timedelta
+from time import sleep
 import boto3
+from botocore.exceptions import ClientError
 from autobotAI_integrations.utils import fromisoformat
 import os
 
@@ -118,34 +120,43 @@ class Boto3Helper:
             return self.credentials["AccessKeyId"]
 
     def refresh_sts_creds(self):
-        arn = self.csp.get('roleArn', None)
-        if arn and arn != 'None':
-            sts_client = self.ctx.autobot_aws_context.boto3_helper.get_client('sts',
-                                                                                region_name='us-east-1',
-                                                                                endpoint_url="https://sts.us-east-1.amazonaws.com"
-                                                                              )
-            assumerole = sts_client.assume_role(
-                RoleArn=self.csp['roleArn'],
-                RoleSessionName=arn[13:25] + arn[31:],
-                ExternalId=self.csp['externalId'],
-                DurationSeconds=3600
-            )
+        while True:
+            try:
+                arn = self.csp.get('roleArn', None)
+                if arn and arn != 'None':
+                    sts_client = self.ctx.autobot_aws_context.boto3_helper.get_client('sts',
+                                                                                        region_name='us-east-1',
+                                                                                        endpoint_url="https://sts.us-east-1.amazonaws.com"
+                                                                                      )
+                    assumerole = sts_client.assume_role(
+                        RoleArn=self.csp['roleArn'],
+                        RoleSessionName=arn[13:25] + arn[31:],
+                        ExternalId=self.csp['externalId'],
+                        DurationSeconds=3600
+                    )
 
-        else:
-            sts_client = boto3.client(
-                'sts',
-                aws_access_key_id=self.csp['access_key'],
-                aws_secret_access_key=self.csp['secret_key'],
-                aws_session_token=self.csp["session_token"] or None,
-                region_name='us-east-1',
-                endpoint_url="https://sts.us-east-1.amazonaws.com"
-            )
+                else:
+                    sts_client = boto3.client(
+                        'sts',
+                        aws_access_key_id=self.csp['access_key'],
+                        aws_secret_access_key=self.csp['secret_key'],
+                        aws_session_token=self.csp["session_token"] or None,
+                        region_name='us-east-1',
+                        endpoint_url="https://sts.us-east-1.amazonaws.com"
+                    )
 
-            # Get temporary credentials
-            assumerole = sts_client.get_session_token()
-        self.credentials = assumerole['Credentials']
-        self.credentials["stsCredsGeneratedOn"] = datetime.now().isoformat()
-        self.ctx.logger.info(f"Using Access Key with ID {self.credentials['AccessKeyId']}")
+                    # Get temporary credentials
+                    assumerole = sts_client.get_session_token()
+                self.credentials = assumerole['Credentials']
+                self.credentials["stsCredsGeneratedOn"] = datetime.now().isoformat()
+                self.ctx.logger.info(f"Using Access Key with ID {self.credentials['AccessKeyId']}")
+            except ClientError as e:
+                if "ThrottlingException" in str(e):
+                    sleep(3)
+                    continue
+                raise
+            return
+
 
     def get_secret_key(self):
         self.ctx.logger.debug("Called with autobot_resources=%s", str(self.autobot_resources))
