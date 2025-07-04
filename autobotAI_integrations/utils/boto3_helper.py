@@ -147,6 +147,7 @@ class Boto3Helper:
             assumerole = sts_client.get_session_token()
         self.credentials = assumerole['Credentials']
         self.credentials["stsCredsGeneratedOn"] = datetime.now().isoformat()
+        self.ctx.logger.info(f"Using Access Key with ID {self.credentials['AccessKeyId']}")
 
     def get_secret_key(self):
         self.ctx.logger.debug("Called with autobot_resources=%s", str(self.autobot_resources))
