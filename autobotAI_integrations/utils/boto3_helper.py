@@ -114,9 +114,7 @@ class Boto3Helper:
         if self.autobot_resources:
             return self.ctx.config["ACCESS_KEY"]
         else:
-            if (datetime.now() - fromisoformat(
-                    self.credentials["stsCredsGeneratedOn"])).total_seconds() > 3600:
-                self.refresh_sts_creds()
+            self.refresh_sts_creds()
             return self.credentials["AccessKeyId"]
 
     def refresh_sts_creds(self):
