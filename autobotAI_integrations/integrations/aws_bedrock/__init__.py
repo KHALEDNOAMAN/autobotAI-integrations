@@ -221,6 +221,12 @@ class AWSBedrockService(AIBaseService):
                     "bedrock-runtime": boto3.client(
                         "bedrock-runtime", region_name=self.integration.region
                     ),
+                    "bedrock-agent": boto3.client(
+                        "bedrock-agent", region_name=self.integration.region
+                    ),
+                    "bedrock-agent-runtime": boto3.client(
+                        "bedrock-agent-runtime", region_name=self.integration.region
+                    ),
                 },
                 "params": self.prepare_params(
                     self.filer_combo_params(
