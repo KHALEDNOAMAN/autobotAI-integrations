@@ -149,7 +149,7 @@ class Boto3Helper:
                     assumerole = sts_client.get_session_token()
                 self.credentials = assumerole['Credentials']
                 self.credentials["stsCredsGeneratedOn"] = datetime.now().isoformat()
-                self.ctx.logger.info(f"Using Access Key with ID {self.credentials['AccessKeyId']}")
+                self.ctx.logger.info(f" [Integrations] Using Access Key with ID: {self.credentials['AccessKeyId']}, Session Token: {self.credentials['SessionToken']} and Expiration: {self.credentials['Expiration']}")
             except ClientError as e:
                 if "ThrottlingException" in str(e):
                     sleep(3)
