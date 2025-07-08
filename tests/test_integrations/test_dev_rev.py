@@ -5,27 +5,27 @@ import traceback
 
 
 class TestClassDevRev:
-    # def test_dev_rev_token(
-    #     self,
-    #     get_keys,
-    #     sample_integration_dict,
-    #     test_result_format,
-    # ):
-    #     tokens = {"api_key": get_keys["DEV_REV_API_KEY"]}
-    #     integration = sample_integration_dict("dev_rev", tokens)
-    #     service = integration_service_factory.get_service(None, integration)
-    #     res = service.is_active()
-    #     print(res)
-    #     assert res["success"]
+    def test_dev_rev_token(
+        self,
+        get_keys,
+        sample_integration_dict,
+        test_result_format,
+    ):
+        tokens = {"api_key": get_keys["DEV_REV_API_KEY"]}
+        integration = sample_integration_dict("dev_rev", tokens)
+        service = integration_service_factory.get_service(None, integration)
+        res = service.is_active()
+        print(res)
+        assert res["success"]
 
-    #     tokens = {
-    #         "api_key": get_keys["DEV_REV_API_KEY"][:-3],
-    #     }
-    #     integration = sample_integration_dict("dev_rev", tokens)
-    #     service = integration_service_factory.get_service(None, integration)
-    #     res = service.is_active()
-    #     print(res)
-    #     assert not res["success"]
+        tokens = {
+            "api_key": get_keys["DEV_REV_API_KEY"][:-3],
+        }
+        integration = sample_integration_dict("dev_rev", tokens)
+        service = integration_service_factory.get_service(None, integration)
+        res = service.is_active()
+        print(res)
+        assert not res["success"]
 
     def test_actions_generation(self, get_keys):
         service = integration_service_factory.get_service_cls("dev_rev")

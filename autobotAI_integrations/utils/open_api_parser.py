@@ -123,9 +123,10 @@ class OpenApiParser:
                     method_details["parameters"] = self._generate_path_parameters(
                         method_details
                     )
+                    api_path_url = path_url if path_url.startswith(('http://', 'https://')) else self.base_url + path_url
                     open_api_path_models.append(
                         OpenAPIPathModel(
-                            path_url=self.base_url + path_url,
+                            path_url=api_path_url,
                             method=method,
                             **method_details,
                         )

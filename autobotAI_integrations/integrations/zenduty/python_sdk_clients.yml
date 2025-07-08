@@ -1,0 +1,10 @@
+- name: api_client
+  import_library_names:
+    - zenduty
+  pip_package_names:
+    - zenduty-api
+- name: zenduty
+  import_library_names:
+    - zenduty
+  pip_package_names:
+    - zenduty-api
