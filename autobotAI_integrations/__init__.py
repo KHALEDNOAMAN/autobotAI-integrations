@@ -566,6 +566,11 @@ def executor(context):
         logger.debug(f"Headers: {headers}, Params: {params}, JSON: {json_data}, Form Data: {form_data}")
 
         try:
+            # Ensure we don't send both json and form data in same request
+            if json_data and form_data:
+                logger.info("Both JSON and form data provided - using JSON data only")
+                form_data = None
+                
             response = requests.request(
                 method=method,
                 url=url,
