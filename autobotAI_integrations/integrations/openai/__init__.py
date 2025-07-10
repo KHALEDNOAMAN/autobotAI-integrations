@@ -206,10 +206,12 @@ class OpenAIService(AIBaseService):
         )
         return llm
     
-    def load_llama_index_embedding_model(self, model_name: str, **kwargs):
+    def load_llama_index_embedding_model(self, model_name: Optional[str] = None, **kwargs):
         """
         Returns Llama Index Embedding model object and model dimensions as tuple
         """
+        if not model_name:
+            model_name = "text-embedding-3-small"
         from llama_index.embeddings.openai import OpenAIEmbedding
 
         embed_model = OpenAIEmbedding(
