@@ -61,16 +61,14 @@ class OpenApiParser:
         }
         if request_body.get("content", {}).get("application/json"):
             schema = request_body["content"]["application/json"].get("schema", {})
-            param["type"] = schema.get("type", "object")
             if "$ref" in schema:
                 ref_name = schema["$ref"].split("/")[-1]
                 param["example"] = self.components.get(ref_name)
             elif "example" in schema:
                 param["example"] = schema["example"]
-            elif param["type"] == "object":
+            else:
                 param["example"] = schema.get("properties", {})
-        else:
-            param["type"] = "object"  # Fallback for unspecified content types
+        param["type"] = "handlebars-json"  # We Only Support Json content types
         return OpenAPIPathParams(**param)
 
     def _generate_path_parameters(
@@ -123,9 +121,10 @@ class OpenApiParser:
                     method_details["parameters"] = self._generate_path_parameters(
                         method_details
                     )
+                    api_path_url = path_url if path_url.startswith(('http://', 'https://')) else self.base_url + path_url
                     open_api_path_models.append(
                         OpenAPIPathModel(
-                            path_url=self.base_url + path_url,
+                            path_url=api_path_url,
                             method=method,
                             **method_details,
                         )
