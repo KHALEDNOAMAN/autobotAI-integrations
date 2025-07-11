@@ -148,7 +148,7 @@ class Boto3Helper:
                     # Get temporary credentials
                     assumerole = sts_client.get_session_token()
                 self.credentials = assumerole['Credentials']
-                self.credentials["stsCredsGeneratedOn"] = datetime.now().isoformat()
+                self.credentials["stsCredsGeneratedOn"] = datetime.now().isoformat()                
             except ClientError as e:
                 if "ThrottlingException" in str(e):
                     sleep(3)
