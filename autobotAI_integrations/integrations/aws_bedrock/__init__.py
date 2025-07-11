@@ -366,13 +366,14 @@ class AWSBedrockService(AIBaseService):
             region_name=self.integration.region,
             **kwargs,
         )
-        embeddings = embed_model.get_text_embedding(
-            "Bedrock new Embeddings models is great."
-        )
+        # embeddings = embed_model.get_text_embedding(
+        #     "Bedrock new Embeddings models is great."
+        # )
 
-        dimensions = len(embeddings)
+        # dimensions = len(embeddings)
 
-        return embed_model, dimensions
+        # return embed_model, dimensions
+        return embed_model
     
     def load_llama_index_llm(self, model, **kwargs):
         from autobotAI_integrations.patches.llama_index_llms_bedrock_converse import BedrockConverse
