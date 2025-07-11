@@ -566,6 +566,11 @@ def executor(context):
         logger.debug(f"Headers: {headers}, Params: {params}, JSON: {json_data}, Form Data: {form_data}")
 
         try:
+            # Ensure we don't send both json and form data in same request
+            if json_data and form_data:
+                logger.info("Both JSON and form data provided - using JSON data only")
+                form_data = None
+                
             response = requests.request(
                 method=method,
                 url=url,
@@ -755,7 +760,7 @@ class AIBaseService(BaseService):
     def get_pydantic_agent(self, model: str, tools, system_prompt: str, options: dict = {}):
         raise NotImplementedError()
     
-    def load_llama_index_embedding_model(self, model_name: str,**kwargs):
+    def load_llama_index_embedding_model(self, model_name: Optional[str] = None,**kwargs):
         """
         Returns Langchaain Embedding model object and model dimensions as tuple
         """

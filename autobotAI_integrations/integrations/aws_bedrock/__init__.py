@@ -221,6 +221,12 @@ class AWSBedrockService(AIBaseService):
                     "bedrock-runtime": boto3.client(
                         "bedrock-runtime", region_name=self.integration.region
                     ),
+                    "bedrock-agent": boto3.client(
+                        "bedrock-agent", region_name=self.integration.region
+                    ),
+                    "bedrock-agent-runtime": boto3.client(
+                        "bedrock-agent-runtime", region_name=self.integration.region
+                    ),
                 },
                 "params": self.prepare_params(
                     self.filer_combo_params(
@@ -344,10 +350,12 @@ class AWSBedrockService(AIBaseService):
         )
         return Agent(model, system_prompt=system_prompt, tools=tools, **options)
     
-    def load_llama_index_embedding_model(self, model_name: str, **kwargs):
+    def load_llama_index_embedding_model(self, model_name: Optional[str] = None, **kwargs):
         """
         Returns Langchaain Embedding model object and model dimensions as tuple
         """
+        if not model_name:
+            model_name = "amazon.titan-embed-text-v2:0"
         from llama_index.embeddings.bedrock import BedrockEmbedding
         credentials = self._temp_credentials()
         embed_model = BedrockEmbedding(

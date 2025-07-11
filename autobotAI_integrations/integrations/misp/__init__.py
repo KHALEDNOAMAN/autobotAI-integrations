@@ -45,6 +45,7 @@ class MISPService(BaseService):
                 return {"success": True}
             response = requests.get(
                 url=self.integration.base_url,
+                verify=self.integration.verify_cert,
                 headers={
                     "Authorization": self.integration.token,  # Replace with your actual API key
                     "Accept": "application/json",
