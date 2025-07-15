@@ -221,16 +221,14 @@ class AWSService(BaseService):
         if built_clients["regional"]:
             for region in built_clients["regional"]:
                 combo = {"metadata": {
-                    "region": region,
-                    "account_id": getattr(self.integration, "account_id", "")
+                    "region": region
                 }, "clients": {**built_clients["global"], **built_clients["regional"][region]},
                     "params": self.prepare_params(self.filer_combo_params(payload_task.params, region)),
                     "context": payload_task.context}
                 combinations.append(combo)
         else:
             combo = {"metadata": {
-                "region": "global",
-                "account_id": getattr(self.integration, "account_id", "")
+                "region": "global"
             }, "clients": {**built_clients["global"]},
                 "params": self.prepare_params(self.filer_combo_params(payload_task.params, "global")),
                 "context": payload_task.context}
