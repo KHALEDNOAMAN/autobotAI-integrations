@@ -220,10 +220,18 @@ class AWSService(BaseService):
         combinations = []
         if built_clients["regional"]:
             for region in built_clients["regional"]:
+                this_params = self.filer_combo_params(payload_task.params, region)
+                execute_for_this_region = True
+                for param in this_params:
+                    if param["filter_relevant_resources"] and param["required"] and not param["values"]:
+                        execute_for_this_region = False
+                        break
+                if not execute_for_this_region:
+                    continue
                 combo = {"metadata": {
                     "region": region
                 }, "clients": {**built_clients["global"], **built_clients["regional"][region]},
-                    "params": self.prepare_params(self.filer_combo_params(payload_task.params, region)),
+                    "params": self.prepare_params(this_params),
                     "context": payload_task.context}
                 combinations.append(combo)
         else:
@@ -239,7 +247,7 @@ class AWSService(BaseService):
         filtered_params = []
         for param in params:
             if not param.filter_relevant_resources or not param.values or not isinstance(param.values, list):
-                filtered_params.append(param)
+                filtered_params.append(param.model_dump())
             else:
                 filtered_values = []
                 for value in param.values:
@@ -248,7 +256,7 @@ class AWSService(BaseService):
                             filtered_values.append(value)
                     else:
                         filtered_values.append(value)
-                filtered_params.append({"name": param.name, "values": filtered_values})
+                filtered_params.append({**param.model_dump(), "values": filtered_values})
         return filtered_params
 
     def generate_python_sdk_creds(self, requested_clients=None) -> SDKCreds:
