@@ -218,13 +218,14 @@ class OpenAIService(AIBaseService):
             api_key=self.integration.api_key, model=model_name, **kwargs
         )
 
-        embeddings = embed_model.get_text_embedding(
-            "Open AI new Embeddings models is great."
-        )
+        # embeddings = embed_model.get_text_embedding(
+        #     "Open AI new Embeddings models is great."
+        # )
 
-        dimensions = len(embeddings)
+        # dimensions = len(embeddings)
 
-        return embed_model, dimensions
+        # return embed_model, dimensions
+        return embed_model
 
     
     def load_llama_index_llm(self, model, **kwargs):
