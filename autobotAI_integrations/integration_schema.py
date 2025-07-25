@@ -4,6 +4,8 @@ from typing import Optional, Any, get_origin, get_args, Union
 from pydantic import BaseModel, ConfigDict, ValidationError, Field, validator, model_validator
 import uuid
 
+from autobotAI_integrations.utils import mask_value
+
 class ConnectionTypes(str, Enum):
     DIRECT = "DIRECT"
     AGENT = "AGENT"
@@ -61,12 +63,15 @@ class IntegrationSchema(BaseModel):
     def encryption_exclusions(self):
         return ["agent_ids"]
 
-    def dump_all_data(self):
+    def dump_all_data(self, mask_sensitive: bool = False):
         excluded =[key for key, val in  self.__class__.model_fields.items() if val.exclude]
         raw_dict =  self.model_dump()
         for key in excluded:
             value = getattr(self, key)
             if isinstance(value, BaseModel):
                 value = value.model_dump()
+            if mask_sensitive:
+                value = mask_value(value)
             raw_dict[key] = value
         return raw_dict
+
