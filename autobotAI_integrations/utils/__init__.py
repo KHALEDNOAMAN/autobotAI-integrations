@@ -338,23 +338,3 @@ def get_restapi_validated_params(params: List[Param]):
                 raise ValueError("Timeout must be an integer.")
             filtered_params["timeout"] = params.values
     return filtered_params
-
-
-def mask_value(value):
-    if isinstance(value, (str, int, float, bool)):
-        value = str(value)
-        if value.lower() in ["true", "false"]:
-            return "*"
-        unmasked_length = min(len(value) // 4, 2)
-        return (
-            value[:unmasked_length]
-            + "*" * min(len(value) - 2 * unmasked_length, 10)
-            + value[len(value) - unmasked_length :]
-        )
-    if isinstance(value, dict):
-        return {k: mask_value(v) for k, v in value.items()}
-    elif isinstance(value, (list, set, tuple)):
-        return value.__class__(mask_value(v) for v in value)
-    elif isinstance(value, BaseModel):
-        return mask_value(value.model_dump())
-    return "****"  # Return "****" for unsupported type
