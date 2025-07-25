@@ -4,7 +4,6 @@ from typing import Optional, Any, get_origin, get_args, Union
 from pydantic import BaseModel, ConfigDict, ValidationError, Field, validator, model_validator
 import uuid
 
-from autobotAI_integrations.utils import mask_value
 
 class ConnectionTypes(str, Enum):
     DIRECT = "DIRECT"
@@ -75,3 +74,22 @@ class IntegrationSchema(BaseModel):
             raw_dict[key] = value
         return raw_dict
 
+
+def mask_value(value):
+    if isinstance(value, (str, int, float, bool)):
+        value = str(value)
+        if value.lower() in ["true", "false"]:
+            return "*"
+        unmasked_length = min(len(value) // 4, 2)
+        return (
+            value[:unmasked_length]
+            + "*" * min(len(value) - 2 * unmasked_length, 10)
+            + value[len(value) - unmasked_length :]
+        )
+    if isinstance(value, dict):
+        return {k: mask_value(v) for k, v in value.items()}
+    elif isinstance(value, (list, set, tuple)):
+        return value.__class__(mask_value(v) for v in value)
+    elif isinstance(value, BaseModel):
+        return mask_value(value.model_dump())
+    return "****"  # Return "****" for unsupported type
