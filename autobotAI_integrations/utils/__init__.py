@@ -8,6 +8,8 @@ import uuid
 from pathlib import Path
 import json
 import importlib
+
+import urllib
 from autobotAI_integrations.integration_schema import ConnectionTypes
 from autobotAI_integrations.utils.security_measures import validate_code
 
@@ -310,6 +312,11 @@ def get_restapi_validated_params(params: List[Param]):
         elif getattr(param, "in_") == "query":
             if param.values is None:
                 continue
+            if param.name == "q": # Decoding query parameters, as passing encoded params for q will get double enccoded by requests. params
+                try:
+                    param.values = urllib.parse.unquote_plus(param.values)
+                except Exception as e:
+                    print(traceback.print_exc())
             filtered_params["query_parameters"][param.name] = param.values
         elif getattr(param, "in_") == "path":
             if param.name.lower() == "base_url":
