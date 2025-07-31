@@ -92,4 +92,6 @@ def mask_value(value):
         return value.__class__(mask_value(v) for v in value)
     elif isinstance(value, BaseModel):
         return mask_value(value.model_dump())
+    elif value is None:
+        return None
     return "****"  # Return "****" for unsupported type
