@@ -678,15 +678,15 @@ def executor(context):
                 params["json_data"] = None
             response = self.rest_api_processor(
                 url=request_url,
-                method=params.get("method", "GET"),
+                method=params.get("method") or "GET",
                 headers={
-                    **params.get("headers", {}),
+                    **(params.get("headers") or {}),
                     "Content-Type": "application/json",
-                    **payload_task.creds.headers,
+                    **(payload_task.creds.headers or {}),
                 },
                 params={
-                    **payload_task.creds.query_params,
-                    **params.get("query_parameters", None),
+                    **(payload_task.creds.query_params or {}),
+                    **(params.get("query_parameters") or {}),
                 },
                 json_data=params.get("json_data", None),
                 form_data=params.get("form_data", None),
