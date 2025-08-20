@@ -75,6 +75,8 @@ class Param(BaseModel):
     @classmethod
     def resource_type_validator(cls, values: Any) -> Any:
         if isinstance(values, dict):
+            if not values.get("name", None):
+                raise ValueError("Name Not Provided in Param")
             if not values.get("params_type", None) and values.get("type", None):
                 values["params_type"] = values["type"]
             if not values.get("type", None) and values.get("params_type", None):
