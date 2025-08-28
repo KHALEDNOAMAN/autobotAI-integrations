@@ -49,7 +49,7 @@ class GithubService(BaseService):
         super().__init__(ctx, integration)
         self.token = integration.token
         if not self.token and integration.installation_id:
-            self.token = self.get_installation_token(integration.installation_id, self.integration.private_key_url or ctx.get("integration_extra_details", {}).get("github_app_integration_private_key"), self.integration.app_id)
+            self.token = self.get_installation_token(integration.installation_id, self.integration.private_key or ctx.get("integration_extra_details", {}).get("github_app_integration_private_key"), self.integration.app_id)
 
     def _generate_jwt(self, private_key, app_id) -> str:
         now = int(time.time())
