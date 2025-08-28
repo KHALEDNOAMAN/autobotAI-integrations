@@ -762,7 +762,7 @@
                 ]
             }
         },
-        "/api/account/teams/{}/members/": {
+        "/api/account/teams/{team_id}/members/": {
             "post": {
                 "summary": "Add user to Team",
                 "description": "Create the Team Member object by setting the values of all the required parameters passed in the request body.",
@@ -914,7 +914,7 @@
                 ]
             }
         },
-        "/api/account/teams/{}/permissions/": {
+        "/api/account/teams/{team_id}/permissions/": {
             "get": {
                 "summary": "Retrieve Team Permission object",
                 "description": "Returns a particular Team Permission object.",
@@ -980,7 +980,7 @@
                 ]
             }
         },
-        "/api/account/teams/{}/schedules/": {
+        "/api/account/teams/{team_id}/schedules/": {
             "post": {
                 "summary": "Create the Schedule object",
                 "description": "Create the Schedule object by setting the values of all the required parameters passed in the request body.",
@@ -1134,7 +1134,7 @@
                 ]
             }
         },
-        "/api/v2/account/teams/{}/schedules/{}/overrides/": {
+        "/api/v2/account/teams/{team_id}/schedules/{schedule_id}/overrides/": {
             "post": {
                 "summary": "Create the Schedule Override object",
                 "description": "Create the Schedule Override object by setting the values of all the required parameters passed in the request body. (Note - Rate limits are 1/sec and 20/minute)",
@@ -1212,7 +1212,7 @@
                 ]
             }
         },
-        "/api/account/teams/{}/escalation_policies/": {
+        "/api/account/teams/{team_id}/escalation_policies/": {
             "post": {
                 "summary": "Create the Escalation Policy object",
                 "description": "Create the Escalation Policy object by setting the values of all the required parameters passed in the request body.",
@@ -1389,7 +1389,7 @@
                 ]
             }
         },
-        "/api/account/teams/{}/services/": {
+        "/api/account/teams/{team_id}/services/": {
             "post": {
                 "summary": "Create the Service object",
                 "description": "Create the Service object by setting the values of all the required parameters passed in the request body.",
@@ -1562,7 +1562,7 @@
                 ]
             }
         },
-        "/api/account/teams/{}/services/{service_id}/integrations/": {
+        "/api/account/teams/{team_id}/services/{service_id}/integrations/": {
             "post": {
                 "summary": "Create the Integration object",
                 "description": "Create the Integration object by setting the values of all the required parameters passed in the request body.",
@@ -1953,7 +1953,7 @@
                 ]
             }
         },
-        "/api/account/teams/{}/roles/": {
+        "/api/account/teams/{team_id}/roles/": {
             "post": {
                 "summary": "Create the Incident Role object",
                 "description": "Create the Incident Role object by setting the values of all the required parameters passed in the request body.",
@@ -2589,7 +2589,7 @@
                 ]
             }
         },
-        "/api/account/teams/{}/tags/": {
+        "/api/account/teams/{team_id}/tags/": {
             "post": {
                 "summary": "Create the Tag object",
                 "description": "Create the Tag object by setting the values of all the required parameters passed in the request body.",
@@ -2743,7 +2743,7 @@
                 ]
             }
         },
-        "/api/account/teams/{}/task_templates/": {
+        "/api/account/teams/{team_id}/task_templates/": {
             "post": {
                 "summary": "Create the Task Template object",
                 "description": "Create the Template object object by setting the values of all the required parameters passed in the request body.",
@@ -2896,7 +2896,7 @@
                 ]
             }
         },
-        "/api/account/teams/{}/priority/": {
+        "/api/account/teams/{team_id}/priority/": {
             "post": {
                 "summary": "Create the Priority object",
                 "description": "Create the Priority object by setting the values of all the required parameters passed in the request body.",
@@ -3046,7 +3046,7 @@
                 ]
             }
         },
-        "/api/account/teams/{}/sla/": {
+        "/api/account/teams/{team_id}/sla/": {
             "post": {
                 "summary": "Create the SLA object",
                 "description": "Create the SLA object by setting the values of all the required parameters passed in the request body.",
@@ -3200,7 +3200,7 @@
                 ]
             }
         },
-        "/api/account/teams/{}/maintenance/": {
+        "/api/account/teams/{team_id}/maintenance/": {
             "post": {
                 "summary": "Create the Team Maintenance Mode object",
                 "description": "Create the Team Maintenance Mode object by setting the values of all the required parameters passed in the request body.",

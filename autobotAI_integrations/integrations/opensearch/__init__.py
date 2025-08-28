@@ -31,11 +31,11 @@ class AWSOpensearchType(str, Enum):
 
 
 class OpensearchIntegration(BaseSchema):
-    host_url: str = Field(default=None, description="base url", exclude=True)
+    host_url: Optional[str] = None
 
     # On-premise Opensearch
-    port: Optional[int] = Field(default=None, exclude=True)
-    username: Optional[str] = Field(default=None, exclude=True)
+    port: Optional[int] = None
+    username: Optional[str] = None
     password: Optional[str] = Field(default=None, exclude=True)
     verify_cert: bool = Field(default=True)
 
