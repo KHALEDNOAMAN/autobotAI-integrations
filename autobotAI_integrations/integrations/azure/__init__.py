@@ -17,7 +17,7 @@ from autobotAI_integrations.models import (
 
 
 class AzureIntegration(BaseSchema):
-    tenant_id: Optional[str] = Field(default=None, exclude=True)
+    tenant_id: Optional[str] = None
     client_id: Optional[str] = Field(default=None, exclude=True)
     subscription_id: Optional[str] = Field(default=None, exclude=True)
     client_secret: Optional[str] = Field(default=None, exclude=True)

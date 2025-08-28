@@ -9,7 +9,7 @@ import requests
 
 
 class MicrosoftIntegration(BaseSchema):
-    tenant_id: Optional[str] = Field(default=None, exclude=True)
+    tenant_id: Optional[str] = None
     client_id: Optional[str] = Field(default=None, exclude=True)
     subscription_id: Optional[str] = Field(default=None, exclude=True)
     user_id: Optional[str] = Field(default=None, exclude=True)
