@@ -16,9 +16,9 @@ from autobotAI_integrations.models import IntegrationCategory
 class GithubIntegration(BaseSchema):
     base_url: str =  Field(default="https://api.github.com")# If enterprise version of github
     token: Optional[str] = Field(default=None, exclude=True)
-    installation_id: Optional[str] = Field(default=None)
-    app_id: str = Field(default="1857214")
-    private_key: Optional[str] = Field(default=None, exclude=True)
+    client_id: Optional[str] = Field(default=None, exclude=True)
+    client_secret: str = Field(default=None, exclude=True)
+    oauth_code: Optional[str] = Field(default=None, exclude=True)
     name: Optional[str] = "GitHub"
     category: Optional[str] = IntegrationCategory.CODE_REPOSITORY.value
     description: Optional[str] = (
@@ -48,28 +48,25 @@ class GithubService(BaseService):
             integration = GithubIntegration(**integration)
         super().__init__(ctx, integration)
         self.token = integration.token
-        if not self.token and integration.installation_id:
-            self.token = self.get_installation_token(integration.installation_id, self.integration.private_key or getattr(ctx, "integration_extra_details", {}).get("github_app_integration_private_key"), self.integration.app_id)
+        if not self.token and integration.oauth_code:
+            self.token = self.exchange_code_for_token()
 
-    def _generate_jwt(self, private_key, app_id) -> str:
-        now = int(time.time())
+    def exchange_code_for_token(self) -> str:
+        """
+        Exchange OAuth code for access token.
+        The `code` is received after user authorizes your GitHub App.
+        """
+        url = "https://github.com/login/oauth/access_token"
+        headers = {"Accept": "application/json"}
         payload = {
-            "iat": now - 60,     # issued at
-            "exp": now + 600,    # 10 minutes expiration
-            "iss": app_id        # GitHub App ID
+            "client_id": self.integration.client_id,
+            "client_secret": self.integration.client_secret,
+            "code": self.integration.code
         }
-        return jwt.encode(payload, private_key, algorithm="RS256")
 
-    def get_installation_token(self, installation_id, private_key, app_id) -> str:
-        jwt_token = self._generate_jwt(private_key, app_id)
-        headers = {
-            "Authorization": f"Bearer {jwt_token}",
-            "Accept": "application/vnd.github+json"
-        }
-        url = f"https://api.github.com/app/installations/{installation_id}/access_tokens"
-        response = requests.post(url, headers=headers)
+        response = requests.post(url, headers=headers, data=payload)
         response.raise_for_status()
-        return response.json()["token"]
+        return response.json().get("access_token")
 
     def _test_integration(self):
         headers = {
@@ -131,7 +128,7 @@ class GithubService(BaseService):
                     ],
                 },
                 {
-                    "label": "App Integration",
+                    "label": "O-Auth App Integration",
                     "type": "form",
                     "children": [
                         {
@@ -143,7 +140,7 @@ class GithubService(BaseService):
                             "required": False,
                         },
                         {
-                            "name": "installation_id",
+                            "name": "client_id",
                             "type": "text/password",
                             "label": "Installation ID",
                             "placeholder": "Enter the Installation Id",
@@ -151,21 +148,22 @@ class GithubService(BaseService):
                             "required": True,
                         },
                         {
-                            "name": "app_id",
-                            "type": "text",
+                            "name": "client_secret",
+                            "type": "text/password",
                             "label": "App ID",
                             "placeholder": "Leave Empty or '1857214' for Official App or Add your custom app's App Id",
                             "description": "The App ID Generated after creating the Github APP",
-                            "required": False,
+                            "required": True,
                         },
                         {
-                            "name": "private_key",
+                            "name": "oauth_code",
                             "type": "text/password",
                             "label": "Private Key",
                             "placeholder": "Leave Empty for official github app or add your custom private key",
                             "description": "The Private Key Required to generate Access Tokens",
-                            "required": False,
+                            "required": True,
                         },
+
                     ],
                 }
             ]
