@@ -16,9 +16,10 @@ from autobotAI_integrations.models import IntegrationCategory
 class GithubIntegration(BaseSchema):
     base_url: str =  Field(default="https://api.github.com")# If enterprise version of github
     token: Optional[str] = Field(default=None, exclude=True)
-    client_id: Optional[str] = Field(default=None, exclude=True)
-    client_secret: str = Field(default=None, exclude=True)
+    client_id: Optional[str] = Field(default=None)
+    client_secret: Optional[str] = Field(default=None, exclude=True)
     oauth_code: Optional[str] = Field(default=None, exclude=True)
+    redirect_uri: Optional[str] = Field(default=None, exclude=True)
     name: Optional[str] = "GitHub"
     category: Optional[str] = IntegrationCategory.CODE_REPOSITORY.value
     description: Optional[str] = (
@@ -61,7 +62,7 @@ class GithubService(BaseService):
         payload = {
             "client_id": self.integration.client_id,
             "client_secret": self.integration.client_secret,
-            "code": self.integration.code
+            "code": self.integration.oauth_code
         }
 
         response = requests.post(url, headers=headers, data=payload)
