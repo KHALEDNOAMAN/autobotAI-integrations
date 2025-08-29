@@ -16,10 +16,6 @@ from autobotAI_integrations.models import IntegrationCategory
 class GithubIntegration(BaseSchema):
     base_url: str =  Field(default="https://api.github.com")# If enterprise version of github
     token: Optional[str] = Field(default=None, exclude=True)
-    client_id: Optional[str] = Field(default=None)
-    client_secret: Optional[str] = Field(default=None, exclude=True)
-    oauth_code: Optional[str] = Field(default=None, exclude=True)
-    redirect_uri: Optional[str] = Field(default=None, exclude=True)
     name: Optional[str] = "GitHub"
     category: Optional[str] = IntegrationCategory.CODE_REPOSITORY.value
     description: Optional[str] = (
@@ -49,25 +45,6 @@ class GithubService(BaseService):
             integration = GithubIntegration(**integration)
         super().__init__(ctx, integration)
         self.token = integration.token
-        if not self.token and integration.oauth_code:
-            self.token = self.exchange_code_for_token()
-
-    def exchange_code_for_token(self) -> str:
-        """
-        Exchange OAuth code for access token.
-        The `code` is received after user authorizes your GitHub App.
-        """
-        url = "https://github.com/login/oauth/access_token"
-        headers = {"Accept": "application/json"}
-        payload = {
-            "client_id": self.integration.client_id,
-            "client_secret": self.integration.client_secret,
-            "code": self.integration.oauth_code
-        }
-
-        response = requests.post(url, headers=headers, data=payload)
-        response.raise_for_status()
-        return response.json().get("access_token")
 
     def _test_integration(self):
         headers = {
