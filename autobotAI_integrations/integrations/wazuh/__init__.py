@@ -16,7 +16,7 @@ from autobotAI_integrations.models import (
 class WazuhIntegration(BaseSchema):
     base_url: Optional[str] = Field(default=None, description="base url")
 
-    username: Optional[str] = Field(default=None, description="username", exclude=True)
+    username: Optional[str] = None
     password: Optional[str] = Field(default=None, description="password", exclude=True)
 
     name: Optional[str] = "Wazuh"

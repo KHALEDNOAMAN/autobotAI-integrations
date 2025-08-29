@@ -1,6 +1,6 @@
-from typing import List, Type, Union
+from typing import List, Optional, Type, Union
 
-from autobotAI_integrations.models import *
+from pydantic import Field
 from autobotAI_integrations import (
     BaseSchema,
     BaseService,
@@ -8,9 +8,11 @@ from autobotAI_integrations import (
 )
 import requests
 
+from autobotAI_integrations.models import IntegrationCategory, SteampipeCreds
+
 
 class GrafanaIntegrations(BaseSchema):
-    host_url: Optional[str] = Field(default=None, exclude=True)
+    host_url: Optional[str] = None
     auth_key: Optional[str] = Field(default=None, exclude=True)
 
     category: Optional[str] = IntegrationCategory.MONITORING_TOOLS.value
