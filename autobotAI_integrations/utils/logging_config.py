@@ -15,7 +15,15 @@ class MultiLineFormatter(logging.Formatter):
             record.bot_exc_id = "AutobotAI"
         super().format(record)
         prefix = self.formatMessage(record).split(record.getMessage())[0]
-        return "\n".join(prefix + line for line in record.getMessage().splitlines())
+        response = "\n".join(prefix + line for line in record.getMessage().splitlines())
+
+        # append traceback with custom prefix if exc_info is present
+        if getattr(record, "exc_info"):
+            exc_text = self.formatException(record.exc_info)
+            prefix = f"[{self.formatTime(record, self.datefmt)}] {record.levelname} for " \
+                     f"[{getattr(record, 'req_id', '-')}] [{getattr(record, 'bot_exc_id', '-')}]"
+            response += "\n" + prefix + "\n" + exc_text
+        return response
 
 def set_log_format(unformatted_logger):
     FORMAT = "[%(asctime)s] %(levelname)s in %(module)s/%(filename)s:%(funcName)s:%(lineno)d for [%(req_id)s] [%(bot_exc_id)s]-- %(message)s"
