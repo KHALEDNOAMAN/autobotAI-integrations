@@ -17,8 +17,8 @@ class MultiLineFormatter(logging.Formatter):
         if getattr(record, "exc_info"):
             exc_text = self.formatException(record.exc_info)
             prefix = f"[{self.formatTime(record, self.datefmt)}] {record.levelname} for " \
-                     f"[{getattr(record, 'req_id', '-')}] [{getattr(record, 'bot_exc_id', '-')}]"
-            response += "\n" + prefix + "\n" + exc_text
+                     f"[{getattr(record, 'req_id', '-')}] [{getattr(record, 'bot_exc_id', '-')}] "
+            response += "\n".join(prefix + line for line in exc_text.splitlines())
         return response
 
 def set_log_format(unformatted_logger):
