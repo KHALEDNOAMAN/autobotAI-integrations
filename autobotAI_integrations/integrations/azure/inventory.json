@@ -209,6 +209,9 @@
                     "name": "id",
                     "alias": "urn"
                 }
+            ],
+            "tags": [
+                "compute"
             ]
         },
         {
@@ -249,6 +252,9 @@
                     "name": "id",
                     "alias": "urn"
                 }
+            ],
+            "tags": [
+                "compute"
             ]
         },
         {
@@ -296,6 +302,9 @@
                     "name": "id",
                     "alias": "urn"
                 }
+            ],
+            "tags": [
+                "compute"
             ]
         },
         {
@@ -340,6 +349,9 @@
                     "name": "id",
                     "alias": "urn"
                 }
+            ],
+            "tags": [
+                "compute"
             ]
         },
         {
@@ -401,6 +413,9 @@
                     "name": "id",
                     "alias": "urn"
                 }
+            ],
+            "tags": [
+                "compute"
             ]
         },
         {
@@ -820,6 +835,9 @@
                     "name": "id",
                     "alias": "urn"
                 }
+            ],
+            "tags": [
+                "compute"
             ]
         },
         {
@@ -883,6 +901,9 @@
                     "name": "id",
                     "alias": "urn"
                 }
+            ],
+            "tags": [
+                "compute"
             ]
         },
         {
@@ -911,6 +932,9 @@
                     "name": "id",
                     "alias": "urn"
                 }
+            ],
+            "tags": [
+                "compute"
             ]
         },
         {
@@ -944,6 +968,9 @@
                     "name": "id",
                     "alias": "urn"
                 }
+            ],
+            "tags": [
+                "compute"
             ]
         },
         {
@@ -1103,6 +1130,9 @@
                     "name": "id",
                     "alias": "urn"
                 }
+            ],
+            "tags": [
+                "compute"
             ]
         },
         {
@@ -1185,6 +1215,9 @@
                     "name": "id",
                     "alias": "urn"
                 }
+            ],
+            "tags": [
+                "compute"
             ]
         },
         {
@@ -1287,6 +1320,9 @@
                     "name": "id",
                     "alias": "urn"
                 }
+            ],
+            "tags": [
+                "compute"
             ]
         },
         {
@@ -1456,6 +1492,9 @@
                     "name": "id",
                     "alias": "urn"
                 }
+            ],
+            "tags": [
+                "compute"
             ]
         },
         {
@@ -1546,6 +1585,9 @@
                     "name": "id",
                     "alias": "urn"
                 }
+            ],
+            "tags": [
+                "compute"
             ]
         },
         {
@@ -1565,7 +1607,10 @@
             ],
             "included": [],
             "excluded": [],
-            "inventory_supported": true
+            "inventory_supported": true,
+            "tags": [
+                "compute"
+            ]
         },
         {
             "name": "azure_consumption_usage",
@@ -1636,6 +1681,9 @@
                     "name": "id",
                     "alias": "urn"
                 }
+            ],
+            "tags": [
+                "compute"
             ]
         },
         {
@@ -1740,6 +1788,9 @@
                     "name": "id",
                     "alias": "urn"
                 }
+            ],
+            "tags": [
+                "compute"
             ]
         },
         {
@@ -1777,6 +1828,9 @@
                     "name": "id",
                     "alias": "urn"
                 }
+            ],
+            "tags": [
+                "compute"
             ]
         },
         {
@@ -1810,6 +1864,9 @@
                     "name": "id",
                     "alias": "urn"
                 }
+            ],
+            "tags": [
+                "compute"
             ]
         },
         {
@@ -1873,6 +1930,9 @@
                     "name": "id",
                     "alias": "urn"
                 }
+            ],
+            "tags": [
+                "compute"
             ]
         },
         {
@@ -1909,6 +1969,9 @@
                     "name": "id",
                     "alias": "urn"
                 }
+            ],
+            "tags": [
+                "compute"
             ]
         },
         {
@@ -1969,6 +2032,9 @@
                     "name": "id",
                     "alias": "urn"
                 }
+            ],
+            "tags": [
+                "compute"
             ]
         },
         {
@@ -2017,6 +2083,9 @@
                     "name": "id",
                     "alias": "urn"
                 }
+            ],
+            "tags": [
+                "compute"
             ]
         },
         {
@@ -2229,6 +2298,9 @@
                     "name": "id",
                     "alias": "urn"
                 }
+            ],
+            "tags": [
+                "compute"
             ]
         },
         {
@@ -2639,6 +2711,9 @@
                     "name": "id",
                     "alias": "urn"
                 }
+            ],
+            "tags": [
+                "compute"
             ]
         },
         {
@@ -2718,6 +2793,9 @@
                     "name": "id",
                     "alias": "urn"
                 }
+            ],
+            "tags": [
+                "compute"
             ]
         },
         {
@@ -2768,6 +2846,9 @@
                     "name": "id",
                     "alias": "urn"
                 }
+            ],
+            "tags": [
+                "compute"
             ]
         },
         {
@@ -2814,6 +2895,9 @@
                     "name": "id",
                     "alias": "urn"
                 }
+            ],
+            "tags": [
+                "compute"
             ]
         },
         {
@@ -3212,6 +3296,9 @@
                     "name": "id",
                     "alias": "urn"
                 }
+            ],
+            "tags": [
+                "compute"
             ]
         },
         {
@@ -3229,7 +3316,10 @@
             ],
             "included": [],
             "excluded": [],
-            "inventory_supported": true
+            "inventory_supported": true,
+            "tags": [
+                "compute"
+            ]
         },
         {
             "name": "azure_kusto_cluster",
