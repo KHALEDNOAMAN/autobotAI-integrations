@@ -9,6 +9,7 @@ from autobotAI_integrations.models import (
     BaseSchema,
     ConnectionInterfaces,
     IntegrationCategory,
+    RestAPICreds,
     SDKClient,
     SDKCreds,
     SteampipeCreds,
@@ -90,7 +91,7 @@ class VirusTotalService(BaseService):
         return [
             ConnectionInterfaces.PYTHON_SDK,
             ConnectionInterfaces.REST_API,
-            ConnectionInterfaces.STEAMPIPE,
+            # ConnectionInterfaces.STEAMPIPE,
         ]
 
     def generate_steampipe_creds(self) -> SteampipeCreds:
@@ -132,3 +133,13 @@ class VirusTotalService(BaseService):
             "VTCLI_APIKEY": str(self.integration.api_key),
         }
         return SDKCreds(envs=creds)
+    
+    def generate_rest_api_creds(self) -> RestAPICreds:
+        return RestAPICreds(
+            base_url="https://www.virustotal.com/api/v3",
+            headers={
+                "x-apikey": self.integration.api_key,
+                "Accept": "application/json",
+                "Content-Type": "application/json",
+            },
+        )
