@@ -653,7 +653,7 @@ def executor(context):
 
         except requests.exceptions.RequestException as e:
             logger.error(f"Request failed: {e}")
-            return {"abAI-client-error": f"Request failed: {e}", "text": response.text if response else None}
+            return {"abAI-client-error": f"Request failed: {e}", "text": response.text if response else ""}
 
     def execute_rest_api_task(self, payload_task: PayloadTask):
         logger.info("Running Rest API Task")
