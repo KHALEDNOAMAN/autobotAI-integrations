@@ -102,7 +102,7 @@ class DATADOGService(BaseService):
             ConnectionInterfaces.REST_API,
             ConnectionInterfaces.CLI,
             ConnectionInterfaces.PYTHON_SDK,
-            ConnectionInterfaces.STEAMPIPE,
+            # ConnectionInterfaces.STEAMPIPE,
         ]
 
     def build_python_exec_combinations_hook(
@@ -147,9 +147,6 @@ class DATADOGService(BaseService):
             config=config,
         )
 
-    def generate_rest_api_creds(self) -> RestAPICreds:
-        pass
-
     def generate_python_sdk_creds(self) -> SDKCreds:
         envs = {
             "DATADOG_API_KEY": self.integration.api_key,
@@ -158,5 +155,13 @@ class DATADOGService(BaseService):
         }
         return SDKCreds(envs=envs)
 
-    def generate_cli_creds(self) -> CLICreds:
-        pass
+    def generate_rest_api_creds(self) -> RestAPICreds:
+        return RestAPICreds(
+            base_url=self.integration.api_url,
+            headers={
+                "DD-APPLICATION-KEY":str(self.integration.app_key),
+                "DD-API-KEY": str(self.integration.api_key),
+                "Content-Type": "application/json",
+                "Accept": "application/json",
+            },
+        )
