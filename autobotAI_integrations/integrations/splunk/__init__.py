@@ -1,6 +1,7 @@
 import importlib
-from typing import Type, Union
-from autobotAI_integrations.models import *
+from typing import List, Optional, Type, Union
+
+from pydantic import Field
 from autobotAI_integrations import (
     BaseSchema,
     BaseService,
@@ -8,6 +9,7 @@ from autobotAI_integrations import (
 )
 import requests
 
+from autobotAI_integrations.models import IntegrationCategory, SDKClient, SDKCreds, SteampipeCreds
 from autobotAI_integrations.payload_schema import PayloadTask
 from autobotAI_integrations.utils import list_of_unique_elements
 import urllib.parse

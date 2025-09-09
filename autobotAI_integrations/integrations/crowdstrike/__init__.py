@@ -1,12 +1,13 @@
-from typing import List, Type, Union
-
-from autobotAI_integrations.models import *
+from typing import Optional, Type, Union
 from autobotAI_integrations import (
     BaseSchema,
     BaseService,
     ConnectionInterfaces,
 )
 import requests
+from pydantic import Field
+
+from autobotAI_integrations.models import IntegrationCategory, SteampipeCreds
 
 
 class CrowdstrikeIntegrations(BaseSchema):

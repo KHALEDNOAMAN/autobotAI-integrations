@@ -12,7 +12,7 @@ from autobotAI_integrations import (
 import requests
 from pydantic import Field
 
-from autobotAI_integrations.models import IntegrationCategory, SteampipeCreds
+from autobotAI_integrations.models import IntegrationCategory
 
 
 class TrendMicroVisionOneIntegration(BaseSchema):
