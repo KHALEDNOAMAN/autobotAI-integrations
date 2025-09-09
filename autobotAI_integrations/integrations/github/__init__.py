@@ -139,6 +139,14 @@ class GithubService(BaseService):
                             "description": "Do Not Change, But Add this to the APP's Page as CallBack URL.",
                             "required": True,
                         },
+                        {
+                            "name": "token_url",
+                            "type": "text/url",
+                            "label": "Token URL",
+                            "placeholder": "{base_url}/login/oauth/access_token",
+                            "description": "URL to get the token from, against the code.",
+                            "required": True,
+                        }
                     ],
                 }
             ]
