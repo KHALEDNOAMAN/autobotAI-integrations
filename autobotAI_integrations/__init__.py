@@ -564,7 +564,7 @@ def executor(context):
     ) -> Union[Dict[str, Any], List[Dict[str, Any]]]:
         logger.info(f"Making {method} request to {url}")
         logger.debug(f"Headers: {headers}, Params: {params}, JSON: {json_data}, Form Data: {form_data}")
-
+        response = None
         try:
             # Ensure we don't send both json and form data in same request
             if json_data and form_data:
@@ -653,7 +653,7 @@ def executor(context):
 
         except requests.exceptions.RequestException as e:
             logger.error(f"Request failed: {e}")
-            return {"abAI-client-error": f"Request failed: {e}"}
+            return {"abAI-client-error": f"Request failed: {e}", "text": response.text if response else None}
 
     def execute_rest_api_task(self, payload_task: PayloadTask):
         logger.info("Running Rest API Task")
