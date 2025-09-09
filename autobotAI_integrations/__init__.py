@@ -497,11 +497,11 @@ def executor(context):
         self.clear_steampipe_spc_config(plugin_name=payload_task.creds.plugin_name)
 
         stdout = process.stdout.decode("utf-8")
-        error_str = process.stderr.decode("utf-8")        
-        logger.error(f"Possible error running the steampipe query: {error_str}")
+        error_str = process.stderr.decode("utf-8")
         stderr = []
         # Get the Error if query fails
         if error_str:
+            logger.error(f"Possible error running the steampipe query: {error_str}")
             try:
                 stderr.append(
                     {
