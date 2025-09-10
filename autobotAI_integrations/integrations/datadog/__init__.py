@@ -156,10 +156,11 @@ class DATADOGService(BaseService):
         return SDKCreds(envs=envs)
 
     def generate_rest_api_creds(self) -> RestAPICreds:
+        api_url = "://api.".join(self.integration.api_url.split("://", 1))
         return RestAPICreds(
-            base_url=self.integration.api_url,
+            base_url=api_url,
             headers={
-                "DD-APPLICATION-KEY":str(self.integration.app_key),
+                "DD-APPLICATION-KEY": str(self.integration.app_key),
                 "DD-API-KEY": str(self.integration.api_key),
                 "Content-Type": "application/json",
                 "Accept": "application/json",
