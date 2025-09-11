@@ -1,3 +1,4 @@
+from enum import Enum
 import importlib
 import re
 from typing import List, Optional, Union
@@ -9,6 +10,11 @@ from autobotAI_integrations import BaseSchema, SteampipeCreds, RestAPICreds, SDK
     BaseService, ConnectionInterfaces, PayloadTask, SDKClient
 
 from autobotAI_integrations.models import IntegrationCategory
+
+
+class GithubAuthTypes(Enum):
+    PAT = "pat"
+    OAUTH_APP = "oauth_app"
 
 
 class GithubIntegration(BaseSchema):
@@ -85,6 +91,7 @@ class GithubService(BaseService):
                 {
                     "label": "PAT Integration",
                     "type": "form",
+                    "formId": GithubAuthTypes.PAT.value,
                     "children": [
                         {
                             "name": "base_url",
@@ -106,6 +113,7 @@ class GithubService(BaseService):
                 {
                     "label": "O-Auth App Integration",
                     "type": "form",
+                    "formId": GithubAuthTypes.OAUTH_APP.value,
                     "children": [
                         {
                             "name": "base_url",
