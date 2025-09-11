@@ -16,7 +16,7 @@ from autobotAI_integrations.models import IntegrationCategory
 
 class GithubAppIntegration(BaseSchema):
     base_url: str =  Field(default="https://api.github.com")# If enterprise version of github
-    installation_id: str = Field(default=None)
+    installation_id: str
     token: Optional[str] = Field(default=None)
     private_key: Optional[str] = Field(default=None, exclude=True)
     client_id: Optional[str] = Field(default=None)
@@ -49,7 +49,7 @@ class GithubAppService(BaseService):
             integration = GithubAppIntegration(**integration)
         super().__init__(ctx, integration)
         self.token = integration.token
-        if not self.token and integration.installation_id:
+        if not self.token:
             self.token = self.get_installation_token()
 
     def _generate_jwt(self) -> str:
@@ -58,10 +58,11 @@ class GithubAppService(BaseService):
         payload = {
             "iat": now - 60,  # issued at
             "exp": now + 60,  # 10 minutes expiration
-            "iss": self.integration.client_id,  # GitHub App ID
+            "iss": self.integration.client_id or "Iv23lijhGQuHe1J5e4il",  # GitHub App ID/ Client ID
             "alg": "RS256"
         }
-        jwt_token = jwt.encode(payload, self.integration.private_key, algorithm="RS256")
+        private_key = self.integration.private_key or getattr(self.ctx, "integration_extra_details", {}).get("github_app_integration_private_key")
+        jwt_token = jwt.encode(payload, private_key, algorithm="RS256")
         print(jwt_token)
         return jwt_token
 
