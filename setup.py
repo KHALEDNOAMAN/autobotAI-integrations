@@ -16,7 +16,7 @@ setup(
         "pydash>=8.0.5",
         "requests>=2.32.4",
         "tenacity>=8.5.0",
-        "jwt>=1.4.0"
+        "PyJWT"
     ],
     extras_require={
         "executable": [
