@@ -58,8 +58,6 @@ class GithubAppService(BaseService):
         super().__init__(ctx, integration)
         if self.integration.default_app and not self.integration.private_key:
             self.integration.private_key = getattr(self.ctx, "integration_extra_details", {}).get("github_app_integration_private_key")
-        self.token = self.get_installation_token()
-        integration.token = self.integration.token = self.token
 
     def _generate_jwt(self) -> str:
         now = int(time.time())
@@ -72,22 +70,30 @@ class GithubAppService(BaseService):
         }
         private_key = self.integration.private_key or getattr(self.ctx, "integration_extra_details", {}).get("github_app_integration_private_key")
         jwt_token = jwt.encode(payload, private_key, algorithm="RS256")
-        print(jwt_token)
         return jwt_token
 
     def get_installation_token(self) -> str:
-        jwt_token = self._generate_jwt()
-        headers = {
-            "Authorization": f"Bearer {jwt_token}",
-            "Accept": "application/vnd.github+json",
-            "X-GitHub-Api-Version": "2022-11-28"
-        }
-        url = f"https://api.github.com/app/installations/{self.integration.installation_id}/access_tokens"
-        response = requests.post(url, headers=headers)
-        response.raise_for_status()
-        return response.json()["token"]
+        try:
+            jwt_token = self._generate_jwt()
+            headers = {
+                "Authorization": f"Bearer {jwt_token}",
+                "Accept": "application/vnd.github+json",
+                "X-GitHub-Api-Version": "2022-11-28"
+            }
+            url = f"https://api.github.com/app/installations/{self.integration.installation_id}/access_tokens"
+            response = requests.post(url, headers=headers)
+            response.raise_for_status()
+            return response.json()["token"]
+        except:
+            if self.integration.token:
+                self.token = self.integration.token
+                if self._test_integration()["success"]:
+                    return self.token
+            raise
+
 
     def _test_integration(self):
+        self.integration.token = self.token = self.get_installation_token()
         headers = {
             "Authorization": f"token {self.token}",
             "Accept": "application/vnd.github+json",
@@ -195,6 +201,7 @@ class GithubAppService(BaseService):
         ]
 
     def generate_steampipe_creds(self) -> SteampipeCreds:
+        self.integration.token = self.token = self.get_installation_token()
         envs = {
             "GITHUB_TOKEN": str(self.token),
         }
@@ -210,6 +217,7 @@ class GithubAppService(BaseService):
                               conf_path=conf_path, config=config)
 
     def generate_rest_api_creds(self) -> RestAPICreds:
+        self.integration.token = self.token = self.get_installation_token()
         return RestAPICreds(
             base_url=self.integration.base_url,
             headers={
@@ -218,6 +226,7 @@ class GithubAppService(BaseService):
         )
 
     def generate_python_sdk_creds(self) -> SDKCreds:
+        self.integration.token = self.token = self.get_installation_token()
         envs = {
             "GITHUB_BASE_URL": self.integration.base_url,
             "GITHUB_TOKEN": self.token
