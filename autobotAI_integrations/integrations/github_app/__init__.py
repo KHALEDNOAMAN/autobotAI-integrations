@@ -21,7 +21,7 @@ class GithubAppIntegration(BaseSchema):
     private_key: Optional[str] = Field(default=None, exclude=True)
     client_id: Optional[str] = Field(default=None)
     name: Optional[str] = "GitHubApp"
-    default_app: bool = Field(default=None, exclude=True)
+    default_app: Optional[bool] = Field(default=None, exclude=True)
     category: Optional[str] = IntegrationCategory.CODE_REPOSITORY.value
     description: Optional[str] = (
         "Popular version control platform for software development, known for its social coding features and large user base."
