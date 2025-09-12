@@ -17,7 +17,7 @@ from autobotAI_integrations.models import IntegrationCategory
 class GithubAppIntegration(BaseSchema):
     base_url: str =  Field(default="https://api.github.com")# If enterprise version of github
     installation_id: str
-    token: Optional[str] = Field(default=None)
+    token: Optional[str] = Field(default=None, exclude=True)
     private_key: Optional[str] = Field(default=None, exclude=True)
     client_id: Optional[str] = Field(default=None)
     name: Optional[str] = "GitHubApp"
@@ -51,6 +51,7 @@ class GithubAppService(BaseService):
         self.token = integration.token
         if not self.token:
             self.token = self.get_installation_token()
+        integration.token = self.integration.token = self.token
 
     def _generate_jwt(self) -> str:
         now = int(time.time())
