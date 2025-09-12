@@ -5,7 +5,7 @@ import re
 from typing import List, Optional, Union
 
 import jwt
-from pydantic import Field, field_validator
+from pydantic import Field, field_validator, model_validator
 import requests
 
 from autobotAI_integrations import BaseSchema, SteampipeCreds, RestAPICreds, SDKCreds, CLICreds, \
@@ -21,10 +21,18 @@ class GithubAppIntegration(BaseSchema):
     private_key: Optional[str] = Field(default=None, exclude=True)
     client_id: Optional[str] = Field(default=None)
     name: Optional[str] = "GitHubApp"
+    default_app: bool = Field(default=None, exclude=True)
     category: Optional[str] = IntegrationCategory.CODE_REPOSITORY.value
     description: Optional[str] = (
         "Popular version control platform for software development, known for its social coding features and large user base."
     )
+
+    @model_validator(mode="after")
+    def validate_base_url(self) -> Optional[str]:
+        if self.default_app is None and not self.client_id and not self.private_key:
+            self.default_app = True
+        elif self.default_app is None:
+            self.default_app = True
 
     @field_validator("base_url", mode="before")
     @classmethod
@@ -48,9 +56,9 @@ class GithubAppService(BaseService):
         if not isinstance(integration, GithubAppIntegration):
             integration = GithubAppIntegration(**integration)
         super().__init__(ctx, integration)
-        self.token = integration.token
-        if not self.token:
-            self.token = self.get_installation_token()
+        if self.integration.default_app and not self.integration.private_key:
+            self.integration.private_key = getattr(self.ctx, "integration_extra_details", {}).get("github_app_integration_private_key")
+        self.token = self.get_installation_token()
         integration.token = self.integration.token = self.token
 
     def _generate_jwt(self) -> str:
