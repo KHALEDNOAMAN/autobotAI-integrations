@@ -47,7 +47,7 @@ class GitService(BaseService):
         return {"label": "Git Integration", "type": "form", "children": []}
 
     @staticmethod
-    def get_schema() -> Type[BaseSchema]:
+    def get_schema(ctx=None) -> Type[BaseSchema]:
         return GitIntegration
 
     @classmethod

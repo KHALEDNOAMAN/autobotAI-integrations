@@ -181,7 +181,7 @@ def executor(context):
             return open_api_actions
 
     @staticmethod
-    def get_schema() -> BaseSchema:
+    def get_schema(ctx=None) -> BaseSchema:
         raise NotImplementedError()
 
     @classmethod

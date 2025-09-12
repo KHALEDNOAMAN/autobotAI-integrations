@@ -157,7 +157,7 @@ def executor(context):
         }
 
     @staticmethod
-    def get_schema() -> Type[BaseSchema]:
+    def get_schema(ctx=None) -> Type[BaseSchema]:
         return OllamaIntegration
 
     def build_python_exec_combinations_hook(

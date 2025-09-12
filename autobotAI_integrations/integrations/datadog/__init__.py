@@ -93,7 +93,7 @@ class DATADOGService(BaseService):
         }
 
     @staticmethod
-    def get_schema():
+    def get_schema(ctx=None):
         return DATADOGIntegration
 
     @staticmethod

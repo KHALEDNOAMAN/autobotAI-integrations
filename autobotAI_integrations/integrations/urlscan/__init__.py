@@ -65,7 +65,7 @@ class URLScanService(BaseService):
         }
 
     @staticmethod
-    def get_schema() -> Type[BaseSchema]:
+    def get_schema(ctx=None) -> Type[BaseSchema]:
         return URLScanIntegrations
 
     @classmethod

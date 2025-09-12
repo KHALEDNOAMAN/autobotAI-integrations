@@ -161,7 +161,7 @@ class GithubService(BaseService):
         }
 
     @staticmethod
-    def get_schema():
+    def get_schema(ctx=None):
         return GithubIntegration
 
     @staticmethod

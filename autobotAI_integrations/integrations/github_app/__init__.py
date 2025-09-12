@@ -28,7 +28,7 @@ class GithubAppIntegration(BaseSchema):
     )
 
     @model_validator(mode="after")
-    def validate_base_url(self) -> Optional[str]:
+    def validate_default_app(self) -> Optional[str]:
         if self.default_app is None and not self.client_id and not self.private_key:
             self.default_app = True
         elif self.default_app is None:
@@ -158,8 +158,15 @@ class GithubAppService(BaseService):
         }
 
     @staticmethod
-    def get_schema():
-        return GithubAppIntegration
+    def get_schema(ctx=None):
+        class GithubAppIntegrationModifiedSchema(GithubAppIntegration):
+
+            @model_validator(mode="after")
+            def validate_default_app(self) -> Optional[str]:
+                if ctx and self.default_app and not self.private_key:
+                    self.private_key = getattr(ctx, "integration_extra_details", {}).get("github_app_integration_private_key")
+
+        return GithubAppIntegrationModifiedSchema
 
     @staticmethod
     def supported_connection_interfaces():
