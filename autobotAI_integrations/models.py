@@ -12,6 +12,7 @@ class ConnectionInterfaces(str, Enum):
     PYTHON_SDK = 'python_sdk'
     REST_API = 'rest_api'
     CLI = 'cli'
+    MCP_SERVER = 'mcp_server'
 
     def __str__(self):
         return self.value
@@ -86,6 +87,12 @@ class CLICreds(BaseCreds):
     envs: dict
     installer_check: str
     install_command: str
+
+class MCPCreds(BaseCreds):
+    connection_interface: ClassVar[ConnectionInterfaces] = ConnectionInterfaces.MCP_SERVER
+    creds_type: str = ConnectionInterfaces.MCP_SERVER.value
+    envs: dict = {}
+    headers: dict = {}
 
 # Setting default to None
 class BaseSchema(IntegrationSchema):

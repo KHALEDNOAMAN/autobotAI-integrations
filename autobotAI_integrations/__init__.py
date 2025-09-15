@@ -18,11 +18,12 @@ import yaml
 from pydantic import BaseModel
 from autobotAI_integrations.integration_schema import ConnectionTypes, IntegrationSchema, IntegrationStates
 from autobotAI_integrations.models import *
-from autobotAI_integrations.open_api_schema import OpenAPIAction
+from autobotAI_integrations.open_api_schema import MCPServerAction, OpenAPIAction
 from autobotAI_integrations.payload_schema import PayloadTask, Payload, Param
 from autobotAI_integrations.utils.logging_config import logger
 from autobotAI_integrations.utils import (
     list_of_unique_elements,
+    load_actions_from_mcp_server_config,
     load_mod_from_string,
     run_mod_func,
     oscf_based_steampipe_json,
@@ -179,6 +180,17 @@ def executor(context):
             logger.exception(f"Error occurred while parsing open api file: {e}")
         finally:
             return open_api_actions
+    
+    @classmethod
+    def get_all_mcp_server_actions(cls) -> List[MCPServerAction]:
+        if ConnectionInterfaces.MCP_SERVER not in cls.supported_connection_interfaces():
+            return []
+        base_path = os.path.dirname(inspect.getfile(cls))
+        with open(path.join(base_path, "mcp_servers.json")) as f:
+            server_config = json.load(f)
+            mcp_server_action = load_actions_from_mcp_server_config(server_config)
+            return mcp_server_action
+        return []
 
     @staticmethod
     def get_schema() -> BaseSchema:
@@ -211,6 +223,9 @@ def executor(context):
         raise NotImplementedError()
 
     def generate_cli_creds(self) -> CLICreds:
+        raise NotImplementedError()
+
+    def generate_mcp_creds(self) -> MCPCreds:
         raise NotImplementedError()
 
     def build_python_exec_combinations_hook(self, payload_task: PayloadTask,
