@@ -193,7 +193,7 @@ def executor(context):
         return []
 
     @staticmethod
-    def get_schema() -> BaseSchema:
+    def get_schema(ctx=None) -> BaseSchema:
         raise NotImplementedError()
 
     @classmethod

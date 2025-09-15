@@ -36,7 +36,7 @@ class KubernetesService(BaseService):
         return {"label": "Kubernetes", "type": "form", "children": []}
 
     @staticmethod
-    def get_schema():
+    def get_schema(ctx=None):
         return KubernetesIntegration
 
     @classmethod

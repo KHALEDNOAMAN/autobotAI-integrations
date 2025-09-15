@@ -1,30 +1,38 @@
+import time
 from enum import Enum
 import importlib
 import re
 from typing import List, Optional, Union
 
-from pydantic import Field, field_validator
+import jwt
+from pydantic import Field, field_validator, model_validator
 import requests
 
 from autobotAI_integrations import BaseSchema, SteampipeCreds, RestAPICreds, SDKCreds, CLICreds, \
     BaseService, ConnectionInterfaces, PayloadTask, SDKClient
 
-from autobotAI_integrations.models import IntegrationCategory, MCPCreds
+from autobotAI_integrations.models import IntegrationCategory
 
 
-class GithubAuthTypes(Enum):
-    PAT = "pat"
-    OAUTH_APP = "oauth_app"
-
-
-class GithubIntegration(BaseSchema):
+class GithubAppIntegration(BaseSchema):
     base_url: str =  Field(default="https://api.github.com")# If enterprise version of github
+    installation_id: str
     token: Optional[str] = Field(default=None, exclude=True)
-    name: Optional[str] = "GitHub"
+    private_key: Optional[str] = Field(default=None, exclude=True)
+    client_id: Optional[str] = Field(default=None)
+    name: Optional[str] = "GitHubApp"
+    default_app: Optional[bool] = Field(default=None, exclude=True)
     category: Optional[str] = IntegrationCategory.CODE_REPOSITORY.value
     description: Optional[str] = (
         "Popular version control platform for software development, known for its social coding features and large user base."
     )
+
+    @model_validator(mode="after")
+    def validate_default_app(self) -> Optional[str]:
+        if self.default_app is None and not self.client_id and not self.private_key:
+            self.default_app = True
+        elif self.default_app is None:
+            self.default_app = True
 
     @field_validator("base_url", mode="before")
     @classmethod
@@ -40,24 +48,59 @@ class GithubIntegration(BaseSchema):
         return "https://api.github.com"
 
 
-class GithubService(BaseService):
-    def __init__(self, ctx: dict, integration: Union[GithubIntegration, dict]):
+class GithubAppService(BaseService):
+    def __init__(self, ctx: dict, integration: Union[GithubAppIntegration, dict]):
         """
         Integration should have all the data regarding the integration
         """
-        if not isinstance(integration, GithubIntegration):
-            integration = GithubIntegration(**integration)
+        if not isinstance(integration, GithubAppIntegration):
+            integration = GithubAppIntegration(**integration)
         super().__init__(ctx, integration)
-        self.token = integration.token
+        if self.integration.default_app and not self.integration.private_key:
+            self.integration.private_key = getattr(self.ctx, "integration_extra_details", {}).get("github_app_integration_private_key")
+
+    def _generate_jwt(self) -> str:
+        now = int(time.time())
+
+        payload = {
+            "iat": now - 60,  # issued at
+            "exp": now + 60,  # 10 minutes expiration
+            "iss": self.integration.client_id or "Iv23lijhGQuHe1J5e4il",  # GitHub App ID/ Client ID
+            "alg": "RS256"
+        }
+        private_key = self.integration.private_key or getattr(self.ctx, "integration_extra_details", {}).get("github_app_integration_private_key")
+        jwt_token = jwt.encode(payload, private_key, algorithm="RS256")
+        return jwt_token
+
+    def get_installation_token(self) -> str:
+        try:
+            jwt_token = self._generate_jwt()
+            headers = {
+                "Authorization": f"Bearer {jwt_token}",
+                "Accept": "application/vnd.github+json",
+                "X-GitHub-Api-Version": "2022-11-28"
+            }
+            url = f"https://api.github.com/app/installations/{self.integration.installation_id}/access_tokens"
+            response = requests.post(url, headers=headers)
+            response.raise_for_status()
+            return response.json()["token"]
+        except:
+            if self.integration.token:
+                self.token = self.integration.token
+                if self._test_integration()["success"]:
+                    return self.token
+            raise
+
 
     def _test_integration(self):
+        self.integration.token = self.token = self.get_installation_token()
         headers = {
             "Authorization": f"token {self.token}",
             "Accept": "application/vnd.github+json",
         }
 
         # Try accessing the user endpoint to validate the token and URL
-        user_endpoint = f"{self.integration.base_url}/user"
+        user_endpoint = f"{self.integration.base_url}/installation/repositories"
 
         try:
             response = requests.get(user_endpoint, headers=headers)
@@ -85,93 +128,58 @@ class GithubService(BaseService):
     @staticmethod
     def get_forms():
         return {
-            "label": "Github",
+            "label": "Github App Integration",
             "type": "form",
             "children": [
                 {
-                    "label": "PAT Integration",
-                    "type": "form",
-                    "formId": GithubAuthTypes.PAT.value,
-                    "children": [
-                        {
-                            "name": "base_url",
-                            "type": "text/url",
-                            "label": "Github Base URL",
-                            "placeholder": "Enter Base URL default: https://api.github.com",
-                            "description": "Github Base URL if Using Enterprise Version",
-                            "required": False,
-                        },
-                        {
-                            "name": "token",
-                            "type": "text/password",
-                            "label": "Github Token",
-                            "placeholder": "Enter the github token",
-                            "required": True,
-                        },
-                    ],
+                    "name": "base_url",
+                    "type": "text/url",
+                    "label": "Github Base URL",
+                    "placeholder": "Enter Base URL default: https://api.github.com",
+                    "description": "Github Base URL if Using Enterprise Version",
+                    "required": False
                 },
                 {
-                    "label": "O-Auth App Integration",
-                    "type": "form",
-                    "formId": GithubAuthTypes.OAUTH_APP.value,
-                    "children": [
-                        {
-                            "name": "base_url",
-                            "type": "text/url",
-                            "label": "Github Base URL",
-                            "placeholder": "Enter Base URL default: https://api.github.com",
-                            "description": "Github Base URL if Using Enterprise Version",
-                            "required": False,
-                        },
-                        {
-                            "name": "client_id",
-                            "type": "text/password",
-                            "label": "Client ID",
-                            "placeholder": "Enter the Client ID",
-                            "description": "The Client ID Generated after Creating the Github APP",
-                            "required": True,
-                        },
-                        {
-                            "name": "client_secret",
-                            "type": "text/password",
-                            "label": "Client Secret",
-                            "placeholder": "Client Secret",
-                            "description": "Client Secret Generated by the App Developer.",
-                            "required": True,
-                        },
-                        {
-                            "name": "redirect_uri",
-                            "type": "text/password",
-                            "label": "Private Key",
-                            "placeholder": "Do Not Change",
-                            "description": "Do Not Change, But Add this to the APP's Page as CallBack URL.",
-                            "required": True,
-                        },
-                        {
-                            "name": "token_url",
-                            "type": "text/url",
-                            "label": "Token URL",
-                            "placeholder": "{base_url}/login/oauth/access_token",
-                            "description": "URL to get the token from, against the code.",
-                            "required": True,
-                        }
-                    ],
+                    "name": "installation_id",
+                    "type": "text",
+                    "label": "Github Installation Id",
+                    "placeholder": "Installation ID of the Application",
+                    "required": True
+                },
+                {
+                    "name": "private_key",
+                    "type": "text/password",
+                    "label": "Github Private Key",
+                    "placeholder": "Leave Empty if using Official Github App",
+                    "required": False
+                },
+                {
+                    "name": "client_id",
+                    "type": "text",
+                    "label": "Github Client Id",
+                    "placeholder": "Leave Empty if using Official Github App",
+                    "required": False
                 }
             ]
         }
 
     @staticmethod
     def get_schema(ctx=None):
-        return GithubIntegration
+        class GithubAppIntegrationModifiedSchema(GithubAppIntegration):
+
+            @model_validator(mode="after")
+            def validate_default_app(self) -> Optional[str]:
+                if ctx and self.default_app and not self.private_key:
+                    self.private_key = getattr(ctx, "integration_extra_details", {}).get("github_app_integration_private_key")
+
+        return GithubAppIntegrationModifiedSchema
 
     @staticmethod
     def supported_connection_interfaces():
         return [
             ConnectionInterfaces.REST_API,
             ConnectionInterfaces.CLI,
-            ConnectionInterfaces.PYTHON_SDK, 
-            ConnectionInterfaces.MCP_SERVER
-            # ConnectionInterfaces.STEAMPIPE
+            ConnectionInterfaces.PYTHON_SDK,
         ]
 
     def build_python_exec_combinations_hook(self, payload_task: PayloadTask,
@@ -193,6 +201,7 @@ class GithubService(BaseService):
         ]
 
     def generate_steampipe_creds(self) -> SteampipeCreds:
+        self.integration.token = self.token = self.get_installation_token()
         envs = {
             "GITHUB_TOKEN": str(self.token),
         }
@@ -208,6 +217,7 @@ class GithubService(BaseService):
                               conf_path=conf_path, config=config)
 
     def generate_rest_api_creds(self) -> RestAPICreds:
+        self.integration.token = self.token = self.get_installation_token()
         return RestAPICreds(
             base_url=self.integration.base_url,
             headers={
@@ -216,6 +226,7 @@ class GithubService(BaseService):
         )
 
     def generate_python_sdk_creds(self) -> SDKCreds:
+        self.integration.token = self.token = self.get_installation_token()
         envs = {
             "GITHUB_BASE_URL": self.integration.base_url,
             "GITHUB_TOKEN": self.token
@@ -224,12 +235,3 @@ class GithubService(BaseService):
 
     def generate_cli_creds(self) -> CLICreds:
         pass
-
-    def generate_mcp_creds(self) -> CLICreds:
-        if self.integration.base_url == "https://api.github.com":
-            return MCPCreds(
-                headers={
-                    "Authorization": f"Bearer {self.token}",
-                },
-            )
-        raise Exception("Remote MCP is only supported for public github")

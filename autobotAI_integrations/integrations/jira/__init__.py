@@ -113,7 +113,7 @@ class JiraService(BaseService):
         }
 
     @staticmethod
-    def get_schema():
+    def get_schema(ctx=None):
         return JiraIntegration
 
     @staticmethod
