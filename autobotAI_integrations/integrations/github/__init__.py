@@ -225,7 +225,7 @@ class GithubService(BaseService):
     def generate_cli_creds(self) -> CLICreds:
         pass
 
-    def generate_mcp_creds(self) -> CLICreds:
+    def generate_mcp_creds(self) -> MCPCreds:
         if self.integration.base_url == "https://api.github.com":
             return MCPCreds(
                 headers={
