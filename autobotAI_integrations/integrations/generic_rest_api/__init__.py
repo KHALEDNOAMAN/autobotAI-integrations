@@ -26,7 +26,7 @@ class GenericRestAPIIntegration(BaseSchema):
     # No Auth
     api_url: str
     auth_type: Union[APIAuthType, str] = APIAuthType.NO_AUTH
-    healthcheck_get_api_path: Optional[str] = Field(default=None, exclude=True)
+    healthcheck_get_api_path: Optional[str] = None
     ignore_ssl: bool = False
 
     # Bearer Token
