@@ -148,7 +148,7 @@ class GithubAppService(BaseService):
                 },
                 {
                     "name": "private_key",
-                    "type": "text/raw",
+                    "type": "textarea",
                     "label": "Github Private Key",
                     "placeholder": "Leave Empty if using Official Github App",
                     "required": False
