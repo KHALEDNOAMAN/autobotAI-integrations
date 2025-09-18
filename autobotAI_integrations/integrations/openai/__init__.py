@@ -63,18 +63,27 @@ class OpenAIService(AIBaseService):
             # TODO: USE API
             from openai import OpenAI
             client = OpenAI(api_key=self.integration.api_key)
-            models = client.models.list().data
-            model_names = []
-            for model in models:
-                model_names.append(model.id)
+            
+            models_list = client.models.list().data
+            
+            tool_calling_models = [
+                model.id for model in models_list
+                # Only including text based tool calling models
+                if any(k in model.id for k in ["gpt", "o1", "o2", "o3", "o4"])
+                # Removing old and embedding models
+                and not any(x in model.id for x in ["instruct", "embedding"])
+            ]
+            
+            tool_calling_models.sort()
+            
             return {
                 "integration_id": self.integration.accountId,
-                "models": model_names,
+                "models": tool_calling_models,
                 "embedding_models": [
                     "text-embedding-3-small",
                     "text-embedding-3-large",
                     "text-embedding-ada-002",
-                ],
+                ]
             }
         except Exception as e:
             return {"error": "Details can not be fetched"}
@@ -126,7 +135,7 @@ class OpenAIService(AIBaseService):
         }
 
     @staticmethod
-    def get_schema():
+    def get_schema(ctx=None):
         return OpenAIIntegration
 
     @staticmethod

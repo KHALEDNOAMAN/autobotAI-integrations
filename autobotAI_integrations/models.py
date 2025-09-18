@@ -56,6 +56,7 @@ class RestAPICreds(BaseCreds):
     connection_interface: ClassVar[ConnectionInterfaces] = ConnectionInterfaces.REST_API
     creds_type: str = ConnectionInterfaces.REST_API.value
     base_url: str
+    envs: Optional[dict] = None
     token: Optional[str] = None
     headers: dict = {}
     query_params: dict = dict()

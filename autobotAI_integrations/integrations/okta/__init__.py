@@ -87,7 +87,7 @@ class OktaService(BaseService):
         }
 
     @staticmethod
-    def get_schema():
+    def get_schema(ctx=None):
         return OktaIntegration
 
     @classmethod

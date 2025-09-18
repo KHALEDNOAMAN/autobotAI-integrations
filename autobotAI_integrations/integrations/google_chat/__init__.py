@@ -71,7 +71,7 @@ class GoogleChatService(BaseService):
         }
 
     @staticmethod
-    def get_schema() -> Type[BaseSchema]:
+    def get_schema(ctx=None) -> Type[BaseSchema]:
         return GoogleChatIntegration
 
     def build_python_exec_combinations_hook(self, payload_task: PayloadTask, client_definitions: List[SDKClient]) -> list:

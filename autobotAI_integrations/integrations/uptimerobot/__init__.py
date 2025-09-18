@@ -1,16 +1,14 @@
-from typing import List, Type, Union
+from typing import Optional, Type, Union
 
-from autobotAI_integrations import list_of_unique_elements
-from autobotAI_integrations.models import *
-from autobotAI_integrations.models import List
 from autobotAI_integrations import (
     BaseSchema,
-    CLICreds,
     BaseService,
     ConnectionInterfaces,
 )
 import requests
-import json
+from pydantic import Field
+
+from autobotAI_integrations.models import IntegrationCategory, RestAPICreds, SteampipeCreds
 
 
 class UptimeRobotIntegrations(BaseSchema):
@@ -34,20 +32,17 @@ class UptimeRobotService(BaseService):
 
     def _test_integration(self) -> dict:
         try:
-            url = "https://api.uptimerobot.com/v2/getAccountDetails"
-            payload = "api_key={}&format=json".format(self.integration.api_key)
-            headers = {
-                "cache-control": "no-cache",
-                "content-type": "application/x-www-form-urlencoded",
-            }
-            response = requests.request("POST", url, data=payload, headers=headers)
-            result = json.loads(response.text)
-            if response.status_code == 200 and result.get('stat') == 'ok':
+            url = "https://api.uptimerobot.com/v3/user/me"
+            response = requests.get(
+                url, headers={"Authorization": f"Bearer {self.integration.api_key}"}
+            )
+            response.raise_for_status()
+            if response.status_code == 200:
                 return {"success": True}
             else:
                 return {
                     "success": False,
-                    "error": result.get('error'),
+                    "error": f"Request Failed with Status code {response.status_code}",
                 }
         except Exception as e:
             return {
@@ -72,7 +67,7 @@ class UptimeRobotService(BaseService):
         }
 
     @staticmethod
-    def get_schema() -> Type[BaseSchema]:
+    def get_schema(ctx=None) -> Type[BaseSchema]:
         return UptimeRobotIntegrations
 
     @classmethod
@@ -87,7 +82,6 @@ class UptimeRobotService(BaseService):
     @staticmethod
     def supported_connection_interfaces():
         return [
-            ConnectionInterfaces.STEAMPIPE,
             ConnectionInterfaces.REST_API,
             ConnectionInterfaces.CLI,
         ]
@@ -105,4 +99,14 @@ class UptimeRobotService(BaseService):
             connection_name="uptimerobot",
             conf_path=conf_path,
             config=config,
+        )
+    
+    def generate_rest_api_creds(self) -> RestAPICreds:
+        return RestAPICreds(
+            base_url="https://api.uptimerobot.com/v3",
+            headers={
+                "Authorization":f"Bearer {self.integration.api_key}",
+                "Accept": "application/json",
+                "Content-Type": "application/json",
+            },
         )

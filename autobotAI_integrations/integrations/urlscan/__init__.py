@@ -1,7 +1,7 @@
-from typing import List, Type, Union
+from typing import List, Optional, Type, Union
 
-from autobotAI_integrations.models import *
-from autobotAI_integrations.models import List
+from pydantic import Field
+from autobotAI_integrations.models import IntegrationCategory, List, RestAPICreds, SteampipeCreds
 from autobotAI_integrations import (
     BaseSchema,
     BaseService,
@@ -65,7 +65,7 @@ class URLScanService(BaseService):
         }
 
     @staticmethod
-    def get_schema() -> Type[BaseSchema]:
+    def get_schema(ctx=None) -> Type[BaseSchema]:
         return URLScanIntegrations
 
     @classmethod
@@ -80,7 +80,7 @@ class URLScanService(BaseService):
     @staticmethod
     def supported_connection_interfaces():
         return [
-            ConnectionInterfaces.STEAMPIPE,
+            # ConnectionInterfaces.STEAMPIPE,
             ConnectionInterfaces.REST_API,
             ConnectionInterfaces.CLI,
         ]
@@ -97,5 +97,15 @@ class URLScanService(BaseService):
             plugin_name="urlscan",
             connection_name="urlscan",
             conf_path=conf_path,
-            config=config,
+            config=config
+        )
+    
+    def generate_rest_api_creds(self) -> RestAPICreds:
+        return RestAPICreds(
+            base_url="https://urlscan.io",
+            headers={
+                "API-Key": self.integration.api_key,
+                "Accept": "application/json",
+                "Content-Type": "application/json",
+            },
         )

@@ -19,9 +19,9 @@ from .http_requests_client import HTTPRequestClient
 
 
 class PythonHTTPRequestIntegration(BaseSchema):
-    api_url: Optional[str] = Field(default=None, exclude=True)
+    api_url: Optional[str] = None
     headers_json: Dict[str, str] = Field(default=dict(), exclude=True)
-    healthcheck_get_api_path: Optional[str] = Field(default=None, exclude=True)
+    healthcheck_get_api_path: Optional[str] = None
     ignore_ssl: bool = False
 
     name: Optional[str] = "Python HTTP REST API"
@@ -160,7 +160,7 @@ class PythonHTTPService(BaseService):
         }
 
     @staticmethod
-    def get_schema() -> Type[BaseSchema]:
+    def get_schema(ctx=None) -> Type[BaseSchema]:
         return PythonHTTPRequestIntegration
 
     @classmethod

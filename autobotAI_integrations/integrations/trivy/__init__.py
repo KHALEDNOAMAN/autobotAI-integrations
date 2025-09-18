@@ -1,12 +1,10 @@
-from typing import List, Type, Union
-
-from autobotAI_integrations.models import *
+from typing import Optional, Type, Union
 from autobotAI_integrations import (
     BaseSchema,
     BaseService,
     ConnectionInterfaces,
 )
-import requests
+from autobotAI_integrations.models import IntegrationCategory, SteampipeCreds
 
 
 class TrivyIntegrations(BaseSchema):
@@ -38,7 +36,7 @@ class TrivyService(BaseService):
         }
 
     @staticmethod
-    def get_schema() -> Type[BaseSchema]:
+    def get_schema(ctx=None) -> Type[BaseSchema]:
         return TrivyIntegrations
 
     @classmethod

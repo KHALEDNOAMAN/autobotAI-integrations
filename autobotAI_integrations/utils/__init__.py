@@ -308,7 +308,7 @@ def get_restapi_validated_params(params: List[Param]):
         elif getattr(param, "in_") == "method":
             if not isinstance(param.values, str):
                 raise ValueError("Method must be a string.")
-            filtered_params["method"] = param.values.upper()
+            filtered_params["method"] = param.values.upper() if param.values else param.values
         elif getattr(param, "in_") == "query":
             if param.values is None:
                 continue

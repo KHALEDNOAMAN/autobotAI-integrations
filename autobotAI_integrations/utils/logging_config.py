@@ -9,6 +9,10 @@ logger.propagate = False
 
 class MultiLineFormatter(logging.Formatter):
     def format(self, record):
+        if not hasattr(record, 'req_id'):
+            record.req_id = "System"
+        if not hasattr(record, 'bot_exc_id'):
+            record.bot_exc_id = "AutobotAI"
         super().format(record)
         prefix = self.formatMessage(record).split(record.getMessage())[0]
         response = "\n".join(prefix + line for line in record.getMessage().splitlines())

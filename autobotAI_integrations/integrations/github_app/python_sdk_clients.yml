@@ -1,0 +1,5 @@
+- name: github
+  import_library_names:
+    - github
+  pip_package_names:
+    - PyGithub

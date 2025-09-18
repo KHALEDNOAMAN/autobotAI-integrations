@@ -181,7 +181,7 @@ def executor(context):
             return open_api_actions
 
     @staticmethod
-    def get_schema() -> BaseSchema:
+    def get_schema(ctx=None) -> BaseSchema:
         raise NotImplementedError()
 
     @classmethod
@@ -564,7 +564,7 @@ def executor(context):
     ) -> Union[Dict[str, Any], List[Dict[str, Any]]]:
         logger.info(f"Making {method} request to {url}")
         logger.debug(f"Headers: {headers}, Params: {params}, JSON: {json_data}, Form Data: {form_data}")
-
+        response = None
         try:
             # Ensure we don't send both json and form data in same request
             if json_data and form_data:
@@ -653,7 +653,7 @@ def executor(context):
 
         except requests.exceptions.RequestException as e:
             logger.error(f"Request failed: {e}")
-            return {"abAI-client-error": f"Request failed: {e}"}
+            return {"abAI-client-error": f"Request failed: {e}", "text": response.text if response else ""}
 
     def execute_rest_api_task(self, payload_task: PayloadTask):
         logger.info("Running Rest API Task")
@@ -678,15 +678,15 @@ def executor(context):
                 params["json_data"] = None
             response = self.rest_api_processor(
                 url=request_url,
-                method=params.get("method", "GET"),
+                method=params.get("method") or "GET",
                 headers={
-                    **params.get("headers", {}),
+                    **(params.get("headers") or {}),
                     "Content-Type": "application/json",
-                    **payload_task.creds.headers,
+                    **(payload_task.creds.headers or {}),
                 },
                 params={
-                    **payload_task.creds.query_params,
-                    **params.get("query_parameters", None),
+                    **(payload_task.creds.query_params or {}),
+                    **(params.get("query_parameters") or {}),
                 },
                 json_data=params.get("json_data", None),
                 form_data=params.get("form_data", None),

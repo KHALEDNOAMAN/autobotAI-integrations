@@ -12,7 +12,7 @@ from autobotAI_integrations import (
 import requests
 from pydantic import Field
 
-from autobotAI_integrations.models import IntegrationCategory, SteampipeCreds
+from autobotAI_integrations.models import IntegrationCategory
 
 
 class TrendMicroVisionOneIntegration(BaseSchema):
@@ -81,7 +81,7 @@ class TrendMicroVisionOneService(BaseService):
         }
 
     @staticmethod
-    def get_schema() -> Type[BaseSchema]:
+    def get_schema(ctx=None) -> Type[BaseSchema]:
         return TrendMicroVisionOneIntegration
 
     @staticmethod

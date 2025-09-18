@@ -13,7 +13,7 @@ from autobotAI_integrations import (
     SDKClient,
 )
 
-from autobotAI_integrations.models import IntegrationCategory
+from autobotAI_integrations.models import IntegrationCategory, RestAPICreds
 
 
 class SnowflakeIntegration(BaseSchema):
@@ -101,7 +101,7 @@ class SnowflakeService(BaseService):
         }
 
     @staticmethod
-    def get_schema():
+    def get_schema(ctx=None):
         return SnowflakeIntegration
 
     @staticmethod
@@ -110,7 +110,7 @@ class SnowflakeService(BaseService):
             ConnectionInterfaces.PYTHON_SDK,
             # NOTE:Snowflake steampipe is not updated with their latest version
             # ConnectionInterfaces.STEAMPIPE,
-            # ConnectionInterfaces.REST_API
+            # ConnectionInterfaces.REST_API,
         ]
 
     @classmethod
@@ -161,3 +161,6 @@ class SnowflakeService(BaseService):
             "SNOWFLAKE_PASSWORD": self.integration.password,
         }
         return SDKCreds(envs=envs)
+
+    def generate_rest_api_creds(self) -> RestAPICreds:
+        raise NotImplementedError
