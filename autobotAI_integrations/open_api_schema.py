@@ -1,3 +1,4 @@
+from enum import Enum
 from typing import Optional, List, Any
 
 from pydantic import BaseModel, Field, model_validator
@@ -17,6 +18,19 @@ class OpenAPIAction(BaseModel):
     executable_type: Optional[str] = ConnectionInterfaces.REST_API.value
     category: Optional[str] = None
     parameters_definition: Optional[List[OpenAPIPathParams]] = []
+
+class MCPTransport(str, Enum):
+    STREAMABLE_HTTP = "streamable_http"
+    STDIO = "stdio"
+
+    def __str__(self):
+        return self.value
+
+
+class MCPServerAction(OpenAPIAction):
+    document_link: Optional[str] = None
+    executable_type: Optional[str] = ConnectionInterfaces.MCP_SERVER.value
+    transport: Optional[MCPTransport] = MCPTransport.STREAMABLE_HTTP.value
 
 
 class OpenAPIPathModel(BaseModel):
