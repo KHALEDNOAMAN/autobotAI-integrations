@@ -11,9 +11,10 @@ import importlib
 from pydantic import BaseModel
 import urllib
 from autobotAI_integrations.integration_schema import ConnectionTypes
+from autobotAI_integrations.open_api_schema import MCPServerAction, MCPTransport
 from autobotAI_integrations.utils.security_measures import validate_code
 
-from autobotAI_integrations.payload_schema import Param, PayloadTask
+from autobotAI_integrations.payload_schema import OpenAPIPathParams, Param, PayloadTask
 
 
 def fromisoformat(strdate):
@@ -338,3 +339,54 @@ def get_restapi_validated_params(params: List[Param]):
                 raise ValueError("Timeout must be an integer.")
             filtered_params["timeout"] = params.values
     return filtered_params
+
+
+def load_actions_from_mcp_server_config(server_config) -> List[MCPServerAction]:
+    # ONLY Streamable HTTP is supported
+    # This transport only contains headers
+    try:
+        mcp_actions = []
+        for integration_type, details in server_config.items():
+            if MCPTransport.STREAMABLE_HTTP.value in details:
+                streamable_http = details.get(MCPTransport.STREAMABLE_HTTP.value, {})
+                commmon_params = []
+
+                if "headers" in streamable_http:
+                    commmon_params = get_header_params(streamable_http.get("headers", {}))
+
+                for server in streamable_http.get("servers", []):
+                    params = get_header_params(server.get("headers", {}))
+                    action = MCPServerAction(
+                        integration_type=integration_type,
+                        name=server.get("name"),
+                        description=server.get("description"),
+                        document_link=streamable_http.get("document_link"),
+                        code=server.get("url"),
+                        parameters_definition=commmon_params + params,
+                        transport=MCPTransport.STREAMABLE_HTTP.value,
+                    )
+
+                    mcp_actions.append(action)
+                return mcp_actions
+            else:
+                return [] 
+        return mcp_actions
+    except Exception as e:
+        print(traceback.print_exc())
+        raise e
+
+def get_header_params(headers):
+    params = []
+    for key, value in headers.items():
+        params.append(
+            OpenAPIPathParams(
+                **{
+                    "type": value.get("type", "string"),
+                    "name": key,
+                    "in": "headers",
+                    "description": value.get("description", ""),
+                    "required": value.get("required", False),
+                }
+            )
+        )
+    return params
