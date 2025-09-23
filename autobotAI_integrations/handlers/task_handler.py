@@ -25,8 +25,9 @@ def handle_task(task: PayloadTask) -> TaskResult:
 
     # Clearing Sensitive Keys from Environment Variables
     try:
-        for key in task.creds.envs:
-            os.environ.pop(key, None)
+        if hasattr(task.creds, "envs"):
+            for key in task.creds.envs:
+                os.environ.pop(key, None)
     except Exception as e:
         logger.error(
             f"Error while clearing sensitive keys from environment variables: {e}"
