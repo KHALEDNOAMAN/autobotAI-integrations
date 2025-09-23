@@ -108,6 +108,7 @@ class OpenAPIPathParams(Param):
 class PayloadTask(BaseModel):
     task_id: Optional[str]
     creds: SerializeAsAny[BaseCreds]
+    output_selector: Optional[str] = None
     connection_interface: ConnectionInterfaces
     executable: str
     tables: Optional[List[str]] = None

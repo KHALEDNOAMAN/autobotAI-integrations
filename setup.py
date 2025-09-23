@@ -16,7 +16,8 @@ setup(
         "pydash>=8.0.5",
         "requests>=2.32.4",
         "tenacity>=8.5.0",
-        "PyJWT"
+        "PyJWT",
+        "jsonpath-ng",
     ],
     extras_require={
         "executable": [

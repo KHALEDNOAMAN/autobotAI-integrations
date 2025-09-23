@@ -3,7 +3,7 @@ from datetime import datetime
 import importlib.machinery
 import importlib.util
 import traceback
-from typing import List
+from typing import Any, Dict, List
 import uuid
 from pathlib import Path
 import json
@@ -13,9 +13,9 @@ import urllib
 from autobotAI_integrations.integration_schema import ConnectionTypes
 from autobotAI_integrations.open_api_schema import MCPServerAction, MCPTransport
 from autobotAI_integrations.utils.security_measures import validate_code
-
 from autobotAI_integrations.payload_schema import OpenAPIPathParams, Param, PayloadTask
-
+from jsonpath_ng import parse
+from jsonpath_ng.exceptions import JSONPathError
 
 def fromisoformat(strdate):
     try:
@@ -390,3 +390,50 @@ def get_header_params(headers):
             )
         )
     return params
+
+def extract(resources: List[Any], selector: str, logger) -> List[Dict[str, Any]]:
+    """
+    Extract data from resources using JSONPath selector.
+    Returns flat list with common fields merged.
+    """
+    if not resources or not selector.strip():
+        return resources
+
+    # Extract common fields once
+    common_fields = {
+        k: resources[0].get(k)
+        for k in ["integration_id", "integration_type", "user_id", "root_user_id"]
+        if resources[0].get(k) is not None
+    }
+
+    # Parse JSONPath
+    jsonpath_expr = selector.strip()
+    if not jsonpath_expr.startswith("$"):
+        jsonpath_expr = f"$.{jsonpath_expr}"
+
+    try:
+        expr = parse(jsonpath_expr)
+        results = []
+
+        for resource in resources:
+            for match in expr.find(resource):
+                if match.value is None:
+                    continue
+
+                if isinstance(match.value, list):
+                    for item in match.value:
+                        if isinstance(item, dict):
+                            results.append({**item, **common_fields})
+                        else:
+                            results.append({str(match.path): item, **common_fields})
+                elif isinstance(match.value, dict):
+                    results.append({**match.value, **common_fields})
+                else:
+                    results.append({str(match.path): match.value, **common_fields})
+
+        return results if results else resources
+
+    except (JSONPathError, Exception):
+        logger.error(f"Invalid JSONPath selector: {selector}")
+        logger.error(traceback.format_exc())
+        return resources
