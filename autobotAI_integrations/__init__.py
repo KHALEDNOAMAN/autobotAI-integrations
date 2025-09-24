@@ -236,6 +236,11 @@ def executor(context):
         client_definitions = self.find_client_definitions(payload_task.clients)
         current_installation = set()
 
+        # Only append LAMBDA_TASK_ROOT if it exists in env (safe for Lambda)
+        lambda_task_root = os.environ.get('LAMBDA_TASK_ROOT')
+        if lambda_task_root:
+            sys.path.insert(0, lambda_task_root)
+
         # Check if running in a frozen state (e.g., bundled with PyInstaller for linux integration).
         if getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS'):
             # attempt to locate the system's Python executable.
@@ -260,7 +265,7 @@ def executor(context):
                     if line.strip() and not line.strip().startswith("#")
                 ]
             else:
-                logger.warning(f"User packages are not a valid string.")
+                logger.warning("User packages are not a valid string.")
 
         logger.debug(f"Integration: {integration.cspName}\nUser Packages: {user_packages}\nClient Defs: {client_definitions}")
 
