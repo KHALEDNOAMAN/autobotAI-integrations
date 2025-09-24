@@ -1,4 +1,5 @@
 import importlib
+import importlib.metadata
 import shutil
 import os
 import subprocess
@@ -157,7 +158,7 @@ def executor(context):
         if ConnectionInterfaces.PYTHON_SDK not in cls.supported_connection_interfaces():
             return []
         base_path = os.path.dirname(inspect.getfile(cls))
-        if integration_type!=None:
+        if integration_type is not None:
             base_path = base_path + f'/integrations/{integration_type}'
             logger.info("base path is %s", base_path)
         with open(path.join(base_path, ".", 'python_sdk_clients.yml')) as f:
@@ -236,12 +237,6 @@ def executor(context):
         client_definitions = self.find_client_definitions(payload_task.clients)
         current_installation = set()
 
-        # Only append LAMBDA_TASK_ROOT if it exists in env (safe for Lambda)
-        lambda_task_root = os.environ.get('LAMBDA_TASK_ROOT')
-        if lambda_task_root:
-            logger.info(f"Lambda task root: {lambda_task_root}")
-            sys.path.insert(1, lambda_task_root)
-
         # Check if running in a frozen state (e.g., bundled with PyInstaller for linux integration).
         if getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS'):
             # attempt to locate the system's Python executable.
@@ -291,16 +286,20 @@ def executor(context):
             try:
                 # prevents the reinstallation of the same package for different tasks
                 if exec_mode == "frozen":
+                    # this might be replacable by simple 'importlib.metadata.version(package)' check
                     subprocess.check_call(
                         [python_exec, "-m", "pip", "show", package],
                         env={**os.environ, "PYTHONPATH": f"/tmp/{idx}/"}
                     )
+                    # Not sure if this line should be here
                     sys.path.insert(1, f"/tmp/{idx}/")
                 else:
-                    subprocess.check_call(["pip", "show", package])
+                    # subprocess.check_call(["pip", "show", package])
+                    # Efficient way to check package
+                    importlib.metadata.version(package)
                 logger.info(f"Python package '{package}' already installed.")
 
-            except subprocess.CalledProcessError:
+            except (subprocess.CalledProcessError, importlib.metadata.PackageNotFoundError):
                 subprocess.check_call([
                     python_exec, "-m", "pip", "install", package,
                     "-t", f"/tmp/{idx}/", "--no-cache-dir", "--upgrade"
