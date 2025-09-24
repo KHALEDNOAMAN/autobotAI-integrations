@@ -239,7 +239,8 @@ def executor(context):
         # Only append LAMBDA_TASK_ROOT if it exists in env (safe for Lambda)
         lambda_task_root = os.environ.get('LAMBDA_TASK_ROOT')
         if lambda_task_root:
-            sys.path.insert(0, lambda_task_root)
+            logger.info(f"Lambda task root: {lambda_task_root}")
+            sys.path.insert(1, lambda_task_root)
 
         # Check if running in a frozen state (e.g., bundled with PyInstaller for linux integration).
         if getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS'):
