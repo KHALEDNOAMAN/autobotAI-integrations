@@ -383,7 +383,7 @@ def get_header_params(headers):
                 **{
                     "type": value.get("type", "string"),
                     "name": key,
-                    "in": "headers",
+                    "in": "header",
                     "description": value.get("description", ""),
                     "required": value.get("required", False),
                 }
