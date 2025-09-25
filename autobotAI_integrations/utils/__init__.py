@@ -8,6 +8,7 @@ import uuid
 from pathlib import Path
 import json
 import importlib
+from pydantic import BaseModel
 import urllib
 from autobotAI_integrations.integration_schema import ConnectionTypes
 from autobotAI_integrations.open_api_schema import MCPServerAction, MCPTransport

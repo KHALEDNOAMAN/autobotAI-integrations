@@ -1,5 +1,5 @@
 import traceback
-from typing import Any, List, Optional, Type, Union
+from typing import Type, Union
 from enum import Enum
 
 import uuid
@@ -7,22 +7,10 @@ import boto3
 import pydash
 from botocore.exceptions import ClientError
 from pydantic import Field, model_validator
+import os
 
-from autobotAI_integrations import (
-    BaseService,
-    list_of_unique_elements,
-    PayloadTask,
-    Param,
-)
-from autobotAI_integrations.models import (
-    BaseSchema,
-    CLICreds,
-    ConnectionInterfaces,
-    IntegrationCategory,
-    SDKClient,
-    SDKCreds,
-    SteampipeCreds,
-)
+from autobotAI_integrations import BaseService, list_of_unique_elements, PayloadTask, Param
+from autobotAI_integrations.models import *
 from autobotAI_integrations.utils.boto3_helper import Boto3Helper
 from autobotAI_integrations.utils.logging_config import logger
 
@@ -33,7 +21,6 @@ class Forms:
 
 class AWSSDKClient(SDKClient):
     is_regional: bool
-
 
 class AWSAuthTypes(str, Enum):
     IAM_ROLE_INTEGRaTION = "iam_role_integration"
@@ -70,6 +57,7 @@ class AWSIntegration(BaseSchema):
 
 
 class AWSService(BaseService):
+
     def __init__(self, ctx: dict, integration: Union[AWSIntegration, dict]):
         """
         Integration should have all the data regarding the integration
@@ -129,9 +117,9 @@ class AWSService(BaseService):
                             "type": "text",
                             "label": "IAM Role ARN",
                             "placeholder": "Enter IAM role ARN",
-                            "required": True,
+                            "required": True
                         }
-                    ],
+                    ]
                 },
                 {
                     "label": "AccessKey / SecretKey Integration",
@@ -143,34 +131,33 @@ class AWSService(BaseService):
                             "type": "text",
                             "label": "Access Key",
                             "placeholder": "Enter your AWS access key",
-                            "required": True,
+                            "required": True
                         },
                         {
                             "name": "secret_key",
                             "type": "text/password",
                             "label": "Secret Key",
                             "placeholder": "Enter your AWS secret key",
-                            "required": True,
-                        },
-                    ],
-                },
-            ],
+                            "required": True
+                        }
+                    ]
+                }
+            ]
         }
 
     def get_integration_specific_details(self) -> dict:
         try:
-            ec2_client = self._get_aws_client("ec2")
-            regions = [
-                region["RegionName"]
-                for region in ec2_client.describe_regions()["Regions"]
-            ]
+            ec2_client = self._get_aws_client('ec2')
+            regions = [region['RegionName'] for region in ec2_client.describe_regions()["Regions"]]
             return {
                 "integration_id": self.integration.accountId,
-                "activeRegions": regions,
+                "activeRegions": regions
             }
         except Exception as e:
-            logger.error("Details cannot be fetched")
-            return {"error": "Details cannot be fetched"}
+            logger.warn("Details cannot be fetched")
+            return {
+                "error": "Details cannot be fetched"
+            }
 
     @staticmethod
     def get_schema(ctx=None) -> Type[BaseSchema]:
@@ -183,7 +170,7 @@ class AWSService(BaseService):
             "supported_executor": "ecs",
             "compliance_supported": True,
             "supported_interfaces": cls.supported_connection_interfaces(),
-            "python_code_sample": cls.get_code_sample(),
+            "python_code_sample": cls.get_code_sample()
         }
 
     def generate_steampipe_creds(self) -> SteampipeCreds:
@@ -195,51 +182,39 @@ class AWSService(BaseService):
   ignore_error_codes = ["InvalidClientTokenId", "InvalidToken", "AccessDenied", "AccessDeniedException", "NotAuthorized", "UnauthorizedOperation", "UnrecognizedClientException", "AuthorizationError"]
 }
 """
-        return SteampipeCreds(
-            envs=creds,
-            plugin_name="aws",
-            connection_name="aws",
-            conf_path=conf_path,
-            config=config,
-        )
+        return SteampipeCreds(envs=creds, plugin_name="aws", connection_name="aws",
+                              conf_path=conf_path, config=config)
 
-    def build_python_exec_combinations_hook(
-        self, payload_task: PayloadTask, client_definitions: List[SDKClient]
-    ) -> list:
-        built_clients = {"global": {}, "regional": {}}
-        global_clients = pydash.filter_(
-            client_definitions, lambda x: x.is_regional is False
-        )
-        regional_clients = pydash.filter_(
-            client_definitions, lambda x: x.is_regional is True
-        )
+    def build_python_exec_combinations_hook(self, payload_task: PayloadTask,
+                                            client_definitions: List[SDKClient]) -> list:
+        built_clients = {
+            "global": {},
+            "regional": {
+
+            }
+        }
+        global_clients = pydash.filter_(client_definitions, lambda x: x.is_regional is False)
+        regional_clients = pydash.filter_(client_definitions, lambda x: x.is_regional is True)
         creds = {
             "aws_access_key_id": payload_task.creds.envs["AWS_ACCESS_KEY_ID"],
-            "aws_secret_access_key": payload_task.creds.envs["AWS_SECRET_ACCESS_KEY"],
+            "aws_secret_access_key": payload_task.creds.envs["AWS_SECRET_ACCESS_KEY"],            
         }
         if payload_task.creds.envs.get("AWS_SESSION_TOKEN"):
-            creds["aws_session_token"] = payload_task.creds.envs.get(
-                "AWS_SESSION_TOKEN"
-            )
+            creds["aws_session_token"] = payload_task.creds.envs.get("AWS_SESSION_TOKEN")
         if global_clients:
             for client in global_clients:
-                built_clients["global"][client.name] = boto3.client(
-                    client.name, **creds
-                )
+                built_clients["global"][client.name] = boto3.client(client.name, **creds)
         if regional_clients:
             active_regions = self.integration.activeRegions
             if not active_regions:
-                active_regions = self.get_integration_specific_details()[
-                    "available_regions"
-                ]
+                active_regions = self.get_integration_specific_details()["available_regions"]
                 logger.info("Active Regions: %s", active_regions)
             for region in active_regions:
                 built_clients["regional"].setdefault(region, {})
                 for client in regional_clients:
                     try:
-                        built_clients["regional"][region][client.name] = boto3.client(
-                            client.name, region_name=region, **creds
-                        )
+                        built_clients["regional"][region][client.name] = boto3.client(client.name, region_name=region,
+                                                                                      **creds)
                     except ImportError:
                         logger.exception(f"Failed create client for {client['name']}")
         combinations = []
@@ -248,45 +223,30 @@ class AWSService(BaseService):
                 this_params = self.filer_combo_params(payload_task.params, region)
                 execute_for_this_region = True
                 for param in this_params:
-                    if (
-                        param["filter_relevant_resources"]
-                        and param["required"]
-                        and not param["values"]
-                    ):
+                    if param["filter_relevant_resources"] and param["required"] and not param["values"]:
                         execute_for_this_region = False
                         break
                 if not execute_for_this_region:
                     continue
-                combo = {
-                    "metadata": {"region": region},
-                    "clients": {
-                        **built_clients["global"],
-                        **built_clients["regional"][region],
-                    },
+                combo = {"metadata": {
+                    "region": region
+                }, "clients": {**built_clients["global"], **built_clients["regional"][region]},
                     "params": self.prepare_params(this_params),
-                    "context": payload_task.context,
-                }
+                    "context": payload_task.context}
                 combinations.append(combo)
         else:
-            combo = {
-                "metadata": {"region": "global"},
-                "clients": {**built_clients["global"]},
-                "params": self.prepare_params(
-                    self.filer_combo_params(payload_task.params, "global")
-                ),
-                "context": payload_task.context,
-            }
+            combo = {"metadata": {
+                "region": "global"
+            }, "clients": {**built_clients["global"]},
+                "params": self.prepare_params(self.filer_combo_params(payload_task.params, "global")),
+                "context": payload_task.context}
             combinations.append(combo)
         return combinations
 
     def filer_combo_params(self, params: List[Param], region):
         filtered_params = []
         for param in params:
-            if (
-                not param.filter_relevant_resources
-                or not param.values
-                or not isinstance(param.values, list)
-            ):
+            if not param.filter_relevant_resources or not param.values or not isinstance(param.values, list):
                 filtered_params.append(param.model_dump())
             else:
                 filtered_values = []
@@ -296,9 +256,7 @@ class AWSService(BaseService):
                             filtered_values.append(value)
                     else:
                         filtered_values.append(value)
-                filtered_params.append(
-                    {**param.model_dump(), "values": filtered_values}
-                )
+                filtered_params.append({**param.model_dump(), "values": filtered_values})
         return filtered_params
 
     def generate_python_sdk_creds(self, requested_clients=None) -> SDKCreds:
@@ -307,12 +265,8 @@ class AWSService(BaseService):
 
     @staticmethod
     def supported_connection_interfaces():
-        return [
-            ConnectionInterfaces.REST_API,
-            ConnectionInterfaces.CLI,
-            ConnectionInterfaces.PYTHON_SDK,
-            ConnectionInterfaces.STEAMPIPE,
-        ]
+        return [ConnectionInterfaces.REST_API, ConnectionInterfaces.CLI, ConnectionInterfaces.PYTHON_SDK,
+                ConnectionInterfaces.STEAMPIPE]
 
     def generate_cli_creds(self) -> CLICreds:
         raise NotImplementedError()

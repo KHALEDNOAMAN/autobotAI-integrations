@@ -6,7 +6,9 @@ from pydantic import Field, field_validator
 from autobotAI_integrations import (
     BaseSchema,
     SteampipeCreds,
+    RestAPICreds,
     SDKCreds,
+    CLICreds,
     BaseService,
     ConnectionInterfaces,
     PayloadTask,

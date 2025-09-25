@@ -1,9 +1,11 @@
-from typing import Type, Union, Optional
+from typing import List, Type, Union, Optional
 
-from pydantic import Field
-
-from autobotAI_integrations.models import BaseSchema, ConnectionInterfaces, IntegrationCategory, SteampipeCreds
-from autobotAI_integrations import BaseService
+from autobotAI_integrations.models import *
+from autobotAI_integrations import (
+    BaseSchema,
+    BaseService,
+    ConnectionInterfaces,
+)
 import requests
 
 

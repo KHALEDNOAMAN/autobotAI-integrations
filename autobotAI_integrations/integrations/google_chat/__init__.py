@@ -1,10 +1,11 @@
-from typing import List, Optional, Type, Union
+from typing import Type, Union
+
+import uuid
 import re
 
 from autobotAI_integrations import BaseService, PayloadTask
 from .webhook_client import GoogleChatWebhookClient
-from autobotAI_integrations.models import BaseSchema, CLICreds, ConnectionInterfaces, IntegrationCategory, SDKClient, SDKCreds
-
+from autobotAI_integrations.models import *
 
 
 class GoogleChatIntegration(BaseSchema):
