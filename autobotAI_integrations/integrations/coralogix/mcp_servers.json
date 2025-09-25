@@ -5,7 +5,7 @@
             "headers": {},
             "servers": [
                 {
-                    "name": "Management Server",
+                    "name": "All",
                     "description": "All available Coralogix MCP tools, check your coralogix mcp endpoint at 'https://coralogix.com/docs/integrations/coralogix-endpoints/#management-endpoints' before moving forward.",
                     "url": "https://api.eu2.coralogix.com/mgmt/api/v1/mcp/",
                     "headers": {}
