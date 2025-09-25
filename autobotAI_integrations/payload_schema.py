@@ -1,7 +1,7 @@
 from enum import Enum
 from typing import List, Optional, Any, Union, Dict
 
-from pydantic import BaseModel, ConfigDict, SerializeAsAny, field_validator, Field, model_validator
+from pydantic import BaseModel, SerializeAsAny, field_validator, Field, model_validator
 
 from autobotAI_integrations import IntegrationSchema
 from autobotAI_integrations.models import (

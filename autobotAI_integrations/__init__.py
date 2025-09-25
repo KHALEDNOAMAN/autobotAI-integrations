@@ -7,20 +7,17 @@ import sys
 import inspect
 import platform
 import json
-from copy import deepcopy
 import traceback
-from enum import Enum
 from os import path
 from pathlib import Path
-from typing import Optional, Dict, Any, List, Callable, Union
+from typing import Optional, Dict, Any, List, Union
 
 import requests
 import yaml
-from pydantic import BaseModel
-from autobotAI_integrations.integration_schema import ConnectionTypes, IntegrationSchema, IntegrationStates
+from autobotAI_integrations.integration_schema import IntegrationStates
 from autobotAI_integrations.models import *
 from autobotAI_integrations.open_api_schema import MCPServerAction, OpenAPIAction
-from autobotAI_integrations.payload_schema import PayloadTask, Payload, Param
+from autobotAI_integrations.payload_schema import PayloadTask, Param
 from autobotAI_integrations.utils.logging_config import logger
 from autobotAI_integrations.utils import (
     list_of_unique_elements,

@@ -1,12 +1,10 @@
-from typing import Type, Union
+from typing import Optional, Type, Union
 
-from autobotAI_integrations.models import *
-from autobotAI_integrations import (
-    BaseSchema,
-    BaseService,
-    ConnectionInterfaces,
-)
+from pydantic import Field
+from autobotAI_integrations import BaseService
 import requests
+
+from autobotAI_integrations.models import BaseSchema, ConnectionInterfaces, IntegrationCategory, SteampipeCreds
 
 
 class WizIntegrations(BaseSchema):

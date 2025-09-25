@@ -1,12 +1,17 @@
 import traceback
-from typing import Type, Union
+from typing import List, Optional, Type, Union
 
-import boto3, uuid
+import boto3
 from botocore.exceptions import ClientError
 from pydantic import Field
 
-from autobotAI_integrations import BaseService, list_of_unique_elements, PayloadTask, Param
-from autobotAI_integrations.models import *
+from autobotAI_integrations import (
+    BaseService,
+    list_of_unique_elements,
+    PayloadTask,
+    Param,
+)
+from autobotAI_integrations.models import BaseSchema, CLICreds, ConnectionInterfaces, IntegrationCategory, SDKClient, SDKCreds
 from autobotAI_integrations.utils.boto3_helper import Boto3Helper
 
 

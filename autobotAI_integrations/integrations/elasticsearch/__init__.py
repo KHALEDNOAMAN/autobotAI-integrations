@@ -8,7 +8,6 @@ from autobotAI_integrations.models import (
     BaseSchema,
     ConnectionInterfaces,
     IntegrationCategory,
-    RestAPICreds,
     SDKClient,
     SDKCreds,
 )

@@ -1,7 +1,7 @@
 from enum import Enum
-from typing import Optional, List, Any
+from typing import Optional, List
 
-from pydantic import BaseModel, Field, model_validator
+from pydantic import BaseModel, Field
 from autobotAI_integrations.models import ConnectionInterfaces
 from autobotAI_integrations.payload_schema import OpenAPIPathParams
 
