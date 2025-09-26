@@ -130,8 +130,11 @@ class GitlabService(BaseService):
 
     def generate_rest_api_creds(self) -> RestAPICreds:
         headers = {"Authorization": f"Bearer {str(self.integration.token)}"}
+        base_url = str(self.integration.base_url)
+        if self.integration.base_url.startswith("https://gitlab.com"):
+            base_url = str(self.integration.base_url).rstrip('/') + "/api/v4" 
         return RestAPICreds(
-            api_url=str(self.integration.base_url),
+            base_url=base_url,
             token=str(self.integration.token),
             headers=headers,
         )
