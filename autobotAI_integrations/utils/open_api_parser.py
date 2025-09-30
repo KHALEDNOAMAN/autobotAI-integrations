@@ -69,6 +69,7 @@ class OpenApiParser:
             else:
                 param["example"] = schema.get("properties", {})
         param["type"] = "handlebars-json"  # We Only Support Json content types
+        param["version"] = 2
         return OpenAPIPathParams(**param)
 
     def _generate_path_parameters(
@@ -84,6 +85,7 @@ class OpenApiParser:
                     "type": "string",
                     "required": True,
                     "description": "Base URL of the API",
+                    "version": 2
                 })
             )
         if "parameters" in method_details:
@@ -98,6 +100,7 @@ class OpenApiParser:
                             **{
                                 "type": parameter_type,
                                 "values": self._extract_parameter_default(parameter),
+                                "version": 2,
                                 **parameter,
                             }
                         )
@@ -269,7 +272,8 @@ class OpenApiParser:
                     "type": 'str',
                     "required": True,
                     "description": "HTTP Method",
-                    "values": path.method
+                    "values": path.method,
+                    "version": 2
                 })
             )
 
