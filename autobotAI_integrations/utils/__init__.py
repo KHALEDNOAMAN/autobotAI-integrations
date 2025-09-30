@@ -337,7 +337,7 @@ def get_restapi_validated_params(params: List[Param]):
         elif getattr(param, "in_") == "timeout":
             if not isinstance(param.values, int):
                 raise ValueError("Timeout must be an integer.")
-            filtered_params["timeout"] = params.values
+            filtered_params["timeout"] = param.values
     return filtered_params
 
 
