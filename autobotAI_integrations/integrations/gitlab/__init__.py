@@ -87,7 +87,7 @@ class GitlabService(BaseService):
             ConnectionInterfaces.REST_API,
             ConnectionInterfaces.CLI,
             ConnectionInterfaces.PYTHON_SDK,
-            ConnectionInterfaces.STEAMPIPE,
+            # ConnectionInterfaces.STEAMPIPE,
         ]
 
     def build_python_exec_combinations_hook(

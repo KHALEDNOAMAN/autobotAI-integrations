@@ -298,6 +298,9 @@ class OpenApiParser:
                 parameters.append(parameter)
 
             action_name = path.summary
+            if not action_name and path.description and len(path.description) < 60:
+                action_name = path.description.replace("\n", " ")
+            
             if not action_name:
                 action_name = (path.method or "").upper() + " Action " + path.path_url.replace("/", " ").replace("base_url", "")
             
