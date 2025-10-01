@@ -16,8 +16,7 @@ def executor(context):
     completion = client.chat.completions.create(
         model="sonar-pro",
         messages=[
-            {"role": "system", "content": "You are a poetic assistant, skilled in explaining complex programming concepts with creative flair."},
-            {"role": "user", "content": "Compose a poem that explains the concept of recursion in programming."}
+            {"role": "user", "content": "What were the results of the 2025 French Open Finals?"}
         ]
     )
 

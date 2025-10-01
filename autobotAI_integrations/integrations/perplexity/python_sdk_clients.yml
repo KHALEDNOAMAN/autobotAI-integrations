@@ -1,5 +1,5 @@
 - name: perplexity
   import_library_names:
-    - openai
+    - perplexity
   pip_package_names:
-    - openai
+    - perplexityai

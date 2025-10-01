@@ -101,23 +101,21 @@ class PerplexityService(BaseService):
     
     def generate_python_sdk_creds(self) -> SDKCreds:
         envs = {
-            "OPENAI_API_KEY": self.integration.api_key,
+            "PERPLEXITY_API_KEY": self.integration.api_key,
         }
         return SDKCreds(envs=envs)
     
     def build_python_exec_combinations_hook(
         self, payload_task: PayloadTask, client_definitions: List[SDKClient]
     ) -> list:
-        openai = importlib.import_module(
+        perplexity = importlib.import_module(
             client_definitions[0].import_library_names[0], package=None
         )
-
         return [
             {
                 "clients": {
-                    "perplexity": openai.OpenAI(
-                        base_url="https://api.perplexity.ai",
-                        api_key=payload_task.creds.envs.get("OPENAI_API_KEY")
+                    "perplexity": perplexity.Perplexity(
+                        api_key=payload_task.creds.envs.get("PERPLEXITY_API_KEY"),
                     )
                 },
                 "params": self.prepare_params(payload_task.params),
