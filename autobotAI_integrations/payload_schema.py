@@ -105,6 +105,18 @@ class OpenAPIPathParams(Param):
                 values["in_"] = values["in"]
         return values
 
+    def model_dump(self, *args, **kwargs):
+        kwargs["by_alias"] = True
+        return super().model_dump(*args, **kwargs)
+
+    def model_dump_json(self, *args, **kwargs) -> str:
+        kwargs["by_alias"] = True
+        return super().model_dump_json(*args, **kwargs)
+    
+    def dict(self, *args, **kwargs):
+        kwargs["by_alias"] = True
+        return super().dict(*args, **kwargs)
+
 
 class PayloadTask(BaseModel):
     task_id: Optional[str]
