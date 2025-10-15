@@ -27,7 +27,9 @@ logger = logging.getLogger(__name__)
 HUMAN_PREFIX = "\n\nHuman:"
 ASSISTANT_PREFIX = "\n\nAssistant:"
 
+
 BEDROCK_MODELS = {
+    "amazon.nova-premier-v1:0": 1000000,
     "amazon.nova-pro-v1:0": 300000,
     "amazon.nova-lite-v1:0": 300000,
     "amazon.nova-micro-v1:0": 128000,
@@ -45,6 +47,10 @@ BEDROCK_MODELS = {
     "anthropic.claude-3-5-sonnet-20241022-v2:0": 200000,
     "anthropic.claude-3-5-haiku-20241022-v1:0": 200000,
     "anthropic.claude-3-7-sonnet-20250219-v1:0": 200000,
+    "anthropic.claude-opus-4-20250514-v1:0": 200000,
+    "anthropic.claude-opus-4-1-20250805-v1:0": 200000,
+    "anthropic.claude-sonnet-4-20250514-v1:0": 200000,
+    "anthropic.claude-sonnet-4-5-20250929-v1:0": 200000,
     "ai21.j2-mid-v1": 8192,
     "ai21.j2-ultra-v1": 8192,
     "cohere.command-text-v14": 4096,
@@ -62,17 +68,22 @@ BEDROCK_MODELS = {
     "meta.llama3-2-11b-instruct-v1:0": 128000,
     "meta.llama3-2-90b-instruct-v1:0": 128000,
     "meta.llama3-3-70b-instruct-v1:0": 128000,
+    "meta.llama4-maverick-17b-instruct-v1:0": 1000000,
+    "meta.llama4-scout-17b-instruct-v1:0": 3500000,
     "mistral.mistral-7b-instruct-v0:2": 32000,
     "mistral.mixtral-8x7b-instruct-v0:1": 32000,
     "mistral.mistral-large-2402-v1:0": 32000,
     "mistral.mistral-small-2402-v1:0": 32000,
     "mistral.mistral-large-2407-v1:0": 32000,
+    "openai.gpt-oss-120b-1:0": 128000,
+    "openai.gpt-oss-20b-1:0": 128000,
     "ai21.jamba-1-5-mini-v1:0": 256000,
     "ai21.jamba-1-5-large-v1:0": 256000,
     "deepseek.r1-v1:0": 128000,
 }
 
 BEDROCK_FUNCTION_CALLING_MODELS = (
+    "amazon.nova-premier-v1:0",
     "amazon.nova-pro-v1:0",
     "amazon.nova-lite-v1:0",
     "amazon.nova-micro-v1:0",
@@ -83,20 +94,27 @@ BEDROCK_FUNCTION_CALLING_MODELS = (
     "anthropic.claude-3-5-sonnet-20241022-v2:0",
     "anthropic.claude-3-5-haiku-20241022-v1:0",
     "anthropic.claude-3-7-sonnet-20250219-v1:0",
+    "anthropic.claude-opus-4-20250514-v1:0",
+    "anthropic.claude-opus-4-1-20250805-v1:0",
+    "anthropic.claude-sonnet-4-20250514-v1:0",
+    "anthropic.claude-sonnet-4-5-20250929-v1:0",
     "cohere.command-r-v1:0",
     "cohere.command-r-plus-v1:0",
     "mistral.mistral-large-2402-v1:0",
     "mistral.mistral-large-2407-v1:0",
     "meta.llama3-1-8b-instruct-v1:0",
     "meta.llama3-1-70b-instruct-v1:0",
-    "meta.llama3-2-1b-instruct-v1:0",
-    "meta.llama3-2-3b-instruct-v1:0",
     "meta.llama3-2-11b-instruct-v1:0",
     "meta.llama3-2-90b-instruct-v1:0",
     "meta.llama3-3-70b-instruct-v1:0",
+    "meta.llama4-maverick-17b-instruct-v1:0",
+    "meta.llama4-scout-17b-instruct-v1:0",
+    "openai.gpt-oss-120b-1:0",
+    "openai.gpt-oss-20b-1:0",
 )
 
 BEDROCK_INFERENCE_PROFILE_SUPPORTED_MODELS = (
+    "amazon.nova-premier-v1:0",
     "amazon.nova-pro-v1:0",
     "amazon.nova-lite-v1:0",
     "amazon.nova-micro-v1:0",
@@ -107,6 +125,10 @@ BEDROCK_INFERENCE_PROFILE_SUPPORTED_MODELS = (
     "anthropic.claude-3-5-sonnet-20241022-v2:0",
     "anthropic.claude-3-5-haiku-20241022-v1:0",
     "anthropic.claude-3-7-sonnet-20250219-v1:0",
+    "anthropic.claude-opus-4-20250514-v1:0",
+    "anthropic.claude-opus-4-1-20250805-v1:0",
+    "anthropic.claude-sonnet-4-20250514-v1:0",
+    "anthropic.claude-sonnet-4-5-20250929-v1:0",
     "meta.llama3-1-8b-instruct-v1:0",
     "meta.llama3-1-70b-instruct-v1:0",
     "meta.llama3-2-1b-instruct-v1:0",
@@ -114,14 +136,16 @@ BEDROCK_INFERENCE_PROFILE_SUPPORTED_MODELS = (
     "meta.llama3-2-11b-instruct-v1:0",
     "meta.llama3-2-90b-instruct-v1:0",
     "meta.llama3-3-70b-instruct-v1:0",
+    "meta.llama4-maverick-17b-instruct-v1:0",
+    "meta.llama4-scout-17b-instruct-v1:0",
     "deepseek.r1-v1:0",
 )
 
 
 def get_model_name(model_name: str) -> str:
     """Extract base model name from region-prefixed model identifier."""
-    # Check for region prefixes (us, eu, apac)
-    REGION_PREFIXES = ["us.", "eu.", "apac."]
+    # Check for region prefixes (us, eu, apac, global)
+    REGION_PREFIXES = ["us.", "eu.", "apac.", "global."]
 
     # If no region prefix, return the original model name
     if not any(prefix in model_name for prefix in REGION_PREFIXES):
