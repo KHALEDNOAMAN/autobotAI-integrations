@@ -87,7 +87,7 @@ class GitlabService(BaseService):
             ConnectionInterfaces.REST_API,
             ConnectionInterfaces.CLI,
             ConnectionInterfaces.PYTHON_SDK,
-            ConnectionInterfaces.STEAMPIPE,
+            # ConnectionInterfaces.STEAMPIPE,
         ]
 
     def build_python_exec_combinations_hook(
@@ -129,10 +129,12 @@ class GitlabService(BaseService):
         )
 
     def generate_rest_api_creds(self) -> RestAPICreds:
-        headers = {"Authorization": f"Bearer {str(self.integration.token)}"}
+        headers = {"PRIVATE-TOKEN": str(self.integration.token)}
+        base_url = str(self.integration.base_url)
+        if self.integration.base_url.startswith("https://gitlab.com"):
+            base_url = str(self.integration.base_url).rstrip('/') + "/api/v4" 
         return RestAPICreds(
-            api_url=str(self.integration.base_url),
-            token=str(self.integration.token),
+            base_url=base_url,
             headers=headers,
         )
 

@@ -5,8 +5,10 @@ import requests
 from autobotAI_integrations import BaseService
 from autobotAI_integrations.models import (
     BaseSchema,
+    CLICreds,
     ConnectionInterfaces,
     IntegrationCategory,
+    MCPCreds,
     SDKClient,
     SDKCreds,
     RestAPICreds,
@@ -107,6 +109,7 @@ class CoralogixService(BaseService):
         return [
             ConnectionInterfaces.PYTHON_SDK,
             # ConnectionInterfaces.REST_API
+            ConnectionInterfaces.MCP_SERVER,
         ]
 
     def build_python_exec_combinations_hook(
@@ -140,4 +143,11 @@ class CoralogixService(BaseService):
             base_url=self.integration.api_url,
             token=self.integration.api_key,
             headers={"Authorization": f"Bearer {self.integration.api_key}"},
+        )
+    
+    def generate_mcp_creds(self) -> CLICreds:
+        return MCPCreds(
+            headers={
+                "Authorization": self.integration.api_key,
+            },
         )

@@ -1,0 +1,577 @@
+{
+    "openapi": "3.0.3",
+    "info": {
+        "title": "Perplexity API",
+        "description": "Perplexity's Sonar API provides access to AI-powered search and reasoning models with real-time web search capabilities, citations, and structured output support.",
+        "version": "1.0.0",
+        "contact": {
+            "name": "Perplexity AI",
+            "url": "https://docs.perplexity.ai",
+            "email": "api@perplexity.ai"
+        },
+        "license": {
+            "name": "Perplexity Terms of Service",
+            "url": "https://www.perplexity.ai/terms"
+        }
+    },
+    "servers": [
+        {
+            "url": "https://api.perplexity.ai",
+            "description": "Production server"
+        }
+    ],
+    "security": [
+        {
+            "BearerAuth": []
+        }
+    ],
+    "paths": {
+        "/search": {
+            "post": {
+                "summary": "Create a search query", 
+                "description": "Performs a search query using Perplexity's search capabilities",
+                "operationId": "createSearch",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "required": ["query"],
+                                "properties": {
+                                    "query": {
+                                        "type": "string",
+                                        "description": "The search query text"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "results": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "object",
+                                                "properties": {
+                                                    "title": {
+                                                        "type": "string"
+                                                    },
+                                                    "url": {
+                                                        "type": "string"
+                                                    },
+                                                    "snippet": {
+                                                        "type": "string"
+                                                    },
+                                                    "date": {
+                                                        "type": "string",
+                                                        "format": "date"
+                                                    },
+                                                    "last_updated": {
+                                                        "type": "string",
+                                                        "format": "date"
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error"
+                                }
+                            }
+                        }
+                    },
+                    "429": {
+                        "description": "Rate limit exceeded",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/chat/completions": {
+            "post": {
+                "summary": "Create a chat completion",
+                "description": "Creates a model response for the given chat conversation with real-time web search capabilities and citations.",
+                "operationId": "createChatCompletion",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/ChatCompletionRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ChatCompletionResponse"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error"
+                                }
+                            }
+                        }
+                    },
+                    "429": {
+                        "description": "Rate limit exceeded",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/generate_auth_token": {
+            "post": {
+                "summary": "Generate API key",
+                "description": "Creates a new API key programmatically",
+                "operationId": "generateAuthToken",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "description": "Name for the API key"
+                                    }
+                                },
+                                "required": [
+                                    "name"
+                                ]
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "API key generated successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "token": {
+                                            "type": "string",
+                                            "description": "Generated API key"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/revoke_auth_token": {
+            "post": {
+                "summary": "Revoke API key",
+                "description": "Revokes an existing API key",
+                "operationId": "revokeAuthToken",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "token": {
+                                        "type": "string",
+                                        "description": "API key to revoke"
+                                    }
+                                },
+                                "required": [
+                                    "token"
+                                ]
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "API key revoked successfully"
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "securitySchemes": {
+            "BearerAuth": {
+                "type": "http",
+                "scheme": "bearer",
+                "description": "API key for authentication. Get your key from https://www.perplexity.ai/settings/api"
+            }
+        },
+        "schemas": {
+            "ChatCompletionRequest": {
+                "type": "object",
+                "required": [
+                    "model",
+                    "messages"
+                ],
+                "properties": {
+                    "model": {
+                        "type": "string",
+                        "description": "ID of the model to use",
+                        "enum": [
+                            "sonar-pro",
+                            "sonar",
+                            "sonar-reasoning-pro",
+                            "sonar-reasoning",
+                            "sonar-deep-research",
+                            "r1-1776"
+                        ]
+                    },
+                    "messages": {
+                        "type": "array",
+                        "description": "Array of message objects",
+                        "items": {
+                            "$ref": "#/components/schemas/Message"
+                        }
+                    },
+                    "temperature": {
+                        "type": "number",
+                        "minimum": 0,
+                        "maximum": 2,
+                        "default": 1,
+                        "description": "Sampling temperature between 0 and 2"
+                    },
+                    "max_tokens": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "description": "Maximum number of tokens to generate"
+                    },
+                    "top_p": {
+                        "type": "number",
+                        "minimum": 0,
+                        "maximum": 1,
+                        "default": 1,
+                        "description": "Nucleus sampling parameter"
+                    },
+                    "frequency_penalty": {
+                        "type": "number",
+                        "minimum": -2,
+                        "maximum": 2,
+                        "default": 0,
+                        "description": "Frequency penalty between -2.0 and 2.0"
+                    },
+                    "presence_penalty": {
+                        "type": "number",
+                        "minimum": -2,
+                        "maximum": 2,
+                        "default": 0,
+                        "description": "Presence penalty between -2.0 and 2.0"
+                    },
+                    "stream": {
+                        "type": "boolean",
+                        "default": false,
+                        "description": "Enable streaming responses"
+                    },
+                    "search_domain_filter": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "description": "List of domains to include or exclude from search"
+                    },
+                    "search_recency_filter": {
+                        "type": "string",
+                        "enum": [
+                            "hour",
+                            "day",
+                            "week",
+                            "month",
+                            "year"
+                        ],
+                        "description": "Filter search results by recency"
+                    },
+                    "return_images": {
+                        "type": "boolean",
+                        "default": false,
+                        "description": "Include image URLs in the response"
+                    },
+                    "return_related_questions": {
+                        "type": "boolean",
+                        "default": false,
+                        "description": "Include related questions in the response"
+                    },
+                    "search_mode": {
+                        "type": "string",
+                        "enum": [
+                            "web",
+                            "academic"
+                        ],
+                        "default": "web",
+                        "description": "Search mode selector"
+                    }
+                }
+            },
+            "Message": {
+                "type": "object",
+                "required": [
+                    "role",
+                    "content"
+                ],
+                "properties": {
+                    "role": {
+                        "type": "string",
+                        "enum": [
+                            "system",
+                            "user",
+                            "assistant"
+                        ],
+                        "description": "Role of the message sender"
+                    },
+                    "content": {
+                        "type": "string",
+                        "description": "Content of the message"
+                    }
+                }
+            },
+            "ChatCompletionResponse": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "description": "Unique identifier for the completion"
+                    },
+                    "object": {
+                        "type": "string",
+                        "description": "Object type",
+                        "default": "chat.completion"
+                    },
+                    "created": {
+                        "type": "integer",
+                        "description": "Unix timestamp of when the completion was created"
+                    },
+                    "model": {
+                        "type": "string",
+                        "description": "The model used for the completion"
+                    },
+                    "choices": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Choice"
+                        },
+                        "description": "Array of completion choices"
+                    },
+                    "usage": {
+                        "$ref": "#/components/schemas/Usage"
+                    },
+                    "search_results": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/SearchResult"
+                        },
+                        "description": "Array of web sources used"
+                    },
+                    "citations": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "description": "Array of source URLs"
+                    }
+                }
+            },
+            "Choice": {
+                "type": "object",
+                "properties": {
+                    "index": {
+                        "type": "integer",
+                        "description": "Index of the choice"
+                    },
+                    "message": {
+                        "$ref": "#/components/schemas/AssistantMessage"
+                    },
+                    "finish_reason": {
+                        "type": "string",
+                        "enum": [
+                            "stop",
+                            "length",
+                            "content_filter"
+                        ],
+                        "description": "Reason why the model stopped generating"
+                    },
+                    "delta": {
+                        "$ref": "#/components/schemas/Delta"
+                    }
+                }
+            },
+            "AssistantMessage": {
+                "type": "object",
+                "properties": {
+                    "role": {
+                        "type": "string",
+                        "default": "assistant"
+                    },
+                    "content": {
+                        "type": "string",
+                        "description": "The generated response content"
+                    }
+                }
+            },
+            "Delta": {
+                "type": "object",
+                "properties": {
+                    "role": {
+                        "type": "string"
+                    },
+                    "content": {
+                        "type": "string"
+                    }
+                }
+            },
+            "Usage": {
+                "type": "object",
+                "properties": {
+                    "prompt_tokens": {
+                        "type": "integer",
+                        "description": "Number of tokens in the prompt"
+                    },
+                    "completion_tokens": {
+                        "type": "integer",
+                        "description": "Number of tokens in the completion"
+                    },
+                    "total_tokens": {
+                        "type": "integer",
+                        "description": "Total number of tokens used"
+                    },
+                    "search_context_size": {
+                        "type": "string",
+                        "enum": [
+                            "low",
+                            "medium",
+                            "high"
+                        ],
+                        "description": "Size of search context used"
+                    },
+                    "cost": {
+                        "$ref": "#/components/schemas/Cost"
+                    }
+                }
+            },
+            "Cost": {
+                "type": "object",
+                "properties": {
+                    "input_tokens_cost": {
+                        "type": "number",
+                        "description": "Cost for input tokens"
+                    },
+                    "output_tokens_cost": {
+                        "type": "number",
+                        "description": "Cost for output tokens"
+                    },
+                    "request_cost": {
+                        "type": "number",
+                        "description": "Cost for the request"
+                    },
+                    "total_cost": {
+                        "type": "number",
+                        "description": "Total cost for the request"
+                    }
+                }
+            },
+            "SearchResult": {
+                "type": "object",
+                "properties": {
+                    "title": {
+                        "type": "string",
+                        "description": "Title of the web source"
+                    },
+                    "url": {
+                        "type": "string",
+                        "description": "URL of the web source"
+                    },
+                    "date": {
+                        "type": "string",
+                        "format": "date",
+                        "description": "Publication date of the source"
+                    },
+                    "last_updated": {
+                        "type": "string",
+                        "format": "date",
+                        "description": "Last updated date of the source"
+                    },
+                    "snippet": {
+                        "type": "string",
+                        "description": "Text snippet from the source"
+                    }
+                }
+            },
+            "Error": {
+                "type": "object",
+                "properties": {
+                    "error": {
+                        "type": "string",
+                        "description": "Error message"
+                    },
+                    "code": {
+                        "type": "string",
+                        "description": "Error code"
+                    }
+                }
+            }
+        }
+    }
+}

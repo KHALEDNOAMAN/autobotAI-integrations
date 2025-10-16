@@ -16,7 +16,8 @@ setup(
         "pydash>=8.0.5",
         "requests>=2.32.4",
         "tenacity>=8.5.0",
-        "PyJWT"
+        "PyJWT",
+        "jsonpath-ng",
     ],
     extras_require={
         "executable": [
@@ -27,7 +28,9 @@ setup(
             "azure-mgmt-resource>=24.0.0",
             "slack-sdk>=3.36.0",
             "snowflake-connector-python>=3.16.0",
-            "opensearch-py>=3.0.0"
+            "opensearch-py>=3.0.0",
+            "msgraph-sdk",  # Adding to reduce latency in msgraph
+            "msgraph-beta-sdk",  # Adding to reduce latency in msgraph
         ],
         "full": [
             # Used only in backend (core) via API
@@ -67,6 +70,7 @@ setup(
             "integrations/*/python_sdk_clients.yml",
             "integrations/*/compliance.json",
             "integrations/*/open_api.json",
+            "integrations/*/mcp_servers.json",
         ]
     },
     classifiers=[

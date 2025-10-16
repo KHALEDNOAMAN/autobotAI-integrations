@@ -9,7 +9,7 @@ import requests
 from autobotAI_integrations import BaseSchema, SteampipeCreds, RestAPICreds, SDKCreds, CLICreds, \
     BaseService, ConnectionInterfaces, PayloadTask, SDKClient
 
-from autobotAI_integrations.models import IntegrationCategory
+from autobotAI_integrations.models import IntegrationCategory, MCPCreds
 
 
 class GithubAuthTypes(Enum):
@@ -170,6 +170,7 @@ class GithubService(BaseService):
             ConnectionInterfaces.REST_API,
             ConnectionInterfaces.CLI,
             ConnectionInterfaces.PYTHON_SDK, 
+            ConnectionInterfaces.MCP_SERVER
             # ConnectionInterfaces.STEAMPIPE
         ]
 
@@ -223,3 +224,12 @@ class GithubService(BaseService):
 
     def generate_cli_creds(self) -> CLICreds:
         pass
+
+    def generate_mcp_creds(self) -> MCPCreds:
+        if self.integration.base_url == "https://api.github.com":
+            return MCPCreds(
+                headers={
+                    "Authorization": f"Bearer {self.token}",
+                },
+            )
+        raise Exception("Remote MCP is only supported for public github")

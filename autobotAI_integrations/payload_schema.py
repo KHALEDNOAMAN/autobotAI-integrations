@@ -66,6 +66,7 @@ class Param(BaseModel):
     values: Optional[Any] = None
     filter_relevant_resources: bool = False
     system_prompt: Optional[str] = None
+    version: Optional[int] = None
 
     def model_dump_json(self, *args, **kwargs) -> str:
         kwargs["by_alias"] = True
@@ -104,10 +105,23 @@ class OpenAPIPathParams(Param):
                 values["in_"] = values["in"]
         return values
 
+    def model_dump(self, *args, **kwargs):
+        kwargs["by_alias"] = True
+        return super().model_dump(*args, **kwargs)
+
+    def model_dump_json(self, *args, **kwargs) -> str:
+        kwargs["by_alias"] = True
+        return super().model_dump_json(*args, **kwargs)
+    
+    def dict(self, *args, **kwargs):
+        kwargs["by_alias"] = True
+        return super().dict(*args, **kwargs)
+
 
 class PayloadTask(BaseModel):
     task_id: Optional[str]
     creds: SerializeAsAny[BaseCreds]
+    output_selector: Optional[str] = None
     connection_interface: ConnectionInterfaces
     executable: str
     tables: Optional[List[str]] = None

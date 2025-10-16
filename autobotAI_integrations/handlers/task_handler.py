@@ -8,6 +8,7 @@ from autobotAI_integrations.payload_schema import (
     ResponseDebugInfo,
     ResponseError,
 )
+from autobotAI_integrations.utils import extract
 from autobotAI_integrations.utils.logging_config import logger, set_unset_log_ids
 import json
 
@@ -25,8 +26,9 @@ def handle_task(task: PayloadTask) -> TaskResult:
 
     # Clearing Sensitive Keys from Environment Variables
     try:
-        for key in task.creds.envs:
-            os.environ.pop(key, None)
+        if hasattr(task.creds, "envs") and task.creds.envs is not None:
+            for key in task.creds.envs:
+                os.environ.pop(key, None)
     except Exception as e:
         logger.error(
             f"Error while clearing sensitive keys from environment variables: {e}"
@@ -73,9 +75,15 @@ def handle_task(task: PayloadTask) -> TaskResult:
         result.resources = formatted_result
     else:
         result.resources = formatted_result
+    
+    if result.resources and hasattr(task, "output_selector") and task.output_selector:
+        result.resources = extract(result.resources, task.output_selector, logger)
 
     result.errors = [ResponseError(**error) for error in output[1]]
     if result.errors:
         logger.error("Task Errors: {}".format(result.errors))
+    
+    del formatted_result
+    del output
 
     return result

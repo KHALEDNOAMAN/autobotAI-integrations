@@ -3,7 +3,7 @@ from datetime import datetime
 import importlib.machinery
 import importlib.util
 import traceback
-from typing import List
+from typing import Any, Dict, List
 import uuid
 from pathlib import Path
 import json
@@ -11,10 +11,11 @@ import importlib
 from pydantic import BaseModel
 import urllib
 from autobotAI_integrations.integration_schema import ConnectionTypes
+from autobotAI_integrations.open_api_schema import MCPServerAction, MCPTransport
 from autobotAI_integrations.utils.security_measures import validate_code
-
-from autobotAI_integrations.payload_schema import Param, PayloadTask
-
+from autobotAI_integrations.payload_schema import OpenAPIPathParams, Param, PayloadTask
+from jsonpath_ng import parse
+from jsonpath_ng.exceptions import JSONPathError
 
 def fromisoformat(strdate):
     try:
@@ -336,5 +337,103 @@ def get_restapi_validated_params(params: List[Param]):
         elif getattr(param, "in_") == "timeout":
             if not isinstance(param.values, int):
                 raise ValueError("Timeout must be an integer.")
-            filtered_params["timeout"] = params.values
+            filtered_params["timeout"] = param.values
     return filtered_params
+
+
+def load_actions_from_mcp_server_config(server_config) -> List[MCPServerAction]:
+    # ONLY Streamable HTTP is supported
+    # This transport only contains headers
+    try:
+        mcp_actions = []
+        for integration_type, details in server_config.items():
+            if MCPTransport.STREAMABLE_HTTP.value in details:
+                streamable_http = details.get(MCPTransport.STREAMABLE_HTTP.value, {})
+                commmon_params = []
+
+                if "headers" in streamable_http:
+                    commmon_params = get_header_params(streamable_http.get("headers", {}))
+
+                for server in streamable_http.get("servers", []):
+                    params = get_header_params(server.get("headers", {}))
+                    action = MCPServerAction(
+                        integration_type=integration_type,
+                        name=server.get("name"),
+                        description=server.get("description"),
+                        document_link=streamable_http.get("document_link"),
+                        code=server.get("url"),
+                        parameters_definition=commmon_params + params,
+                        transport=MCPTransport.STREAMABLE_HTTP.value,
+                    )
+
+                    mcp_actions.append(action)
+                return mcp_actions
+            else:
+                return [] 
+        return mcp_actions
+    except Exception as e:
+        print(traceback.print_exc())
+        raise e
+
+def get_header_params(headers):
+    params = []
+    for key, value in headers.items():
+        params.append(
+            OpenAPIPathParams(
+                **{
+                    "type": value.get("type", "string"),
+                    "name": key,
+                    "in": "header",
+                    "description": value.get("description", ""),
+                    "required": value.get("required", False),
+                }
+            )
+        )
+    return params
+
+def extract(resources: List[Any], selector: str, logger) -> List[Dict[str, Any]]:
+    """
+    Extract data from resources using JSONPath selector.
+    Returns flat list with common fields merged.
+    """
+    if not resources or not selector.strip():
+        return resources
+
+    # Extract common fields once
+    common_fields = {
+        k: resources[0].get(k)
+        for k in ["integration_id", "integration_type", "user_id", "root_user_id"]
+        if resources[0].get(k) is not None
+    }
+
+    # Parse JSONPath
+    jsonpath_expr = selector.strip()
+    if not jsonpath_expr.startswith("$"):
+        jsonpath_expr = f"$.{jsonpath_expr}"
+
+    try:
+        expr = parse(jsonpath_expr)
+        results = []
+
+        for resource in resources:
+            for match in expr.find(resource):
+                if match.value is None:
+                    continue
+
+                if isinstance(match.value, list):
+                    for item in match.value:
+                        if isinstance(item, dict):
+                            results.append({**item, **common_fields})
+                        else:
+                            results.append({str(match.path): item, **common_fields})
+                elif isinstance(match.value, dict):
+                    results.append({**match.value, **common_fields})
+                else:
+                    results.append({str(match.path): match.value, **common_fields})
+
+        return results if results else resources
+
+    except (JSONPathError, Exception):
+        logger.error(f"Invalid JSONPath selector: {selector}")
+        logger.error(traceback.format_exc())
+        return resources

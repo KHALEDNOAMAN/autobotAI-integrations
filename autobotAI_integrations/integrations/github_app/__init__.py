@@ -93,16 +93,16 @@ class GithubAppService(BaseService):
 
 
     def _test_integration(self):
-        self.integration.token = self.token = self.get_installation_token()
-        headers = {
-            "Authorization": f"token {self.token}",
-            "Accept": "application/vnd.github+json",
-        }
-
-        # Try accessing the user endpoint to validate the token and URL
-        user_endpoint = f"{self.integration.base_url}/installation/repositories"
-
         try:
+            self.integration.token = self.token = self.get_installation_token()
+            headers = {
+                "Authorization": f"token {self.token}",
+                "Accept": "application/vnd.github+json",
+            }
+
+            # Try accessing the user endpoint to validate the token and URL
+            user_endpoint = f"{self.integration.base_url}/installation/repositories"
+
             response = requests.get(user_endpoint, headers=headers)
 
             if response.status_code == 200:
@@ -122,7 +122,7 @@ class GithubAppService(BaseService):
                     "success": False,
                     "error": f"Error: Unexpected status code {response.status_code}. Response: {response.text}",
                 }
-        except requests.exceptions.RequestException as e:
+        except (requests.exceptions.RequestException, BaseException) as e:
             return {"success": False, "error": str(e)}
 
     @staticmethod

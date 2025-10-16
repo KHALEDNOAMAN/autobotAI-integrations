@@ -1,4 +1,5 @@
 import importlib
+import importlib.metadata
 import shutil
 import os
 import subprocess
@@ -18,11 +19,12 @@ import yaml
 from pydantic import BaseModel
 from autobotAI_integrations.integration_schema import ConnectionTypes, IntegrationSchema, IntegrationStates
 from autobotAI_integrations.models import *
-from autobotAI_integrations.open_api_schema import OpenAPIAction
+from autobotAI_integrations.open_api_schema import MCPServerAction, OpenAPIAction
 from autobotAI_integrations.payload_schema import PayloadTask, Payload, Param
 from autobotAI_integrations.utils.logging_config import logger
 from autobotAI_integrations.utils import (
     list_of_unique_elements,
+    load_actions_from_mcp_server_config,
     load_mod_from_string,
     run_mod_func,
     oscf_based_steampipe_json,
@@ -156,7 +158,7 @@ def executor(context):
         if ConnectionInterfaces.PYTHON_SDK not in cls.supported_connection_interfaces():
             return []
         base_path = os.path.dirname(inspect.getfile(cls))
-        if integration_type!=None:
+        if integration_type is not None:
             base_path = base_path + f'/integrations/{integration_type}'
             logger.info("base path is %s", base_path)
         with open(path.join(base_path, ".", 'python_sdk_clients.yml')) as f:
@@ -179,6 +181,17 @@ def executor(context):
             logger.exception(f"Error occurred while parsing open api file: {e}")
         finally:
             return open_api_actions
+    
+    @classmethod
+    def get_all_mcp_server_actions(cls) -> List[MCPServerAction]:
+        if ConnectionInterfaces.MCP_SERVER not in cls.supported_connection_interfaces():
+            return []
+        base_path = os.path.dirname(inspect.getfile(cls))
+        with open(path.join(base_path, "mcp_servers.json")) as f:
+            server_config = json.load(f)
+            mcp_server_action = load_actions_from_mcp_server_config(server_config)
+            return mcp_server_action
+        return []
 
     @staticmethod
     def get_schema(ctx=None) -> BaseSchema:
@@ -213,6 +226,9 @@ def executor(context):
     def generate_cli_creds(self) -> CLICreds:
         raise NotImplementedError()
 
+    def generate_mcp_creds(self) -> MCPCreds:
+        raise NotImplementedError()
+
     def build_python_exec_combinations_hook(self, payload_task: PayloadTask,
                                             client_definitions: List[SDKClient]) -> list:
         raise NotImplementedError()
@@ -245,7 +261,7 @@ def executor(context):
                     if line.strip() and not line.strip().startswith("#")
                 ]
             else:
-                logger.warning(f"User packages are not a valid string.")
+                logger.warning("User packages are not a valid string.")
 
         logger.debug(f"Integration: {integration.cspName}\nUser Packages: {user_packages}\nClient Defs: {client_definitions}")
 
@@ -270,16 +286,20 @@ def executor(context):
             try:
                 # prevents the reinstallation of the same package for different tasks
                 if exec_mode == "frozen":
+                    # this might be replacable by simple 'importlib.metadata.version(package)' check
                     subprocess.check_call(
                         [python_exec, "-m", "pip", "show", package],
                         env={**os.environ, "PYTHONPATH": f"/tmp/{idx}/"}
                     )
+                    # Not sure if this line should be here
                     sys.path.insert(1, f"/tmp/{idx}/")
                 else:
-                    subprocess.check_call(["pip", "show", package])
+                    # subprocess.check_call(["pip", "show", package])
+                    # Efficient way to check package
+                    importlib.metadata.version(package)
                 logger.info(f"Python package '{package}' already installed.")
 
-            except subprocess.CalledProcessError:
+            except (subprocess.CalledProcessError, importlib.metadata.PackageNotFoundError):
                 subprocess.check_call([
                     python_exec, "-m", "pip", "install", package,
                     "-t", f"/tmp/{idx}/", "--no-cache-dir", "--upgrade"
