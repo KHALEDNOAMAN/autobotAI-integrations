@@ -9,6 +9,7 @@ from autobotAI_integrations.models import (
     IntegrationCategory,
     RestAPICreds,
 )
+from autobotAI_integrations.utils.logging_config import logger
 
 class CrowdSecIntegration(BaseSchema):
     token: Optional[str] = Field(default=None, description="token", exclude=True)
@@ -33,9 +34,13 @@ class CrowdSecService(BaseService):
     def _test_integration(self):
         try:
             response = requests.get(
-                url=f"https://cti.api.crowdsec.net/v2/smoke/185.7.214.104",
-                headers={"x-api-key": self.integration.token}
+                url="https://cti.api.crowdsec.net/v2/smoke/8.8.8.8",
+                headers={
+                    "x-api-key": self.integration.token,
+                    "Accept": "application/json",
+                },
             )
+            response.raise_for_status()
             if response.status_code == 200:
                 return {"success": True, "data": response.json()}
             else:
@@ -46,6 +51,7 @@ class CrowdSecService(BaseService):
         except requests.exceptions.ConnectionError:
             return {"success": False, "error": "Connection is Unreachable"}
         except Exception as e:
+            logger.exception(e)
             return {"success": False, "error": str(e)}
 
     @staticmethod
