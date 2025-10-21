@@ -17,7 +17,7 @@ class AwsSesIntegration(BaseSchema):
     session_token: Optional[str] = Field(default=None, exclude=True)
     account_id: Optional[str] = None
     roleArn: Optional[str] = None
-    externalId: Optional[str] = None
+    externalId: Optional[str] = Field(default=None, exclude=True)
 
     name: Optional[str] = "AWS SES"
     category: Optional[str] = IntegrationCategory.NOTIFICATIONS_AND_COMMUNICATIONS.value
