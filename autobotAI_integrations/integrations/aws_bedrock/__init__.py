@@ -26,7 +26,7 @@ class AWSBedrockIntegration(BaseSchema):
     session_token: Optional[str] = Field(default=None, exclude=True)
     account_id: Optional[str] = None
     roleArn: Optional[str] = None
-    externalId: Optional[str] = Field(default=None, exclude=True)
+    externalId: Optional[str] = None
 
     name: Optional[str] = "AWS Bedrock"
     category: Optional[str] = IntegrationCategory.AI.value
