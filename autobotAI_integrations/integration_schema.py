@@ -30,6 +30,7 @@ class IntegrationSchema(BaseModel):
     alias: str  # Name given by User
     connection_type: ConnectionTypes = ConnectionTypes.DIRECT.value  # Direct means we get the credentials, Agent means we don't have the creds, our agent is installed in the customer's environment.
     groups: list = []  # Tags/groups
+    category: Optional[str] = None
     agent_ids: list = []  # If agent based, then agent ids are populated
     accessToken: str = ""  # Part of creds
     createdAt: Optional[str] = None
