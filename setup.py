@@ -18,7 +18,7 @@ setup(
         "tenacity>=8.5.0",
         "PyJWT",
         "jsonpath-ng",
-        "git+https://github.com/shunyeka-spl/autobotai-library-addons.git",
+        "autobotai_library_addons @ git+https://github.com/shunyeka-spl/autobotai-library-addons.git",
     ],
     extras_require={
         "executable": [
