@@ -1,0 +1,5 @@
+- name: servicenow
+  import_library_names:
+    - pysnc
+  pip_package_names:
+    - pysnc
