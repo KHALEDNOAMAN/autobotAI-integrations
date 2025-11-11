@@ -90,43 +90,39 @@ class TestClassServiceNow:
         test_result_format(result)
         # print(result.model_dump_json(indent=2))
         # assert False 
-
-    def test_actions_run_create_incident(self, get_keys):
-        """Directly test creating an incident in ServiceNow via REST API"""
-
-        base_instance_url = get_keys["SERVICENOW_BASE_URL"]
-        api_url = f"{base_instance_url}/api/now/table/incident"
-
-        username = get_keys["SERVICENOW_USERNAME"]
-        password = get_keys["SERVICENOW_PASSWORD"]
-
-        payload = {
-        "short_description": "Tuk tuk test incident creation",
-        "description": "This is a test incident created for automated testing purposes",
-        "urgency": "2",   
-        "impact": "2",   
-        "priority": "3",  
-        "category": "software"
+    # Read all Records from a table
+    def test_actions_run(
+        self, get_keys, sample_restapi_task, test_result_format, sample_integration_dict
+    ):
+        tokens = {
+        "base_url": get_keys["SERVICENOW_BASE_URL"], 
+        "username": get_keys["SERVICENOW_USERNAME"],
+        "password": get_keys["SERVICENOW_PASSWORD"],
         }
+        integration = sample_integration_dict("servicenow", tokens)
+        service = integration_service_factory.get_service(None, integration)
+        actions = service.get_all_rest_api_actions()
 
-        try:
-            response = requests.post(
-            api_url,
-            auth=(username, password),
-            headers={"Content-Type": "application/json"},
-            data=json.dumps(payload)
-        )
+        for action in actions:
+            if action.name == "Retrieve records from a table":
+                params = action.parameters_definition
 
-            assert response.status_code in [200, 201], f"Failed to create incident. Got: {response.status_code}"
-            data = response.json()
+                for param in params:
+                    if param.name == "tableName":
+                        param.values = "incident"
 
-        # Extract sys_id or number for validation
-            if "result" in data:
-                sys_id = data["result"].get("sys_id")
-                number = data["result"].get("number")
-            else:
-                raise ValueError("No result found in response")
+                    if param.name == "sysparm_limit":
+                        param.values = "2"  
+                    
+                action.parameters_definition = params
 
-        except Exception as e:
-            traceback.print_exc()
-            assert False, f"Incident creation test failed: {str(e)}"
+                try:
+                    task = sample_restapi_task(
+                    integration, action.code, action.parameters_definition
+                )
+                    result = handle_task(task)
+                    print(result.model_dump_json(indent=2))
+                    test_result_format(result)
+                except Exception as e:
+                    traceback.print_exc()
+                # assert False

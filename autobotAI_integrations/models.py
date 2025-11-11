@@ -1,5 +1,5 @@
 from enum import Enum
-from typing import Optional, List, Any, Dict, ClassVar
+from typing import Optional, List, Any, Dict, ClassVar , Tuple
 
 from pydantic import BaseModel, ConfigDict, Field
 import pathlib, os
@@ -63,6 +63,7 @@ class RestAPICreds(BaseCreds):
     query_params: dict = dict()
     verify_ssl: bool = True
     request_body_type: RestAPIRequestBodyType = RestAPIRequestBodyType.JSON
+    auth: Optional[Tuple[str, str]] = None
 
 
 class Client(BaseModel):
