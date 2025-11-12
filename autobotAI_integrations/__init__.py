@@ -583,8 +583,7 @@ def executor(context):
         timeout: int = 10,
         verify_ssl: bool = True,
     ) -> Union[Dict[str, Any], List[Dict[str, Any]]]:
-        logger.info(f"Making {method} request to {url}")
-        logger.info(f"Basic Auth:{auth}")
+        logger.info(f"Making {method} request to {url}")        
         logger.debug(f"Headers: {headers}, Params: {params}, JSON: {json_data}, Form Data: {form_data}")
 
         response = None
