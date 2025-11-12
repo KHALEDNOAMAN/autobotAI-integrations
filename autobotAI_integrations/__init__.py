@@ -12,7 +12,7 @@ import traceback
 from enum import Enum
 from os import path
 from pathlib import Path
-from typing import Optional, Dict, Any, List, Callable, Union
+from typing import Optional, Dict, Any, List, Callable, Union , Tuple
 
 import requests
 import yaml
@@ -579,11 +579,13 @@ def executor(context):
         params: Optional[Dict[str, Any]] = None,
         json_data: Optional[Dict[str, Any]] = None,
         form_data: Optional[Dict[str, Any]] = None,
+        auth: Optional[Tuple[str, str]] = None, 
         timeout: int = 10,
         verify_ssl: bool = True,
     ) -> Union[Dict[str, Any], List[Dict[str, Any]]]:
-        logger.info(f"Making {method} request to {url}")
+        logger.info(f"Making {method} request to {url}")        
         logger.debug(f"Headers: {headers}, Params: {params}, JSON: {json_data}, Form Data: {form_data}")
+
         response = None
         try:
             # Ensure we don't send both json and form data in same request
@@ -600,6 +602,7 @@ def executor(context):
                 data=form_data if form_data else None,
                 timeout=timeout,
                 verify=verify_ssl,
+                auth=auth if auth else None,
             )
 
             logger.info(f"Response Status Code: {response.status_code}")
@@ -712,6 +715,7 @@ def executor(context):
                 form_data=params.get("form_data", None),
                 timeout=params.get("timeout", 10),
                 verify_ssl=payload_task.creds.verify_ssl,
+                auth=payload_task.creds.auth,
             )
             logger.debug(f"Response: {response}")
 
