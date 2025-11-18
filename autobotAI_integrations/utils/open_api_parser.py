@@ -231,7 +231,7 @@ class OpenApiParser:
         """
         if file_path:
             file_content = None
-            with open(file_path, "r") as file:
+            with open(file_path, "r",encoding="utf-8") as file:
                 file_content = file.read()
             if file_path.endswith(".yaml") or file_path.endswith(".yml"):
                 self._parsed_dict = yaml.safe_load(file_content)

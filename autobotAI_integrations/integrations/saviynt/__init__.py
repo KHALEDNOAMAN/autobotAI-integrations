@@ -16,9 +16,8 @@ class SaviyntauthTypes(Enum):
     BASIC_AUTH = "basic_auth"
 
 class SaviyntIntegration(BaseSchema):
-    base_url: Optional[str] = Field(default=None, description="base url")
-    username: Optional[str] = Field(default=None, exclude=True)
-    password: Optional[str] = Field(default=None, exclude=True)
+    base_url: str = Field(default=None, description="base url")
+    token : str = Field(default=None, exclude=True)
     name: Optional[str] = "Saviynt"
     category: Optional[str] = IntegrationCategory.SECURITY_TOOLS.value
     description: Optional[str] = (
@@ -32,7 +31,7 @@ class SaviyntIntegration(BaseSchema):
         if base_url and base_url != "None":
             if re.match(saviynt_pattern, base_url):
                 return base_url.strip("/")
-            raise ValueError(f"Invalid ServiceNow Instance URL: {base_url}. Format: https://instance.saviyntcloud.com")
+            raise ValueError(f"Invalid Saviynt Instance URL: {base_url}. Format: https://instance.saviyntcloud.com")
         raise ValueError("Saviynt Instance URL is required")
 
 
@@ -42,32 +41,26 @@ class SaviyntService(BaseService):
         if not isinstance(integration,SaviyntIntegration):
             integration=SaviyntIntegration(**integration)
         super().__init__(ctx,integration)
-        self.base_url = integration.base_url
-        self.username = integration.username
-        self.password = integration.password
+        self.token = integration.token
     
     def _test_integration(self):
-        if self.username and self.password:
             headers={
                 "Accept": "application/json",
                 "Content-Type": "application/json",
+                "Authorization": f"token {self.token}",
             }
-            user_endpoint = f"{self.base_url}/ECMv6/request/requestHome"
+            user_endpoint = f"{self.integration.base_url}/ECMv6/request/requestHome"
             
             try:
-                response = requests.get(
-                user_endpoint,
-                auth=(self.username, self.password),
-                headers=headers,
-                )
+                response = requests.get(user_endpoint, headers=headers)
                 if response.status_code == 200:
-                    return {"success": True, "data": response.json()}
+                    return {"success": True}
                 else:
                     return {
                         "success": False,
                         "error": f"Authentication failed with status code: {response.status_code}",
                     }
-            except Exception as e:
+            except requests.exceptions.RequestException as e:
                 return {"success": False, "error": str(e)}
 
     @staticmethod
@@ -77,7 +70,7 @@ class SaviyntService(BaseService):
             "type": "form",
             "children": [
                 {
-                    "label": "Basic Auth Integration",
+                    "label": "Saviynt Integration",
                     "type": "form",
                     "formId": SaviyntauthTypes.BASIC_AUTH.value,
                     "children": [
@@ -85,22 +78,15 @@ class SaviyntService(BaseService):
                             "name": "base_url",
                             "type": "text/url",
                             "label": "Saviynt Instance URL",
-                            "placeholder": "https://company.saviyntcloud.com",
+                            "placeholder": "https://instance.saviyntcloud.com",
                             "description": "Your Saviynt instance URL",
                             "required": True,
                         },
                         {
-                            "name": "username",
-                            "type": "text",
-                            "label": "Username",
-                            "placeholder": "Enter your ServiceNow username",
-                            "required": True,
-                        },
-                        {
-                            "name": "password",
+                            "name": "token",
                             "type": "text/password",
-                            "label": "Password",
-                            "placeholder": "Enter your ServiceNow password",
+                            "label": "Saviynt Token",
+                            "placeholder": "Enter the Saviynt token",
                             "required": True,
                         },
                     ],
@@ -117,14 +103,9 @@ class SaviyntService(BaseService):
         return [ConnectionInterfaces.REST_API]
     
     def generate_rest_api_creds(self) -> RestAPICreds:
-        headers = {
-            "Accept": "application/json",
-            "Content-Type": "application/json",
-        }
-        
-        if self.username and self.password:
-            return RestAPICreds(
-                base_url=self.base_url,
-                headers=headers,
-                auth=(self.username, self.password)
-            )
+        return RestAPICreds(
+            base_url=self.integration.base_url,
+            headers={
+                "Authorization": f"Bearer {self.token}",
+            },
+        )
