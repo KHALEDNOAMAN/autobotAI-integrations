@@ -10,7 +10,7 @@
   },
   "servers": [
     {
-      "url": "https://dev199692.service-now.com/"
+      "url": "{{base_url}}"
     }
   ],
   "paths": {
