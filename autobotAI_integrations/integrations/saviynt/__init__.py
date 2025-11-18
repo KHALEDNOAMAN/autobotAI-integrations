@@ -17,29 +17,10 @@ class SaviyntIntegration(BaseSchema):
     base_url: str = Field(default=None, description="base url")
     token : str = Field(default=None, exclude=True)
     name: Optional[str] = "Saviynt"
-    ignore_ssl: bool = False
     category: Optional[str] = IntegrationCategory.SECURITY_TOOLS.value
     description: Optional[str] = (
         "Saviynt is an identity management solution which manages user access and provides system security and compliance."
     )
-
-    def use_dependency(self, dependency: dict):
-        if dependency.get("cspName") in ["linux", "kubernetes"]:
-            self.connection_type = ConnectionTypes.AGENT
-            self.agent_ids = dependency.get("agent_ids")
-            self.dependent_integration_id = dependency.get("accountId")
-
-    @field_validator("ignore_ssl", mode="before")
-    @classmethod
-    def validate_ignore_ssl(cls, ignore_ssl) -> bool:
-        if isinstance(ignore_ssl, bool):
-            return ignore_ssl
-        elif isinstance(ignore_ssl, str):
-            if ignore_ssl.lower() == "true":
-                return True
-            elif ignore_ssl.lower() == "false":
-                return False
-        raise ValueError("Invalid ignore_ssl passed !")
 
     @field_validator("base_url", mode="before")
     @classmethod
@@ -62,9 +43,6 @@ class SaviyntService(BaseService):
     
     def _test_integration(self):
             try:
-                if self.integration.connection_type == ConnectionTypes.AGENT:
-                    return {"success": True}
-                
                 headers={
                 "Accept": "application/json",
                 "Content-Type": "application/json",
@@ -72,7 +50,7 @@ class SaviyntService(BaseService):
                 }
 
                 user_endpoint = f"{self.integration.base_url}/ECMv6/request/requestHome"
-                response = requests.get(user_endpoint, headers=headers,verify=not self.integration.ignore_ssl)
+                response = requests.get(user_endpoint, headers=headers)
                 if response.status_code == 200:
                     return {"success": True}
                 else:
@@ -80,12 +58,6 @@ class SaviyntService(BaseService):
                         "success": False,
                         "error": f"Authentication failed with status code: {response.status_code}",
                     }
-            except requests.exceptions.SSLError:
-                return {
-                "success": False,
-                "error": "Request failed with invalid API URl",
-                }
-    
             except requests.exceptions.RequestException as e:
                 return {"success": False, "error": str(e)}
 
@@ -106,18 +78,6 @@ class SaviyntService(BaseService):
                             "placeholder": "https://instance.saviyntcloud.com",
                             "description": "Your Saviynt instance URL",
                             "required": True,
-                        },
-                        {
-                            "name": "ignore_ssl",
-                            "type": "select",
-                            "label": "Ignore SSL",
-                            "placeholder": "default: 'False'",
-                            "description": "Select whether to ignore SSL certificate validation.",
-                            "options": [
-                                {"label": "True", "value": True},
-                                {"label": "False", "value": False},
-                            ],
-                            "required": False,
                         },
                         {
                             "name": "token",
