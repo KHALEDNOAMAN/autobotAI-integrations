@@ -2,8 +2,16 @@
     "aws": {
         "benchmarks": [
             {
+                "name": "acsc_essential_eight",
+                "description": "ACSC Essential Eight"
+            },
+            {
                 "name": "audit_manager_control_tower",
                 "description": "AWS Audit Manager Control Tower Guardrails"
+            },
+            {
+                "name": "cis_compute_service_v100",
+                "description": "CIS Compute Service v1.0.0"
             },
             {
                 "name": "cis_controls_v8_ig1",
@@ -24,6 +32,26 @@
             {
                 "name": "cis_v150",
                 "description": "CIS v1.5.0"
+            },
+            {
+                "name": "cis_v200",
+                "description": "CIS v2.0.0"
+            },
+            {
+                "name": "cis_v300",
+                "description": "CIS v3.0.0"
+            },
+            {
+                "name": "cis_v400",
+                "description": "CIS v4.0.0"
+            },
+            {
+                "name": "cis_v500",
+                "description": "CIS v5.0.0"
+            },
+            {
+                "name": "cis_v600",
+                "description": "CIS v6.0.0"
             },
             {
                 "name": "cisa_cyber_essentials",
@@ -70,6 +98,10 @@
                 "description": "NIST 800-171 Revision 2"
             },
             {
+                "name": "nist_800_172",
+                "description": "NIST 800-172"
+            },
+            {
                 "name": "nist_800_53_rev_4",
                 "description": "NIST 800-53 Revision 4"
             },
@@ -82,16 +114,32 @@
                 "description": "NIST Cybersecurity Framework (CSF) v1.1"
             },
             {
+                "name": "nist_csf_v2",
+                "description": "NIST Cybersecurity Framework (CSF) v2.0"
+            },
+            {
+                "name": "nydfs_23",
+                "description": "New York Department of Financial Services (NYDFS) 23 NYCRR 500"
+            },
+            {
                 "name": "pci_dss_v321",
                 "description": "PCI DSS v3.2.1"
+            },
+            {
+                "name": "pci_dss_v40",
+                "description": "PCI DSS v4.0"
             },
             {
                 "name": "rbi_cyber_security",
                 "description": "RBI Cyber Security Framework"
             },
             {
+                "name": "rbi_itf_nbfc",
+                "description": "RBI IT Framework for NBFCs"
+            },
+            {
                 "name": "soc_2",
-                "description": "System and Organization Controls (SOC) 2 is an auditing procedure that ensures a company's data is securely managed."
+                "description": "System and Organization Controls (SOC) 2"
             },
             {
                 "name": "other",

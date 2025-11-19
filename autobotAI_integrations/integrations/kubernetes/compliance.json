@@ -3,7 +3,11 @@
         "benchmarks": [
             {
                 "name": "cis_kube_v120",
-                "description": "CIS Kubernetes v1.20 benchmark provides prescriptive guidance for establishing a secure configuration posture for Kubernetes 1.19 - 1.20."
+                "description": "CIS Kubernetes v1.20 Benchmark"
+            },
+            {
+                "name": "cis_v170",
+                "description": "CIS Kubernetes v1.7.0 Benchmark"
             },
             {
                 "name": "nsa_cisa_v1",

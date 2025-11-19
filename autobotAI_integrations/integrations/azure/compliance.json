@@ -3,23 +3,51 @@
         "benchmarks": [
             {
                 "name": "cis_v130",
-                "description": "The CIS Microsoft Azure Foundations Security Benchmark provides prescriptive guidance for establishing a secure baseline configuration for Microsoft Azure."
+                "description": "CIS Microsoft Azure Foundations Benchmark v1.3.0"
             },
             {
                 "name": "cis_v140",
-                "description": "The CIS Microsoft Azure Foundations Security Benchmark provides prescriptive guidance for establishing a secure baseline configuration for Microsoft Azure."
+                "description": "CIS Microsoft Azure Foundations Benchmark v1.4.0"
             },
             {
                 "name": "cis_v150",
-                "description": "The CIS Microsoft Azure Foundations Security Benchmark provides prescriptive guidance for establishing a secure baseline configuration for Microsoft Azure."
+                "description": "CIS Microsoft Azure Foundations Benchmark v1.5.0"
             },
             {
                 "name": "cis_v200",
-                "description": "The CIS Microsoft Azure Foundations Security Benchmark provides prescriptive guidance for establishing a secure baseline configuration for Microsoft Azure."
+                "description": "CIS Microsoft Azure Foundations Benchmark v2.0.0"
+            },
+            {
+                "name": "cis_v210",
+                "description": "CIS Microsoft Azure Foundations Benchmark v2.1.0"
+            },
+            {
+                "name": "cis_v300",
+                "description": "CIS Microsoft Azure Foundations Benchmark v3.0.0"
+            },
+            {
+                "name": "cis_v400",
+                "description": "CIS Microsoft Azure Foundations Benchmark v4.0.0"
+            },
+            {
+                "name": "cis_v500",
+                "description": "CIS Microsoft Azure Foundations Benchmark v5.0.0"
+            },
+            {
+                "name": "fedramp_high",
+                "description": "FedRAMP High"
             },
             {
                 "name": "hipaa_hitrust_v92",
-                "description": "The HIPAA HITRUST 9.2 provides a combined set of predefined compliance and security best-practice checks for Health Insurance Portability and Accountability Act."
+                "description": "HIPAA HITRUST 9.2"
+            },
+            {
+                "name": "nist_csf_v2",
+                "description": "NIST Cybersecurity Framework (CSF) v2.0"
+            },
+            {
+                "name": "nist_sp_800_171_rev_2",
+                "description": "NIST SP 800-171 Revision 2"
             },
             {
                 "name": "nist_sp_800_53_rev_5",
@@ -27,7 +55,11 @@
             },
             {
                 "name": "pci_dss_v321",
-                "description": "PCI DSS 3.2.1"
+                "description": "PCI DSS v3.2.1"
+            },
+            {
+                "name": "rbi_itf_nbfc_v2017",
+                "description": "RBI IT Framework for NBFCs (2017)"
             }
         ]
     }
