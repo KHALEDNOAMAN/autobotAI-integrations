@@ -53,6 +53,16 @@ class SaviyntService(BaseService):
                 response = requests.get(user_endpoint, headers=headers)
                 if response.status_code == 200:
                     return {"success": True}
+                elif response.status_code == 401:
+                    return {
+                        "success": False,
+                        "error": "Authentication failed. Please check your Saviynt token.",
+                    }
+                elif response.status_code == 404:
+                    return {
+                    "success": False,
+                    "error": "Error: Not Found. Invalid Saviynt URL or endpoint.",
+                    }
                 else:
                     return {
                         "success": False,
