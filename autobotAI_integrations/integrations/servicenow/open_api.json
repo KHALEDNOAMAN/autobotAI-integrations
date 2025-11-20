@@ -10,7 +10,7 @@
   },
   "servers": [
     {
-      "url": "{{base_url}}"
+      "url": "{base_url}"
     }
   ],
   "paths": {
