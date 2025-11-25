@@ -46,10 +46,10 @@ class SaviyntService(BaseService):
                 headers={
                 "Accept": "application/json",
                 "Content-Type": "application/json",
-                "Authorization": f"token {self.token}",
+                "Authorization": f"Bearer {self.token}",
                 }
 
-                user_endpoint = f"{self.integration.base_url}/ECMv6/request/requestHome"
+                user_endpoint = f"{self.integration.base_url}/ECM/api/v5/getSavRoles"
                 response = requests.get(user_endpoint, headers=headers)
                 if response.status_code == 200:
                     return {"success": True}
