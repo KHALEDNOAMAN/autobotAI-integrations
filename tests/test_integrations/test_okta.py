@@ -56,9 +56,7 @@ class TestClassOkta:
             integration, code=okta_python_code, clients=["okta"]
         )
         result = handle_task(task)
-        print(result.model_dump_json(indent=2))
         test_result_format(result)
-        # assert False
 
     def test_integration_active(self, get_keys, sample_integration_dict):
         tokens = {
@@ -107,8 +105,6 @@ class TestClassOkta:
                     integration, action.code, action.parameters_definition
             )
             result = handle_task(task)
-            print(result.model_dump_json(indent=2))
             test_result_format(result)
         except Exception as e:
             traceback.print_exc()
-        # assert False
