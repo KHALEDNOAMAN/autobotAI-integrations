@@ -773,10 +773,7 @@ def executor(context):
 class AIBaseService(BaseService):
     @staticmethod
     def ai_prompt_python_template():
-        raise NotImplementedError()
-
-    def langchain_authenticator(self,model):
-        raise NotImplementedError()
+        raise NotImplementedError()    
 
     def prompt_executor(self, model=None, prompt=None, options: dict = {}, messages: List[Dict[str, Any]] = []):
         raise NotImplementedError()
