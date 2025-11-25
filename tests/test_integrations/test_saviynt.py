@@ -26,7 +26,6 @@ class TestClassSaviynt:
         integration = sample_integration_dict("saviynt", tokens)
         service = integration_service_factory.get_service(None, integration)
         res = service.is_active()
-
         assert not res["success"]
 
     def test_integration_active(self, get_keys, sample_integration_dict):
@@ -68,6 +67,5 @@ class TestClassSaviynt:
                     test_result_format(result)
                 except Exception as e:
                     traceback.print_exc()
-                # assert False, f"Action execution failed: {str(e)}"
                 
         
