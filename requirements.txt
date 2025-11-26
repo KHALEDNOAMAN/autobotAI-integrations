@@ -11,7 +11,6 @@ Deprecated>=1.2.18
 google-auth>=2.40.3
 idna>=3.10
 jmespath>=1.0.1
-kubernetes>=33.1.0
 oauthlib>=3.3.1
 pyasn1>=0.6.1
 pyasn1_modules>=0.4.2
