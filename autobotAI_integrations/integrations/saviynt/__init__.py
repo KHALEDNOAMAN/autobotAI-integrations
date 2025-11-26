@@ -12,10 +12,13 @@ from autobotAI_integrations.models import (
     RestAPICreds,
 )
 
-
+class SaviyntAuthTypes(Enum):
+    BASIC_AUTH = "basic_auth"
+    
 class SaviyntIntegration(BaseSchema):
     base_url: str = Field(default=None, description="base url")
-    token : str = Field(default=None, exclude=True)
+    username: Optional[str] = Field(default=None, exclude=True)
+    password: Optional[str] = Field(default=None, exclude=True)
     name: Optional[str] = "Saviynt"
     category: Optional[str] = IntegrationCategory.SECURITY_TOOLS.value
     description: Optional[str] = (
@@ -39,29 +42,29 @@ class SaviyntService(BaseService):
         if not isinstance(integration,SaviyntIntegration):
             integration=SaviyntIntegration(**integration)
         super().__init__(ctx,integration)
-        self.token = integration.token
     
     def _test_integration(self):
         try:
             headers={
-            "Accept": "application/json",
             "Content-Type": "application/json",
-            "Authorization": f"Bearer {self.token}",
             }
 
-            user_endpoint = f"{self.integration.base_url}/ECM/api/v5/getSavRoles"
-            response = requests.get(user_endpoint, headers=headers)
+            user_endpoint = f"{self.integration.base_url}/ECM/api/login"
+            response = requests.post(user_endpoint, headers=headers,json={
+                "username": self.integration.username,
+                "password": self.integration.password
+            })
             if response.status_code == 200:
                 return {"success": True}
             elif response.status_code == 401:
                 return {
                         "success": False,
-                        "error": "Authentication failed. Please check your Saviynt token."
+                        "error": "Authentication failed. Please check your UserName and PassWord."
                 }
             elif response.status_code == 404:
                 return {
                     "success": False,
-                    "error": "Error: Not Found. Invalid Saviynt URL or endpoint.",
+                    "error": "Error: Not Found. Invalid Saviynt URL",
                 }
             else:
                 return {
@@ -76,6 +79,7 @@ class SaviyntService(BaseService):
         return {
             "label": "Saviynt",
             "type": "form",
+            "formId": SaviyntAuthTypes.BASIC_AUTH.value,
             "children": [
                 {
                     "label": "Saviynt Integration",
@@ -90,10 +94,17 @@ class SaviyntService(BaseService):
                             "required": True,
                         },
                         {
-                            "name": "token",
+                            "name": "username",
+                            "type": "text",
+                            "label": "Username",
+                            "placeholder": "Enter your Saviynt username",
+                            "required": True,
+                        },
+                        {
+                            "name": "password",
                             "type": "text/password",
-                            "label": "Saviynt Token",
-                            "placeholder": "Enter the Saviynt token",
+                            "label": "Password",
+                            "placeholder": "Enter your Saviynt password",
                             "required": True,
                         },
                     ],
@@ -110,9 +121,19 @@ class SaviyntService(BaseService):
         return [ConnectionInterfaces.REST_API]
     
     def generate_rest_api_creds(self) -> RestAPICreds:
+        headers={
+            "Content-Type": "application/json",
+        }
+        user_endpoint = f"{self.integration.base_url}/ECM/api/login"
+        login_request = requests.post(user_endpoint, headers=headers,json={
+                "username": self.integration.username,
+                "password": self.integration.password
+        })
+        data = login_request.json()
+        token = data.get('access_token')
         return RestAPICreds(
             base_url=self.integration.base_url,
             headers={
-                "Authorization": f"Bearer {self.token}",
+                "Authorization": f"Bearer {token}",
             }
         )
