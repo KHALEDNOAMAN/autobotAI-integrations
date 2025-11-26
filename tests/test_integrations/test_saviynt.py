@@ -4,35 +4,12 @@ from autobotAI_integrations.integrations import integration_service_factory
 
 class TestClassSaviynt:
 
-    def test_saviynt_token(
-        self,
-        get_keys,
-        sample_integration_dict,
-        test_result_format,
-    ):
-        tokens = {
-            "base_url": get_keys["SAVIYNT_BASE_URL"],
-            "token": get_keys["SAVIYNT_TOKEN"],
-        }
-        integration = sample_integration_dict("saviynt", tokens)
-        service = integration_service_factory.get_service(None, integration)
-        res = service.is_active()
-        assert res["success"]
-
-        tokens = {
-            "base_url": get_keys["SAVIYNT_BASE_URL"],
-            "token": get_keys["SAVIYNT_TOKEN"][3:-3],
-        }
-        integration = sample_integration_dict("saviynt", tokens)
-        service = integration_service_factory.get_service(None, integration)
-        res = service.is_active()
-        assert not res["success"]
-
     def test_integration_active(self, get_keys, sample_integration_dict):
         """Test Saviynt integration connection with valid credentials"""
         tokens = {
             "base_url": get_keys["SAVIYNT_BASE_URL"],
-            "token": get_keys["SAVIYNT_TOKEN"],
+            "username": get_keys["SAVIYNT_USERNAME"],
+            "password":get_keys["SAVIYNT_PASSWORD"]
         }
         integration = sample_integration_dict("saviynt", tokens)
         service = integration_service_factory.get_service(None, integration)
@@ -51,8 +28,9 @@ class TestClassSaviynt:
         self, get_keys, sample_restapi_task, test_result_format, sample_integration_dict
     ):
         tokens = {
-        "base_url": get_keys["SAVIYNT_BASE_URL"],
-        "token": get_keys["SAVIYNT_TOKEN"],
+            "base_url": get_keys["SAVIYNT_BASE_URL"],
+            "username": get_keys["SAVIYNT_USERNAME"],
+            "password":get_keys["SAVIYNT_PASSWORD"]
         }
         integration = sample_integration_dict("saviynt", tokens)
         service = integration_service_factory.get_service(None, integration)
@@ -66,6 +44,5 @@ class TestClassSaviynt:
                     result = handle_task(task)
                     test_result_format(result)
                 except Exception as e:
-                    traceback.print_exc()
-                
+                    traceback.print_exc()                
         
