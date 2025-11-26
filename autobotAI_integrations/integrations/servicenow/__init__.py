@@ -17,7 +17,7 @@ class ServiceNowAuthTypes(Enum):
 
 class ServiceNowIntegration(BaseSchema):
     base_url: Optional[str] = Field(default=None)
-    username: Optional[str] = Field(default=None, exclude=True)
+    username: Optional[str] = Field(default=None, exclude=False)
     password: Optional[str] = Field(default=None, exclude=True)
     name: Optional[str] = "ServiceNow"
     category: Optional[str] = IntegrationCategory.OTHERS.value
