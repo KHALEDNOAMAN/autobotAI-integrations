@@ -42,34 +42,34 @@ class SaviyntService(BaseService):
         self.token = integration.token
     
     def _test_integration(self):
-            try:
-                headers={
-                "Accept": "application/json",
-                "Content-Type": "application/json",
-                "Authorization": f"token {self.token}",
-                }
+        try:
+            headers={
+            "Accept": "application/json",
+            "Content-Type": "application/json",
+            "Authorization": f"Bearer {self.token}",
+            }
 
-                user_endpoint = f"{self.integration.base_url}/ECMv6/request/requestHome"
-                response = requests.get(user_endpoint, headers=headers)
-                if response.status_code == 200:
-                    return {"success": True}
-                elif response.status_code == 401:
-                    return {
+            user_endpoint = f"{self.integration.base_url}/ECM/api/v5/getSavRoles"
+            response = requests.get(user_endpoint, headers=headers)
+            if response.status_code == 200:
+                return {"success": True}
+            elif response.status_code == 401:
+                return {
                         "success": False,
-                        "error": "Authentication failed. Please check your Saviynt token.",
-                    }
-                elif response.status_code == 404:
-                    return {
+                        "error": "Authentication failed. Please check your Saviynt token."
+                }
+            elif response.status_code == 404:
+                return {
                     "success": False,
                     "error": "Error: Not Found. Invalid Saviynt URL or endpoint.",
-                    }
-                else:
-                    return {
+                }
+            else:
+                return {
                         "success": False,
                         "error": f"Authentication failed with status code: {response.status_code}",
-                    }
-            except requests.exceptions.RequestException as e:
-                return {"success": False, "error": str(e)}
+                }
+        except requests.exceptions.RequestException as e:
+            return {"success": False, "error": str(e)}
 
     @staticmethod
     def get_forms():
@@ -114,5 +114,5 @@ class SaviyntService(BaseService):
             base_url=self.integration.base_url,
             headers={
                 "Authorization": f"Bearer {self.token}",
-            },
+            }
         )
