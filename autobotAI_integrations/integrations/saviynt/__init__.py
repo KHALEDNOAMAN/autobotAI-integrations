@@ -17,7 +17,7 @@ class SaviyntAuthTypes(Enum):
     
 class SaviyntIntegration(BaseSchema):
     base_url: str = Field(default=None, description="base url")
-    username: Optional[str] = Field(default=None, exclude=True)
+    username: Optional[str] = Field(default=None, exclude=False)
     password: Optional[str] = Field(default=None, exclude=True)
     name: Optional[str] = "Saviynt"
     category: Optional[str] = IntegrationCategory.SECURITY_TOOLS.value
