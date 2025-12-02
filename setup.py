@@ -32,6 +32,7 @@ setup(
             "opensearch-py>=3.0.0",
             "msgraph-sdk",  # Adding to reduce latency in msgraph
             "msgraph-beta-sdk",  # Adding to reduce latency in msgraph
+            'ark-sdk-python'
         ],
         "full": [
             # Used only in backend (core) via API
@@ -63,6 +64,7 @@ setup(
             "llama-index-llms-bedrock",
             "llama-index-embeddings-openai",
             "llama-index-embeddings-bedrock",
+            'ark-sdk-python'
         ],
     },
     package_data={
