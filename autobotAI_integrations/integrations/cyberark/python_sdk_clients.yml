@@ -1,0 +1,35 @@
+- class_name: ArkIdentityAPI
+  module: ark_sdk_python.services.identity
+  name: ArkIdentityAPI
+  pip_package_names:
+    - ark-sdk-python
+
+- class_name : ArkIdentityUsersService
+  module: ark_sdk_python.services.identity.users
+  name: ArkIdentityUsersService
+  pip_package_names:
+    - ark-sdk-python
+
+- class_name : ArkIdentityRolesService
+  module: ark_sdk_python.services.identity.roles
+  name: ArkIdentityRolesService
+  pip_package_names:
+    - ark-sdk-python
+
+- class_name : ArkIdentityPoliciesService
+  module: ark_sdk_python.services.identity.policies
+  name: ArkIdentityPoliciesService
+  pip_package_names:
+    - ark-sdk-python
+
+- class_name : ArkIdentityDirectoriesService
+  module: ark_sdk_python.services.identity.directories
+  name: ArkIdentityDirectoriesService
+  pip_package_names:
+    - ark-sdk-python
+
+- class_name : ArkIdentityConnectorsService
+  module: ark_sdk_python.services.identity.connectors
+  name: ArkIdentityConnectorsService
+  pip_package_names:
+    - ark-sdk-python
