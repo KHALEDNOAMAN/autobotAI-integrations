@@ -20,7 +20,7 @@ class ServiceNowIntegration(BaseSchema):
     username: Optional[str] = Field(default=None, exclude=False)
     password: Optional[str] = Field(default=None, exclude=True)
     name: Optional[str] = "ServiceNow"
-    category: Optional[str] = IntegrationCategory.OTHERS.value
+    category: Optional[str] = IntegrationCategory.NOTIFICATIONS_AND_COMMUNICATIONS.value
     description: Optional[str] = (
         "Enterprise IT Service Management platform for managing digital workflows and automating business processes."
     )
@@ -74,6 +74,22 @@ class ServiceNowService(BaseService):
                 return {"success": False, "error": str(e)}
         
         return {"success": False, "error": "No authentication credentials provided"}
+    
+
+    def get_integration_specific_details(self):
+        try:
+            details = {}
+            details["integration_id"] = self.integration.accountId
+            channels = self._get_all_channels_name(
+                base_url=self.integration.base_url,
+                username=self.integration.username,
+                password=self.integration.password
+            )
+            if channels:
+                details["channels"] = channels
+            return details
+        except Exception as e:
+            return {"error": "Details can not be fetched"}
 
     @staticmethod
     def get_forms():
@@ -168,3 +184,39 @@ class ServiceNowService(BaseService):
  
     def generate_cli_creds(self) -> CLICreds:
         pass
+
+    @staticmethod
+    def _get_all_channels_name(base_url, username, password, iteration_count=10):
+        channels = []
+        try:
+            limit = 100   
+            offset = 0    
+            count = 0
+
+            while count < iteration_count :
+                url = (
+                f"{base_url}/api/now/table/sys_cs_channel"
+                f"?sysparm_limit={limit}&sysparm_offset={offset}"
+                )
+                
+                response = requests.get(
+                    url,
+                    auth=(username, password),
+                    headers={"Accept": "application/json"}
+                )
+
+                if response.status_code != 200:
+                    raise Exception(response.text)
+            
+                result = response.json().get("result", [])
+
+                channels.extend([item.get("name") for item in result])
+
+                if len(result) < limit:
+                    break
+
+                offset += limit
+                count += 1
+            return channels
+        except Exception as e:
+            print(f"Error fetching channels: {e}")
