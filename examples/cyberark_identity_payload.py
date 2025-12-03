@@ -3,7 +3,7 @@ import uuid
 import dotenv
 
 dotenv.load_dotenv()
-from autobotAI_integrations.integrations.cyberark import CyberArkIntegration
+from autobotAI_integrations.integrations.cyberark_identity import CyberArkIdentityIntegration
 from autobotAI_integrations import ConnectionInterfaces, IntegrationSchema
 from autobotAI_integrations.integrations import integration_service_factory
 from autobotAI_integrations.payload_schema import Payload, PayloadTask, PayloadTaskContext
@@ -32,7 +32,7 @@ cyberark_json = {
     "userId": "abhishek.rathod@autobot.live",
     "accountId": "175c0fa813244bc5a1aa6264e7ba20cc",
     "integrationState": "INACTIVE",
-    "cspName": "cyberark",
+    "cspName": "cyberark_identity",
     "alias": "test-cyberark-integrationsv2*",
     "connection_type": "DIRECT",
     "instance_url": os.environ["CYBERARK_BASE_URL"],
@@ -63,7 +63,7 @@ context = {
 
 
 def generate_cyberark_python_payload(cyberark_json=cyberark_json) -> Payload:
-    integration = CyberArkIntegration(**cyberark_json)
+    integration = CyberArkIdentityIntegration(**cyberark_json)
     service = integration_service_factory.get_service(None, integration)
     creds = service.generate_python_sdk_creds()
     task_dict = {

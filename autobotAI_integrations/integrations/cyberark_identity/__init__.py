@@ -10,7 +10,7 @@ from autobotAI_integrations import BaseSchema, SteampipeCreds, RestAPICreds, SDK
     BaseService, ConnectionInterfaces, PayloadTask, SDKClient
 from autobotAI_integrations.models import IntegrationCategory, MCPCreds
 
-class CyberArkIntegration(BaseSchema):
+class CyberArkIdentityIntegration(BaseSchema):
     base_url: str = Field(default=None, description="Identity Tenant URL")
     username: Optional[str] = Field(default=None, exclude=False)
     password: Optional[str] = Field(default=None, exclude=True)
@@ -30,10 +30,10 @@ class CyberArkIntegration(BaseSchema):
             raise ValueError(f"Invalid CyberArk Identity Tenant URL: {base_url}. Format: https://example.id.cyberark.cloud")
         raise ValueError("CyberArk Identity Tenant URL is required")
 
-class CyberArkService(BaseService):
-    def __init__(self,ctx:dict,integration:Union[CyberArkIntegration,dict]):
-        if not isinstance(integration,CyberArkIntegration):
-            integration=CyberArkIntegration(**integration)
+class CyberArkIdentityService(BaseService):
+    def __init__(self,ctx:dict,integration:Union[CyberArkIdentityIntegration,dict]):
+        if not isinstance(integration,CyberArkIdentityIntegration):
+            integration=CyberArkIdentityIntegration(**integration)
         super().__init__(ctx,integration)
 
     def _test_integration(self):
@@ -107,7 +107,7 @@ class CyberArkService(BaseService):
     
     @staticmethod
     def get_schema(ctx=None):
-        return CyberArkIntegration
+        return CyberArkIdentityIntegration
     
     @staticmethod
     def supported_connection_interfaces():

@@ -16,7 +16,7 @@ def executor(context):
     return res
 """
 
-class TestClassCyberArk:
+class TestClassCyberArkIdentity:
 
     def test_integration_active(self, get_keys, sample_integration_dict):
         """Test CyberArk integration connection with valid credentials"""
@@ -25,14 +25,14 @@ class TestClassCyberArk:
             "username": get_keys["CYBERARK_USERNAME"],
             "password": get_keys["CYBERARK_PASSWORD"],
         }
-        integration = sample_integration_dict("cyberark", tokens)
+        integration = sample_integration_dict("cyberark_identity", tokens)
         service = integration_service_factory.get_service(None, integration)
         res = service.is_active()
         
         assert res["success"], f"Integration connection failed: {res.get('error')}"
 
     def test_actions_generation(self, get_keys):
-        service = integration_service_factory.get_service_cls("cyberark")
+        service = integration_service_factory.get_service_cls("cyberark_identity")
         actions = service.get_all_rest_api_actions()
         for action in actions:
             assert action.name is not None
@@ -49,10 +49,11 @@ class TestClassCyberArk:
             "username": get_keys["CYBERARK_USERNAME"],
             "password": get_keys["CYBERARK_PASSWORD"],
         }
-        integration = sample_integration_dict("cyberark", tokens)
+        integration = sample_integration_dict("cyberark_identity", tokens)
         task = sample_python_task(integration, code=cyberark_python_code, clients=["ArkIdentityUsersService"])
         result = handle_task(task)
         test_result_format(result)
+
 
     def test_action_run(
         self, get_keys, sample_restapi_task, test_result_format, sample_integration_dict
@@ -62,7 +63,7 @@ class TestClassCyberArk:
             "username": get_keys["CYBERARK_USERNAME"],
             "password":get_keys["CYBERARK_PASSWORD"]
         }
-        integration = sample_integration_dict("cyberark", tokens)
+        integration = sample_integration_dict("cyberark_identity", tokens)
         service = integration_service_factory.get_service(None, integration)
         actions = service.get_all_rest_api_actions()
         for action in actions:
