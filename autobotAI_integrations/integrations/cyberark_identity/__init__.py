@@ -73,7 +73,7 @@ class CyberArkIdentityService(BaseService):
         return {
             "label": "CyberArk",
             "type": "form",
-            "childern" : [
+            "children" : [
                 {
                     "label": "CyberArk Integration",
                     "type": "form",
