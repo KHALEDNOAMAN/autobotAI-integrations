@@ -155,21 +155,22 @@ class CyberArkIdentityService(BaseService):
         )
         data = response.json()
         token = data.get("access_token")
-     
+        
         isp_auth = ArkISPAuth(
-            token=ArkToken(
-                token=token,
-                endpoint=self.integration.base_url,
-            )
+            # token=ArkToken(
+            #     token=token,
+            #     endpoint=self.integration.base_url,
+            # ),
+            cache_authentication=False
         )
-        # isp_auth.authenticate(
-        #     auth_profile=ArkAuthProfile(
-        #         username=payload_task.creds.envs.get("CYBERARK_USERNAME"),
-        #         auth_method=ArkAuthMethod.Identity,
-        #         auth_method_settings=IdentityArkAuthMethodSettings(),
-        #     ),
-        #     secret=ArkSecret(secret=payload_task.creds.envs.get("CYBERARK_PASSWORD")),
-        # )
+        isp_auth.authenticate(
+            auth_profile=ArkAuthProfile(
+                username=payload_task.creds.envs.get("CYBERARK_USERNAME"),
+                auth_method=ArkAuthMethod.Identity,
+                auth_method_settings=IdentityArkAuthMethodSettings(),
+            ),
+            secret=ArkSecret(secret=payload_task.creds.envs.get("CYBERARK_PASSWORD")),
+        )
         for client in client_definitions:
             try:
                 client_module = importlib.import_module(client.module, package=None)
