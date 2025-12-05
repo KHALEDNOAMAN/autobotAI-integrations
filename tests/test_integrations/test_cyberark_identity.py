@@ -64,9 +64,8 @@ class TestClassCyberArkIdentity:
             clients=["ArkIdentityUsersService", "ArkIdentityAPI"],
         )
         result = handle_task(task)
-        print(result.model_dump_json(indent=2))
         test_result_format(result)
-        assert False
+     
 
 
     def test_action_run(

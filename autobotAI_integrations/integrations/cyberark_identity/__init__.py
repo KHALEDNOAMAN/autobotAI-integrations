@@ -155,12 +155,12 @@ class CyberArkIdentityService(BaseService):
         )
         data = response.json()
         token = data.get("access_token")
-     
+        
         isp_auth = ArkISPAuth(
             token=ArkToken(
                 token=token,
                 endpoint=self.integration.base_url,
-            )
+            ),
         )
         # isp_auth.authenticate(
         #     auth_profile=ArkAuthProfile(
