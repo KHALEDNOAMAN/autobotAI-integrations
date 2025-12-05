@@ -116,6 +116,8 @@ class CyberArkIdentityService(BaseService):
     def build_python_exec_combinations_hook(
         self, payload_task: PayloadTask, client_definitions: List[SDKClient]
     ) -> list:
+        import os
+        os.environ["HOME"] = "/tmp" 
         from ark_sdk_python.auth import ArkISPAuth
         from ark_sdk_python.models.auth.ark_auth_profile import ArkAuthProfile
         from ark_sdk_python.models.auth.ark_auth_method import ArkAuthMethod, IdentityArkAuthMethodSettings
