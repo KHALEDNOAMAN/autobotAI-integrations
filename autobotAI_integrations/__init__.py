@@ -12,12 +12,16 @@ import traceback
 from enum import Enum
 from os import path
 from pathlib import Path
-from typing import Optional, Dict, Any, List, Callable, Union , Tuple
+from typing import Optional, Dict, Any, List, Callable, Union, Tuple
 
 import requests
 import yaml
 from pydantic import BaseModel
-from autobotAI_integrations.integration_schema import ConnectionTypes, IntegrationSchema, IntegrationStates
+from autobotAI_integrations.integration_schema import (
+    ConnectionTypes,
+    IntegrationSchema,
+    IntegrationStates,
+)
 from autobotAI_integrations.models import *
 from autobotAI_integrations.open_api_schema import MCPServerAction, OpenAPIAction
 from autobotAI_integrations.payload_schema import PayloadTask, Payload, Param
@@ -74,7 +78,9 @@ class BaseService:
         else:
             self.integration.integrationState = IntegrationStates.INACTIVE
             self.on_test_integration_failure()
-        logger.info(f"Integration accountId: {self.integration.accountId} And State: {self.integration.integrationState}")
+        logger.info(
+            f"Integration accountId: {self.integration.accountId} And State: {self.integration.integrationState}"
+        )
         return result
 
     def on_test_integration_failure(self):
@@ -139,7 +145,7 @@ def executor(context):
         benchmarks = cls.load_compliance_data()
         compliance_names = []
         for compliance in benchmarks:
-            compliance_names.append(compliance['name'])
+            compliance_names.append(compliance["name"])
         return compliance_names
 
     @classmethod
@@ -148,20 +154,20 @@ def executor(context):
             return []
         base_path = os.path.dirname(inspect.getfile(cls))
         integration_type = cls.get_integration_type()
-        with open(path.join(base_path, 'inventory.json')) as f:
+        with open(path.join(base_path, "inventory.json")) as f:
             clients_data = f.read()
             data = json.loads(clients_data)
         return data[integration_type]
 
     @classmethod
-    def get_all_python_sdk_clients(cls,integration_type=None):
+    def get_all_python_sdk_clients(cls, integration_type=None):
         if ConnectionInterfaces.PYTHON_SDK not in cls.supported_connection_interfaces():
             return []
         base_path = os.path.dirname(inspect.getfile(cls))
         if integration_type is not None:
-            base_path = base_path + f'/integrations/{integration_type}'
+            base_path = base_path + f"/integrations/{integration_type}"
             logger.info("base path is %s", base_path)
-        with open(path.join(base_path, ".", 'python_sdk_clients.yml')) as f:
+        with open(path.join(base_path, ".", "python_sdk_clients.yml")) as f:
             return yaml.safe_load(f)
 
     @classmethod
@@ -172,7 +178,9 @@ def executor(context):
         parser = open_api_parser.OpenApiParser()
         open_api_actions = []
         if not os.path.exists(os.path.join(base_path, "open_api.json")):
-            logger.info(f"File open_api.json not found for {cls.get_integration_type()}")
+            logger.info(
+                f"File open_api.json not found for {cls.get_integration_type()}"
+            )
             return open_api_actions
         try:
             parser.parse_file(os.path.join(base_path, "open_api.json"))
@@ -181,7 +189,7 @@ def executor(context):
             logger.exception(f"Error occurred while parsing open api file: {e}")
         finally:
             return open_api_actions
-    
+
     @classmethod
     def get_all_mcp_server_actions(cls) -> List[MCPServerAction]:
         if ConnectionInterfaces.MCP_SERVER not in cls.supported_connection_interfaces():
@@ -208,10 +216,12 @@ def executor(context):
                 "supported_execution_types": cls.supported_connection_interfaces(),
                 "clients": list_of_unique_elements(cls.get_all_python_sdk_clients()),
                 "supported_executor": "ecs",
-                "compliance_supported": False
+                "compliance_supported": False,
             }
         except Exception as e:
-            logger.exception(f"Error occurred while fetching details for {cls.__name__}: {e}")
+            logger.exception(
+                f"Error occurred while fetching details for {cls.__name__}: {e}"
+            )
             return {}
 
     def generate_steampipe_creds(self) -> SteampipeCreds:
@@ -229,8 +239,9 @@ def executor(context):
     def generate_mcp_creds(self) -> MCPCreds:
         raise NotImplementedError()
 
-    def build_python_exec_combinations_hook(self, payload_task: PayloadTask,
-                                            client_definitions: List[SDKClient]) -> list:
+    def build_python_exec_combinations_hook(
+        self, payload_task: PayloadTask, client_definitions: List[SDKClient]
+    ) -> list:
         raise NotImplementedError()
 
     def build_python_exec_combinations(self, payload_task: PayloadTask):
@@ -238,7 +249,7 @@ def executor(context):
         current_installation = set()
 
         # Check if running in a frozen state (e.g., bundled with PyInstaller for linux integration).
-        if getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS'):
+        if getattr(sys, "frozen", False) and hasattr(sys, "_MEIPASS"):
             # attempt to locate the system's Python executable.
             python_exec = shutil.which("python3") or shutil.which("python")
             exec_mode = "frozen"
@@ -255,15 +266,20 @@ def executor(context):
         if getattr(integration, "cspName", "").lower() == "python":
             user_packages_raw = getattr(integration, "packages", None)
 
-            if isinstance(user_packages_raw, str) and user_packages_raw.strip().lower() not in ("", "none", "null"):
+            if isinstance(
+                user_packages_raw, str
+            ) and user_packages_raw.strip().lower() not in ("", "none", "null"):
                 user_packages = [
-                    line.strip() for line in user_packages_raw.splitlines()
+                    line.strip()
+                    for line in user_packages_raw.splitlines()
                     if line.strip() and not line.strip().startswith("#")
                 ]
             else:
                 logger.warning("User packages are not a valid string.")
 
-        logger.debug(f"Integration: {integration.cspName}\nUser Packages: {user_packages}\nClient Defs: {client_definitions}")
+        logger.debug(
+            f"Integration: {integration.cspName}\nUser Packages: {user_packages}\nClient Defs: {client_definitions}"
+        )
 
         # Collect all unique packages
         all_packages = set(user_packages)
@@ -289,7 +305,7 @@ def executor(context):
                     # this might be replacable by simple 'importlib.metadata.version(package)' check
                     subprocess.check_call(
                         [python_exec, "-m", "pip", "show", package],
-                        env={**os.environ, "PYTHONPATH": f"/tmp/{idx}/"}
+                        env={**os.environ, "PYTHONPATH": f"/tmp/{idx}/"},
                     )
                     # Not sure if this line should be here
                     sys.path.insert(1, f"/tmp/{idx}/")
@@ -299,19 +315,37 @@ def executor(context):
                     importlib.metadata.version(package)
                 logger.info(f"Python package '{package}' already installed.")
 
-            except (subprocess.CalledProcessError, importlib.metadata.PackageNotFoundError):
-                subprocess.check_call([
-                    python_exec, "-m", "pip", "install", package,
-                    "-t", f"/tmp/{idx}/", "--no-cache-dir", "--upgrade"
-                ])
+            except (
+                subprocess.CalledProcessError,
+                importlib.metadata.PackageNotFoundError,
+            ):
+                subprocess.check_call(
+                    [
+                        python_exec,
+                        "-m",
+                        "pip",
+                        "install",
+                        package,
+                        "-t",
+                        f"/tmp/{idx}/",
+                        "--no-cache-dir",
+                        "--upgrade",
+                    ]
+                )
                 sys.path.insert(1, f"/tmp/{idx}/")
                 current_installation.add(package)
             except Exception as e:
-                logger.exception(f"Error occurred while installing python package '{package}': {e}")
+                logger.exception(
+                    f"Error occurred while installing python package '{package}': {e}"
+                )
 
-        return self.build_python_exec_combinations_hook(payload_task, client_definitions)
+        return self.build_python_exec_combinations_hook(
+            payload_task, client_definitions
+        )
 
-    def find_client_definitions(self, client_name_list,integration_type=None) -> List[SDKClient]:
+    def find_client_definitions(
+        self, client_name_list, integration_type=None
+    ) -> List[SDKClient]:
         all_clients = self.get_all_python_sdk_clients(integration_type)
         client_details = []
         for client in client_name_list:
@@ -319,7 +353,7 @@ def executor(context):
             client_details.append(SDKClient(**client_def))
         return client_details
 
-    def python_sdk_processor(self, payload_task: PayloadTask) -> (List[Dict[str, Any]], List[str]):  # type: ignore                
+    def python_sdk_processor(self, payload_task: PayloadTask) -> (List[Dict[str, Any]], List[str]):  # type: ignore
         if payload_task.creds and payload_task.creds.envs:
             for key, value in payload_task.creds.envs.items():
                 if key and value:
@@ -342,12 +376,14 @@ def executor(context):
                         }
                     )
             except:
-                errors.append({
-                    "message": traceback.format_exc(chain=True, limit=1),
-                    "other_details": {
-                        "execution_details": payload_task.context.execution_details
+                errors.append(
+                    {
+                        "message": traceback.format_exc(chain=True, limit=1),
+                        "other_details": {
+                            "execution_details": payload_task.context.execution_details
+                        },
                     }
-                })
+                )
 
         return results, errors
 
@@ -378,21 +414,23 @@ def executor(context):
         if result:
             default_data = {
                 "user_id": payload_task.context.execution_details.caller.user_id,
-                "root_user_id": payload_task.context.execution_details.caller.root_user_id
+                "root_user_id": payload_task.context.execution_details.caller.root_user_id,
             }
-            if payload_task.context.integration.category not in [IntegrationCategory.AI.value] and payload_task.context.integration.cspName not in ["python"]:
-                default_data["integration_id"] = payload_task.context.integration.accountId
-                default_data["integration_type"] = payload_task.context.integration.cspName
+            if payload_task.context.integration.category not in [
+                IntegrationCategory.AI.value
+            ] and payload_task.context.integration.cspName not in ["python"]:
+                default_data["integration_id"] = (
+                    payload_task.context.integration.accountId
+                )
+                default_data["integration_type"] = (
+                    payload_task.context.integration.cspName
+                )
             if not isinstance(result, list):
                 result = [result]
             for r in result:
                 if isinstance(r, dict):
                     resources.append(
-                        {
-                            **r,
-                            **combination.get("metadata", {}),
-                            **default_data
-                        }
+                        {**r, **combination.get("metadata", {}), **default_data}
                     )
                 else:
                     resources.append(
@@ -412,7 +450,7 @@ def executor(context):
         config_path = self._get_steampipe_config_path(plugin_name)
         logger.info(f"Setting {plugin_name}.spc file to PATH: {config_path}")
         logger.info(f"SPC Config {plugin_name}.spc file is: {config_str}")
-        with open(config_path, 'w') as f:
+        with open(config_path, "w") as f:
             f.write(config_str)
 
     def clear_steampipe_spc_config(self, plugin_name):
@@ -435,10 +473,7 @@ def executor(context):
         )
         if os.path.exists(path):
             logger.info("Mod already exists, Trying to fetch latest version.")
-            subprocess.run(
-                ["git", "pull"],
-                cwd=path
-            )
+            subprocess.run(["git", "pull"], cwd=path)
         else:
             subprocess.run(
                 [
@@ -456,22 +491,39 @@ def executor(context):
         if payload_task.creds and payload_task.creds.envs:
             for key, value in payload_task.creds.envs.items():
                 if key and value:
-                    env[key] = value    
+                    env[key] = value
 
-        logger.info("Starting Steampipe Service...")    
-        subprocess.run(["steampipe", "service", "start"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, env=env)
+        logger.info("Starting Steampipe Service...")
+        subprocess.run(
+            ["steampipe", "service", "start"],
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL,
+            env=env,
+        )
 
-        logger.info(f"Running Benchmark...") 
+        logger.info(f"Running Benchmark...")
         process = subprocess.run(
-            ["powerpipe", "benchmark", "run", "{}".format(payload_task.executable), "--output", "json"],
+            [
+                "powerpipe",
+                "benchmark",
+                "run",
+                "{}".format(payload_task.executable),
+                "--output",
+                "json",
+            ],
             cwd=path,
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
-            env=env
+            env=env,
         )
 
-        logger.info("Stopping Steampipe Service...")  
-        subprocess.run(["steampipe", "service", "stop"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, env=env)
+        logger.info("Stopping Steampipe Service...")
+        subprocess.run(
+            ["steampipe", "service", "stop"],
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL,
+            env=env,
+        )
 
         return process
 
@@ -489,12 +541,14 @@ def executor(context):
         )
         self.set_steampipe_spc_config(
             config_str=payload_task.creds.config,
-            plugin_name=payload_task.creds.plugin_name
+            plugin_name=payload_task.creds.plugin_name,
         )
         execution_mode = None
 
         logger.debug("Checking for Query type")
-        if payload_task.executable.startswith(f"{payload_task.creds.plugin_name}_compliance"):
+        if payload_task.executable.startswith(
+            f"{payload_task.creds.plugin_name}_compliance"
+        ):
             execution_mode = "compliance"
         elif payload_task.executable.lower().startswith("select"):
             execution_mode = "query"
@@ -508,10 +562,16 @@ def executor(context):
         else:
             logger.info(f"Running query: '{payload_task.executable}'")
             process = subprocess.run(
-                ["/usr/local/bin/steampipe", "query", "{}".format(payload_task.executable), "--output", "json"],
+                [
+                    "/usr/local/bin/steampipe",
+                    "query",
+                    "{}".format(payload_task.executable),
+                    "--output",
+                    "json",
+                ],
                 stdout=subprocess.PIPE,
                 stderr=subprocess.PIPE,
-                env={**os.environ, **payload_task.creds.envs}
+                env={**os.environ, **payload_task.creds.envs},
             )
 
         self.clear_steampipe_spc_config(plugin_name=payload_task.creds.plugin_name)
@@ -540,13 +600,12 @@ def executor(context):
             if stdout == "None" or not stdout or stdout == "null":
                 stdout = []
         except BaseException as e:
-            stderr = [{
-                "message": traceback.format_exc(),
-                "other_details": {
-                    "non_json_output": stdout,
-                    "stderr": error_str
+            stderr = [
+                {
+                    "message": traceback.format_exc(),
+                    "other_details": {"non_json_output": stdout, "stderr": error_str},
                 }
-            }]
+            ]
 
         logger.info(f"Transforming Output for {execution_mode}")
         logger.debug(f"Stdout: {stdout}")
@@ -579,12 +638,14 @@ def executor(context):
         params: Optional[Dict[str, Any]] = None,
         json_data: Optional[Dict[str, Any]] = None,
         form_data: Optional[Dict[str, Any]] = None,
-        auth: Optional[Tuple[str, str]] = None, 
-        timeout: int = 10,
+        auth: Optional[Tuple[str, str]] = None,
+        timeout: int = 30,
         verify_ssl: bool = True,
     ) -> Union[Dict[str, Any], List[Dict[str, Any]]]:
-        logger.info(f"Making {method} request to {url}")        
-        logger.debug(f"Headers: {headers}, Params: {params}, JSON: {json_data}, Form Data: {form_data}")
+        logger.info(f"Making {method} request to {url}")
+        logger.debug(
+            f"Headers: {headers}, Params: {params}, JSON: {json_data}, Form Data: {form_data}"
+        )
 
         response = None
         try:
@@ -592,7 +653,7 @@ def executor(context):
             if json_data and form_data:
                 logger.info("Both JSON and form data provided - using JSON data only")
                 form_data = None
-                
+
             response = requests.request(
                 method=method,
                 url=url,
@@ -676,7 +737,10 @@ def executor(context):
 
         except requests.exceptions.RequestException as e:
             logger.error(f"Request failed: {e}")
-            return {"abAI-client-error": f"Request failed: {e}", "text": response.text if response else ""}
+            return {
+                "abAI-client-error": f"Request failed: {e}",
+                "text": response.text if response else "",
+            }
 
     def execute_rest_api_task(self, payload_task: PayloadTask):
         logger.info("Running Rest API Task")
@@ -696,7 +760,10 @@ def executor(context):
 
             logger.info("Making request..")
 
-            if payload_task.creds.request_body_type == RestAPIRequestBodyType.FORM_DATA.value:  # noqa: F405
+            if (
+                payload_task.creds.request_body_type
+                == RestAPIRequestBodyType.FORM_DATA.value
+            ):  # noqa: F405
                 params["form_data"] = params.get("json_data", None)
                 params["json_data"] = None
             response = self.rest_api_processor(
@@ -742,9 +809,9 @@ def executor(context):
             # Transforming results
             if not isinstance(response, list):
                 response = [response]
-            
+
             response = change_keys(response)
-            
+
             for row in response:
                 if not isinstance(row, dict):
                     row = {"result": row}
@@ -775,34 +842,41 @@ class AIBaseService(BaseService):
     def ai_prompt_python_template():
         raise NotImplementedError()
 
-    def langchain_authenticator(self,model):
+    def prompt_executor(
+        self,
+        model=None,
+        prompt=None,
+        options: dict = {},
+        messages: List[Dict[str, Any]] = [],
+    ):
         raise NotImplementedError()
 
-    def prompt_executor(self, model=None, prompt=None, options: dict = {}, messages: List[Dict[str, Any]] = []):
+    def get_pydantic_agent(
+        self, model: str, tools, system_prompt: str, options: dict = {}
+    ):
         raise NotImplementedError()
-    
-    def get_pydantic_agent(self, model: str, tools, system_prompt: str, options: dict = {}):
-        raise NotImplementedError()
-    
-    def load_llama_index_embedding_model(self, model_name: Optional[str] = None,**kwargs):
+
+    def load_llama_index_embedding_model(
+        self, model_name: Optional[str] = None, **kwargs
+    ):
         """
         Returns Langchaain Embedding model object and model dimensions as tuple
         """
         raise NotImplementedError()
-    
+
     def load_llama_index_llm(self, model: str, **kwargs):
         """
         Returns Langchaain LLM model object
         """
         raise NotImplementedError()
-    
+
     def check_context_length(self, data: str, model_name: str) -> dict:
         try:
             llm = self.load_llama_index_llm(model_name)
             context_window = llm.metadata.context_window
 
             # Estimate token count (rough approximation: 4 chars ≈ 1 token)
-            estimated_tokens = len(data) #To be safe
+            estimated_tokens = len(data)  # To be safe
 
             return {
                 "text_length": len(data),

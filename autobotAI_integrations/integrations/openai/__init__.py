@@ -208,12 +208,6 @@ class OpenAIService(AIBaseService):
         )
         return Agent(model, system_prompt=system_prompt, tools=tools, **options)
 
-    def langchain_authenticator(self, model):
-        from langchain_openai import ChatOpenAI
-        llm = ChatOpenAI(
-            temperature=0, model_name=model, openai_api_key=self.integration.api_key
-        )
-        return llm
     
     def load_llama_index_embedding_model(self, model_name: Optional[str] = None, **kwargs):
         """

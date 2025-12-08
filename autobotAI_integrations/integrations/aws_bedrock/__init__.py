@@ -306,36 +306,7 @@ class AWSBedrockService(AIBaseService):
                 "temperature": float(temperature),
             }
         request = json.dumps(native_request)
-        return request
-
-    def langchain_authenticator(self, model=None):
-        # if self.integration.roleArn not in ["None", None]:
-        #     boto3_helper = Boto3Helper(
-        #         self.ctx, integration=self.integration.dump_all_data()
-        #     )
-        #     session=boto3_helper.get_session()
-        # else:
-        #     session=boto3.Session(
-        #         aws_access_key_id=self.integration.access_key,
-        #         aws_secret_access_key=self.integration.secret_key,
-        #         region_name=self.integration.region,
-        #         aws_session_token=self.integration.session_token if self.integration.session_token else None,
-        #     )
-        model_kwargs = {"max_tokens": int(2048), "temperature": float(0)}
-        # bedrock_runtime= self._get_aws_client("bedrock-runtime")
-        # bedrock_runtime = boto3.client(
-        #     service_name="bedrock-runtime",
-        #     region_name=self.integration.region
-        # )
-        from langchain_aws import BedrockLLM
-
-        llm = BedrockLLM(
-            region_name=self.integration.region,
-            # client=bedrock_runtime,
-            model_id=model,
-            model_kwargs=model_kwargs,
-        )
-        return llm
+        return request    
 
     def get_pydantic_agent(
         self, model: str, tools, system_prompt: str, options: dict = {}
