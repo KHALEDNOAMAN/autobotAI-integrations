@@ -1,0 +1,5 @@
+- name: sailpoint
+  import_library_names:
+    - sailpoint.v2025
+  pip_package_names:
+    - sailpoint
