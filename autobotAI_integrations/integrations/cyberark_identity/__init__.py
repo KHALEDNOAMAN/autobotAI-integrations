@@ -104,6 +104,7 @@ class CyberArkIdentityService(BaseService):
                             "type": "text",
                             "label": "ClientId",
                             "placeholder": "Enter your ClientId Of CyberArk",
+                            "description":"Enter the OAuth Client ID provided by the administrator. Do not enter your CyberArk admin login ID",
                             "required": True,
                         },
                         {
@@ -111,6 +112,7 @@ class CyberArkIdentityService(BaseService):
                             "type": "text/password",
                             "label": "Client Secret",
                             "placeholder": "Enter your Client's Secret Of CyberArk",
+                            "description":"Enter the OAuth Client Secret provided by the administrator. Do not enter your CyberArk admin password.",
                             "required": True,
                         },
                     ],
