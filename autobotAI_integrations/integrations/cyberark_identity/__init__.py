@@ -1,14 +1,20 @@
-from typing import Optional, Union ,List
-from pydantic import Field,field_validator
+from typing import Optional, Union, List
+from pydantic import Field, field_validator
 import requests
 import re
 import importlib
 
-from autobotAI_integrations import BaseService
-from autobotAI_integrations.integration_schema import ConnectionTypes
-from autobotAI_integrations import BaseSchema, SteampipeCreds, RestAPICreds, SDKCreds, CLICreds , \
-    BaseService, ConnectionInterfaces, PayloadTask, SDKClient
-from autobotAI_integrations.models import IntegrationCategory, MCPCreds
+from autobotAI_integrations import (
+    BaseService,
+    BaseSchema,
+    RestAPICreds,
+    SDKCreds,
+    ConnectionInterfaces,
+    PayloadTask,
+    SDKClient,
+)
+from autobotAI_integrations.models import IntegrationCategory
+
 
 class CyberArkIdentityIntegration(BaseSchema):
     base_url: str = Field(default=None, description="Identity Tenant URL")
@@ -27,38 +33,45 @@ class CyberArkIdentityIntegration(BaseSchema):
         if base_url and base_url != "None":
             if re.match(identityTenantURL, base_url):
                 return base_url.strip("/")
-            raise ValueError(f"Invalid CyberArk Identity Tenant URL: {base_url}. Format: https://example.id.cyberark.cloud")
+            raise ValueError(
+                f"Invalid CyberArk Identity Tenant URL: {base_url}. Format: https://example.id.cyberark.cloud"
+            )
         raise ValueError("CyberArk Identity Tenant URL is required")
 
+
 class CyberArkIdentityService(BaseService):
-    def __init__(self,ctx:dict,integration:Union[CyberArkIdentityIntegration,dict]):
-        if not isinstance(integration,CyberArkIdentityIntegration):
-            integration=CyberArkIdentityIntegration(**integration)
-        super().__init__(ctx,integration)
+    def __init__(
+        self, ctx: dict, integration: Union[CyberArkIdentityIntegration, dict]
+    ):
+        if not isinstance(integration, CyberArkIdentityIntegration):
+            integration = CyberArkIdentityIntegration(**integration)
+        super().__init__(ctx, integration)
 
     def _test_integration(self):
         try:
-            headers={
-                "Content-Type":"application/x-www-form-urlencoded"
-            }
+            headers = {"Content-Type": "application/x-www-form-urlencoded"}
 
             user_endpoint = f"{self.integration.base_url}/oauth2/platformtoken/"
-            response = requests.post(user_endpoint, headers=headers,data={
-            "grant_type":"client_credentials",
-            "client_id": self.integration.username,
-            "client_secret": self.integration.password
-            })
+            response = requests.post(
+                user_endpoint,
+                headers=headers,
+                data={
+                    "grant_type": "client_credentials",
+                    "client_id": self.integration.username,
+                    "client_secret": self.integration.password,
+                },
+            )
             if response.status_code == 200:
                 return {"success": True}
             elif response.status_code == 401:
                 return {
                     "success": False,
-                    "error": "Authentication failed. Please check your UserName and PassWord."
+                    "error": "Authentication failed. Please check your UserName and PassWord.",
                 }
             elif response.status_code == 404:
                 return {
-                "success": False,
-                "error": "Error: Not Found. Invalid CyberArk Indentity URL",
+                    "success": False,
+                    "error": "Error: Not Found. Invalid CyberArk Indentity URL",
                 }
             else:
                 return {
@@ -67,13 +80,13 @@ class CyberArkIdentityService(BaseService):
                 }
         except requests.exceptions.RequestException as e:
             return {"success": False, "error": str(e)}
-            
+
     @staticmethod
     def get_forms():
         return {
             "label": "CyberArk",
             "type": "form",
-            "children" : [
+            "children": [
                 {
                     "label": "CyberArk Integration",
                     "type": "form",
@@ -91,7 +104,7 @@ class CyberArkIdentityService(BaseService):
                             "type": "text",
                             "label": "ClientId",
                             "placeholder": "Enter your ClientId Of CyberArk",
-                            "description":"Enter the Client ID of the user that has been marked as an OAuth confidential client. Do not enter your CyberArk admin login ID",
+                            "description": "Enter the Client ID of the user that has been marked as an OAuth confidential client. Do not enter your CyberArk admin login ID",
                             "required": True,
                         },
                         {
@@ -99,27 +112,28 @@ class CyberArkIdentityService(BaseService):
                             "type": "text/password",
                             "label": "Client Secret",
                             "placeholder": "Enter your Client's Secret Of CyberArk",
-                            "description":"Enter the Password of the user that has been marked as an OAuth confidential client. Do not enter your CyberArk admin password.",
+                            "description": "Enter the Password of the user that has been marked as an OAuth confidential client. Do not enter your CyberArk admin password.",
                             "required": True,
                         },
-                    ]
+                    ],
                 }
-            ]
+            ],
         }
-    
+
     @staticmethod
     def get_schema(ctx=None):
         return CyberArkIdentityIntegration
-    
+
     @staticmethod
     def supported_connection_interfaces():
-        return [ConnectionInterfaces.PYTHON_SDK,ConnectionInterfaces.REST_API]
-    
+        return [ConnectionInterfaces.PYTHON_SDK, ConnectionInterfaces.REST_API]
+
     def build_python_exec_combinations_hook(
         self, payload_task: PayloadTask, client_definitions: List[SDKClient]
     ) -> list:
         from ark_sdk_python.auth import ArkISPAuth
         from ark_sdk_python.auth.ark_auth import ArkToken
+
         clients_classes = dict()
 
         headers = {"Content-Type": "application/x-www-form-urlencoded"}
@@ -138,22 +152,22 @@ class CyberArkIdentityService(BaseService):
         )
         data = response.json()
         token = data.get("access_token")
- 
+
         isp_auth = ArkISPAuth(
             token=ArkToken(
                 token=token,
                 endpoint=self.integration.base_url,
             ),
         )
-        
+
         for client in client_definitions:
             try:
                 client_module = importlib.import_module(client.module, package=None)
-                
+
                 if not client.class_name:
                     clients_classes[client.name] = client_module
                     continue
-                
+
                 if hasattr(client_module, client.class_name):
                     cls = getattr(client_module, client.class_name)
                     try:
@@ -163,42 +177,40 @@ class CyberArkIdentityService(BaseService):
             except BaseException as e:
                 print(f"Error initializing client {client.name}: {e}")
                 continue
-        
+
         return [
             {
                 "clients": clients_classes,
                 "params": self.prepare_params(payload_task.params),
-                "context": payload_task.context
+                "context": payload_task.context,
             }
         ]
-    
+
     def generate_python_sdk_creds(self) -> SDKCreds:
         envs = {
             "CYBERARK_USERNAME": self.integration.username,
             "CYBERARK_PASSWORD": self.integration.password,
         }
         return SDKCreds(envs=envs)
-    
+
     def generate_rest_api_creds(self):
-        headers={
-                "Content-Type":"application/x-www-form-urlencoded"
-        }
+        headers = {"Content-Type": "application/x-www-form-urlencoded"}
 
         user_endpoint = f"{self.integration.base_url}/oauth2/platformtoken/"
-        response = requests.post(user_endpoint, headers=headers,data={
-        "grant_type":"client_credentials",
-        "client_id": self.integration.username,
-        "client_secret": self.integration.password
-        })
+        response = requests.post(
+            user_endpoint,
+            headers=headers,
+            data={
+                "grant_type": "client_credentials",
+                "client_id": self.integration.username,
+                "client_secret": self.integration.password,
+            },
+        )
         data = response.json()
-        token = data.get('access_token')
+        token = data.get("access_token")
         return RestAPICreds(
             base_url=self.integration.base_url,
             headers={
                 "Authorization": f"Bearer {token}",
-            }
+            },
         )
-    
-        
-
-    

@@ -1,10 +1,7 @@
 import traceback
-import pytest
 
 from autobotAI_integrations.handlers.task_handler import handle_task
 from autobotAI_integrations.integrations import integration_service_factory
-import requests
-import json
 
 cyberark_python_code = """
 def executor(context):
@@ -54,7 +51,6 @@ class TestClassCyberArkIdentity:
         result = handle_task(task)
         test_result_format(result)
 
-
     def test_action_run(
         self, get_keys, sample_restapi_task, test_result_format, sample_integration_dict
     ):
@@ -76,5 +72,4 @@ class TestClassCyberArkIdentity:
                     result = handle_task(task)
                     test_result_format(result)
                 except Exception as e:
-                    traceback.print_exc() 
-              
+                    traceback.print_exc()
