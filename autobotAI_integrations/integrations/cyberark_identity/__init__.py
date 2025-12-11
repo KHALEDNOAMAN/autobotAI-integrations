@@ -94,9 +94,9 @@ class CyberArkIdentityService(BaseService):
                         {
                             "name": "base_url",
                             "type": "text/url",
-                            "label": "CyberArk Indentity URL",
+                            "label": "CyberArk Identity URL",
                             "placeholder": "https://example.id.cyberark.cloud",
-                            "description": "Your CyberArk Indentity URL",
+                            "description": "Your CyberArk Identity URL",
                             "required": True,
                         },
                         {
@@ -104,7 +104,7 @@ class CyberArkIdentityService(BaseService):
                             "type": "text",
                             "label": "ClientId",
                             "placeholder": "Enter your ClientId Of CyberArk",
-                            "description":"Enter the OAuth Client ID provided by the administrator. Do not enter your CyberArk admin login ID",
+                            "description":"Enter the Client ID of the user that has been marked as an OAuth confidential client. Do not enter your CyberArk admin login ID",
                             "required": True,
                         },
                         {
@@ -112,7 +112,7 @@ class CyberArkIdentityService(BaseService):
                             "type": "text/password",
                             "label": "Client Secret",
                             "placeholder": "Enter your Client's Secret Of CyberArk",
-                            "description":"Enter the OAuth Client Secret provided by the administrator. Do not enter your CyberArk admin password.",
+                            "description":"Enter the Password of the user that has been marked as an OAuth confidential client. Do not enter your CyberArk admin password.",
                             "required": True,
                         },
                     ],
