@@ -1,0 +1,1316 @@
+﻿{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "CyberArk REST API [PUBLIC]",
+    "description": "All available requests in CyberArk Privileged Account Security Web Services\n\n**Last Updated Version:** v13.0\n\n# THIS IS UNOFFICIAL DOCUMENTATION\n\nThis collection is backed up at [https://github.com/infamousjoeg/CyberArk-RESTAPI](https://github.com/infamousjoeg/CyberArk-RESTAPI).\n\n## New Features & Additions\n\n- Added Authentication to CyberArk Identity\n\nHappy automating!\n\n## Getting Started Guide\n\n[Getting Started with REST Using Postman](https://github.com/infamousjoeg/CyberArk-RESTAPI/blob/master/Getting%20Started%20with%20REST%20Using%20Postman.pdf) (PDF)\n\n## Community Tools\n\n- [psPAS](https://github.com/pspete/psPAS) - PowerShell Module for CyberArk's REST API\n- [CredentialRetriever](https://github.com/pspete/CredentialRetriever) - PowerShell Module for CyberArk's Application Access Manager (AAM)\n- [pyAIM](https://github.com/infamousjoeg/pyAIM) - Python Client Library for CyberArk's Application Access Manager (AAM)\n    \n\n## Code Examples\n\n- [cyberark/epv-api-scripts](https://github.com/cyberark/epv-api-scripts)\n- [infamousjoeg on GitHub](https://github.com/infamousjoeg?tab=repositories)\n- [CyberArk's Automation Greatest Hits (Awesome List of Automation)](https://cybr.rocks/greatesthits)\n    \n\n## YouTube Videos Playlist\n\n- [CyberArk Videos Playlist Curated by InfamousJoeG](https://www.youtube.com/playlist?list=PL-p_9AwMQDmkS6rCXQrINn0Xc7dv73dWU)\n    \n\n## Maintainer\n\n[Joe Garcia](https://github.com/infamousjoeg)\n\n[Buy me a coffee](https://www.buymeacoffee.com/infamousjoeg)\n\n## Status Codes\n\n| Status Name | Status Code | Status Description |\n| --- | --- | --- |\n| Success | 200 | The request succeeded. The actual response will depend on the request method used. |\n| Created | 201 | The request was fulfilled and resulted in a new resource being created. |\n| Bad Request | 400 | The request could not be understood by the server due to incorrect syntax. |\n| Unauthorized | 401 | The request requires user authentication. |\n| Forbidden | 403 | The server received and understood the request, but will not fulfill it. Authorization will not help and the request MUST NOT be repeated. |\n| Not Found | 404 | The server did not find anything that matches the Request-URI. No indication is given of whether the condition is temporary or permanent. |\n| Conflict | 409 | The request could not be completed due to a conflict with the current state of the resource. |\n| Internal Server Error | 500 | The server encountered an unexpected condition which prevented it from fulfilling the request. |\n\n_NOTE: If you are having issues with DEL or PUT methods, make sure that your Password Vault Web Access (PVWA) Server's IIS instance does not include WebDav Publishing. This will cause known issues._",
+    "version": "1.0.0"
+  },
+  "paths": {
+    "/Security/AdvanceAuthentication": {
+      "post": {
+        "summary": "Enter email code",
+        "description": "",
+        "parameters": [
+          {
+            "name": "identityTenantURL",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        },
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/Security/StartAuthentication": {
+      "post": {
+        "summary": "Start Authentication",
+        "description": "",
+        "parameters": [
+          {
+            "name": "identityTenantURL",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        },
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/UserMgmt/SignOutCurrentSession": {
+      "post": {
+        "summary": "Sign Out from Current Session",
+        "description": "",
+        "parameters": [
+          {
+            "name": "identityTenantURL",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        }
+      }
+    },
+    "/oauth2/token/{identitySCIMAppID}": {
+      "post": {
+        "summary": "OAuth2 Token - Resource Owner",
+        "description": "Allows retrieval of an Oauth2 Token based on the Identity SCIM Username and Identity SCIM Secret.\n\n***Notes:***\n\n*   *Username Default:* identity-privilege-integration-user$@{{identityDomainSuffix}}\n*   *Scope Default:* scim",
+        "parameters": [
+          {
+            "name": "identityTenantURL",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "identitySCIMAppID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        },
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/scim/v2/containers": {
+      "get": {
+        "summary": "Get Containers",
+        "description": "This endpoint allows you to obtain information relating to all containers (safes) in the vault.\n\n#### Permissions Required\n\n*   Requires individual Container (Safe) Audit Permissions\n    \n\n#### Query Parameters\n\n*   **Index:**\n    *   Returns resources specified by an index. Useful when there are large number of returned resources to control pagination.\n        *   startIndex: initial starting offset for returned resources.\n        *   count: total count of returned resources.\n    *   Example: Return Containers 10 through 13 using index.\n        *   `GET https://myTenantUrl/scim/v2/Containers?startIndex=10&count=5`\n*   **Sort:**\n    *   Returns all resources sorted either ascending (default) or descending based on a resource attribute.\n        *   sortBy: resource attribute to sort by.\n        *   sortOrder: ascending (default) or descending.\n    *   Example: Return Containers in ascending order by Container name.\n        *   `GET https://myTenantUrl/scim/v2/Containers?sortBy=name&sortOrder=ascending`\n*   **Filter:**\n    *   Returns a single resource specified by the filter in the response.\n    *   Example: Return a single Container based on the *name* filter.\n        *   `GET https://myTenantUrl/scim/v2/Containers?filter=name eq \"myContainerName\"`\n*   **Attributes:**\n    *   Returns only the specified attributes in the JSON response.\n    *   Example: Return all Containers with only the *name* attribute.\n        *   `GET https://myTenantUrl/scim/v2/Containers&attributes=name`",
+        "parameters": [
+          {
+            "name": "startIndex",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "required": false
+          },
+          {
+            "name": "count",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "required": false
+          },
+          {
+            "name": "sortBy",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "required": false
+          },
+          {
+            "name": "sortOrder",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "required": false
+          },
+          {
+            "name": "filter",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "required": false
+          },
+          {
+            "name": "attributes",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "required": false
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        },
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Add Container",
+        "description": "With the POST method, you can add Containers with core attributes. This request creates a Container. Include the SCIM schema in the request payload, as shown in the following example.\n\n#### **Required JSON Attributes**\n\n*   name\n*   schemas",
+        "parameters": [
+          {
+            "name": "identityTenantURL",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        },
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/scim/v2/containers/{identitySCIMContainerName}": {
+      "get": {
+        "summary": "Get Container By Name",
+        "description": "**Requirements:** ***Requires CyberArk Password Vault Web Access (PVWA) version 12.2+***\n\nEach Container object has a unique Container Name which you can find in the response payload of a GET request to [https://myTenantUrl.scim/v2/Containers](https://myTenantUrl.scim/v2/Containers). Adding the Container Name attribute value to the Containers endpoint retrieves attributes for just that Container\n\nStartFragment\n\n#### Permissions Required\n\n*   Requires individual Container (Safe) Audit Permissions\n    \n\nEndFragment",
+        "parameters": [
+          {
+            "name": "attributes",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "required": false
+          },
+          {
+            "name": "identitySCIMContainerName",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        }
+      },
+      "put": {
+        "summary": "Update Container",
+        "description": "This request navigates to a specific Container endpoint through the Container Name and changes an informational aspect about the Container.\n\n***Note:*** *If you update a container name, the corresponding Container Id and meta.location are updated to reflect the new Name.*\n\n#### **Recommended Attributes**\n\n*   name\n*   schemas\n*   id\n*   meta",
+        "parameters": [
+          {
+            "name": "identityTenantURL",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "identitySCIMContainerName",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        },
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete Container",
+        "description": "DELETE Container deletes a Container (Safe). The request uses the Container Name to locate the Container's endpoint.",
+        "parameters": [
+          {
+            "name": "identityTenantURL",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "identitySCIMContainerName",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        }
+      }
+    },
+    "/scim/v2/ContainerPermissions": {
+      "get": {
+        "summary": "Get Containers Permissions",
+        "description": "This endpoint allows you to obtain information relating to all Container (Safe) Permissions in the vault.\n\n#### Permissions Required\n\n*   Requires individual Container (Safe) Audit Permissions\n    \n\n#### Query Parameters\n\n*   **Index:**\n    *   Returns resources specified by an index. Useful when there are large number of returned resources to control pagination.\n        *   startIndex: initial starting offset for returned resources.\n        *   count: total count of returned resources.\n    *   Example: Return Containers 10 through 13 using index.\n        *   `GET https://myTenantUrl/scim/v2/ContainerPermissions?startIndex=10&count=5`\n*   **Sort:**\n    *   Returns all resources sorted either ascending (default) or descending based on a resource attribute.\n        *   sortBy: resource attribute to sort by.\n        *   sortOrder: ascending (default) or descending.\n    *   Example: Return ContainerPermissions in ascending order by Container name.\n        *   `GET https://myTenantUrl/scim/v2/ContainerPermissions?sortBy=container.name&sortOrder=ascending`\n*   **Filter:**\n    *   Returns a single resource specified by the filter in the response.\n    *   Example: Return a single Container based on the *container.name* filter.\n        *   `GET https://myTenantUrl/scim/v2/ContainerPermissions?filter=container.name eq \"exampleContainerName\"`\n*   **Attributes:**\n    *   Returns only the specified attributes in the JSON response.\n    *   Example: Return all Containers with only the *container.name* attribute.\n        *   `GET https://myTenantUrl/scim/v2/ContainerPermissions&attributes=container.name`",
+        "parameters": [
+          {
+            "name": "attributes",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "required": false
+          },
+          {
+            "name": "startIndex",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "required": false
+          },
+          {
+            "name": "count",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "required": false
+          },
+          {
+            "name": "sortBy",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "required": false
+          },
+          {
+            "name": "sortOrder",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "required": false
+          },
+          {
+            "name": "filter",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "required": false
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        },
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Add Container Permissions",
+        "description": "With the POST method, you can add Container Permissions for a User or Group. Include the SCIM schema in the request payload, as shown in the following example.\n\n#### **Required JSON Attributes**\n\n*   rights\n*   container.name\n*   user or group identifier (e.g. user.display, user.id, group.id, etc...)\n*   schemas",
+        "parameters": [
+          {
+            "name": "identityTenantURL",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        },
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/scim/v2/ContainerPermissions/{identitySCIMContainerName}:{identitySCIMObjectName}": {
+      "get": {
+        "summary": "Get Containers Permissions By Name",
+        "description": "**Requirements:** ***Requires CyberArk Password Vault Web Access (PVWA) version 12.2+***\n\nThis scenario is unique in that it requires two arguments as each container may have many users or groups mapped to it from a permissions perspective. The two attributes required are one of two options:\n\n1.  Container Name and User Name\n2.  Container Name and Group Name\n    \n\nThe combination of the two variables is the Container Permission Id. (e.g. ContainerName:UserName is the Id of a specific Container Permission resource)",
+        "parameters": [
+          {
+            "name": "attributes",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "required": false
+          },
+          {
+            "name": "identitySCIMContainerName",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "identitySCIMObjectName",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        },
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "summary": "Update Container Permissions",
+        "description": "PUT Container Permission updates a Container (Safe) Permission for a single Container. The request uses the Container Permission Id which is the combination of the Container Name and the User Name or Group Name to locate the Container Permission's endpoint.\n\n#### **Recommended JSON Attributes**\n\n*   container attribute (e.g. container.name)\n*   user attribute (e.g. user.display, user.id)\n*   schemas",
+        "parameters": [
+          {
+            "name": "identityTenantURL",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "identitySCIMContainerName",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "identitySCIMObjectName",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        },
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete Container Permissions",
+        "description": "DELETE Container Permission deletes a Container (Safe) Permission from a single Container. The request uses the Container Permission Id which is the combination of the Container Name and the User Name or Group Name to locate the Container Permission's endpoint.",
+        "parameters": [
+          {
+            "name": "identityTenantURL",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "identitySCIMContainerName",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "identitySCIMObjectName",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        },
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/scim/v2/groups": {
+      "get": {
+        "summary": "Get Groups",
+        "description": "This endpoint allows you to obtain information relating to all groups in Vault. Group names, users involved in the group, and group specifications are outlined in the response.\n\n#### Permissions Required\n\n*   User Rights\n    *   Audit Users\n\n#### Query Parameters\n\n*   **Index:**\n    *   Returns resources specified by an index. Useful when there are large number of returned resources to control pagination.\n        *   startIndex: initial starting offset for returned resources.\n        *   count: total count of returned resources. (**NOTE: Pagination is currently not working for Groups)**\n    *   Example: Return users 10 through 13 using index.\n        *   `GET https://myTenantUrl/scim/v2/Groups?startIndex=10&count=5`\n*   **Sort:**\n    *   Returns all resources sorted either ascending (default) or descending based on a resource attribute.\n        *   sortBy: resource attribute to sort by.\n        *   sortOrder: ascending (default) or descending.\n    *   Example: Return Groups sorted by *displayName* in *ascending* order.\n        *   `GET https://myTenantUrl/scim/v2/Groups?sortBy=displayName&sortOrder=ascending`\n*   **Filter:**\n    *   Returns a single resource specified by the filter in the response.\n    *   Example: Return a single Group based on the *displayName* filter.\n        *   `GET https://myTenantUrl/scim/v2/Groups?filter=displayName eq \"myGroupName\"`\n*   **Attributes:**\n    *   Returns only the specified attributes in the JSON response.\n    *   Example: Return all Groups with only the *displayName* attribute.\n        *   `GET https://myTenantUrl/scim/v2/Groups&attributes=displayName`",
+        "parameters": [
+          {
+            "name": "sortBy",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "required": false
+          },
+          {
+            "name": "sortOrder",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "required": false
+          },
+          {
+            "name": "startIndex",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "required": false
+          },
+          {
+            "name": "count",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "required": false
+          },
+          {
+            "name": "attributes",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "required": false
+          },
+          {
+            "name": "filter",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "required": false
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        }
+      },
+      "post": {
+        "summary": "Add Group",
+        "description": "With the POST method, you can add groups with core attributes.\n\nThis request creates a group and optionally adds a user to that group. More than one user can be added to a created group as long as all of the user IDs are listed as members of the group. Include the SCIM schema in the request payload.\n\n#### Required Permissions\n\n*   User Rights\n    *   Audit Users\n    *   Add/Update Users\n\n#### **Required Body Attributes**\n\n*   displayName\n*   schemas",
+        "parameters": [
+          {
+            "name": "identityTenantURL",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        },
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/scim/v2/groups/{identitySCIMGroupID}": {
+      "get": {
+        "summary": "Get Group by ID",
+        "description": "#### **Get Group By Group Id**\n\n**Requirements:** ***Requires CyberArk Password Vault Web Access (PVWA) version 12.2+***\n\n`GET https://myTenantUrl/scim/v2/Groups/{{id}}`\n\nEach Group object has a unique Group Id (attribute id) generated by the SCIM server, which you can find in the response payload of a GET request to [https://myTenantUrl.scim/v2/Groups](https://myTenantUrl.scim/v2/Groups). Adding the id attribute value to the Groups endpoint retrieves attributes for just that Group.\n\n#### Permissions Required\n\n*   User Rights\n    *   Audit Users\n\n#### Query Parameters\n\n*   **Attributes:**\n    *   Returns only the specified attributes in the JSON response.\n    *   Example: Return Group 8 with only the *displayName* attribute.\n        *   `GET https://myTenantUrl/scim/v2/Groups/8&attributes=displayName`",
+        "parameters": [
+          {
+            "name": "attributes",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "required": false
+          },
+          {
+            "name": "identitySCIMGroupID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        }
+      },
+       "put": {
+        "summary": "Update Group",
+        "description": "This request navigates to a specific group endpoint through the group ID and changes an informational aspect about the group or user associated with the group. The PUT one group method replaces an existing group with an updated version, or creates a new group entirely.\n\n***Note:*** *If you want to keep existing group memberships they must be sent as part of the request.*\n\n#### Required Permissions\n\n*   User Rights\n    *   Audit Users\n    *   Add/Update Users\n\n#### **Recommended Body Attributes**\n\n*   displayName\n*   schemas\n*   id\n*   meta",
+        "parameters": [
+          {
+            "name": "identityTenantURL",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "identitySCIMGroupID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        },
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "summary": "Patch Group",
+        "description": "This request navigates to a specific group endpoint through the group ID and changes an informational aspect about the group or user associated with the group. The PUT one group method replaces an existing group with an updated version, or creates a new group entirely.\n\n***Note:*** *If you want to keep existing group memberships they must be sent as part of the request.*\n\n#### Required Permissions\n\n*   User Rights\n    *   Audit Users\n    *   Add/Update Users\n\n#### **Recommended Body Attributes**\n\n*   displayName\n*   schemas\n*   id\n*   meta",
+        "parameters": [
+          {
+            "name": "identityTenantURL",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "identitySCIMGroupID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        },
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete Group",
+        "description": "DELETE one group deletes a group. The request uses a group ID to locate the group's endpoint. DELETE one group is the only request that returns no information in the HTTP response body. Requesting DELETE twice will yield an error, since the group ID no longer exists.\n\nDeleting a group will not delete the users involved, but will delete the connections the users have to the nonexistent group.\n\n#### **Required Permissions**\n\n*   User Rights\n    *   Audit Users\n    *   Add/Update Users\n\n#### **Valid Examples**\n\nDelete Group with Group Id 1:\n\n`DELETE https://myTenantUrl/scim/v2/Groups/1`",
+        "parameters": [
+          {
+            "name": "identityTenantURL",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "identitySCIMGroupID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        }
+      }
+    },
+    "/scim/v2/privilegeddata": {
+      "get": {
+        "summary": "Get Priviledged Data",
+        "description": "### **Get All Privileged Data**\n\nThis endpoint allows you to obtain information relating to all Privileged Data (Accounts) in the vault.\n\n#### Query Parameters\n\n*   **Index:**\n    *   Returns resources specified by an index. Useful when there are large number of returned resources to control pagination.\n        *   startIndex: initial starting offset for returned resources.\n        *   count: total count of returned resources.\n    *   Example: Return Privileged Data resources 10 through 15 using index.\n        *   `GET https://myTenantUrl/scim/v2/PrivilegedData?startIndex=10&count=5`\n*   **Sort:**\n    *   Returns all resources sorted either ascending (default) or descending based on a resource attribute.\n        *   sortBy: resource attribute to sort by.\n        *   sortOrder: ascending (default) or descending.\n    *   Example: Return Privileged Data resources in *ascending* order by *name*.\n        *   `GET https://myTenantUrl/scim/v2/PrivilegedData?sortBy=name&sortOrder=ascending`\n*   **Filter:**\n    *   Returns a single resource specified by the filter in the response.\n    *   Example: Return a single Privileged Data resource based on the *name* filter.\n        *   `GET https://myTenantUrl/scim/v2/PrivilegedData?filter=name eq \"exampleResourceName\"`\n*   **Attributes:**\n    *   Returns only the specified attributes in the JSON response.\n    *   Example: Return all Privileged Data resources with only the *name* attribute.\n        *   `GET https://myTenantUrl/scim/v2/PrivilegedData=container.name`",
+        "parameters": [
+          {
+            "name": "attributes",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "required": false
+          },
+          {
+            "name": "startIndex",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "required": false
+          },
+          {
+            "name": "count",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "required": false
+          },
+          {
+            "name": "sortBy",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "required": false
+          },
+          {
+            "name": "sortOrder",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "required": false
+          },
+          {
+            "name": "filter",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "required": false
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        },
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/scim/v2/privilegeddata/{identitySCIMPrivilegedDataID}": {
+      "get": {
+        "summary": "Get Priviledged Data By ID",
+        "description": "**Requirements:** ***Requires CyberArk Password Vault Web Access (PVWA) version 12.2+***\n\nReturns a specific Privileged Data Resource.",
+        "parameters": [
+          {
+            "name": "attributes",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "required": false
+          },
+          {
+            "name": "identitySCIMPrivilegedDataID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        },
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "summary": "Update Priviledged Data",
+        "description": "PUT Privileged Data updates a Privileged Data Resource. The request uses the Privileged Data Id. The PUT request only allows you to update core attributes of the Privileged Data resource such as the name. To replace attributes of the resource itself you must use the PATCH operation.\n\n#### **Required JSON Attributes**\n\n*   name\n*   schemas\n*   urn:ietf:params:scim:schemas:cyberark:1.0:PrivilegedData",
+        "parameters": [
+          {
+            "name": "identityTenantURL",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "identitySCIMPrivilegedDataID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        },
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "summary": "Modify Priviledged Data",
+        "description": "Use PATCH to modify a Privileged Data resource.  \nThe following example adds a platformID attribute\n\n***Note:*** *Privileged data is the only Resource Type that accepts a Patch and the patch body conforms to the following json template as defined in the SCIM Schemas response.*",
+        "parameters": [
+          {
+            "name": "identityTenantURL",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "identitySCIMPrivilegedDataID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        },
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete Priviledged Data",
+        "description": "The DELETE request deletes a single Privileged Data resource specified in the SCIM URL. You can only delete a single resource per request.",
+        "parameters": [
+          {
+            "name": "identityTenantURL",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "identitySCIMPrivilegedDataID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        },
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        }
+      }
+    },
+    "scim/v2/privilegeddata": {
+      "post": {
+        "summary": "Add Priviledged Data",
+        "description": "With the POST method, you can add Privileged Data with core attributes. This request creates a Privileged Data resource in a specific Container (Safe). Include the SCIM schema in the request payload, as shown in the following example.\n\n#### **Required JSON Attributes**\n\n*   name\n*   type\n*   schemas\n*   urn:ietf:params:scim:schemas:cyberark:1.0:PrivilegedData",
+        "parameters": [
+          {
+            "name": "identityTenantURL",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        },
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/scim/v2/serviceproviderconfig": {
+      "get": {
+        "summary": "SCIM Config",
+        "description": "SCIM provides a schema for representing the service provider's configuration, identified using the following schema URI:\n\n> urn:ietf:params:scim:schemas:core:2.0:ServiceProviderConfig\n\nThe service provider configuration resource enables a service provider to discover SCIM specification features in a standardized form as well as provide additional implementation details to clients. All attributes have a mutability of \"readOnly\". Unlike other core resources, the \"id\" attribute is not required for the service provider configuration resource.",
+        "parameters": [
+          {
+            "name": "identityTenantURL",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        }
+      }
+    },
+    "/scim/v2/resourcetypes": {
+      "get": {
+        "summary": "SCIM ResourceTypes",
+        "description": "The \"ResourceType\" schema specifies the metadata about a resource type. Resource type resources are READ-ONLY and identified using the following schema URI:\n\n> urn:ietf:params:scim:schemas:core:2.0:ResourceType\n\nThe following example is a GET request to the /scim/ResourceTypes endpoint.\n\n`GET https://myTenantUrl/scim/v2/ResourceTypes`",
+        "parameters": [
+          {
+            "name": "identityTenantURL",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        }
+      }
+    },
+    "/scim/v2/resourcetypes/{identitySCIMResourceType}": {
+      "get": {
+        "summary": "SCIM ResourceTypes By Type",
+        "description": "For details on only one Resource Type, use /scim/v2/ResourceTypes/{{resourceType}}.",
+        "parameters": [
+          {
+            "name": "identityTenantURL",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "identitySCIMResourceType",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        }
+      }
+    },
+    "/scim/v2/schemas": {
+      "get": {
+        "summary": "SCIM Schemas",
+        "description": "This section defines a way to specify the schema in use by resources available and accepted by a SCIM service provider. For each \"schemas\" URI value, this schema specifies the defined attribute(s) and their characteristics (mutability, returnability, etc). For every schema URI used in a resource object, there is a corresponding \"Schema\" resource. \"Schema\" resources are not modifiable, and their associated attributes have a mutability of \"readOnly\". Except for \"id\" (which is always returned), all attributes have a \"returned\" characteristic of \"default\". Unless otherwise specified, all schema attributes are case insensitive. These resources have a \"schemas\" attribute with the following schema URI:\n\n> urn:ietf:params:scim:schemas:core:2.0:Schema\n\nUnlike other core resources, the \"Schema\" resource MAY contain a complex object within a sub-attribute, and all attributes are REQUIRED unless otherwise specified.\n\nA GET request to the /scim/v2/Schemas endpoint returns attributes for all objects.",
+        "parameters": [
+          {
+            "name": "identityTenantURL",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        }
+      }
+    },
+    "/scim/v2/schemas/{identitySCIMObjectType}": {
+      "get": {
+        "summary": "SCIM Schemas By Object",
+        "description": "For details on only one object, use /scim/v2/Schemas/{{object}}.",
+        "parameters": [
+          {
+            "name": "identityTenantURL",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "identitySCIMObjectType",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        }
+      }
+    },
+    "/scim/v2/users": {
+      "get": {
+        "summary": "Get Users",
+        "description": "This endpoint allows you to obtain information relating to all users in Vault, including the user's id attribute that you need for PUT, and DELETE requests.\n\n#### Query Parameters\n\n*   Index:\n    *   Returns users specified by an index. Useful when there are large number of returned resources to control pagination.\n        *   startIndex: initial starting offset for returned resources.\n        *   count: total count of returned resources.\n    *   Example: Return users 10 through 13 using index.\n        *   `GET https://myTenantUrl/scim/v2/Users?startIndex=10&count=5`\n*   Sort:\n    *   Returns all resources sorted either ascending (default) or descending based on a resource attribute.\n        *   sortBy: resource attribute to sort by.\n        *   sortOrder: ascending (default) or descending.\n    *   Example: Return users sorted by *userName* in *ascending* order.\n        *   `GET https://myTenantUrl/scim/v2/Users?sortBy=userName&sortOrder=ascending`\n*   Filter:\n    *   Returns a single resource specified by the filter in the response.\n    *   Example: Return a single user based on the *userName* filter.\n        *   `GET https://myTenantUrl/scim/v2/Users?filter=userName eq \"Administrator\"`\n*   Attributes:\n    *   Returns only the specified attributes in the JSON response.\n    *   Example: Return all Users with only userName and displayName.\n        *   `GET https://myTenantUrl/scim/v2/Users&attributes=userName,displayName`",
+        "parameters": [
+          {
+            "name": "startIndex",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "required": false
+          },
+          {
+            "name": "count",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "required": false
+          },
+          {
+            "name": "filter",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "required": false
+          },
+          {
+            "name": "sortBy",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "required": false
+          },
+          {
+            "name": "sortOrder",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "required": false
+          },
+          {
+            "name": "attributes",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "required": false
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        }
+      },
+      "post": {
+        "summary": "Add User",
+        "description": "With the POST method, you can add users with core and custom attributes. Include the SCIM schema in the request payload, as shown in the following example.\n\n**Required JSON Attributes:**\n\n*   userName\n*   Password\n*   schemas",
+        "parameters": [
+          {
+            "name": "identityTenantURL",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        },
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/scim/v2/users/{identitySCIMUserID}": {
+      "get": {
+        "summary": "Get User By ID",
+        "description": "**Requirements:** ***Requires CyberArk Password Vault Web Access (PVWA) version 12.2+***\n\nAdding the id attribute value to the Users endpoint retrieves attributes for just that user.\n\n**Optional Fields:**\n\n*Attributes:* If attributes are specified only those specific attributes will be returned in the JSON response.",
+        "parameters": [
+          {
+            "name": "attributes",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "required": false
+          },
+          {
+            "name": "identitySCIMUserID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        }
+      },
+      "put": {
+        "summary": "Update User",
+        "description": "Use a PUT request to update all attributes of an existing user. Null values are supported, so you can use a PUT request to remove user attribute values.\n\nPUT requests require the same amount of user information as POST requests.\n\n**Required JSON Attributes:**\n\n*   userName\n*   schemas\n*   id\n*   meta",
+        "parameters": [
+          {
+            "name": "identityTenantURL",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "identitySCIMUserID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        },
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete User",
+        "description": "The DELETE request deletes a single user specified in the SCIM URL. You can only delete a single user. Trying to delete all users results in an error.\n\nDELETE is the only request that does not return a response. Running DELETE twice receives an error; you cannot delete a user if the user ID no longer exists in Vault.\n\n**Valid Examples:**\n\nDelete user with User Id = 1:\n\n`DELETE https://myTenantUrl/scim/v2/Users/1`",
+        "parameters": [
+          {
+            "name": "identityTenantURL",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "identitySCIMUserID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        }
+      }
+    }
+  }
+}
