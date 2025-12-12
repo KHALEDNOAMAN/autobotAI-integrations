@@ -199,15 +199,18 @@ class OpenAIService(AIBaseService):
     def get_pydantic_agent(
         self, model: str, tools, system_prompt: str, options: dict = {}
     ):
-        from pydantic_ai.models.openai import OpenAIModel
-        from pydantic_ai.providers.openai import OpenAIProvider
         from pydantic_ai import Agent
-        model = OpenAIModel(
-            model_name=model,
+        model_instance = self.get_pydantic_model(model)
+        return Agent(model_instance, system_prompt=system_prompt, tools=tools, **options)
+    
+    def get_pydantic_model(self, model_name: str):
+        from pydantic_ai.models.openai import OpenAIResponsesModel
+        from pydantic_ai.providers.openai import OpenAIProvider
+        model = OpenAIResponsesModel(
+            model_name=model_name,
             provider=OpenAIProvider(api_key=self.integration.api_key),
         )
-        return Agent(model, system_prompt=system_prompt, tools=tools, **options)
-
+        return model
     
     def load_llama_index_embedding_model(self, model_name: Optional[str] = None, **kwargs):
         """

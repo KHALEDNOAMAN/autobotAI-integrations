@@ -855,6 +855,9 @@ class AIBaseService(BaseService):
         self, model: str, tools, system_prompt: str, options: dict = {}
     ):
         raise NotImplementedError()
+    
+    def get_pydantic_model(self, model_name: str):
+        raise NotImplementedError()
 
     def load_llama_index_embedding_model(
         self, model_name: Optional[str] = None, **kwargs
