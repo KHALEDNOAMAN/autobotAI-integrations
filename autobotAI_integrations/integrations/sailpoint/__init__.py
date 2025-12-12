@@ -199,6 +199,7 @@ class SailPointIdentityNowService(BaseService):
             base_url=f"https://{self.integration.tenantname}.api.{self.integration.tenantdomain}.com/v2025",
             headers={
                 "Authorization": f"Bearer {token}",
+                "X-SailPoint-Experimental": "true"
             },
         )
 
