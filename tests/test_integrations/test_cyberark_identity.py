@@ -81,7 +81,7 @@ class TestClassCyberArkIdentity:
         actions = service.get_all_rest_api_actions()
         for action in actions:
             # Get Users
-            if action.name == 'Get Users':
+            if action.name == 'Get users details':
                 try:
                     task = sample_restapi_task(
                     integration, action.code, action.parameters_definition
@@ -90,4 +90,3 @@ class TestClassCyberArkIdentity:
                     test_result_format(result)
                 except Exception as e:
                     traceback.print_exc() 
-              
