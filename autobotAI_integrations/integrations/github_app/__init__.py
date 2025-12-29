@@ -12,6 +12,7 @@ from autobotAI_integrations import (
     SteampipeCreds,
     RestAPICreds,
     SDKCreds,
+    CLICreds,
     BaseService,
     ConnectionInterfaces,
     PayloadTask,
@@ -256,7 +257,11 @@ class GithubAppService(BaseService):
         }
         return SDKCreds(envs=envs)
 
+    def generate_cli_creds(self) -> CLICreds:
+        pass
+
     def generate_mcp_creds(self) -> MCPCreds:
+        self.integration.token = self.token = self.get_installation_token()
         if self.integration.base_url == "https://api.github.com":
             return MCPCreds(
                 headers={

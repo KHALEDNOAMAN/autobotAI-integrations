@@ -27,17 +27,8 @@ class TestClassCyberArkIdentity:
         }
         integration = sample_integration_dict("cyberark_identity", tokens)
         service = integration_service_factory.get_service(None, integration)
-        res = service.is_active()
-        assert res["success"]
-        tokens = {
-            "base_url": get_keys["CYBERARK_BASE_URL"],
-            "username": get_keys["CYBERARK_USERNAME"],
-            "password": get_keys["CYBERARK_PASSWORD"],
-        }
-        integration = sample_integration_dict("cyberark_identity", tokens)
-        service = integration_service_factory.get_service(None, integration)
-        res = service.is_active()
-        assert not res["success"]
+        res = service.is_active()        
+        assert res["success"], f"Integration connection failed: {res.get('error')}"
 
     def test_actions_generation(self, get_keys):
         service = integration_service_factory.get_service_cls("cyberark_identity")

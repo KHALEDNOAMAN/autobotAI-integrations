@@ -4,8 +4,8 @@ import requests
 import re
 import importlib
 
-from autobotAI_integrations import BaseService
 from autobotAI_integrations import (
+    BaseService,
     BaseSchema,
     RestAPICreds,
     SDKCreds,
