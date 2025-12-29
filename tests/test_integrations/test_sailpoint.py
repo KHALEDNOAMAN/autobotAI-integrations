@@ -1,4 +1,4 @@
-import traceback
+import traceback, json
 from autobotAI_integrations.handlers.task_handler import handle_task
 from autobotAI_integrations.integrations import integration_service_factory
 

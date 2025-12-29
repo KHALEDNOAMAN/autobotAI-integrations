@@ -99,7 +99,8 @@ class OktaService(BaseService):
     def supported_connection_interfaces():
         return [
             ConnectionInterfaces.PYTHON_SDK,
-            ConnectionInterfaces.STEAMPIPE,
+            # ConnectionInterfaces.STEAMPIPE,
+            ConnectionInterfaces.REST_API,
         ]
 
     def build_python_exec_combinations_hook(
@@ -147,3 +148,12 @@ class OktaService(BaseService):
             "OKTA_CLIENT_TOKEN": self.integration.token,
         }
         return SDKCreds(envs=envs)
+    
+    def generate_rest_api_creds(self) -> RestAPICreds:
+        return RestAPICreds(
+            base_url=self.integration.host_url,
+            headers={
+            "Accept": "application/json",
+            "Content-Type": "application/json",
+            "Authorization": f"SSWS {self.integration.token}"} 
+        )

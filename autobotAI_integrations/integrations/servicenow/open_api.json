@@ -8,11 +8,6 @@
   "externalDocs": {
     "url": "https://docs.servicenow.com/?context=CSHelp:REST-Table-API"
   },
-  "servers": [
-    {
-      "url": "{{base_url}}"
-    }
-  ],
   "paths": {
     "/api/now/table/{tableName}": {
       "get": {

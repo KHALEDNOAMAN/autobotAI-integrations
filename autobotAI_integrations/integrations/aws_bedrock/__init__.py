@@ -306,46 +306,21 @@ class AWSBedrockService(AIBaseService):
                 "temperature": float(temperature),
             }
         request = json.dumps(native_request)
-        return request
-
-    def langchain_authenticator(self, model=None):
-        # if self.integration.roleArn not in ["None", None]:
-        #     boto3_helper = Boto3Helper(
-        #         self.ctx, integration=self.integration.dump_all_data()
-        #     )
-        #     session=boto3_helper.get_session()
-        # else:
-        #     session=boto3.Session(
-        #         aws_access_key_id=self.integration.access_key,
-        #         aws_secret_access_key=self.integration.secret_key,
-        #         region_name=self.integration.region,
-        #         aws_session_token=self.integration.session_token if self.integration.session_token else None,
-        #     )
-        model_kwargs = {"max_tokens": int(2048), "temperature": float(0)}
-        # bedrock_runtime= self._get_aws_client("bedrock-runtime")
-        # bedrock_runtime = boto3.client(
-        #     service_name="bedrock-runtime",
-        #     region_name=self.integration.region
-        # )
-        from langchain_aws import BedrockLLM
-
-        llm = BedrockLLM(
-            region_name=self.integration.region,
-            # client=bedrock_runtime,
-            model_id=model,
-            model_kwargs=model_kwargs,
-        )
-        return llm
+        return request    
 
     def get_pydantic_agent(
         self, model: str, tools, system_prompt: str, options: dict = {}
     ):
+        from pydantic_ai.agent import Agent
+        model_instance = self.get_pydantic_model(model)
+        return Agent(model_instance, system_prompt=system_prompt, tools=tools, **options)
+    
+    def get_pydantic_model(self, model_name: str):
         from pydantic_ai.models.bedrock import BedrockConverseModel
         from pydantic_ai.providers.bedrock import BedrockProvider
-        from pydantic_ai.agent import Agent
         credentials = self._temp_credentials()
         model = BedrockConverseModel(
-            model_name=model,
+            model_name=model_name,
             provider=BedrockProvider(
                 aws_access_key_id=credentials["AWS_ACCESS_KEY_ID"],
                 aws_secret_access_key=credentials["AWS_SECRET_ACCESS_KEY"],
@@ -353,7 +328,7 @@ class AWSBedrockService(AIBaseService):
                 region_name=self.integration.region,
             ),
         )
-        return Agent(model, system_prompt=system_prompt, tools=tools, **options)
+        return model
     
     def load_llama_index_embedding_model(self, model_name: Optional[str] = None, **kwargs):
         """

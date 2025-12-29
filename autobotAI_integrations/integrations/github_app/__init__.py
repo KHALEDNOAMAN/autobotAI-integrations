@@ -1,5 +1,4 @@
 import time
-from enum import Enum
 import importlib
 import re
 from typing import List, Optional, Union
@@ -181,7 +180,6 @@ class GithubAppService(BaseService):
     @staticmethod
     def get_schema(ctx=None):
         class GithubAppIntegrationModifiedSchema(GithubAppIntegration):
-
             @model_validator(mode="after")
             def validate_default_app(self) -> Optional[str]:
                 if ctx and self.default_app and not self.private_key:

@@ -1,5 +1,5 @@
 from typing import Optional, Type, Union
-from pydantic import Field,field_validator
+from pydantic import Field, field_validator
 from enum import Enum
 import requests
 import re
@@ -12,9 +12,11 @@ from autobotAI_integrations.models import (
     RestAPICreds,
 )
 
+
 class SaviyntAuthTypes(Enum):
     BASIC_AUTH = "basic_auth"
-    
+
+
 class SaviyntIntegration(BaseSchema):
     base_url: str = Field(default=None, description="base url")
     username: Optional[str] = Field(default=None, exclude=True)
@@ -32,34 +34,40 @@ class SaviyntIntegration(BaseSchema):
         if base_url and base_url != "None":
             if re.match(saviynt_pattern, base_url):
                 return base_url.strip("/")
-            raise ValueError(f"Invalid Saviynt Instance URL: {base_url}. Format: https://instance.saviyntcloud.com")
+            raise ValueError(
+                f"Invalid Saviynt Instance URL: {base_url}. Format: https://instance.saviyntcloud.com"
+            )
         raise ValueError("Saviynt Instance URL is required")
 
 
 class SaviyntService(BaseService):
-    
-    def __init__(self,ctx:dict,integration:Union[SaviyntIntegration,dict]):
-        if not isinstance(integration,SaviyntIntegration):
-            integration=SaviyntIntegration(**integration)
-        super().__init__(ctx,integration)
-    
+
+    def __init__(self, ctx: dict, integration: Union[SaviyntIntegration, dict]):
+        if not isinstance(integration, SaviyntIntegration):
+            integration = SaviyntIntegration(**integration)
+        super().__init__(ctx, integration)
+
     def _test_integration(self):
         try:
-            headers={
-            "Content-Type": "application/json",
+            headers = {
+                "Content-Type": "application/json",
             }
 
             user_endpoint = f"{self.integration.base_url}/ECM/api/login"
-            response = requests.post(user_endpoint, headers=headers,json={
-                "username": self.integration.username,
-                "password": self.integration.password
-            })
+            response = requests.post(
+                user_endpoint,
+                headers=headers,
+                json={
+                    "username": self.integration.username,
+                    "password": self.integration.password,
+                },
+            )
             if response.status_code == 200:
                 return {"success": True}
             elif response.status_code == 401:
                 return {
-                        "success": False,
-                        "error": "Authentication failed. Please check your UserName and PassWord."
+                    "success": False,
+                    "error": "Authentication failed. Please check your UserName and PassWord.",
                 }
             elif response.status_code == 404:
                 return {
@@ -68,8 +76,8 @@ class SaviyntService(BaseService):
                 }
             else:
                 return {
-                        "success": False,
-                        "error": f"Authentication failed with status code: {response.status_code}",
+                    "success": False,
+                    "error": f"Authentication failed with status code: {response.status_code}",
                 }
         except requests.exceptions.RequestException as e:
             return {"success": False, "error": str(e)}
@@ -109,9 +117,9 @@ class SaviyntService(BaseService):
                         },
                     ],
                 }
-            ]
+            ],
         }
-    
+
     @staticmethod
     def get_schema(ctx=None):
         return SaviyntIntegration
@@ -119,21 +127,25 @@ class SaviyntService(BaseService):
     @staticmethod
     def supported_connection_interfaces():
         return [ConnectionInterfaces.REST_API]
-    
+
     def generate_rest_api_creds(self) -> RestAPICreds:
-        headers={
+        headers = {
             "Content-Type": "application/json",
         }
         user_endpoint = f"{self.integration.base_url}/ECM/api/login"
-        login_request = requests.post(user_endpoint, headers=headers,json={
+        login_request = requests.post(
+            user_endpoint,
+            headers=headers,
+            json={
                 "username": self.integration.username,
-                "password": self.integration.password
-        })
+                "password": self.integration.password,
+            },
+        )
         data = login_request.json()
-        token = data.get('access_token')
+        token = data.get("access_token")
         return RestAPICreds(
             base_url=self.integration.base_url,
             headers={
                 "Authorization": f"Bearer {token}",
-            }
+            },
         )

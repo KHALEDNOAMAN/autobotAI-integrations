@@ -104,7 +104,7 @@ class CyberArkIdentityService(BaseService):
                             "type": "text",
                             "label": "ClientId",
                             "placeholder": "Enter your ClientId Of CyberArk",
-                            "description": "Enter the Client ID of the user that has been marked as an OAuth confidential client. Do not enter your CyberArk admin login ID",
+                            "description":"Enter the Client ID of the user that has been marked as an OAuth confidential client. Do not enter your CyberArk admin login ID",
                             "required": True,
                         },
                         {
@@ -112,7 +112,7 @@ class CyberArkIdentityService(BaseService):
                             "type": "text/password",
                             "label": "Client Secret",
                             "placeholder": "Enter your Client's Secret Of CyberArk",
-                            "description": "Enter the Password of the user that has been marked as an OAuth confidential client. Do not enter your CyberArk admin password.",
+                            "description":"Enter the Password of the user that has been marked as an OAuth confidential client. Do not enter your CyberArk admin password.",
                             "required": True,
                         },
                     ],
@@ -133,7 +133,6 @@ class CyberArkIdentityService(BaseService):
     ) -> list:
         from ark_sdk_python.auth import ArkISPAuth
         from ark_sdk_python.auth.ark_auth import ArkToken
-
         clients_classes = dict()
 
         headers = {"Content-Type": "application/x-www-form-urlencoded"}
@@ -152,14 +151,14 @@ class CyberArkIdentityService(BaseService):
         )
         data = response.json()
         token = data.get("access_token")
-
+ 
         isp_auth = ArkISPAuth(
             token=ArkToken(
                 token=token,
                 endpoint=self.integration.base_url,
             ),
         )
-
+        
         for client in client_definitions:
             try:
                 client_module = importlib.import_module(client.module, package=None)
