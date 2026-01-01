@@ -29,8 +29,8 @@ class TestClassbit_bucket_cloud:
         self, get_keys, sample_integration_dict, sample_python_task, test_result_format
     ):
         tokens = {
-            "username": get_keys["BITBUCKET_CLOUD_USERNAME"],
-            "password": get_keys["BITBUCKET_CLOUD_PASSWORD"],
+            "username": get_keys["BITBUCKET_CLOUD_KEY"],
+            "password": get_keys["BITBUCKET_CLOUD_SECRET"],
         }
         integration = sample_integration_dict("bitbucket_cloud", tokens)
         task = sample_python_task(
@@ -41,16 +41,16 @@ class TestClassbit_bucket_cloud:
 
     def test_integration_active(self, get_keys, sample_integration_dict):
         tokens = {
-            "username": get_keys["BITBUCKET_CLOUD_USERNAME"],
-            "password": get_keys["BITBUCKET_CLOUD_PASSWORD"],
+            "username": get_keys["BITBUCKET_CLOUD_KEY"],
+            "password": get_keys["BITBUCKET_CLOUD_SECRET"],
         }
         integration = sample_integration_dict("bitbucket_cloud", tokens)
         service = integration_service_factory.get_service(None, integration)
         res = service.is_active()
         assert res["success"]
         tokens = {
-            "username": get_keys["BITBUCKET_CLOUD_USERNAME"],
-            "password": get_keys["BITBUCKET_CLOUD_PASSWORD"][:-2],
+            "username": get_keys["BITBUCKET_CLOUD_KEY"],
+            "password": get_keys["BITBUCKET_CLOUD_SECRET"][:-2],
         }
         integration = sample_integration_dict("bitbucket_cloud", tokens)
         service = integration_service_factory.get_service(None, integration)
@@ -71,8 +71,8 @@ class TestClassbit_bucket_cloud:
         self, get_keys, sample_restapi_task, test_result_format, sample_integration_dict
     ):
         tokens = {
-            "username": get_keys["BITBUCKET_CLOUD_USERNAME"],
-            "password": get_keys["BITBUCKET_CLOUD_PASSWORD"],
+            "username": get_keys["BITBUCKET_CLOUD_KEY"],
+            "password": get_keys["BITBUCKET_CLOUD_SECRET"],
         }
         integration = sample_integration_dict("bitbucket_cloud", tokens)
         service = integration_service_factory.get_service(None, integration)
@@ -82,17 +82,15 @@ class TestClassbit_bucket_cloud:
                 params = action.parameters_definition
                 for param in params:
                     if param.name == "repo_slug":
-                        param.values = "test-repo"
+                        param.values = "test-repo-2026"
                     if param.name == "workspace":
-                        param.values = "test-workspace-0204"
+                        param.values = "abhishek-rathod"
                 action.parameters_definition = params
                 try:
                     task = sample_restapi_task(
                         integration, action.code, action.parameters_definition
                     )
                     result = handle_task(task)
-                    print(result.model_dump_json(indent=2))
                     test_result_format(result)
                 except Exception as e:
                     traceback.print_exc()
-                    assert False
