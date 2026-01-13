@@ -32,7 +32,7 @@ setup(
             "opensearch-py>=3.0.0",
             "msgraph-sdk",  # Adding to reduce latency in msgraph
             "msgraph-beta-sdk",  # Adding to reduce latency in msgraph
-            'ark-sdk-python'
+            "ark-sdk-python",
         ],
         "full": [
             # Used only in backend (core) via API
@@ -41,7 +41,7 @@ setup(
             "pydantic>=2.11.7",
             "PyYAML>=6.0.2",
             "pydash>=8.0.5",
-            "PyGithub>=2.7.0",            
+            "PyGithub>=2.7.0",
             "google-auth>=2.40.3",
             "azure-identity>=1.23.1",
             "python-dotenv>=1.1.1",
@@ -56,12 +56,12 @@ setup(
             "snowflake-connector-python>=3.16.0",
             "opensearch-py>=3.0.0",
             "pydantic-ai>=1.22.0",
-            "llama-index",
-            "llama-index-llms-openai",
+            "llama-index==0.14.12",
+            "llama-index-llms-openai==0.6.12",
             "llama-index-llms-bedrock",
-            "llama-index-embeddings-openai",
+            "llama-index-embeddings-openai==0.6.1",
             "llama-index-embeddings-bedrock",
-            'ark-sdk-python'
+            "ark-sdk-python",
         ],
     },
     package_data={
