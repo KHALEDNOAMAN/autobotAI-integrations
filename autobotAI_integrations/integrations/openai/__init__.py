@@ -267,14 +267,14 @@ class OpenAIService(AIBaseService):
                 counter += 1
                 try:
                     kwargs = {"messages": messages, "model": model}
-                    if params != "get_code" and params != "approval" and params!="chat" and params!="params":
+                    if params not in {"get_code", "approval", "chat", "params", "title", "message"}:
                         kwargs["response_format"] = {"type": "json_object"}
                     result = client.chat.completions.create(**kwargs)
                     logger.info("result is %s", result)
                     if result.choices[0].message.content:
                         return result.choices[0].message.content
-                except:
-                    continue
+                except Exception as e:
+                    logger.error(str(e))
             return "AI-Execution Failed to Generate Result"
         else:
             raise Exception("Model is Required")
