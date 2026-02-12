@@ -30,7 +30,7 @@ setup(
             "slack-sdk>=3.36.0",
             "snowflake-connector-python>=3.16.0",
             "opensearch-py>=3.0.0",
-            "msgraph-sdk>=1.6.0",  # Adding to reduce latency in msgraph
+            "msgraph-sdk>=1.52.0",  # Adding to reduce latency in msgraph
             "msgraph-beta-sdk",  # Adding to reduce latency in msgraph
             "ark-sdk-python",
         ],

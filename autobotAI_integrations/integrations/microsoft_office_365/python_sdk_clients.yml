@@ -2,4 +2,4 @@
   import_library_names:
     - msgraph
   pip_package_names:
-    - msgraph-sdk
+    - msgraph-sdk>=1.52.0
