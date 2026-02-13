@@ -2,4 +2,4 @@
   import_library_names:
     - okta.client
   pip_package_names:
-    - okta
+    - okta==2.9.13
