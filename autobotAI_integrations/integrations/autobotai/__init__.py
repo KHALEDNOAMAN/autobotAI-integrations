@@ -101,6 +101,12 @@ class AutobotAIService(BaseService):
     def get_schema(ctx=None) -> Type[BaseSchema]:
         return AutobotAIIntegration
     
+    @classmethod
+    def get_details(cls):
+        details = super().get_details()
+        details["preview"] = True
+        return details
+
     @staticmethod
     def supported_connection_interfaces():
         return [ConnectionInterfaces.MCP_SERVER]
