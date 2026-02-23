@@ -40,31 +40,34 @@ class AutobotAIService(BaseService):
         super().__init__(ctx, integration)
 
     def _test_integration(self):
-        user_endpoint =  f"{self.integration.base_url}/integrations"
-        response = requests.get(
-            user_endpoint,
-            headers={
-                "Authorization": f"ApiKey {self.integration.api_key}"
-            }
-        )
-        if response.status_code == 200:
-            return {"success": True}
-        
-        elif response.status_code == 401:
-            return {
-                "success": False,
-                "error": "Authentication failed. Please check your api key",
-            }
-        elif response.status_code == 404:
-            return {
-                "success": False,
-                "error": "Error: Not Found. Invalid AutobotAI Api URL",
-            }
-        else:
-            return {
-                "success": False,
-                "error": f"Authentication failed with status code: {response.status_code}",
-            }
+        try:
+            user_endpoint =  f"{self.integration.base_url}/integrations"
+            response = requests.get(
+                user_endpoint,
+                headers={
+                    "Authorization": f"ApiKey {self.integration.api_key}"
+                }
+            )
+            if response.status_code == 200:
+                return {"success": True}
+            
+            elif response.status_code == 401:
+                return {
+                    "success": False,
+                    "error": "Authentication failed. Please check your api key",
+                }
+            elif response.status_code == 404:
+                return {
+                    "success": False,
+                    "error": "Error: Not Found. Invalid AutobotAI Api URL",
+                }
+            else:
+                return {
+                    "success": False,
+                    "error": f"Authentication failed with status code: {response.status_code}",
+                }
+        except requests.exceptions.RequestException as e:
+            return {"success": False, "error": str(e)}
             
 
     @staticmethod
@@ -98,7 +101,7 @@ class AutobotAIService(BaseService):
         }
 
     @staticmethod
-    def get_schema(ctx=None) -> Type[BaseSchema]:
+    def get_schema(ctx=None):
         return AutobotAIIntegration
     
     @classmethod
