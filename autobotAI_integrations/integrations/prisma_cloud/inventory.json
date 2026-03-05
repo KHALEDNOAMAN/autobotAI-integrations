@@ -1,0 +1,332 @@
+{
+    "prisma_cloud": [
+        {
+            "name": "prisma_cloud_alert",
+            "all_columns": [
+                "id",
+                "alert_time",
+                "policy_id",
+                "policy_name",
+                "policy_type",
+                "policy_severity",
+                "status",
+                "first_seen",
+                "last_seen",
+                "alert_count",
+                "resource_id",
+                "resource_name",
+                "resource_type",
+                "resource_account",
+                "resource_region",
+                "resource_cloud_type",
+                "risk_detail",
+                "reason",
+                "triggered_by"
+            ],
+            "included": [],
+            "excluded": [],
+            "inventory_supported": true
+        },
+        {
+            "name": "prisma_cloud_policy",
+            "all_columns": [
+                "policy_id",
+                "name",
+                "description",
+                "severity",
+                "policy_type",
+                "cloud_type",
+                "compliance_metadata",
+                "rule_last_modified_on",
+                "created_on",
+                "created_by",
+                "last_modified_on",
+                "last_modified_by",
+                "system_default",
+                "enabled",
+                "deleted",
+                "remediation",
+                "recommendation"
+            ],
+            "included": [],
+            "excluded": [],
+            "inventory_supported": true
+        },
+        {
+            "name": "prisma_cloud_compliance_standard",
+            "all_columns": [
+                "id",
+                "name",
+                "description",
+                "created_by",
+                "created_on",
+                "last_modified_by",
+                "last_modified_on",
+                "system_default",
+                "policies_assigned_count",
+                "cloud_types"
+            ],
+            "included": [],
+            "excluded": [],
+            "inventory_supported": true
+        },
+        {
+            "name": "prisma_cloud_compliance_requirement",
+            "all_columns": [
+                "id",
+                "name",
+                "description",
+                "compliance_id",
+                "created_by",
+                "created_on",
+                "last_modified_by",
+                "last_modified_on",
+                "system_default",
+                "policies_assigned_count",
+                "standard_name",
+                "requirement_id",
+                "view_order"
+            ],
+            "included": [],
+            "excluded": [],
+            "inventory_supported": true
+        },
+        {
+            "name": "prisma_cloud_account",
+            "all_columns": [
+                "account_id",
+                "name",
+                "cloud_type",
+                "account_type",
+                "enabled",
+                "last_modified_ts",
+                "last_modified_by",
+                "storage_scan_enabled",
+                "protection_mode",
+                "deployment_type",
+                "group_ids",
+                "groups",
+                "status",
+                "number_of_child_accounts"
+            ],
+            "included": [],
+            "excluded": [],
+            "inventory_supported": true
+        },
+        {
+            "name": "prisma_cloud_account_group",
+            "all_columns": [
+                "id",
+                "name",
+                "description",
+                "account_ids",
+                "accounts",
+                "alert_rules",
+                "auto_created",
+                "last_modified_by",
+                "last_modified_ts"
+            ],
+            "included": [],
+            "excluded": [],
+            "inventory_supported": true
+        },
+        {
+            "name": "prisma_cloud_asset_inventory",
+            "all_columns": [
+                "id",
+                "name",
+                "resource_type",
+                "cloud_type",
+                "account_id",
+                "account_name",
+                "region",
+                "service",
+                "inserted_ts",
+                "deleted_ts",
+                "vulnerability_count",
+                "alert_count",
+                "has_network_exposure",
+                "has_external_exposure",
+                "has_sensitive_data",
+                "tags"
+            ],
+            "included": [],
+            "excluded": [],
+            "inventory_supported": true
+        },
+        {
+            "name": "prisma_cloud_user",
+            "all_columns": [
+                "email",
+                "first_name",
+                "last_name",
+                "time_zone",
+                "enabled",
+                "last_login_ts",
+                "last_modified_by",
+                "last_modified_ts",
+                "role_ids",
+                "roles",
+                "access_keys_allowed",
+                "default_role_id",
+                "user_type"
+            ],
+            "included": [],
+            "excluded": [],
+            "inventory_supported": true
+        },
+        {
+            "name": "prisma_cloud_user_role",
+            "all_columns": [
+                "id",
+                "name",
+                "description",
+                "role_type",
+                "last_modified_by",
+                "last_modified_ts",
+                "account_group_ids",
+                "account_groups",
+                "associated_users",
+                "restrict_dismissal_access",
+                "additional_attributes"
+            ],
+            "included": [],
+            "excluded": [],
+            "inventory_supported": true
+        },
+        {
+            "name": "prisma_cloud_alert_rule",
+            "all_columns": [
+                "policy_scan_config_id",
+                "name",
+                "description",
+                "enabled",
+                "scan_all",
+                "policies",
+                "policy_labels",
+                "excluded_policies",
+                "last_modified_on",
+                "last_modified_by",
+                "target",
+                "notification_config",
+                "allow_auto_remediate",
+                "delay_notification_ms",
+                "notify_on_open",
+                "notify_on_snoozed",
+                "notify_on_dismissed",
+                "notify_on_resolved"
+            ],
+            "included": [],
+            "excluded": [],
+            "inventory_supported": true
+        },
+        {
+            "name": "prisma_cloud_integration",
+            "all_columns": [
+                "id",
+                "name",
+                "description",
+                "integration_type",
+                "enabled",
+                "created_ts",
+                "created_by",
+                "last_modified_ts",
+                "last_modified_by",
+                "status",
+                "reason",
+                "integration_config"
+            ],
+            "included": [],
+            "excluded": [],
+            "inventory_supported": true
+        },
+        {
+            "name": "prisma_cloud_vulnerability",
+            "all_columns": [
+                "cve_id",
+                "severity",
+                "cvss_score",
+                "package_name",
+                "package_version",
+                "fix_version",
+                "resource_id",
+                "resource_name",
+                "resource_type",
+                "cloud_type",
+                "account_id",
+                "region",
+                "first_found",
+                "status",
+                "exploit_available",
+                "risk_factors"
+            ],
+            "included": [],
+            "excluded": [],
+            "inventory_supported": true
+        },
+        {
+            "name": "prisma_cloud_network_exposure",
+            "all_columns": [
+                "resource_id",
+                "resource_name",
+                "resource_type",
+                "cloud_type",
+                "account_id",
+                "region",
+                "exposure_type",
+                "internet_exposed",
+                "port",
+                "protocol",
+                "source_public_ip",
+                "destination_resource_id",
+                "finding_type"
+            ],
+            "included": [],
+            "excluded": [],
+            "inventory_supported": true
+        },
+        {
+            "name": "prisma_cloud_iam_permission",
+            "all_columns": [
+                "id",
+                "name",
+                "source_cloud_type",
+                "source_cloud_account",
+                "source_resource_id",
+                "source_resource_name",
+                "source_resource_type",
+                "dest_cloud_type",
+                "dest_cloud_account",
+                "dest_resource_id",
+                "dest_resource_name",
+                "granted_by_cloud_type",
+                "granted_by_cloud_policy_id",
+                "granted_by_cloud_policy_name",
+                "granted_by_cloud_entity_id",
+                "granted_by_cloud_entity_name",
+                "granted_by_cloud_entity_type",
+                "last_access_date",
+                "exceptions"
+            ],
+            "included": [],
+            "excluded": [],
+            "inventory_supported": true
+        },
+        {
+            "name": "prisma_cloud_audit_log",
+            "all_columns": [
+                "timestamp",
+                "user",
+                "ip_address",
+                "resource_name",
+                "resource_type",
+                "action",
+                "result",
+                "message"
+            ],
+            "included": [],
+            "excluded": [],
+            "inventory_supported": true
+        }
+    ]
+}

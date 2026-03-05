@@ -1,0 +1,77 @@
+# Prisma Cloud Python SDK Clients Configuration
+# This file defines the Python SDK clients available for Prisma Cloud integration
+
+# Note: Prisma Cloud doesn't have an official Python SDK
+# This configuration uses the REST API client approach
+
+clients:
+  - name: prisma_cloud_api_client
+    description: REST API client for Prisma Cloud CSPM
+    package: requests
+    version: ">=2.28.0"
+    authentication:
+      type: api_key
+      credentials:
+        - access_key_id
+        - secret_key
+    endpoints:
+      base_url: "https://api.prismacloud.io"
+      login: "/login"
+      alerts: "/v2/alert"
+      policies: "/v2/policy"
+      compliance: "/compliance/posture"
+      inventory: "/v2/inventory"
+      vulnerabilities: "/v2/vulnerability"
+    
+  - name: prisma_cloud_compute_client
+    description: REST API client for Prisma Cloud Compute (CWPP)
+    package: requests
+    version: ">=2.28.0"
+    authentication:
+      type: api_key
+      credentials:
+        - access_key_id
+        - secret_key
+    endpoints:
+      base_url: "https://api.prismacloud.io/compute"
+      containers: "/api/v1/containers"
+      images: "/api/v1/images"
+      hosts: "/api/v1/hosts"
+      vulnerabilities: "/api/v1/vulnerabilities"
+      compliance: "/api/v1/compliance"
+
+# Third-party libraries that can be used with Prisma Cloud
+third_party_libraries:
+  - name: pan-python
+    description: Pan-python library for Palo Alto Networks products
+    package: pan-python
+    version: ">=1.0.0"
+    repository: "https://github.com/kevinsteves/pan-python"
+    
+  - name: pancloud
+    description: Python SDK for Palo Alto Networks Application Framework
+    package: pancloud
+    version: ">=1.5.0"
+    repository: "https://github.com/PaloAltoNetworks/pancloud"
+
+# API Rate Limits
+rate_limits:
+  default: 30  # requests per second
+  burst: 100   # maximum burst requests
+  
+# Supported Cloud Providers
+supported_clouds:
+  - aws
+  - azure
+  - gcp
+  - alibaba_cloud
+  - oci
+
+# Supported Policy Types
+policy_types:
+  - config          # Configuration policies
+  - network         # Network policies
+  - audit_event     # Audit event policies
+  - anomaly         # Anomaly policies
+  - data            # Data policies
+  - iam             # IAM policies
