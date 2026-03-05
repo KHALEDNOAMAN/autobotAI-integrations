@@ -16,6 +16,7 @@ setup(
         "pydash>=8.0.5",
         "requests>=2.32.4",
         "tenacity>=8.5.0",
+        "setuptools==80.10.2",
         "PyJWT",
         "jsonpath-ng",
         "autobotai_library_addons @ git+https://github.com/shunyeka-spl/autobotai-library-addons.git",
