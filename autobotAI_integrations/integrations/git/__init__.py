@@ -1,3 +1,4 @@
+import traceback
 from typing import List, Optional, Type, Union
 import importlib
 import platform
@@ -33,14 +34,18 @@ class GitService(BaseService):
         super().__init__(ctx, integration)
 
     def _test_integration(self) -> dict:
-        if not self._is_git_installed():
-            self._install_git_with_python()
+        try:
             if not self._is_git_installed():
-                return {
-                    "success": False,
-                    "error": str("git is not installed on machine"),
-                }
-        return {"success": True}
+                self._install_git_with_python()
+                if not self._is_git_installed():
+                    return {
+                        "success": False,
+                        "error": str("git is not installed on machine"),
+                    }
+            return {"success": True}
+        except Exception as e:
+            print(traceback.print_exc())
+            return {"success": False, "error": "Integration Failed!" }
 
     @staticmethod
     def get_forms():
