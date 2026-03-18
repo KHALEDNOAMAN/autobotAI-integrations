@@ -26,13 +26,15 @@ class AwsAthenaIntegration(BaseSchema):
 
     name: Optional[str] = "AWS Athena"
     category: Optional[str] = IntegrationCategory.OTHERS.value
-    description: Optional[str] = "AWS Athena is a serverless interactive query service that makes it easy to analyze data directly in Amazon S3 using standard SQL."
+    description: Optional[str] = (
+        "AWS Athena is a serverless interactive query service that makes it easy to analyze data directly in Amazon S3 using standard SQL."
+    )
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 
     def use_dependency(self, dependency: dict):
-        self.roleArn = dependency.get('roleArn')
+        self.roleArn = dependency.get("roleArn")
         self.access_key = dependency.get("access_key")
         self.secret_key = dependency.get("secret_key")
         self.session_token = dependency.get("session_token")
@@ -41,7 +43,6 @@ class AwsAthenaIntegration(BaseSchema):
 
 
 class AwsAthenaService(BaseService):
-
     def __init__(self, ctx: dict, integration: Union[AwsAthenaIntegration, dict]):
         """
         Integration should have all the data regarding the integration
@@ -55,7 +56,9 @@ class AwsAthenaService(BaseService):
             boto3_helper = Boto3Helper(
                 self.ctx, integration=self.integration.dump_all_data()
             )
-            return boto3_helper.get_client(aws_client_name)
+            return boto3_helper.get_client(
+                aws_client_name, region_name=self.integration.region
+            )
         else:
             return boto3.client(
                 aws_client_name,
@@ -66,6 +69,7 @@ class AwsAthenaService(BaseService):
                     if self.integration.session_token not in [None, "None"]
                     else None
                 ),
+                region_name=self.integration.region,
             )
 
     def _test_integration(self) -> dict:
@@ -204,10 +208,7 @@ class AwsAthenaService(BaseService):
 
     @staticmethod
     def supported_connection_interfaces():
-        return [
-            ConnectionInterfaces.STEAMPIPE,
-            ConnectionInterfaces.PYTHON_SDK
-        ]
+        return [ConnectionInterfaces.STEAMPIPE, ConnectionInterfaces.PYTHON_SDK]
 
     def generate_cli_creds(self) -> CLICreds:
         raise NotImplementedError()
