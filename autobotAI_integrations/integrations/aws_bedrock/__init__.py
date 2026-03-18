@@ -14,7 +14,14 @@ from autobotAI_integrations import (
     PayloadTask,
     Param,
 )
-from autobotAI_integrations.models import  CLICreds, ConnectionInterfaces, IntegrationCategory, BaseSchema, SDKClient, SDKCreds
+from autobotAI_integrations.models import (
+    CLICreds,
+    ConnectionInterfaces,
+    IntegrationCategory,
+    BaseSchema,
+    SDKClient,
+    SDKCreds,
+)
 from autobotAI_integrations.utils.boto3_helper import Boto3Helper
 from autobotAI_integrations.utils.logging_config import logger
 
@@ -61,7 +68,9 @@ class AWSBedrockService(AIBaseService):
             boto3_helper = Boto3Helper(
                 self.ctx, integration=self.integration.dump_all_data()
             )
-            return boto3_helper.get_client(aws_client_name)
+            return boto3_helper.get_client(
+                aws_client_name, region_name=self.integration.region
+            )
         else:
             return boto3.client(
                 aws_client_name,
@@ -72,6 +81,7 @@ class AWSBedrockService(AIBaseService):
                     if self.integration.session_token not in [None, "None"]
                     else None
                 ),
+                region_name=self.integration.region,
             )
 
     def _test_integration(self) -> dict:
@@ -97,16 +107,18 @@ class AWSBedrockService(AIBaseService):
 
     def get_integration_specific_details(self) -> dict:
         try:
-            available_models = list({
-                model["modelId"]
-                for model in self._get_aws_client("bedrock").list_foundation_models()[
-                    "modelSummaries"
-                ]
-                # MODEL WHICH REPLIES IN TEXT
-                if "TEXT" in model["outputModalities"]
-                # MODEL WHICH ARE AVAILABLE ON DEMAND (NOT PROVISIONED)
-                and "ON_DEMAND" in model["inferenceTypesSupported"]
-            })
+            available_models = list(
+                {
+                    model["modelId"]
+                    for model in self._get_aws_client(
+                        "bedrock"
+                    ).list_foundation_models()["modelSummaries"]
+                    # MODEL WHICH REPLIES IN TEXT
+                    if "TEXT" in model["outputModalities"]
+                    # MODEL WHICH ARE AVAILABLE ON DEMAND (NOT PROVISIONED)
+                    and "ON_DEMAND" in model["inferenceTypesSupported"]
+                }
+            )
             inference_prefix = None
             if self.integration.region.startswith("us"):
                 inference_prefix = "us"
@@ -116,10 +128,10 @@ class AWSBedrockService(AIBaseService):
                 inference_prefix = "eu"
             if inference_prefix:
                 available_models += [
-                    inference_prefix +"."+ model["modelId"]
-                    for model in self._get_aws_client("bedrock").list_foundation_models()[
-                        "modelSummaries"
-                    ]
+                    inference_prefix + "." + model["modelId"]
+                    for model in self._get_aws_client(
+                        "bedrock"
+                    ).list_foundation_models()["modelSummaries"]
                     if "INFERENCE_PROFILE" in model["inferenceTypesSupported"]
                 ]
             regions = [
@@ -306,18 +318,22 @@ class AWSBedrockService(AIBaseService):
                 "temperature": float(temperature),
             }
         request = json.dumps(native_request)
-        return request    
+        return request
 
     def get_pydantic_agent(
         self, model: str, tools, system_prompt: str, options: dict = {}
     ):
         from pydantic_ai.agent import Agent
+
         model_instance = self.get_pydantic_model(model)
-        return Agent(model_instance, system_prompt=system_prompt, tools=tools, **options)
-    
+        return Agent(
+            model_instance, system_prompt=system_prompt, tools=tools, **options
+        )
+
     def get_pydantic_model(self, model_name: str):
         from pydantic_ai.models.bedrock import BedrockConverseModel
         from pydantic_ai.providers.bedrock import BedrockProvider
+
         credentials = self._temp_credentials()
         model = BedrockConverseModel(
             model_name=model_name,
@@ -329,14 +345,17 @@ class AWSBedrockService(AIBaseService):
             ),
         )
         return model
-    
-    def load_llama_index_embedding_model(self, model_name: Optional[str] = None, **kwargs):
+
+    def load_llama_index_embedding_model(
+        self, model_name: Optional[str] = None, **kwargs
+    ):
         """
         Returns Langchaain Embedding model object and model dimensions as tuple
         """
         if not model_name:
             model_name = "amazon.titan-embed-text-v2:0"
         from llama_index.embeddings.bedrock import BedrockEmbedding
+
         credentials = self._temp_credentials()
         embed_model = BedrockEmbedding(
             model_name=model_name,
@@ -354,9 +373,12 @@ class AWSBedrockService(AIBaseService):
 
         # return embed_model, dimensions
         return embed_model
-    
+
     def load_llama_index_llm(self, model, **kwargs):
-        from autobotAI_integrations.patches.llama_index_llms_bedrock_converse import BedrockConverse
+        from autobotAI_integrations.patches.llama_index_llms_bedrock_converse import (
+            BedrockConverse,
+        )
+
         credentials = self._temp_credentials()
         llm = BedrockConverse(
             model=model,
@@ -364,7 +386,7 @@ class AWSBedrockService(AIBaseService):
             aws_secret_access_key=credentials["AWS_SECRET_ACCESS_KEY"],
             aws_session_token=credentials["AWS_SESSION_TOKEN"],
             region_name=self.integration.region,
-            **kwargs
+            **kwargs,
         )
         return llm
 
@@ -382,10 +404,17 @@ class AWSBedrockService(AIBaseService):
         client = self._get_aws_client("bedrock-runtime")
         try:
             kwargs = {"modelId": model, "body": request}
-            if params not in {"get_code", "approval", "chat", "params", "title", "message"}:
+            if params not in {
+                "get_code",
+                "approval",
+                "chat",
+                "params",
+                "title",
+                "message",
+            }:
                 kwargs["accept"] = "application/json"
-            response = client.invoke_model(**kwargs)    
-                
+            response = client.invoke_model(**kwargs)
+
             # Invoke the model with the request.
             # response = client.invoke_model(modelId=model, body=request,accept="application/json")
 
