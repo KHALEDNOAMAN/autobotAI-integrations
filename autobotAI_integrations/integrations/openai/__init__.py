@@ -69,8 +69,6 @@ class OpenAIService(AIBaseService):
                 "o3",
             ]
 
-            tool_calling_models.sort()
-
             return {
                 "integration_id": self.integration.accountId,
                 "models": tool_calling_models,
