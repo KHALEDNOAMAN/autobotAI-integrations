@@ -60,22 +60,15 @@ class OpenAIService(AIBaseService):
 
     def get_integration_specific_details(self) -> dict:
         try:
-            # TODO: USE API
-            from openai import OpenAI
-            client = OpenAI(api_key=self.integration.api_key)
-            
-            models_list = client.models.list().data
-            
+
             tool_calling_models = [
-                model.id for model in models_list
-                # Only including text based tool calling models
-                if any(k in model.id for k in ["gpt", "o1", "o2", "o3", "o4"])
-                # Removing old and embedding models
-                and not any(x in model.id for x in ["instruct", "embedding"])
+                "gpt-5.4",
+                "gpt-5.4-mini",
+                "gpt-5.4-nano",
+                "gpt-5.4-pro",
+                "o3",
             ]
-            
-            tool_calling_models.sort()
-            
+
             return {
                 "integration_id": self.integration.accountId,
                 "models": tool_calling_models,
@@ -202,7 +195,7 @@ class OpenAIService(AIBaseService):
         from pydantic_ai import Agent
         model_instance = self.get_pydantic_model(model)
         return Agent(model_instance, system_prompt=system_prompt, tools=tools, **options)
-    
+
     def get_pydantic_model(self, model_name: str):
         from pydantic_ai.models.openai import OpenAIResponsesModel
         from pydantic_ai.providers.openai import OpenAIProvider
@@ -211,7 +204,7 @@ class OpenAIService(AIBaseService):
             provider=OpenAIProvider(api_key=self.integration.api_key),
         )
         return model
-    
+
     def load_llama_index_embedding_model(self, model_name: Optional[str] = None, **kwargs):
         """
         Returns Llama Index Embedding model object and model dimensions as tuple
@@ -233,10 +226,9 @@ class OpenAIService(AIBaseService):
         # return embed_model, dimensions
         return embed_model
 
-    
     def load_llama_index_llm(self, model, **kwargs):
         from llama_index.llms.openai import OpenAI
-        
+
         llm = OpenAI(api_key=self.integration.api_key, model=model, **kwargs)
         return llm
 
@@ -249,7 +241,7 @@ class OpenAIService(AIBaseService):
         messages: List[Dict[str, Any]] = [],
     ):
         from openai import OpenAI
-        
+
         logger.info(f"Executing prompt: {prompt}")
         client = OpenAI(api_key=self.integration.api_key)
         if model:
@@ -278,43 +270,3 @@ class OpenAIService(AIBaseService):
             return "AI-Execution Failed to Generate Result"
         else:
             raise Exception("Model is Required")
-        # if "assistant_id" not in options:
-        #     logger.error(
-        #         "assistant_id is required if model is not provided, and no default assistant was defined"
-        #     )
-        #     raise Exception("assistant_id is required if model is not provided")
-
-        # thread_id = options.get("thread_id", None)
-        # if not thread_id:
-        #     thread = client.beta.threads.create()
-        #     thread_id = thread.id
-
-        #     message = client.beta.threads.messages.create(
-        #         thread_id=thread_id,
-        #         role="user",
-        #         content=prompt,
-        #     )
-
-        # run_id = options.get("run_id", None)
-        # if not run_id:
-        #     run = client.beta.threads.runs.create(
-        #         thread_id=thread_id,
-        #         assistant_id=options.get("assistant_id"),
-        #         extra_headers={"OpenAI-Beta": "assistants=v2"},
-        #     )
-        #     run_id = run.id
-        # print("run is ",run)
-        # print("run status is ",run.status)
-        # while run.status!='completed':
-
-        #     run = client.beta.threads.runs.retrieve(thread_id=thread_id, run_id=run_id)
-        # # if run.status != "completed":
-        # #     return {"thread_id": thread_id, "run_id": run.id, "status": run.status}
-
-        # print("run status is after ",run.status)
-        # messages = client.beta.threads.messages.list(thread_id=thread_id)
-        # print("message is ",message)
-        # new_message = messages.data[0].content[0].text.value
-
-        # print("new message os ",new_message)
-        # return {"status": run.status, "response": new_message}

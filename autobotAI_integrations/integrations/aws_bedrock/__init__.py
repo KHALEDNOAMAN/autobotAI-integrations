@@ -107,33 +107,15 @@ class AWSBedrockService(AIBaseService):
 
     def get_integration_specific_details(self) -> dict:
         try:
-            available_models = list(
-                {
-                    model["modelId"]
-                    for model in self._get_aws_client(
-                        "bedrock"
-                    ).list_foundation_models()["modelSummaries"]
-                    # MODEL WHICH REPLIES IN TEXT
-                    if "TEXT" in model["outputModalities"]
-                    # MODEL WHICH ARE AVAILABLE ON DEMAND (NOT PROVISIONED)
-                    and "ON_DEMAND" in model["inferenceTypesSupported"]
-                }
-            )
-            inference_prefix = None
-            if self.integration.region.startswith("us"):
-                inference_prefix = "us"
-            elif self.integration.region.startswith("ap"):
-                inference_prefix = "apac"
-            elif self.integration.region.startswith("eu"):
-                inference_prefix = "eu"
-            if inference_prefix:
-                available_models += [
-                    inference_prefix + "." + model["modelId"]
-                    for model in self._get_aws_client(
-                        "bedrock"
-                    ).list_foundation_models()["modelSummaries"]
-                    if "INFERENCE_PROFILE" in model["inferenceTypesSupported"]
-                ]
+            available_models = [
+                "global.anthropic.claude-sonnet-4-6",
+                "global.anthropic.claude-opus-4-6-v1",
+                "global.anthropic.claude-sonnet-4-5-20250929-v1:0",
+                "global.anthropic.claude-haiku-4-5-20251001-v1:0",
+                "global.amazon.nova-2-lite-v1:0",
+                "qwen.qwen3-coder-next",
+                "meta.llama3-3-70b-instruct-v1:0",
+            ]
             regions = [
                 region["RegionName"]
                 for region in self._get_aws_client("ec2").describe_regions()["Regions"]
