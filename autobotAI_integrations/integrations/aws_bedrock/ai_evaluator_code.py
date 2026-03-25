@@ -2,7 +2,7 @@ import json
 import re
 
 
-def executor(context):
+async def executor(context):
     sample_json = """
     {
         "name": "string (matches unique resource 'name' field)",
@@ -26,12 +26,12 @@ def executor(context):
     Return JSON strictly in the format of this example: {sample_json} for each prompt JSON provided. No extra text or symbols; respond with JSON output only.
     """
 
-    client = context["clients"]["bedrock-runtime"]
+    agent_factory = context["clients"]["Agent"]
     prompt = context["params"]["prompt"]
     model = context["params"]["model"]
 
     resources = json.loads(json.dumps(context["params"]["resources"], default=str))
-    
+
     MAX_TOKEN = 8192
 
     if not isinstance(resources, list):
@@ -40,7 +40,7 @@ def executor(context):
     # Handling max token limit here
     parsable_resources_count = 0
     try:
-        current_words_length = 2300 + len(prompt) # prompt length
+        current_words_length = 2300 + len(prompt)  # prompt length
         for resource in resources:
             resource_len = len(str(resource))
             if resource_len + current_words_length < MAX_TOKEN * 3:
@@ -53,66 +53,26 @@ def executor(context):
     else:
         resources = resources[: min(parsable_resources_count, 10)]
 
-    system_instruction = f"You are an AI evaluator that returns decision-making JSON data only. Given the prompt and resource list, evaluate each resource according to: {user_prompt}. Return only a JSON array with one JSON object per resource, structured for direct parsing using `json.loads(response)` in Python. No other text should be included."
+    system_instruction = (
+        f"You are an AI evaluator that returns decision-making JSON data only. "
+        f"Given the prompt and resource list, evaluate each resource according to: {user_prompt}. "
+        f"Return only a JSON array with one JSON object per resource, structured for direct parsing "
+        f"using `json.loads(response)` in Python. No other text should be included."
+    )
 
-    llama_final_prompt = f"""
-<|begin_of_text|><|start_header_id|>system<|end_header_id|>
-{system_instruction}
-<|eot_id|><|start_header_id|>user<|end_header_id|>
-Resources: {resources}
-Prompt: {prompt}
-<|eot_id|><|start_header_id|>assistant<|end_header_id|>
-"""
-    mistral_final_prompt = f"""
-[INST] {system_instruction}
-Resources: {resources}
-Prompt: {prompt}
-[/INST]
-"""
-    amazon_titan_final_prompt = f"""
-User: 
-    {'{{' + system_instruction + '}}'}
-    Resources: {resources}
-    Prompt: {prompt}
-Bot:
-    """
+    # Build the agent using the Agent factory client (pydantic-ai pattern)
+    agent = agent_factory(model, system_prompt=system_instruction)
 
-    native_request = {}
-    if model.startswith("meta.llama3"):
-        native_request = {
-            "prompt": llama_final_prompt,
-            "max_gen_len": 2048,
-            "top_p": 0.9,
-        }
-    elif model.startswith("mistral.mistral"):
-        native_request = {
-            "prompt": mistral_final_prompt,
-            "max_tokens": MAX_TOKEN,
-            "top_p": 0.9,
-        }
-    elif model.startswith("amazon.titan"):
-        native_request = {
-            "inputText": amazon_titan_final_prompt,
-            "textGenerationConfig": {"topP": 0.9, "maxTokenCount": MAX_TOKEN},
-        }
-    else:
-        raise Exception(f"Model '{model}' is not supported by ai evaluator.")
+    user_message = f"Resources: {resources}\nPrompt: {prompt}"
 
-    request = json.dumps(native_request)
     count = 0
     results = None
-    pattern = r"```(.*?)```"
+    pattern = r"```(?:json)?(.*?)```"
 
     while count < 3:
-        response = client.invoke_model(modelId=model, body=request)
-        model_output = json.loads(response["body"].read())
-        generated_text = ""
-        if model.startswith("mistral.mistral"):
-            generated_text = model_output["outputs"][0]["text"]
-        elif model.startswith("amazon.titan"):
-            generated_text = model_output["results"][0]["outputText"]
-        else:
-            generated_text = model_output["generation"]
+        response = await agent.run(user_message)
+        generated_text = str(response.output)
+
         try:
             try:
                 results = json.loads(generated_text)
@@ -137,6 +97,7 @@ Bot:
                 "evaluated-response": str(generated_text),
             }
         count += 1
+
     print(f"Evaluated on {count} iterations.")
     return results
 
