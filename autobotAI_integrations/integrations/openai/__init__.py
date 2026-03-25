@@ -60,18 +60,24 @@ class OpenAIService(AIBaseService):
 
     def get_integration_specific_details(self) -> dict:
         try:
-
-            tool_calling_models = [
-                "gpt-5.4",
-                "gpt-5.4-mini",
-                "gpt-5.4-nano",
-                "gpt-5.4-pro",
-                "o3",
+            # available_models = [
+            #     "gpt-5.4",
+            #     "gpt-5.4-mini",
+            #     "gpt-5.4-nano",
+            #     "gpt-5.4-pro",
+            #     "o3",
+            # ]
+            available_models = [
+                "gpt-5",
+                "gpt-5-mini",
+                "gpt-5-nano",
+                "gpt-5-pro",
+                "gpt-5.2",
             ]
 
             return {
                 "integration_id": self.integration.accountId,
-                "models": tool_calling_models,
+                "models": available_models,
                 "embedding_models": [
                     "text-embedding-3-small",
                     "text-embedding-3-large",
