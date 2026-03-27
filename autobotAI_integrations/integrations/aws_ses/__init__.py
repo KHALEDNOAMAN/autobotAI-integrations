@@ -5,7 +5,12 @@ import boto3, uuid
 from botocore.exceptions import ClientError
 from pydantic import Field
 
-from autobotAI_integrations import BaseService, list_of_unique_elements, PayloadTask, Param
+from autobotAI_integrations import (
+    BaseService,
+    list_of_unique_elements,
+    PayloadTask,
+    Param,
+)
 from autobotAI_integrations.models import *
 from autobotAI_integrations.utils.boto3_helper import Boto3Helper
 
@@ -38,7 +43,6 @@ class AwsSesIntegration(BaseSchema):
 
 
 class AwsSesService(BaseService):
-
     def __init__(self, ctx: dict, integration: Union[AwsSesIntegration, dict]):
         """
         Integration should have all the data regarding the integration
@@ -52,7 +56,9 @@ class AwsSesService(BaseService):
             boto3_helper = Boto3Helper(
                 self.ctx, integration=self.integration.dump_all_data()
             )
-            return boto3_helper.get_client(aws_client_name)
+            return boto3_helper.get_client(
+                aws_client_name, region_name=self.integration.region
+            )
         else:
             return boto3.client(
                 aws_client_name,
@@ -63,20 +69,21 @@ class AwsSesService(BaseService):
                     if self.integration.session_token not in [None, "None"]
                     else None
                 ),
+                region_name=self.integration.region,
             )
 
     def _test_integration(self) -> dict:
         try:
-            ses_client = self._get_aws_client('ses')
+            ses_client = self._get_aws_client("ses")
             response = ses_client.list_identities()
-            sts_client = self._get_aws_client('sts')
+            sts_client = self._get_aws_client("sts")
             identity_data = sts_client.get_caller_identity()
-            account_id = str(identity_data['Account'])
+            account_id = str(identity_data["Account"])
             self.integration.account_id = account_id
-            return {'success': True}
+            return {"success": True}
         except ClientError as e:
             print(traceback.format_exc())
-            return {'success': False, 'error': traceback.format_exc()}
+            return {"success": False, "error": traceback.format_exc()}
 
     def get_integration_specific_details(self) -> dict:
         try:
@@ -88,12 +95,10 @@ class AwsSesService(BaseService):
             # Fetching the model
             return {
                 "integration_id": self.integration.accountId,
-                "available_regions": regions
+                "available_regions": regions,
             }
         except Exception as e:
-            return {
-                "error": "Details can not be fetched"
-            }
+            return {"error": "Details can not be fetched"}
 
     @staticmethod
     def get_forms():
@@ -132,31 +137,42 @@ class AwsSesService(BaseService):
             "python_code_sample": cls.get_code_sample(),
         }
 
-    def build_python_exec_combinations_hook(self, payload_task: PayloadTask,
-                                            client_definitions: List[SDKClient]) -> list:
+    def build_python_exec_combinations_hook(
+        self, payload_task: PayloadTask, client_definitions: List[SDKClient]
+    ) -> list:
         creds = {
             "aws_access_key_id": payload_task.creds.envs["AWS_ACCESS_KEY_ID"],
-            "aws_secret_access_key": payload_task.creds.envs["AWS_SECRET_ACCESS_KEY"],            
+            "aws_secret_access_key": payload_task.creds.envs["AWS_SECRET_ACCESS_KEY"],
         }
         if payload_task.creds.envs.get("AWS_SESSION_TOKEN"):
-            creds["aws_session_token"] = payload_task.creds.envs.get("AWS_SESSION_TOKEN")
+            creds["aws_session_token"] = payload_task.creds.envs.get(
+                "AWS_SESSION_TOKEN"
+            )
         return [
             {
-                "metadata": {
-                    "region": self.integration.region
-                },
+                "metadata": {"region": self.integration.region},
                 "clients": {
-                    "ses": boto3.client("ses", region_name=self.integration.region, **creds)
+                    "ses": boto3.client(
+                        "ses", region_name=self.integration.region, **creds
+                    )
                 },
-                "params": self.prepare_params(self.filer_combo_params(payload_task.params, self.integration.region)),
-                "context": payload_task.context
+                "params": self.prepare_params(
+                    self.filer_combo_params(
+                        payload_task.params, self.integration.region
+                    )
+                ),
+                "context": payload_task.context,
             }
         ]
 
     def filer_combo_params(self, params: List[Param], region):
         filtered_params = []
         for param in params:
-            if not param.filter_relevant_resources or not param.values or not isinstance(param.values, list):
+            if (
+                not param.filter_relevant_resources
+                or not param.values
+                or not isinstance(param.values, list)
+            ):
                 filtered_params.append(param)
             else:
                 filtered_values = []

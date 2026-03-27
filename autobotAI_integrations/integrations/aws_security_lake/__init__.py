@@ -26,7 +26,9 @@ class AwsSecurityLakeIntegration(BaseSchema):
 
     name: Optional[str] = "AWS Security Lake"
     category: Optional[str] = IntegrationCategory.SECURITY_TOOLS.value
-    description: Optional[str] = "AWS Security Lake centralizes security data from across AWS accounts, AWS services, and on-premises."
+    description: Optional[str] = (
+        "AWS Security Lake centralizes security data from across AWS accounts, AWS services, and on-premises."
+    )
 
     def use_dependency(self, dependency: dict):
         self.roleArn = dependency.get("roleArn")
@@ -38,7 +40,6 @@ class AwsSecurityLakeIntegration(BaseSchema):
 
 
 class AwsSecurityLakeService(BaseService):
-
     def __init__(self, ctx: dict, integration: Union[AwsSecurityLakeIntegration, dict]):
         """
         Integration should have all the data regarding the integration
@@ -52,7 +53,9 @@ class AwsSecurityLakeService(BaseService):
             boto3_helper = Boto3Helper(
                 self.ctx, integration=self.integration.dump_all_data()
             )
-            return boto3_helper.get_client(aws_client_name)
+            return boto3_helper.get_client(
+                aws_client_name, region_name=self.integration.region
+            )
         else:
             return boto3.client(
                 aws_client_name,
@@ -63,6 +66,7 @@ class AwsSecurityLakeService(BaseService):
                     if self.integration.session_token not in [None, "None"]
                     else None
                 ),
+                region_name=self.integration.region,
             )
 
     def _test_integration(self) -> dict:
