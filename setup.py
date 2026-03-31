@@ -1,4 +1,4 @@
-from setuptools import setup, find_packages
+from setuptools import find_packages, setup
 
 setup(
     name="autobotAI_integrations",
@@ -63,6 +63,7 @@ setup(
             "llama-index-embeddings-openai>=0.5.0,<0.6.0",
             "llama-index-embeddings-bedrock",
             "ark-sdk-python",
+            "zscaler-sdk-python>=1.9.19",
         ],
     },
     package_data={
