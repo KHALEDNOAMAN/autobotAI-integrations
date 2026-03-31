@@ -1,0 +1,5 @@
+- name: zscaler
+  import_library_names:
+    - zscaler
+  pip_package_names:
+    - zscaler-sdk-python

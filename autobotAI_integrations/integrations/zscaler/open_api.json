@@ -1,0 +1,5015 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Zscaler OneAPI - Internet Access (ZIA)",
+    "description": "Zscaler OneAPI REST API for ZIA. Covers activation, admin management, DLP, firewall policies, URL filtering, user management, traffic forwarding, and more.",
+    "version": "1.0.0",
+    "contact": {
+      "name": "Zscaler Support",
+      "url": "https://help.zscaler.com"
+    }
+  },
+  "servers": [
+    {
+      "url": "{base_url}"
+    }
+  ],
+  "paths": {
+    "/api/v1/adminRoles/lite": {
+      "get": {
+        "summary": "Admin Roles  - Get all",
+        "operationId": "Admin_Roles____Get_all",
+        "tags": [
+          "Admin & Role Management"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        }
+      }
+    },
+    "/api/v1/adminUsers": {
+      "get": {
+        "summary": "Admin Users - Get all",
+        "operationId": "Admin_Users___Get_all",
+        "tags": [
+          "Admin & Role Management"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        }
+      },
+      "post": {
+        "summary": "Admin Users - Add",
+        "operationId": "Admin_Users___Add",
+        "tags": [
+          "Admin & Role Management"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "example": {
+                  "loginName": "johnsmith@acme.com",
+                  "userName": "John Smith",
+                  "email": "johnsmith@acme.com",
+                  "role": {
+                    "id": 2322
+                  },
+                  "password": "AeQ9E5w8B$",
+                  "rank": 7,
+                  "name": "Read only",
+                  "policyAccess": "READ_ONLY",
+                  "dashboardAccess": "READ_WRITE",
+                  "reportAccess": "READ_WRITE",
+                  "analysisAccess": "READ_ONLY",
+                  "usernameAccess": "READ_ONLY",
+                  "adminAcctAccess": "NONE",
+                  "permissions": [
+                    "CUSTOM_URL_CAT",
+                    "ADVANCED_SETTINGS",
+                    "COMPLY",
+                    "FIREWALL_DNS",
+                    "SECURE",
+                    "SSL_POLICY",
+                    "VZEN_CONFIGURATION",
+                    "PARTNER_INTEGRATION",
+                    "LOCATIONS",
+                    "VPN_CREDENTIALS",
+                    "HOSTED_PAC_FILES",
+                    "EZ_AGENT_CONFIGURATIONS",
+                    "SECURE_AGENT_NOTIFICATIONS",
+                    "AUTHENTICATION_SETTINGS",
+                    "USER_MANAGEMENT",
+                    "IDENTITY_PROXY_SETTINGS",
+                    "APIKEY_MANAGEMENT",
+                    "OVERRIDE_EXISTING_CAT",
+                    "REMOTE_ASSISTANCE_MANAGEMENT"
+                  ],
+                  "logsLimit": "UNRESTRICTED",
+                  "roleType": "ORG_ADMIN"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/adminUsers/{adminUserId}": {
+      "put": {
+        "summary": "Admin Users - Update",
+        "operationId": "Admin_Users___Update",
+        "tags": [
+          "Admin & Role Management"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        },
+        "parameters": [
+          {
+            "name": "adminUserId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Unique identifier (adminUserId)"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "example": {
+                  "loginName": "johnsmith@acme.com",
+                  "userName": "John Smith",
+                  "email": "johnsmith@acme.com",
+                  "role": {
+                    "id": 2322
+                  },
+                  "password": "AeQ9E5w8B$",
+                  "rank": 7,
+                  "name": "Read only",
+                  "policyAccess": "READ_ONLY",
+                  "dashboardAccess": "READ_WRITE",
+                  "reportAccess": "READ_WRITE",
+                  "analysisAccess": "READ_ONLY",
+                  "usernameAccess": "READ_ONLY",
+                  "adminAcctAccess": "NONE",
+                  "permissions": [
+                    "CUSTOM_URL_CAT",
+                    "ADVANCED_SETTINGS",
+                    "COMPLY",
+                    "FIREWALL_DNS",
+                    "SECURE"
+                  ],
+                  "logsLimit": "UNRESTRICTED",
+                  "roleType": "ORG_ADMIN"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Admin Users - Delete",
+        "operationId": "Admin_Users___Delete",
+        "tags": [
+          "Admin & Role Management"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        },
+        "parameters": [
+          {
+            "name": "adminUserId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Unique identifier (adminUserId)"
+          }
+        ]
+      }
+    },
+    "/api/v1/appServiceGroups/lite": {
+      "get": {
+        "summary": "Application Service Groups - Get all (lite)",
+        "operationId": "Application_Service_Groups___Get_all__lite",
+        "tags": [
+          "Firewall Policies"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        }
+      }
+    },
+    "/api/v1/appServices/lite": {
+      "get": {
+        "summary": "Application Services - Get all (lite)",
+        "operationId": "Application_Services___Get_all__lite",
+        "tags": [
+          "Firewall Policies"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        }
+      }
+    },
+    "/api/v1/auditlogEntryReport": {
+      "post": {
+        "summary": "Admin Audit Logs (advanced) - Request all",
+        "operationId": "Admin_Audit_Logs__advanced____Request_all",
+        "tags": [
+          "Admin Audit Logs"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "example": {
+                  "startTime": 1577840401000,
+                  "endTime": 1583024401000,
+                  "page": 1,
+                  "pageSize": 100
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "summary": "Admin Audit Logs (advanced) - Get status",
+        "operationId": "Admin_Audit_Logs__advanced____Get_status",
+        "tags": [
+          "Admin Audit Logs"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        }
+      },
+      "delete": {
+        "summary": "Admin Audit Logs (advanced) - Delete",
+        "operationId": "Admin_Audit_Logs__advanced____Delete",
+        "tags": [
+          "Admin Audit Logs"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        }
+      }
+    },
+    "/api/v1/auditlogEntryReport/download": {
+      "get": {
+        "summary": "Admin Audit Logs (advanced) - Get report",
+        "operationId": "Admin_Audit_Logs__advanced____Get_report",
+        "tags": [
+          "Admin Audit Logs"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        }
+      }
+    },
+    "/api/v1/authSettings/exemptedUrls": {
+      "get": {
+        "summary": "Auth Bypass - Get all",
+        "operationId": "Auth_Bypass___Get_all",
+        "tags": [
+          "User Authentication Settings"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        }
+      },
+      "post": {
+        "summary": "Auth Bypass - Add to list",
+        "operationId": "Auth_Bypass___Add_to_list",
+        "tags": [
+          "User Authentication Settings"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "example": {
+                  "urls": [
+                    "zscaler.com",
+                    "google.com",
+                    "yahoo.com"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/behavioralAnalysisAdvancedSettings": {
+      "get": {
+        "summary": "Custom MD5 Hash Values - Get full",
+        "operationId": "Custom_MD5_Hash_Values___Get_full",
+        "tags": [
+          "Sandbox Settings"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        }
+      },
+      "put": {
+        "summary": "Custom MD5 Hash Values - Update MD5 list",
+        "operationId": "Custom_MD5_Hash_Values___Update_MD5_list",
+        "tags": [
+          "Sandbox Settings"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "example": {
+                  "fileHashesToBeBlocked": [
+                    "4EE43B71BB89CB9CBF7784495AE8D0DF",
+                    "8350dED6D39DF158E51D6CFBE36FB012"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/behavioralAnalysisAdvancedSettings/fileHashCount": {
+      "get": {
+        "summary": "Custom MD5 Hash Values - Get quota",
+        "operationId": "Custom_MD5_Hash_Values___Get_quota",
+        "tags": [
+          "Sandbox Settings"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        }
+      }
+    },
+    "/api/v1/browserIsolation/profiles": {
+      "get": {
+        "summary": "Browser Isolation Profile - Get all",
+        "operationId": "Browser_Isolation_Profile___Get_all",
+        "tags": [
+          "Browser Isolation"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        }
+      }
+    },
+    "/api/v1/cloudApplications/bulkUpdate": {
+      "put": {
+        "summary": "Cloud Applications - Bulk update",
+        "operationId": "Cloud_Applications___Bulk_update",
+        "tags": [
+          "Shadow IT Report"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "example": {
+                  "applicationIds": [
+                    12345
+                  ],
+                  "sanctionedState": "SANCTIONED",
+                  "customTags": [
+                    {
+                      "id": 1
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/cloudApplications/lite": {
+      "get": {
+        "summary": "Cloud Applications - Get all (lite)",
+        "operationId": "Cloud_Applications___Get_all__lite",
+        "tags": [
+          "Shadow IT Report"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        }
+      }
+    },
+    "/api/v1/customTags": {
+      "get": {
+        "summary": "Custom Tags - Get all",
+        "operationId": "Custom_Tags___Get_all",
+        "tags": [
+          "Shadow IT Report"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        }
+      }
+    },
+    "/api/v1/departments": {
+      "get": {
+        "summary": "Departments - Get all",
+        "operationId": "Departments___Get_all",
+        "tags": [
+          "User Management"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        }
+      }
+    },
+    "/api/v1/departments/{departmentId}": {
+      "get": {
+        "summary": "Departments - Get 1",
+        "operationId": "Departments___Get_1",
+        "tags": [
+          "User Management"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        },
+        "parameters": [
+          {
+            "name": "departmentId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Unique identifier (departmentId)"
+          }
+        ]
+      }
+    },
+    "/api/v1/deviceGroups": {
+      "get": {
+        "summary": "Device Groups - Get all",
+        "operationId": "Device_Groups___Get_all",
+        "tags": [
+          "Device Groups"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        }
+      }
+    },
+    "/api/v1/deviceGroups/devices": {
+      "get": {
+        "summary": "Devices - Get all",
+        "operationId": "Devices___Get_all",
+        "tags": [
+          "Device Groups"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        }
+      }
+    },
+    "/api/v1/dlpDictionaries": {
+      "get": {
+        "summary": "DLP Dictionaries - Get all",
+        "operationId": "DLP_Dictionaries___Get_all",
+        "tags": [
+          "Data Loss Prevention"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        }
+      },
+      "post": {
+        "summary": "DLP Dictionaries - Add",
+        "operationId": "DLP_Dictionaries___Add",
+        "tags": [
+          "Data Loss Prevention"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "example": {
+                  "name": "Your Dictionary Name",
+                  "description": "Your Description",
+                  "phrases": [
+                    {
+                      "action": "PHRASE_COUNT_TYPE_ALL",
+                      "phrase": "YourPhrase"
+                    }
+                  ],
+                  "customPhraseMatchType": "MATCH_ALL_CUSTOM_PHRASE_PATTERN_DICTIONARY",
+                  "patterns": [
+                    {
+                      "action": "PATTERN_COUNT_TYPE_UNIQUE",
+                      "pattern": "YourPattern"
+                    }
+                  ],
+                  "nameL10nTag": false,
+                  "dictionaryType": "PATTERNS_AND_PHRASES"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/dlpDictionaries/lite": {
+      "get": {
+        "summary": "DLP Dictionaries - Get all (lite)",
+        "operationId": "DLP_Dictionaries___Get_all__lite",
+        "tags": [
+          "Data Loss Prevention"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        }
+      }
+    },
+    "/api/v1/dlpDictionaries/validateDlpPattern": {
+      "post": {
+        "summary": "DLP Dictionaries - Validate pattern",
+        "operationId": "DLP_Dictionaries___Validate_pattern",
+        "tags": [
+          "Data Loss Prevention"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/dlpDictionaries/{dictId}/predefinedIdentifiers": {
+      "get": {
+        "summary": "DLP Dictionaries - Get predefined identifiers",
+        "operationId": "DLP_Dictionaries___Get_predefined_identifiers",
+        "tags": [
+          "Data Loss Prevention"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        },
+        "parameters": [
+          {
+            "name": "dictId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Unique identifier (dictId)"
+          }
+        ]
+      }
+    },
+    "/api/v1/dlpDictionaries/{dlpDictionaryId}": {
+      "get": {
+        "summary": "DLP Dictionaries - Get 1",
+        "operationId": "DLP_Dictionaries___Get_1",
+        "tags": [
+          "Data Loss Prevention"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        },
+        "parameters": [
+          {
+            "name": "dlpDictionaryId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Unique identifier (dlpDictionaryId)"
+          }
+        ]
+      },
+      "put": {
+        "summary": "DLP Dictionaries - Update",
+        "operationId": "DLP_Dictionaries___Update",
+        "tags": [
+          "Data Loss Prevention"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        },
+        "parameters": [
+          {
+            "name": "dlpDictionaryId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Unique identifier (dlpDictionaryId)"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "example": {
+                  "id": 1,
+                  "name": "Your Dictionary Name",
+                  "description": "Your Description",
+                  "phrases": [
+                    {
+                      "action": "PHRASE_COUNT_TYPE_ALL",
+                      "phrase": "YourPhrase"
+                    }
+                  ],
+                  "customPhraseMatchType": "MATCH_ALL_CUSTOM_PHRASE_PATTERN_DICTIONARY",
+                  "patterns": [
+                    {
+                      "action": "PATTERN_COUNT_TYPE_UNIQUE",
+                      "pattern": "YourPattern"
+                    }
+                  ],
+                  "nameL10nTag": false,
+                  "dictionaryType": "PATTERNS_AND_PHRASES"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "DLP Dictionaries - Delete",
+        "operationId": "DLP_Dictionaries___Delete",
+        "tags": [
+          "Data Loss Prevention"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        },
+        "parameters": [
+          {
+            "name": "dlpDictionaryId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Unique identifier (dlpDictionaryId)"
+          }
+        ]
+      }
+    },
+    "/api/v1/dlpEngines": {
+      "get": {
+        "summary": "DLP Engines - Get all",
+        "operationId": "DLP_Engines___Get_all",
+        "tags": [
+          "Data Loss Prevention"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        }
+      },
+      "post": {
+        "summary": "DLP Engines - Add",
+        "operationId": "DLP_Engines___Add",
+        "tags": [
+          "Data Loss Prevention"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "example": {
+                  "name": "Your DLP-Engine name",
+                  "engineExpression": "((D45.S > 0))",
+                  "customDlpEngine": true,
+                  "description": "Your Description"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/dlpEngines/lite": {
+      "get": {
+        "summary": "DLP Engines - Get all (lite)",
+        "operationId": "DLP_Engines___Get_all__lite",
+        "tags": [
+          "Data Loss Prevention"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        }
+      }
+    },
+    "/api/v1/dlpEngines/validateDlpExpr": {
+      "post": {
+        "summary": "DLP Engines - Validate expression",
+        "operationId": "DLP_Engines___Validate_expression",
+        "tags": [
+          "Data Loss Prevention"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/dlpEngines/{dlpEngineId}": {
+      "get": {
+        "summary": "DLP Engines - Get 1",
+        "operationId": "DLP_Engines___Get_1",
+        "tags": [
+          "Data Loss Prevention"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        },
+        "parameters": [
+          {
+            "name": "dlpEngineId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Unique identifier (dlpEngineId)"
+          }
+        ]
+      },
+      "put": {
+        "summary": "DLP Engines - Update",
+        "operationId": "DLP_Engines___Update",
+        "tags": [
+          "Data Loss Prevention"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        },
+        "parameters": [
+          {
+            "name": "dlpEngineId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Unique identifier (dlpEngineId)"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "example": {
+                  "id": 25,
+                  "name": "Your DLP-Engine name",
+                  "engineExpression": "((D45.S > 0))",
+                  "customDlpEngine": true,
+                  "description": "Your Description"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "DLP Engines - Delete",
+        "operationId": "DLP_Engines___Delete",
+        "tags": [
+          "Data Loss Prevention"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        },
+        "parameters": [
+          {
+            "name": "dlpEngineId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Unique identifier (dlpEngineId)"
+          }
+        ]
+      }
+    },
+    "/api/v1/dlpExactDataMatchSchemas": {
+      "get": {
+        "summary": "Exact Data Match - Get all",
+        "operationId": "Exact_Data_Match___Get_all",
+        "tags": [
+          "Data Loss Prevention"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        }
+      }
+    },
+    "/api/v1/dlpExactDataMatchSchemas/lite": {
+      "get": {
+        "summary": "Exact Data Match - Get all (lite)",
+        "operationId": "Exact_Data_Match___Get_all__lite",
+        "tags": [
+          "Data Loss Prevention"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        }
+      }
+    },
+    "/api/v1/dlpNotificationTemplates": {
+      "get": {
+        "summary": "Notification Templates - Get all",
+        "operationId": "Notification_Templates___Get_all",
+        "tags": [
+          "Data Loss Prevention"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        }
+      },
+      "post": {
+        "summary": "Notification Templates - Add",
+        "operationId": "Notification_Templates___Add",
+        "tags": [
+          "Data Loss Prevention"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "example": {
+                  "name": "Your Template  name",
+                  "subject": "Your Template Subject ",
+                  "tlsEnabled": false,
+                  "attachContent": false,
+                  "plainTextMessage": "Your Template's Plain text Mesage ",
+                  "htmlMessage": "httml Message "
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/dlpNotificationTemplates/lite": {
+      "get": {
+        "summary": "Notification Templates - Get all (lite)",
+        "operationId": "Notification_Templates___Get_all__lite",
+        "tags": [
+          "Data Loss Prevention"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        }
+      }
+    },
+    "/api/v1/dlpNotificationTemplates/{dlpNotificationTemplateId}": {
+      "put": {
+        "summary": "Notification Templates - Update",
+        "operationId": "Notification_Templates___Update",
+        "tags": [
+          "Data Loss Prevention"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        },
+        "parameters": [
+          {
+            "name": "dlpNotificationTemplateId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Unique identifier (dlpNotificationTemplateId)"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "example": {
+                  "id": 48,
+                  "name": "Your Template  name",
+                  "subject": "Your Template Subject ",
+                  "tlsEnabled": false,
+                  "attachContent": false,
+                  "plainTextMessage": "Your Template's Plain text Mesage ",
+                  "htmlMessage": "httml Message "
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Notification Templates - Delete",
+        "operationId": "Notification_Templates___Delete",
+        "tags": [
+          "Data Loss Prevention"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        },
+        "parameters": [
+          {
+            "name": "dlpNotificationTemplateId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Unique identifier (dlpNotificationTemplateId)"
+          }
+        ]
+      }
+    },
+    "/api/v1/eventlogEntryReport": {
+      "post": {
+        "summary": "Event  Logs - Generate report",
+        "operationId": "Event__Logs___Generate_report",
+        "tags": [
+          "Event Logs"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "example": {
+                  "page": 0,
+                  "pageSize": 100,
+                  "startTime": 1661990400000,
+                  "endTime": 1662981535290
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "summary": "Event Logs  - Get status",
+        "operationId": "Event_Logs____Get_status",
+        "tags": [
+          "Event Logs"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        }
+      },
+      "delete": {
+        "summary": "Event Logs - Delete report",
+        "operationId": "Event_Logs___Delete_report",
+        "tags": [
+          "Event Logs"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        }
+      }
+    },
+    "/api/v1/eventlogEntryReport/download": {
+      "get": {
+        "summary": "Event Logs - Get report",
+        "operationId": "Event_Logs___Get_report",
+        "tags": [
+          "Event Logs"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        }
+      }
+    },
+    "/api/v1/firewallFilteringRules": {
+      "get": {
+        "summary": "Firewall Filtering Rules  - Get all",
+        "operationId": "Firewall_Filtering_Rules____Get_all",
+        "tags": [
+          "Firewall Policies"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        }
+      },
+      "post": {
+        "summary": "Firewall Filtering Rules  - Add",
+        "operationId": "Firewall_Filtering_Rules____Add",
+        "tags": [
+          "Firewall Policies"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "example": {
+                  "accessControl": "READ_WRITE",
+                  "enableFullLogging": false,
+                  "name": "Your_rule",
+                  "order": 1,
+                  "rank": 1,
+                  "action": "ALLOW",
+                  "state": "ENABLED",
+                  "predefined": false,
+                  "defaultRule": false,
+                  "description": "Your description"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/firewallFilteringRules/{firewallFilteringRuleId}": {
+      "get": {
+        "summary": "Firewall Filtering Rules  - Get 1",
+        "operationId": "Firewall_Filtering_Rules____Get_1",
+        "tags": [
+          "Firewall Policies"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        },
+        "parameters": [
+          {
+            "name": "firewallFilteringRuleId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Unique identifier (firewallFilteringRuleId)"
+          }
+        ]
+      },
+      "put": {
+        "summary": "Firewall Filtering Rules  - Update",
+        "operationId": "Firewall_Filtering_Rules____Update",
+        "tags": [
+          "Firewall Policies"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        },
+        "parameters": [
+          {
+            "name": "firewallFilteringRuleId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Unique identifier (firewallFilteringRuleId)"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "example": {
+                  "id": 123,
+                  "accessControl": "READ_WRITE",
+                  "enableFullLogging": false,
+                  "name": "Your_rule",
+                  "order": 1,
+                  "rank": 1,
+                  "action": "ALLOW",
+                  "state": "ENABLED",
+                  "predefined": false,
+                  "defaultRule": false,
+                  "description": "Your description"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Firewall Filtering Rules  - Delete",
+        "operationId": "Firewall_Filtering_Rules____Delete",
+        "tags": [
+          "Firewall Policies"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        },
+        "parameters": [
+          {
+            "name": "firewallFilteringRuleId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Unique identifier (firewallFilteringRuleId)"
+          }
+        ]
+      }
+    },
+    "/api/v1/forwardingRules": {
+      "get": {
+        "summary": "Forwarding Control Rule - Get all",
+        "operationId": "Forwarding_Control_Rule___Get_all",
+        "tags": [
+          "Forwarding Control Policy"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        }
+      },
+      "post": {
+        "summary": "Forwarding Control Rule - Add",
+        "operationId": "Forwarding_Control_Rule___Add",
+        "tags": [
+          "Forwarding Control Policy"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "example": {
+                  "accessControl": "READ_WRITE",
+                  "name": "Your Rule Name",
+                  "type": "FORWARDING",
+                  "order": 1,
+                  "rank": 1,
+                  "forwardMethod": "DIRECT"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/forwardingRules/{forwardingRuleId}": {
+      "get": {
+        "summary": "Forwarding Control Rule - Get 1",
+        "operationId": "Forwarding_Control_Rule___Get_1",
+        "tags": [
+          "Forwarding Control Policy"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        },
+        "parameters": [
+          {
+            "name": "forwardingRuleId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Unique identifier (forwardingRuleId)"
+          }
+        ]
+      },
+      "put": {
+        "summary": "Forwarding Control Rule - Update",
+        "operationId": "Forwarding_Control_Rule___Update",
+        "tags": [
+          "Forwarding Control Policy"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        },
+        "parameters": [
+          {
+            "name": "forwardingRuleId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Unique identifier (forwardingRuleId)"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "example": {
+                  "accessControl": "READ_WRITE",
+                  "id": 254329,
+                  "name": "Your Rule Name",
+                  "type": "FORWARDING",
+                  "order": 1,
+                  "rank": 7,
+                  "forwardMethod": "DIRECT",
+                  "state": "ENABLED"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Forwarding Control Rule - Delete",
+        "operationId": "Forwarding_Control_Rule___Delete",
+        "tags": [
+          "Forwarding Control Policy"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        },
+        "parameters": [
+          {
+            "name": "forwardingRuleId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Unique identifier (forwardingRuleId)"
+          }
+        ]
+      }
+    },
+    "/api/v1/greTunnels": {
+      "get": {
+        "summary": "GRE Tunnels - Get all",
+        "operationId": "GRE_Tunnels___Get_all",
+        "tags": [
+          "Traffic Forwarding"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        }
+      },
+      "post": {
+        "summary": "GRE Tunnels - Add",
+        "operationId": "GRE_Tunnels___Add",
+        "tags": [
+          "Traffic Forwarding"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "example": {
+                  "sourceIp": "4.4.4.4",
+                  "primaryDestVip": {
+                    "id": 123,
+                    "virtualIp": "10.66.68.68"
+                  },
+                  "secondaryDestVip": {
+                    "id": 123,
+                    "virtualIp": "10.66.68.68"
+                  },
+                  "internalIpRange": "172.17.0.216",
+                  "ipUnnumbered": false,
+                  "comment": "Your Description"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/greTunnels/availableInternalIpRanges": {
+      "get": {
+        "summary": "GRE Tunnels - Get available internal GRE IP ranges",
+        "operationId": "GRE_Tunnels___Get_available_internal_GRE_IP_ranges",
+        "tags": [
+          "Traffic Forwarding"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        }
+      }
+    },
+    "/api/v1/greTunnels/{greTunnelId}": {
+      "get": {
+        "summary": "GRE Tunnels - Get 1",
+        "operationId": "GRE_Tunnels___Get_1",
+        "tags": [
+          "Traffic Forwarding"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        },
+        "parameters": [
+          {
+            "name": "greTunnelId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Unique identifier (greTunnelId)"
+          }
+        ]
+      },
+      "put": {
+        "summary": "GRE Tunnels - Update",
+        "operationId": "GRE_Tunnels___Update",
+        "tags": [
+          "Traffic Forwarding"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        },
+        "parameters": [
+          {
+            "name": "greTunnelId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Unique identifier (greTunnelId)"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "example": {
+                  "id": 123,
+                  "sourceIp": "4.4.4.4",
+                  "primaryDestVip": {
+                    "id": 123,
+                    "virtualIp": "10.66.68.68"
+                  },
+                  "secondaryDestVip": {
+                    "id": 123,
+                    "virtualIp": "10.66.68.68"
+                  },
+                  "internalIpRange": "172.17.0.224",
+                  "ipUnnumbered": false,
+                  "comment": "Your Description"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "GRE Tunnels - Delete",
+        "operationId": "GRE_Tunnels___Delete",
+        "tags": [
+          "Traffic Forwarding"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        },
+        "parameters": [
+          {
+            "name": "greTunnelId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Unique identifier (greTunnelId)"
+          }
+        ]
+      }
+    },
+    "/api/v1/groups": {
+      "get": {
+        "summary": "Groups - Get all",
+        "operationId": "Groups___Get_all",
+        "tags": [
+          "User Management"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        }
+      }
+    },
+    "/api/v1/groups/{groupId}": {
+      "get": {
+        "summary": "Groups - Get 1",
+        "operationId": "Groups___Get_1",
+        "tags": [
+          "User Management"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        },
+        "parameters": [
+          {
+            "name": "groupId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Unique identifier (groupId)"
+          }
+        ]
+      }
+    },
+    "/api/v1/icapServers": {
+      "get": {
+        "summary": "ICAP Servers - Get all",
+        "operationId": "ICAP_Servers___Get_all",
+        "tags": [
+          "Data Loss Prevention"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        }
+      }
+    },
+    "/api/v1/icapServers/lite": {
+      "get": {
+        "summary": "ICAP Servers - Get all (lite)",
+        "operationId": "ICAP_Servers___Get_all__lite",
+        "tags": [
+          "Data Loss Prevention"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        }
+      }
+    },
+    "/api/v1/idmprofile": {
+      "get": {
+        "summary": "Indexed Document Match - Get all",
+        "operationId": "Indexed_Document_Match___Get_all",
+        "tags": [
+          "Data Loss Prevention"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        }
+      }
+    },
+    "/api/v1/idmprofile/lite": {
+      "get": {
+        "summary": "Indexed Document Match - Get all (lite)",
+        "operationId": "Indexed_Document_Match___Get_all__lite",
+        "tags": [
+          "Data Loss Prevention"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        }
+      }
+    },
+    "/api/v1/incidentReceiverServers": {
+      "get": {
+        "summary": "Incident Receiver Servers - Get all",
+        "operationId": "Incident_Receiver_Servers___Get_all",
+        "tags": [
+          "Data Loss Prevention"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        }
+      }
+    },
+    "/api/v1/incidentReceiverServers/lite": {
+      "get": {
+        "summary": "Incident Receiver Servers - Get all (lite)",
+        "operationId": "Incident_Receiver_Servers___Get_all__lite",
+        "tags": [
+          "Data Loss Prevention"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        }
+      }
+    },
+    "/api/v1/intermediateCaCertificate": {
+      "get": {
+        "summary": "Intermediate CA Certificates - Get all",
+        "operationId": "Intermediate_CA_Certificates___Get_all",
+        "tags": [
+          "Intermediate CA Certificates"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        }
+      },
+      "post": {
+        "summary": "Intermediate CA Certificates - Add",
+        "operationId": "Intermediate_CA_Certificates___Add",
+        "tags": [
+          "Intermediate CA Certificates"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "example": {
+                  "name": "Your Cert Name ",
+                  "type": "CUSTOM_SW",
+                  "region": "GLOBAL",
+                  "status": "ENABLED"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/intermediateCaCertificate/certid": {
+      "put": {
+        "summary": "Intermediate CA Certificates - Update",
+        "operationId": "Intermediate_CA_Certificates___Update",
+        "tags": [
+          "Intermediate CA Certificates"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "example": {
+                  "name": "Your Cert Name Update ",
+                  "type": "CUSTOM_SW",
+                  "region": "GLOBAL",
+                  "status": "ENABLED"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Intermediate CA Certificates - Delete",
+        "operationId": "Intermediate_CA_Certificates___Delete",
+        "tags": [
+          "Intermediate CA Certificates"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        }
+      }
+    },
+    "/api/v1/intermediateCaCertificate/downloadAttestation/certid": {
+      "get": {
+        "summary": "Intermediate CA Certificates - Download key attestation",
+        "operationId": "Intermediate_CA_Certificates___Download_key_attestation",
+        "tags": [
+          "Intermediate CA Certificates"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        }
+      }
+    },
+    "/api/v1/intermediateCaCertificate/downloadCsr/certid": {
+      "get": {
+        "summary": "Intermediate CA Certificates - Download CSR",
+        "operationId": "Intermediate_CA_Certificates___Download_CSR",
+        "tags": [
+          "Intermediate CA Certificates"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        }
+      }
+    },
+    "/api/v1/intermediateCaCertificate/downloadPublicKey/certid": {
+      "get": {
+        "summary": "Intermediate CA Certificates - Show key pair",
+        "operationId": "Intermediate_CA_Certificates___Show_key_pair",
+        "tags": [
+          "Intermediate CA Certificates"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        }
+      }
+    },
+    "/api/v1/intermediateCaCertificate/finalizeCert/certid": {
+      "post": {
+        "summary": "Intermediate CA Certificates - Finalize certificate",
+        "operationId": "Intermediate_CA_Certificates___Finalize_certificate",
+        "tags": [
+          "Intermediate CA Certificates"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        }
+      }
+    },
+    "/api/v1/intermediateCaCertificate/generateCsr/certid": {
+      "post": {
+        "summary": "Intermediate CA Certificates - Generate CSR",
+        "operationId": "Intermediate_CA_Certificates___Generate_CSR",
+        "tags": [
+          "Intermediate CA Certificates"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "example": {
+                  "csrFileName": "YourFileName",
+                  "commName": "YourCommon_name",
+                  "orgName": "YourOrgName",
+                  "deptName": "YourDept",
+                  "city": "Your_City",
+                  "state": "Test",
+                  "country": "COUNTRY_AF",
+                  "keySize": 2048,
+                  "pathLengthConstraint": 0,
+                  "signatureAlgorithm": "SHA256"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/intermediateCaCertificate/keyPair/certId": {
+      "post": {
+        "summary": "Intermediate CA Certificates - Generate key pair",
+        "operationId": "Intermediate_CA_Certificates___Generate_key_pair",
+        "tags": [
+          "Intermediate CA Certificates"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        }
+      }
+    },
+    "/api/v1/intermediateCaCertificate/lite": {
+      "get": {
+        "summary": "Intermediate CA Certificates - Get all (lite)",
+        "operationId": "Intermediate_CA_Certificates___Get_all__lite",
+        "tags": [
+          "Intermediate CA Certificates"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        }
+      }
+    },
+    "/api/v1/intermediateCaCertificate/makeDefault/certid": {
+      "put": {
+        "summary": "Intermediate CA Certificates - Make certificate as default",
+        "operationId": "Intermediate_CA_Certificates___Make_certificate_as_default",
+        "tags": [
+          "Intermediate CA Certificates"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        }
+      }
+    },
+    "/api/v1/intermediateCaCertificate/readyToUse": {
+      "get": {
+        "summary": "Intermediate CA Certificates - Get ready-to-use certificates",
+        "operationId": "Intermediate_CA_Certificates___Get_ready_to_use_certificates",
+        "tags": [
+          "Intermediate CA Certificates"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        }
+      }
+    },
+    "/api/v1/intermediateCaCertificate/showCert/certid": {
+      "get": {
+        "summary": "Intermediate CA Certificates - Show certificate",
+        "operationId": "Intermediate_CA_Certificates___Show_certificate",
+        "tags": [
+          "Intermediate CA Certificates"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        }
+      }
+    },
+    "/api/v1/intermediateCaCertificate/showCsr/certid": {
+      "get": {
+        "summary": "Intermediate CA Certificates - Show CSR",
+        "operationId": "Intermediate_CA_Certificates___Show_CSR",
+        "tags": [
+          "Intermediate CA Certificates"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        }
+      }
+    },
+    "/api/v1/intermediateCaCertificate/uploadCert/certid": {
+      "post": {
+        "summary": "Intermediate CA Certificates - Upload intermediate certificate",
+        "operationId": "Intermediate_CA_Certificates___Upload_intermediate_certificate",
+        "tags": [
+          "Intermediate CA Certificates"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/intermediateCaCertificate/uploadCertChain/cerid": {
+      "post": {
+        "summary": "Intermediate CA Certificates - Upload intermediate certificate chain",
+        "operationId": "Intermediate_CA_Certificates___Upload_intermediate_certificate_chain",
+        "tags": [
+          "Intermediate CA Certificates"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/intermediateCaCertificate/verifyKeyAttestation/certid": {
+      "post": {
+        "summary": "Intermediate CA Certificates - Verify key attestation",
+        "operationId": "Intermediate_CA_Certificates___Verify_key_attestation",
+        "tags": [
+          "Intermediate CA Certificates"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        }
+      }
+    },
+    "/api/v1/intermediateCaCertificate/{intermediateCaCertificateId}": {
+      "get": {
+        "summary": "Intermediate CA Certificates - Get by certificate ID",
+        "operationId": "Intermediate_CA_Certificates___Get_by_certificate_ID",
+        "tags": [
+          "Intermediate CA Certificates"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        },
+        "parameters": [
+          {
+            "name": "intermediateCaCertificateId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Unique identifier (intermediateCaCertificateId)"
+          }
+        ]
+      }
+    },
+    "/api/v1/iotDiscovery/categories": {
+      "get": {
+        "summary": "IoT Discovery - Get all categories",
+        "operationId": "IoT_Discovery___Get_all_categories",
+        "tags": [
+          "IoT Report"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        }
+      }
+    },
+    "/api/v1/iotDiscovery/classifications": {
+      "get": {
+        "summary": "IoT Discovery - Get all classifications",
+        "operationId": "IoT_Discovery___Get_all_classifications",
+        "tags": [
+          "IoT Report"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        }
+      }
+    },
+    "/api/v1/iotDiscovery/deviceList": {
+      "get": {
+        "summary": "IoT Discovery - Get all device list",
+        "operationId": "IoT_Discovery___Get_all_device_list",
+        "tags": [
+          "IoT Report"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        }
+      }
+    },
+    "/api/v1/iotDiscovery/deviceTypes": {
+      "get": {
+        "summary": "IoT Discovery - Get all device types",
+        "operationId": "IoT_Discovery___Get_all_device_types",
+        "tags": [
+          "IoT Report"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        }
+      }
+    },
+    "/api/v1/ipAddresses": {
+      "get": {
+        "summary": "IP Addresses - Get all",
+        "operationId": "IP_Addresses___Get_all",
+        "tags": [
+          "Location Management"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        }
+      }
+    },
+    "/api/v1/ipDestinationGroups": {
+      "get": {
+        "summary": "IP Destination Groups  - Get all",
+        "operationId": "IP_Destination_Groups____Get_all",
+        "tags": [
+          "Firewall Policies"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        }
+      },
+      "post": {
+        "summary": "IP Destination Groups - Add",
+        "operationId": "IP_Destination_Groups___Add",
+        "tags": [
+          "Firewall Policies"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "example": {
+                  "name": "You Group Name",
+                  "type": "DSTN_IP",
+                  "addresses": [
+                    "1.2.3.4"
+                  ],
+                  "description": "Your Description",
+                  "ipCategories": [],
+                  "countries": [],
+                  "urlCategories": []
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/ipDestinationGroups/ipv6DestinationGroups": {
+      "get": {
+        "summary": "IPv6 Destination Groups - Get all",
+        "operationId": "IPv6_Destination_Groups___Get_all",
+        "tags": [
+          "Firewall Policies"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        }
+      }
+    },
+    "/api/v1/ipDestinationGroups/ipv6DestinationGroups/lite": {
+      "get": {
+        "summary": "IPv6 Destination Groups - Get all (lite)",
+        "operationId": "IPv6_Destination_Groups___Get_all__lite",
+        "tags": [
+          "Firewall Policies"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        }
+      }
+    },
+    "/api/v1/ipDestinationGroups/lite": {
+      "get": {
+        "summary": "IP Destination Groups  - Get all (lite)",
+        "operationId": "IP_Destination_Groups____Get_all__lite",
+        "tags": [
+          "Firewall Policies"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        }
+      }
+    },
+    "/api/v1/ipDestinationGroups/{ipDestinationGroupId}": {
+      "get": {
+        "summary": "IP Destination Groups  - Get 1",
+        "operationId": "IP_Destination_Groups____Get_1",
+        "tags": [
+          "Firewall Policies"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        },
+        "parameters": [
+          {
+            "name": "ipDestinationGroupId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Unique identifier (ipDestinationGroupId)"
+          }
+        ]
+      },
+      "put": {
+        "summary": "IP Destination Groups - Update",
+        "operationId": "IP_Destination_Groups___Update",
+        "tags": [
+          "Firewall Policies"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        },
+        "parameters": [
+          {
+            "name": "ipDestinationGroupId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Unique identifier (ipDestinationGroupId)"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "example": {
+                  "id": 36862,
+                  "name": "You Group Name",
+                  "type": "DSTN_IP",
+                  "addresses": [
+                    "1.2.3.4"
+                  ],
+                  "description": "Your Description3",
+                  "ipCategories": [],
+                  "countries": []
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "IP Destination Groups - Delete",
+        "operationId": "IP_Destination_Groups___Delete",
+        "tags": [
+          "Firewall Policies"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        },
+        "parameters": [
+          {
+            "name": "ipDestinationGroupId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Unique identifier (ipDestinationGroupId)"
+          }
+        ]
+      }
+    },
+    "/api/v1/ipSourceGroups": {
+      "get": {
+        "summary": "IP Source Groups  - Get all",
+        "operationId": "IP_Source_Groups____Get_all",
+        "tags": [
+          "Firewall Policies"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        }
+      },
+      "post": {
+        "summary": "IP Source Groups - Add",
+        "operationId": "IP_Source_Groups___Add",
+        "tags": [
+          "Firewall Policies"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "example": {
+                  "name": "Your Group Name",
+                  "ipAddresses": [
+                    "1.2.3.4"
+                  ],
+                  "description": "Your Description"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/ipSourceGroups/ipv6SourceGroups": {
+      "get": {
+        "summary": "IPv6 Source Groups - Get all",
+        "operationId": "IPv6_Source_Groups___Get_all",
+        "tags": [
+          "Firewall Policies"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        }
+      }
+    },
+    "/api/v1/ipSourceGroups/ipv6SourceGroups/lite": {
+      "get": {
+        "summary": "IPv6 Source Groups - Get all (lite)",
+        "operationId": "IPv6_Source_Groups___Get_all__lite",
+        "tags": [
+          "Firewall Policies"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        }
+      }
+    },
+    "/api/v1/ipSourceGroups/lite": {
+      "get": {
+        "summary": "IP Source Groups  - Get all (lite)",
+        "operationId": "IP_Source_Groups____Get_all__lite",
+        "tags": [
+          "Firewall Policies"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        }
+      }
+    },
+    "/api/v1/ipSourceGroups/{ipSourceGroupId}": {
+      "get": {
+        "summary": "IP Source Groups  - Get 1",
+        "operationId": "IP_Source_Groups____Get_1",
+        "tags": [
+          "Firewall Policies"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        },
+        "parameters": [
+          {
+            "name": "ipSourceGroupId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Unique identifier (ipSourceGroupId)"
+          }
+        ]
+      },
+      "put": {
+        "summary": "IP Source Groups - Update",
+        "operationId": "IP_Source_Groups___Update",
+        "tags": [
+          "Firewall Policies"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        },
+        "parameters": [
+          {
+            "name": "ipSourceGroupId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Unique identifier (ipSourceGroupId)"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "example": {
+                  "id": 36872,
+                  "name": "Your Group Name",
+                  "ipAddresses": [
+                    "1.2.3.4"
+                  ],
+                  "description": "Your Description"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "IP Source Groups - Delete",
+        "operationId": "IP_Source_Groups___Delete",
+        "tags": [
+          "Firewall Policies"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        },
+        "parameters": [
+          {
+            "name": "ipSourceGroupId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Unique identifier (ipSourceGroupId)"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "example": {
+                  "id": 36872,
+                  "name": "Your Group Name",
+                  "ipAddresses": [
+                    "1.2.3.4"
+                  ],
+                  "description": "Your Description"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/ipv6config": {
+      "get": {
+        "summary": "IPv6 Configuration - Get details",
+        "operationId": "IPv6_Configuration___Get_details",
+        "tags": [
+          "Traffic Forwarding"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        }
+      }
+    },
+    "/api/v1/ipv6config/dns64prefix": {
+      "get": {
+        "summary": "DNS64 Prefix - Get all",
+        "operationId": "DNS64_Prefix___Get_all",
+        "tags": [
+          "Traffic Forwarding"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        }
+      }
+    },
+    "/api/v1/ipv6config/nat64prefix": {
+      "get": {
+        "summary": "NAT64 Prefixes - Get all",
+        "operationId": "NAT64_Prefixes___Get_all",
+        "tags": [
+          "Traffic Forwarding"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        }
+      }
+    },
+    "/api/v1/locations": {
+      "get": {
+        "summary": "Locations - Get all",
+        "operationId": "Locations___Get_all",
+        "tags": [
+          "Location Management"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        }
+      },
+      "post": {
+        "summary": "Locations - Add, Static IP",
+        "operationId": "Locations___Add__Static_IP",
+        "tags": [
+          "Location Management"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "example": {
+                  "name": "chicago-hq-gre-1",
+                  "ipAddresses": [
+                    "26.9.19.83"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/locations/bulkDelete": {
+      "post": {
+        "summary": "Locations - Bulk delete",
+        "operationId": "Locations___Bulk_delete",
+        "tags": [
+          "Location Management"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "example": {
+                  "ids": [
+                    1234,
+                    2345
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/locations/groups": {
+      "get": {
+        "summary": "Location Groups - Get all",
+        "operationId": "Location_Groups___Get_all",
+        "tags": [
+          "Location Management"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        }
+      }
+    },
+    "/api/v1/locations/groups/count": {
+      "get": {
+        "summary": "Location Groups - Get total count",
+        "operationId": "Location_Groups___Get_total_count",
+        "tags": [
+          "Location Management"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        }
+      }
+    },
+    "/api/v1/locations/groups/lite": {
+      "get": {
+        "summary": "Location Groups - Get all (lite)",
+        "operationId": "Location_Groups___Get_all__lite",
+        "tags": [
+          "Location Management"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        }
+      }
+    },
+    "/api/v1/locations/groups/{groupId}": {
+      "get": {
+        "summary": "Location Groups - Get 1",
+        "operationId": "Location_Groups___Get_1",
+        "tags": [
+          "Location Management"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        },
+        "parameters": [
+          {
+            "name": "groupId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Unique identifier (groupId)"
+          }
+        ]
+      }
+    },
+    "/api/v1/locations/lite": {
+      "get": {
+        "summary": "Locations - Get all (lite)",
+        "operationId": "Locations___Get_all__lite",
+        "tags": [
+          "Location Management"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        }
+      }
+    },
+    "/api/v1/locations/{locationId}": {
+      "get": {
+        "summary": "Locations - Get 1",
+        "operationId": "Locations___Get_1",
+        "tags": [
+          "Location Management"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        },
+        "parameters": [
+          {
+            "name": "locationId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Unique identifier (locationId)"
+          }
+        ]
+      },
+      "put": {
+        "summary": "Locations - Update",
+        "operationId": "Locations___Update",
+        "tags": [
+          "Location Management"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        },
+        "parameters": [
+          {
+            "name": "locationId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Unique identifier (locationId)"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "example": {
+                  "name": "sjc-2",
+                  "vpnCredentials": [
+                    {
+                      "id": 12345,
+                      "type": "UFQDN",
+                      "fqdn": "sjc-1x-2-test@yourcompany.com"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Locations - Delete",
+        "operationId": "Locations___Delete",
+        "tags": [
+          "Location Management"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        },
+        "parameters": [
+          {
+            "name": "locationId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Unique identifier (locationId)"
+          }
+        ]
+      }
+    },
+    "/api/v1/locations/{locationId}/sublocations": {
+      "get": {
+        "summary": "Sub-locations - Get all",
+        "operationId": "Sub_locations___Get_all",
+        "tags": [
+          "Location Management"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        },
+        "parameters": [
+          {
+            "name": "locationId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Unique identifier (locationId)"
+          }
+        ]
+      }
+    },
+    "/api/v1/networkApplicationGroups": {
+      "get": {
+        "summary": "Network Application Groups  - Get all",
+        "operationId": "Network_Application_Groups____Get_all",
+        "tags": [
+          "Firewall Policies"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        }
+      },
+      "post": {
+        "summary": "Network Application Groups  - Add",
+        "operationId": "Network_Application_Groups____Add",
+        "tags": [
+          "Firewall Policies"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "example": {
+                  "name": "network Application group",
+                  "networkApplications": [
+                    "APNS"
+                  ],
+                  "description": "Your Description"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/networkApplicationGroups/{networkApplicationGroupId}": {
+      "put": {
+        "summary": "Network Application Groups  - Update",
+        "operationId": "Network_Application_Groups____Update",
+        "tags": [
+          "Firewall Policies"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        },
+        "parameters": [
+          {
+            "name": "networkApplicationGroupId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Unique identifier (networkApplicationGroupId)"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "example": {
+                  "id": 123,
+                  "name": "network Application group",
+                  "networkApplications": [
+                    "APNS"
+                  ],
+                  "description": "Your Description"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Network Application Groups  - Delete",
+        "operationId": "Network_Application_Groups____Delete",
+        "tags": [
+          "Firewall Policies"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        },
+        "parameters": [
+          {
+            "name": "networkApplicationGroupId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Unique identifier (networkApplicationGroupId)"
+          }
+        ]
+      }
+    },
+    "/api/v1/networkApplications": {
+      "get": {
+        "summary": "Network Applications  - Get all",
+        "operationId": "Network_Applications____Get_all",
+        "tags": [
+          "Firewall Policies"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        }
+      }
+    },
+    "/api/v1/networkServiceGroups": {
+      "get": {
+        "summary": "Network Service Groups  - Get all",
+        "operationId": "Network_Service_Groups____Get_all",
+        "tags": [
+          "Firewall Policies"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        }
+      },
+      "post": {
+        "summary": "Network Service Groups - Add",
+        "operationId": "Network_Service_Groups___Add",
+        "tags": [
+          "Firewall Policies"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "example": {
+                  "name": "Network Services",
+                  "services": [
+                    {
+                      "id": 13734,
+                      "name": "AIM"
+                    }
+                  ],
+                  "description": "Your description"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/networkServiceGroups/{networkServiceGroupId}": {
+      "put": {
+        "summary": "Network Service Groups - Update",
+        "operationId": "Network_Service_Groups___Update",
+        "tags": [
+          "Firewall Policies"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        },
+        "parameters": [
+          {
+            "name": "networkServiceGroupId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Unique identifier (networkServiceGroupId)"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "example": {
+                  "id": 123,
+                  "name": "Network Services",
+                  "services": [
+                    {
+                      "id": 13734,
+                      "name": "AIM"
+                    }
+                  ],
+                  "description": "Your description"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Network Service Groups - Delete",
+        "operationId": "Network_Service_Groups___Delete",
+        "tags": [
+          "Firewall Policies"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        },
+        "parameters": [
+          {
+            "name": "networkServiceGroupId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Unique identifier (networkServiceGroupId)"
+          }
+        ]
+      }
+    },
+    "/api/v1/networkServices": {
+      "get": {
+        "summary": "Network Services  - Get all",
+        "operationId": "Network_Services____Get_all",
+        "tags": [
+          "Firewall Policies"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        }
+      },
+      "post": {
+        "summary": "Network Services  - Add",
+        "operationId": "Network_Services____Add",
+        "tags": [
+          "Firewall Policies"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "example": {
+                  "name": "Network Service",
+                  "srcTcpPorts": [
+                    {
+                      "start": 123
+                    }
+                  ],
+                  "destTcpPorts": [
+                    {
+                      "start": 123
+                    }
+                  ],
+                  "srcUdpPorts": [
+                    {
+                      "start": 123
+                    }
+                  ],
+                  "destUdpPorts": [
+                    {
+                      "start": 123
+                    }
+                  ],
+                  "type": "CUSTOM",
+                  "description": "Your Description"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/networkServices/{networkServiceId}": {
+      "put": {
+        "summary": "Network Services  - Update",
+        "operationId": "Network_Services____Update",
+        "tags": [
+          "Firewall Policies"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        },
+        "parameters": [
+          {
+            "name": "networkServiceId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Unique identifier (networkServiceId)"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "example": {
+                  "id": 123,
+                  "name": "Network Service",
+                  "srcTcpPorts": [
+                    {
+                      "start": 123
+                    }
+                  ],
+                  "destTcpPorts": [
+                    {
+                      "start": 123
+                    }
+                  ],
+                  "srcUdpPorts": [
+                    {
+                      "start": 123
+                    }
+                  ],
+                  "destUdpPorts": [
+                    {
+                      "start": 123
+                    }
+                  ],
+                  "type": "CUSTOM",
+                  "description": "Your Description"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Network Services  - Delete",
+        "operationId": "Network_Services____Delete",
+        "tags": [
+          "Firewall Policies"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        },
+        "parameters": [
+          {
+            "name": "networkServiceId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Unique identifier (networkServiceId)"
+          }
+        ]
+      }
+    },
+    "/api/v1/orgProvisioning/ipGreTunnelInfo": {
+      "get": {
+        "summary": "GRE Tunnel IP Addresses - Get all",
+        "operationId": "GRE_Tunnel_IP_Addresses___Get_all",
+        "tags": [
+          "Location Management"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        }
+      }
+    },
+    "/api/v1/region/byGeoCoordinates": {
+      "get": {
+        "summary": "City Geo Info - Get by geo-coordinates",
+        "operationId": "City_Geo_Info___Get_by_geo_coordinates",
+        "tags": [
+          "Traffic Forwarding"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        }
+      }
+    },
+    "/api/v1/region/byIPAddress/81.8.4.2": {
+      "get": {
+        "summary": "City Geo Info - Get by IP address",
+        "operationId": "City_Geo_Info___Get_by_IP_address",
+        "tags": [
+          "Traffic Forwarding"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        }
+      }
+    },
+    "/api/v1/region/search": {
+      "get": {
+        "summary": "City Geo Info - Get by city name",
+        "operationId": "City_Geo_Info___Get_by_city_name",
+        "tags": [
+          "Traffic Forwarding"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        }
+      }
+    },
+    "/api/v1/ruleLabels": {
+      "get": {
+        "summary": "Rule Labels - Get all",
+        "operationId": "Rule_Labels___Get_all",
+        "tags": [
+          "Rule Labels"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        }
+      },
+      "post": {
+        "summary": "Rule Labels - Add",
+        "operationId": "Rule_Labels___Add",
+        "tags": [
+          "Rule Labels"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "example": {
+                  "name": "Your Name",
+                  "description": "Your description"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/ruleLabels/{ruleLabelId}": {
+      "get": {
+        "summary": "Rule Labels - Get 1",
+        "operationId": "Rule_Labels___Get_1",
+        "tags": [
+          "Rule Labels"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        },
+        "parameters": [
+          {
+            "name": "ruleLabelId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Unique identifier (ruleLabelId)"
+          }
+        ]
+      },
+      "put": {
+        "summary": "Rule Labels - Update",
+        "operationId": "Rule_Labels___Update",
+        "tags": [
+          "Rule Labels"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        },
+        "parameters": [
+          {
+            "name": "ruleLabelId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Unique identifier (ruleLabelId)"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "example": {
+                  "id": 64147,
+                  "name": "Your Name",
+                  "description": "Your description"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Rule Labels - Delete",
+        "operationId": "Rule_Labels___Delete",
+        "tags": [
+          "Rule Labels"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        },
+        "parameters": [
+          {
+            "name": "ruleLabelId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Unique identifier (ruleLabelId)"
+          }
+        ]
+      }
+    },
+    "/api/v1/sandbox/report/quota": {
+      "get": {
+        "summary": "Sandbox Report - Get quota",
+        "operationId": "Sandbox_Report___Get_quota",
+        "tags": [
+          "Sandbox Report"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        }
+      }
+    },
+    "/api/v1/sandbox/report/{reportId}": {
+      "get": {
+        "summary": "Sandbox Report - Get full",
+        "operationId": "Sandbox_Report___Get_full",
+        "tags": [
+          "Sandbox Report"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        },
+        "parameters": [
+          {
+            "name": "reportId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Unique identifier (reportId)"
+          }
+        ]
+      }
+    },
+    "/api/v1/security": {
+      "get": {
+        "summary": "Allowlist URLs - Get all",
+        "operationId": "Allowlist_URLs___Get_all",
+        "tags": [
+          "Security Policy Settings"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        }
+      },
+      "put": {
+        "summary": "Allowlist URLs - Update",
+        "operationId": "Allowlist_URLs___Update",
+        "tags": [
+          "Security Policy Settings"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "example": {
+                  "whitelistUrls": [
+                    "wellsfargo.com",
+                    "paypal.com"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/security/advanced": {
+      "get": {
+        "summary": "Denylist URLs - Get all",
+        "operationId": "Denylist_URLs___Get_all",
+        "tags": [
+          "Security Policy Settings"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        }
+      },
+      "put": {
+        "summary": "Denylist URLs - Update",
+        "operationId": "Denylist_URLs___Update",
+        "tags": [
+          "Security Policy Settings"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "example": {
+                  "blacklistUrls": [
+                    "facebook.com",
+                    "tinder.com"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/security/advanced/blacklistUrls": {
+      "post": {
+        "summary": "Denylist URLs - Add incr",
+        "operationId": "Denylist_URLs___Add_incr",
+        "tags": [
+          "Security Policy Settings"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "example": {
+                  "blacklistUrls": [
+                    "snapchat.com",
+                    "tinder.com"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/shadowIT/applications/LOCATION/exportCsv": {
+      "post": {
+        "summary": "Shadow IT Report - Locations for a cloud application",
+        "operationId": "Shadow_IT_Report___Locations_for_a_cloud_application",
+        "tags": [
+          "Shadow IT Report"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "example": {
+                  "duration": "LAST_7_DAYS",
+                  "application": [
+                    "ONSHAPE"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/shadowIT/applications/USER/exportCsv": {
+      "post": {
+        "summary": "Shadow IT Report - Users for a cloud application",
+        "operationId": "Shadow_IT_Report___Users_for_a_cloud_application",
+        "tags": [
+          "Shadow IT Report"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "example": {
+                  "duration": "LAST_7_DAYS",
+                  "application": [
+                    "ONSHAPE"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/shadowIT/applications/export": {
+      "post": {
+        "summary": "Shadow IT Report - Cloud applications",
+        "operationId": "Shadow_IT_Report___Cloud_applications",
+        "tags": [
+          "Shadow IT Report"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "example": {
+                  "duration": "LAST_7_DAYS"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/sslSettings/exemptedUrls": {
+      "get": {
+        "summary": "SSL Bypass - Get all",
+        "operationId": "SSL_Bypass___Get_all",
+        "tags": [
+          "User Authentication Settings"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        }
+      },
+      "post": {
+        "summary": "SSL Bypass - Add to list",
+        "operationId": "SSL_Bypass___Add_to_list",
+        "tags": [
+          "User Authentication Settings"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "example": {
+                  "urls": [
+                    "zscaler.com",
+                    "google.com",
+                    "yahoo.com"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/staticIP": {
+      "get": {
+        "summary": "GRE Tunnels - Get available IPs",
+        "operationId": "GRE_Tunnels___Get_available_IPs",
+        "tags": [
+          "Traffic Forwarding"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        }
+      },
+      "post": {
+        "summary": "Static IPs - Add, Auto region",
+        "operationId": "Static_IPs___Add__Auto_region",
+        "tags": [
+          "Traffic Forwarding"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "example": {
+                  "ipAddress": "1.2.3.4",
+                  "geoOverride": false,
+                  "comment": "Your Description",
+                  "routableIP": true
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/staticIP/validate": {
+      "post": {
+        "summary": "Static IPs - Validate",
+        "operationId": "Static_IPs___Validate",
+        "tags": [
+          "Traffic Forwarding"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "example": {
+                  "ipAddress": "1.2.3.4"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/staticIP/{staticIPId}": {
+      "get": {
+        "summary": "Static IPs - Get 1",
+        "operationId": "Static_IPs___Get_1",
+        "tags": [
+          "Traffic Forwarding"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        },
+        "parameters": [
+          {
+            "name": "staticIPId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Unique identifier (staticIPId)"
+          }
+        ]
+      },
+      "put": {
+        "summary": "Static IPs - Update",
+        "operationId": "Static_IPs___Update",
+        "tags": [
+          "Traffic Forwarding"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        },
+        "parameters": [
+          {
+            "name": "staticIPId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Unique identifier (staticIPId)"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Static IPs - Delete",
+        "operationId": "Static_IPs___Delete",
+        "tags": [
+          "Traffic Forwarding"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        },
+        "parameters": [
+          {
+            "name": "staticIPId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Unique identifier (staticIPId)"
+          }
+        ]
+      }
+    },
+    "/api/v1/status": {
+      "get": {
+        "summary": "Status - Get activation status",
+        "operationId": "Status___Get_activation_status",
+        "tags": [
+          "Activation"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        }
+      }
+    },
+    "/api/v1/status/activate": {
+      "post": {
+        "summary": "Status - Activate configuration changes",
+        "operationId": "Status___Activate_configuration_changes",
+        "tags": [
+          "Activation"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        }
+      }
+    },
+    "/api/v1/timeWindows": {
+      "get": {
+        "summary": "Time Windows  - Get all",
+        "operationId": "Time_Windows____Get_all",
+        "tags": [
+          "Firewall Policies"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        }
+      }
+    },
+    "/api/v1/timeWindows/lite": {
+      "get": {
+        "summary": "Time Windows  - Get all (lite)",
+        "operationId": "Time_Windows____Get_all__lite",
+        "tags": [
+          "Firewall Policies"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        }
+      }
+    },
+    "/api/v1/urlCategories": {
+      "get": {
+        "summary": "URL Categories - Get all",
+        "operationId": "URL_Categories___Get_all",
+        "tags": [
+          "URL Categories"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        }
+      },
+      "post": {
+        "summary": "URL Categories - Add",
+        "operationId": "URL_Categories___Add",
+        "tags": [
+          "URL Categories"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "example": {
+                  "configuredName": "Blogs",
+                  "customCategory": true,
+                  "superCategory": "NEWS_AND_MEDIA",
+                  "keywords": [
+                    "blog"
+                  ],
+                  "urls": [
+                    "livejournal.com"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/urlCategories/CUSTOM_01": {
+      "delete": {
+        "summary": "URL Categories - Delete",
+        "operationId": "URL_Categories___Delete",
+        "tags": [
+          "URL Categories"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        }
+      }
+    },
+    "/api/v1/urlCategories/CUSTOM_02": {
+      "put": {
+        "summary": "URL Categories - Update",
+        "operationId": "URL_Categories___Update",
+        "tags": [
+          "URL Categories"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "example": {
+                  "configuredName": "Sport",
+                  "customCategory": true,
+                  "superCategory": "USER_DEFINED",
+                  "urls": [
+                    "nhl.com",
+                    "nba.com"
+                  ],
+                  "id": "CUSTOM_02"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/urlCategories/MUSIC": {
+      "get": {
+        "summary": "URL Categories - Get 1",
+        "operationId": "URL_Categories___Get_1",
+        "tags": [
+          "URL Categories"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        }
+      },
+      "put": {
+        "summary": "URL Categories - Add URLs",
+        "operationId": "URL_Categories___Add_URLs",
+        "tags": [
+          "URL Categories"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "example": {
+                  "superCategory": "ENTERTAINMENT_AND_RECREATION",
+                  "urls": [
+                    "mozart.com"
+                  ],
+                  "dbCategorizedUrls": [
+                    "brahms.com"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/urlCategories/lite": {
+      "get": {
+        "summary": "URL Categories - Get all (lite)",
+        "operationId": "URL_Categories___Get_all__lite",
+        "tags": [
+          "URL Categories"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        }
+      }
+    },
+    "/api/v1/urlCategories/urlQuota": {
+      "get": {
+        "summary": "URL Categories - Quota",
+        "operationId": "URL_Categories___Quota",
+        "tags": [
+          "URL Categories"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        }
+      }
+    },
+    "/api/v1/urlFilteringRules": {
+      "get": {
+        "summary": "URL Filtering Rules - Get all",
+        "operationId": "URL_Filtering_Rules___Get_all",
+        "tags": [
+          "URL Filtering Policies"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        }
+      },
+      "post": {
+        "summary": "URL Filtering Rules - Add",
+        "operationId": "URL_Filtering_Rules___Add",
+        "tags": [
+          "URL Filtering Policies"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/urlFilteringRules/{urlFilteringRuleId}": {
+      "delete": {
+        "summary": "URL Filtering Rules - Delete",
+        "operationId": "URL_Filtering_Rules___Delete",
+        "tags": [
+          "URL Filtering Policies"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        },
+        "parameters": [
+          {
+            "name": "urlFilteringRuleId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Unique identifier (urlFilteringRuleId)"
+          }
+        ]
+      },
+      "put": {
+        "summary": "URL Filtering Rules - Update",
+        "operationId": "URL_Filtering_Rules___Update",
+        "tags": [
+          "URL Filtering Policies"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        },
+        "parameters": [
+          {
+            "name": "urlFilteringRuleId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Unique identifier (urlFilteringRuleId)"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "example": {
+                  "accessControl": "READ_WRITE",
+                  "name": "Test - Adult Content",
+                  "order": 1,
+                  "protocols": [
+                    "ANY_RULE"
+                  ],
+                  "urlCategories": [
+                    "OTHER_ADULT_MATERIAL",
+                    "ADULT_THEMES",
+                    "LINGERIE_BIKINI",
+                    "NUDITY",
+                    "PORNOGRAPHY",
+                    "SEXUALITY",
+                    "ADULT_SEX_EDUCATION",
+                    "K_12_SEX_EDUCATION",
+                    "MATURE_HUMOR"
+                  ],
+                  "state": "ENABLED",
+                  "rank": 7,
+                  "requestMethods": [
+                    "OPTIONS",
+                    "GET",
+                    "HEAD",
+                    "POST",
+                    "PUT",
+                    "DELETE",
+                    "TRACE",
+                    "CONNECT",
+                    "OTHER"
+                  ],
+                  "blockOverride": false,
+                  "action": "BLOCK"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "summary": "URL Filtering Rules - Get 1",
+        "operationId": "URL_Filtering_Rules___Get_1",
+        "tags": [
+          "URL Filtering Policies"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        },
+        "parameters": [
+          {
+            "name": "urlFilteringRuleId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Unique identifier (urlFilteringRuleId)"
+          }
+        ]
+      }
+    },
+    "/api/v1/urlLookup": {
+      "post": {
+        "summary": "URL Lookup",
+        "operationId": "URL_Lookup",
+        "tags": [
+          "URL Categories"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "example": [
+                  "google.com",
+                  "youtube.com",
+                  "facebook.com",
+                  "baidu.com",
+                  "wikipedia.org",
+                  "yahoo.com",
+                  "reddit.com",
+                  "google.co.in",
+                  "qq.com",
+                  "taobao.com",
+                  "amazon.com",
+                  "tmall.com",
+                  "twitter.com",
+                  "google.co.jp",
+                  "sohu.com",
+                  "live.com",
+                  "vk.com",
+                  "instagram.com",
+                  "sina.com",
+                  "360.cn",
+                  "google.de",
+                  "jd.com",
+                  "google.co.uk",
+                  "linkedin.com",
+                  "weibo.com",
+                  "google.fr",
+                  "google.ru",
+                  "yahoo.co.jp",
+                  "yandex.ru",
+                  "netflix.com",
+                  "t.co",
+                  "hao123.com",
+                  "imgur.com",
+                  "google.it",
+                  "ebay.com",
+                  "pornhub.com",
+                  "google.es",
+                  "detail.tmall.com",
+                  "WordPress.com",
+                  "msn.com",
+                  "aliexpress.com",
+                  "bing.com",
+                  "tumblr.com",
+                  "google.ca",
+                  "livejasmin.com",
+                  "microsoft.com",
+                  "stackoverflow.com",
+                  "twitch.tv",
+                  "Soso.com",
+                  "blogspot.com",
+                  "ok.ru",
+                  "apple.com",
+                  "Naver.com",
+                  "mail.ru",
+                  "imdb.com",
+                  "popads.net",
+                  "tianya.cn",
+                  "office.com",
+                  "google.co.kr",
+                  "github.com",
+                  "pinterest.com",
+                  "paypal.com",
+                  "diply.com",
+                  "amazon.de",
+                  "microsoftonline.com",
+                  "onclckds.com",
+                  "amazon.co.uk",
+                  "txxx.com",
+                  "adobe.com",
+                  "wikia.com",
+                  "cnzz.com",
+                  "xhamster.com",
+                  "coccoc.com",
+                  "bongacams.com",
+                  "fc2.com",
+                  "pixnet.net",
+                  "google.pl",
+                  "dropbox.com",
+                  "googleusercontent.com",
+                  "gmw.cn",
+                  "whatsapp.com",
+                  "google.co.th",
+                  "soundcloud.com",
+                  "google.nl",
+                  "xvideos.com",
+                  "Booking.com",
+                  "rakuten.co.jp",
+                  "nytimes.com",
+                  "alibaba.com",
+                  "bet365.com",
+                  "ebay.co.uk",
+                  "quora.com",
+                  "avito.ru",
+                  "dailymail.co.uk",
+                  "globo.com",
+                  "uol.com",
+                  "nicovideo.jp",
+                  "walmart.com",
+                  "redtube.com",
+                  "go2cloud.org"
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/users": {
+      "get": {
+        "summary": "Users - Get all",
+        "operationId": "Users___Get_all",
+        "tags": [
+          "User Management"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        }
+      },
+      "post": {
+        "summary": "Users - Add",
+        "operationId": "Users___Add",
+        "tags": [
+          "User Management"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "example": {
+                  "name": "guest1234",
+                  "email": "guest1234@yourcompany.com",
+                  "groups": [
+                    {
+                      "id": 75457,
+                      "name": "guest-wifi"
+                    }
+                  ],
+                  "department": {
+                    "id": 75458,
+                    "name": "guests"
+                  },
+                  "comments": "guest wi-fi user",
+                  "adminUser": false,
+                  "password": "asd123!!"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/users/auditors": {
+      "get": {
+        "summary": "Auditors - Get all",
+        "operationId": "Auditors___Get_all",
+        "tags": [
+          "User Management"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        }
+      }
+    },
+    "/api/v1/users/bulkDelete": {
+      "post": {
+        "summary": "Users - Bulk delete",
+        "operationId": "Users___Bulk_delete",
+        "tags": [
+          "User Management"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "example": {
+                  "ids": [
+                    1234,
+                    2345
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/users/references": {
+      "get": {
+        "summary": "User References - Get all",
+        "operationId": "User_References___Get_all",
+        "tags": [
+          "User Management"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        }
+      }
+    },
+    "/api/v1/users/{userId}": {
+      "get": {
+        "summary": "Users - Get 1",
+        "operationId": "Users___Get_1",
+        "tags": [
+          "User Management"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        },
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Unique identifier (userId)"
+          }
+        ]
+      },
+      "put": {
+        "summary": "Users - Update",
+        "operationId": "Users___Update",
+        "tags": [
+          "User Management"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        },
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Unique identifier (userId)"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "example": {
+                  "name": "guest1234",
+                  "email": "guest1234@yourcompany.com",
+                  "groups": [
+                    {
+                      "id": 75457,
+                      "name": "guest-wifi"
+                    }
+                  ],
+                  "department": {
+                    "id": 75458,
+                    "name": "guests"
+                  },
+                  "comments": "guest wi-fi user",
+                  "adminUser": false,
+                  "password": "asd123!!"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Users - Delete",
+        "operationId": "Users___Delete",
+        "tags": [
+          "User Management"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        },
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Unique identifier (userId)"
+          }
+        ]
+      }
+    },
+    "/api/v1/vips": {
+      "get": {
+        "summary": "Data Center VIPs - Get all",
+        "operationId": "Data_Center_VIPs___Get_all",
+        "tags": [
+          "Traffic Forwarding"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        }
+      }
+    },
+    "/api/v1/vips/groupByDatacenter": {
+      "get": {
+        "summary": "GRE Tunnels - Get available VIPs grouped by data center",
+        "operationId": "GRE_Tunnels___Get_available_VIPs_grouped_by_data_center",
+        "tags": [
+          "Traffic Forwarding"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        }
+      }
+    },
+    "/api/v1/vips/recommendedList": {
+      "get": {
+        "summary": "GRE Tunnels - Get available VIPs",
+        "operationId": "GRE_Tunnels___Get_available_VIPs",
+        "tags": [
+          "Traffic Forwarding"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        }
+      }
+    },
+    "/api/v1/vpnCredentials": {
+      "get": {
+        "summary": "VPN Credentials - Get all",
+        "operationId": "VPN_Credentials___Get_all",
+        "tags": [
+          "Traffic Forwarding"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        }
+      },
+      "post": {
+        "summary": "VPN Credentials - Add",
+        "operationId": "VPN_Credentials___Add",
+        "tags": [
+          "Traffic Forwarding"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "example": {
+                  "type": "UFQDN",
+                  "fqdn": "sjc-1-37@yourcompany.com",
+                  "comments": "created automatically",
+                  "preSharedKey": "newPassword123!"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/vpnCredentials/bulkDelete": {
+      "post": {
+        "summary": "VPN Credentials - Bulk delete",
+        "operationId": "VPN_Credentials___Bulk_delete",
+        "tags": [
+          "Traffic Forwarding"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "example": {
+                  "ids": [
+                    1234,
+                    2345
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/vpnCredentials/{vpnCredentialId}": {
+      "get": {
+        "summary": "VPN Credentials - Get 1",
+        "operationId": "VPN_Credentials___Get_1",
+        "tags": [
+          "Traffic Forwarding"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        },
+        "parameters": [
+          {
+            "name": "vpnCredentialId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Unique identifier (vpnCredentialId)"
+          }
+        ]
+      },
+      "put": {
+        "summary": "VPN Credentials - Update",
+        "operationId": "VPN_Credentials___Update",
+        "tags": [
+          "Traffic Forwarding"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        },
+        "parameters": [
+          {
+            "name": "vpnCredentialId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Unique identifier (vpnCredentialId)"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "example": {
+                  "type": "UFQDN",
+                  "fqdn": "sjc-1-37@yourcompany.com",
+                  "comments": "created automatically",
+                  "preSharedKey": "newPassword123!"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "VPN Credentials - Delete",
+        "operationId": "VPN_Credentials___Delete",
+        "tags": [
+          "Traffic Forwarding"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        },
+        "parameters": [
+          {
+            "name": "vpnCredentialId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Unique identifier (vpnCredentialId)"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/webDlpRules": {
+      "get": {
+        "summary": "DLP Rules - Get all",
+        "operationId": "DLP_Rules___Get_all",
+        "tags": [
+          "Data Loss Prevention"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        }
+      },
+      "post": {
+        "summary": "DLP Rules - Add (with content inspection)",
+        "operationId": "DLP_Rules___Add__with_content_inspection",
+        "tags": [
+          "Data Loss Prevention"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "example": {
+                  "accessControl": "READ_WRITE",
+                  "order": 1,
+                  "protocols": [
+                    "FTP_RULE",
+                    "HTTPS_RULE",
+                    "HTTP_RULE"
+                  ],
+                  "rank": 1,
+                  "cloudApplications": [],
+                  "minSize": 0,
+                  "action": "ALLOW",
+                  "state": "ENABLED",
+                  "matchOnly": false,
+                  "icapServer": {},
+                  "withoutContentInspection": false,
+                  "name": "Your Rule Name",
+                  "ocrEnabled": false,
+                  "zscalerIncidentReceiver": true
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/webDlpRules/lite": {
+      "get": {
+        "summary": "DLP Rules - Get all (lite)",
+        "operationId": "DLP_Rules___Get_all__lite",
+        "tags": [
+          "Data Loss Prevention"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        }
+      }
+    },
+    "/api/v1/webDlpRules/{webDlpRuleId}": {
+      "put": {
+        "summary": "DLP Rules - Update (with content inspection)",
+        "operationId": "DLP_Rules___Update__with_content_inspection",
+        "tags": [
+          "Data Loss Prevention"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        },
+        "parameters": [
+          {
+            "name": "webDlpRuleId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Unique identifier (webDlpRuleId)"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "example": {
+                  "accessControl": "READ_WRITE",
+                  "id": 27496,
+                  "order": 1,
+                  "protocols": [
+                    "HTTP_RULE",
+                    "FTP_RULE",
+                    "HTTPS_RULE"
+                  ],
+                  "rank": 1,
+                  "cloudApplications": [],
+                  "minSize": 0,
+                  "action": "ALLOW",
+                  "state": "ENABLED",
+                  "matchOnly": false,
+                  "icapServer": {},
+                  "withoutContentInspection": false,
+                  "name": "Your Rule Name",
+                  "ocrEnabled": false,
+                  "zscalerIncidentReceiver": true
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "DLP Rules - Delete",
+        "operationId": "DLP_Rules___Delete",
+        "tags": [
+          "Data Loss Prevention"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        },
+        "parameters": [
+          {
+            "name": "webDlpRuleId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Unique identifier (webDlpRuleId)"
+          }
+        ]
+      }
+    },
+    "/api/v1/workloadGroups": {
+      "get": {
+        "summary": "Workload Groups - Get all",
+        "operationId": "Workload_Groups___Get_all",
+        "tags": [
+          "Workload Groups"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        }
+      }
+    },
+    "/api/v1/zpaGateways": {
+      "get": {
+        "summary": "ZPA Gateway - Get all",
+        "operationId": "ZPA_Gateway___Get_all",
+        "tags": [
+          "Forwarding Control Policy"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        }
+      },
+      "post": {
+        "summary": "ZPA Gateway - Add",
+        "operationId": "ZPA_Gateway___Add",
+        "tags": [
+          "Forwarding Control Policy"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "example": {
+                  "name": "YourName",
+                  "zpaServerGroup": {
+                    "name": "Your Server Group Name",
+                    "externalId": "1234567890"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/zpaGateways/{zpaGatewayId}": {
+      "get": {
+        "summary": "ZPA Gateway - Get 1",
+        "operationId": "ZPA_Gateway___Get_1",
+        "tags": [
+          "Forwarding Control Policy"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        },
+        "parameters": [
+          {
+            "name": "zpaGatewayId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Unique identifier (zpaGatewayId)"
+          }
+        ]
+      },
+      "put": {
+        "summary": "ZPA Gateway - Update",
+        "operationId": "ZPA_Gateway___Update",
+        "tags": [
+          "Forwarding Control Policy"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        },
+        "parameters": [
+          {
+            "name": "zpaGatewayId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Unique identifier (zpaGatewayId)"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "example": {
+                  "id": 594407,
+                  "name": "YourName",
+                  "zpaServerGroup": {
+                    "name": "YourName",
+                    "externalId": "1234567890"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "ZPA Gateway - Delete",
+        "operationId": "ZPA_Gateway___Delete",
+        "tags": [
+          "Forwarding Control Policy"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        },
+        "parameters": [
+          {
+            "name": "zpaGatewayId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Unique identifier (zpaGatewayId)"
+          }
+        ]
+      }
+    }
+  }
+}
