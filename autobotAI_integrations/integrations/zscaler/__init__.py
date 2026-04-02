@@ -1,7 +1,7 @@
 import importlib
 import re
 from typing import List, Optional, Type, Union
-
+from zscaler import ZscalerClient
 import requests
 from pydantic import Field
 
@@ -19,96 +19,21 @@ from autobotAI_integrations.models import IntegrationCategory
 ONEAPI_BASE_URL = "https://api.zsapi.net"
 
 
-def _parse_error_response(response: requests.Response) -> str:
-    """
-    Extract a human-readable error message from a Zscaler API response.
-    Zscaler often returns HTML error pages; this strips the HTML and
-    returns just the meaningful text.
-    """
-    content_type = response.headers.get("Content-Type", "")
-    body = response.text.strip()
-
-    # Try JSON first
-    if "application/json" in content_type:
-        try:
-            data = response.json()
-            msg = (
-                data.get("error_description")
-                or data.get("error")
-                or data.get("message")
-            )
-            if msg:
-                return msg
-        except Exception:
-            pass
-
-    # If HTML, strip tags and scripts, then extract the status message
-    if "<html" in body.lower() or "<body" in body.lower():
-        # Remove <script> and <style> blocks entirely
-        cleaned = re.sub(
-            r"<script[^>]*>.*?</script>", "", body, flags=re.DOTALL | re.IGNORECASE
-        )
-        cleaned = re.sub(
-            r"<style[^>]*>.*?</style>", "", cleaned, flags=re.DOTALL | re.IGNORECASE
-        )
-        # Strip remaining HTML tags
-        text = re.sub(r"<[^>]+>", " ", cleaned)
-        text = re.sub(r"\s+", " ", text).strip()
-
-        # Look for Zscaler's "[error_code] message" pattern
-        bracket_match = re.search(
-            r"\[([^\]]+)\]\s*(.+?)(?:\s*Need help|\s*Visit\s+http|\s*$)", text
-        )
-        if bracket_match:
-            error_code = bracket_match.group(1).strip()
-            error_msg = bracket_match.group(2).strip()
-            return f"{error_code}: {error_msg}"
-
-        # Look for "Error Status Message" pattern in table-like output
-        status_match = re.search(
-            r"(?:Error Status Message|Error)\s*(.+?)(?:\s*Need help|\s*Visit\s+http|\s*$)",
-            text,
-        )
-        if status_match:
-            return status_match.group(1).strip()
-
-        # Fallback: return cleaned text without boilerplate
-        # Remove common Zscaler boilerplate
-        text = re.sub(r"Need help\?.*$", "", text).strip()
-        text = re.sub(r"Visit\s+https?://\S+", "", text).strip()
-        text = re.sub(r"Zscaler Inc\.?", "", text).strip()
-        if text:
-            return text[:300]
-
-    # Fallback: return raw body truncated
-    if len(body) > 300:
-        return body[:300] + "..."
-    return body or "Unknown error"
-
 
 def _get_token(client_id: str, client_secret: str, vanity_domain: str) -> str:
     """
     Authenticate to Zscaler OneAPI using the OAuth2 client_credentials grant.
     Returns a Bearer access token on success or raises on failure.
     """
-    token_url = f"https://{vanity_domain.strip()}.zslogin.net/oauth2/v1/token"
-    response = requests.post(
-        token_url,
-        data={
-            "grant_type": "client_credentials",
-            "client_id": client_id,
-            "client_secret": client_secret,
-            "audience": "https://api.zscaler.com",
-        },
-        headers={"Content-Type": "application/x-www-form-urlencoded"},
-    )
-    if not response.ok:
-        msg = _parse_error_response(response)
-        raise requests.exceptions.HTTPError(
-            f"{response.status_code} - {msg}", response=response
-        )
-    data = response.json()
-    access_token = data.get("access_token")
+    config = {
+        "clientId": client_id,
+        "clientSecret":client_secret,
+        "vanityDomain": f"{vanity_domain.strip()}.zslogin.net",
+        "cloud": "zscaler.net",  # your ZIA cloud
+    }
+    client = ZscalerClient(config)
+    client.authenticate()
+    access_token = client._auth_token
     if not access_token:
         raise ValueError("Token response did not contain an access_token")
     return access_token
@@ -139,37 +64,16 @@ class ZscalerService(BaseService):
 
     def _test_integration(self) -> dict:
         try:
-            token = _get_token(
-                client_id=self.integration.client_id,
-                client_secret=self.integration.client_secret,
-                vanity_domain=self.integration.vanity_domain,
-            )
-            # Verify the token works by hitting a lightweight ZIA endpoint
-            verify_resp = requests.get(
-                f"{ONEAPI_BASE_URL}/zia/api/v1/status",
-                headers={
-                    "Content-Type": "application/json",
-                    "Authorization": f"Bearer {token}",
-                },
-            )
-            if verify_resp.status_code == 200:
-                return {"success": True}
-            else:
-                msg = _parse_error_response(verify_resp)
-                return {
-                    "success": False,
-                    "error": f"Token obtained but ZIA status check failed ({verify_resp.status_code}): {msg}",
-                }
-        except requests.exceptions.ConnectionError:
-            return {
-                "success": False,
-                "error": "Connection is unreachable. Verify the vanity domain is correct.",
+            config = {
+                "clientId": self.integration.client_id,
+                "clientSecret": self.integration.client_secret,
+                "vanityDomain": f"{self.integration.vanity_domain.strip()}.zslogin.net",
+                "cloud": "zscaler.net",  # your ZIA cloud
             }
-        except requests.exceptions.HTTPError as e:
-            return {
-                "success": False,
-                "error": f"Authentication failed: {e}",
-            }
+
+            client = ZscalerClient(config)
+            client.authenticate()
+            return {"success": True}
         except Exception as e:
             return {"success": False, "error": str(e)}
 
