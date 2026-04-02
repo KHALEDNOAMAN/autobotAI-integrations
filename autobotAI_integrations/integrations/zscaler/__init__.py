@@ -163,6 +163,16 @@ class ZscalerService(BaseService):
             if verify_resp.status_code < 200 or verify_resp.status_code >= 300:
                 return {"success": False, "error": f"status code: {verify_resp.status_code}\nerror message: {verify_resp.text}"}
             return {"success": True}
+        except requests.exceptions.ConnectionError:
+            return {
+                "success": False,
+                "error": "Connection is unreachable. Verify the vanity domain is correct.",
+            }
+        except requests.exceptions.HTTPError as e:
+            return {
+                "success": False,
+                "error": f"Authentication failed: {e}",
+            }
         except Exception as e:
             return {"success": False, "error": str(e)}
 
