@@ -89,7 +89,7 @@ def _get_token(client_id: str, client_secret: str, vanity_domain: str, cloud: Op
     """
 
     # The SDK handles token acquisition and refresh automatically
-    token_url = f"https://{vanity_domain.strip()}.zslogin{cloud if cloud else ''}.net/oauth2/v1/token"
+    token_url = f"https://{vanity_domain.strip()}.zslogin.net/oauth2/v1/token"
     response = requests.post(
         token_url,
         data={
