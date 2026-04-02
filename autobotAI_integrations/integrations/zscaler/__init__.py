@@ -123,6 +123,8 @@ class ZscalerIntegration(BaseSchema):
     client_secret: Optional[str] = Field(default=None, exclude=True)
     vanity_domain: Optional[str] = Field(default=None, exclude=False)
     cloud: Optional[str] = Field(default=None, exclude=False)
+    test_method: Optional[str] = Field(default=None, exclude=False)
+    test_api: Optional[str] = Field(default=None, exclude=False)
 
     name: Optional[str] = "Zscaler"
     category: Optional[str] = IntegrationCategory.SECURITY_TOOLS.value
@@ -157,8 +159,8 @@ class ZscalerService(BaseService):
                 vanity_domain=self.integration.vanity_domain.strip(),
                 cloud=self.integration.cloud
             )
-            verify_resp = requests.get(
-                f"{ONEAPI_BASE_URL}/zia/api/v1/status",
+            verify_resp = getattr(requests, self.integration.test_method, requests.get)(
+                f"{ONEAPI_BASE_URL}{self.integration.test_api}",
                 headers={
                     "Content-Type": "application/json",
                     "Authorization": f"Bearer {token}",
@@ -217,6 +219,30 @@ class ZscalerService(BaseService):
                     "description": "Your organization's custom cloud parameter, i.e. mycompany.zslogin{cloud}.net",
                     "required": False,
                 },
+                {
+                    "name": "cloud",
+                    "type": "text",
+                    "label": "Cloud",
+                    "placeholder": "Leave Empty if .zslogin.net",
+                    "description": "Your organization's custom cloud parameter, i.e. mycompany.zslogin{cloud}.net",
+                    "required": False,
+                },
+                {
+                    "name": "test_api",
+                    "type": "text",
+                    "label": "Test API",
+                    "placeholder": "API to hit to test integration",
+                    "description": "API to hit to test integration",
+                    "required": True,
+                },
+                {
+                    "name": "test_method",
+                    "type": "text",
+                    "label": "Test Method",
+                    "placeholder": "Method to hit the api with",
+                    "description": "Method to hit the api with",
+                    "required": True,
+                },
             ],
         }
 
@@ -233,7 +259,6 @@ class ZscalerService(BaseService):
     def supported_connection_interfaces():
         return [
             ConnectionInterfaces.REST_API,
-            ConnectionInterfaces.PYTHON_SDK,
         ]
 
     def generate_rest_api_creds(self) -> RestAPICreds:
