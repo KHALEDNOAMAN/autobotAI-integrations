@@ -1,7 +1,6 @@
 import importlib
 import re
 from typing import List, Optional, Type, Union
-from zscaler import ZscalerClient
 import requests
 from pydantic import Field
 
@@ -15,8 +14,6 @@ from autobotAI_integrations import (
     SDKCreds,
 )
 from autobotAI_integrations.models import IntegrationCategory
-
-ONEAPI_BASE_URL = "https://api.zsapi.net"
 
 def _parse_error_response(response: requests.Response) -> str:
     """
@@ -147,11 +144,18 @@ class ZscalerService(BaseService):
 
     def _test_integration(self) -> dict:
         try:
+            ONEAPI_BASE_URL = "https://api.zsapi.net"
+            self.integration.cloud = "" if not self.integration.cloud else self.integration.cloud
+            if self.integration.cloud:
+                ONEAPI_BASE_URL = f"https://api.{self.integration.cloud}.zscaler.com"
+
+
+
             token = _get_token(
                 client_id=self.integration.client_id,
                 client_secret=self.integration.client_secret,
                 vanity_domain=self.integration.vanity_domain.strip(),
-                cloud="" if not self.integration.cloud else self.integration.cloud
+                cloud=self.integration.cloud
             )
             verify_resp = requests.get(
                 f"{ONEAPI_BASE_URL}/zia/api/v1/status",
@@ -237,12 +241,16 @@ class ZscalerService(BaseService):
         Authenticates via OneAPI client_credentials and returns REST API
         credentials with the Bearer token injected into the headers.
         """
+        self.integration.cloud = "" if not self.integration.cloud else self.integration.cloud
         token = _get_token(
             client_id=self.integration.client_id,
             client_secret=self.integration.client_secret,
             vanity_domain=self.integration.vanity_domain,
             cloud=self.integration.cloud,
         )
+        ONEAPI_BASE_URL = "https://api.zsapi.net"
+        if self.integration.cloud:
+            ONEAPI_BASE_URL = f"https://api.{self.integration.cloud}.zscaler.com"
         return RestAPICreds(
             base_url=f"{ONEAPI_BASE_URL}/zia",
             headers={
