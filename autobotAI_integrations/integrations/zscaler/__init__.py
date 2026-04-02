@@ -20,16 +20,16 @@ ONEAPI_BASE_URL = "https://api.zsapi.net"
 
 
 
-def _get_token(client_id: str, client_secret: str, vanity_domain: str) -> str:
+def _get_token(client_id: str, client_secret: str, vanity_domain: str, cloud: Optional[str] = None) -> str:
     """
     Authenticate to Zscaler OneAPI using the OAuth2 client_credentials grant.
     Returns a Bearer access token on success or raises on failure.
     """
     config = {
         "clientId": client_id,
-        "clientSecret":client_secret,
-        "vanityDomain": f"{vanity_domain.strip()}.zslogin.net",
-        "cloud": "zscaler.net",  # your ZIA cloud
+        "clientSecret": client_secret,
+        "vanityDomain": vanity_domain.strip(),
+        "cloud": "" if not cloud else cloud,  # your ZIA cloud
     }
     client = ZscalerClient(config)
     client.authenticate()
@@ -43,6 +43,7 @@ class ZscalerIntegration(BaseSchema):
     client_id: Optional[str] = Field(default=None, exclude=True)
     client_secret: Optional[str] = Field(default=None, exclude=True)
     vanity_domain: Optional[str] = Field(default=None, exclude=False)
+    cloud: Optional[str] = Field(default=None, exclude=False)
 
     name: Optional[str] = "Zscaler"
     category: Optional[str] = IntegrationCategory.SECURITY_TOOLS.value
@@ -67,8 +68,8 @@ class ZscalerService(BaseService):
             config = {
                 "clientId": self.integration.client_id,
                 "clientSecret": self.integration.client_secret,
-                "vanityDomain": f"{self.integration.vanity_domain.strip()}.zslogin.net",
-                "cloud": "zscaler.net",  # your ZIA cloud
+                "vanityDomain": self.integration.vanity_domain.strip(),
+                "cloud": "" if not self.integration.cloud else self.integration.cloud,  # your ZIA cloud
             }
 
             client = ZscalerClient(config)
@@ -106,6 +107,14 @@ class ZscalerService(BaseService):
                     "description": "Your organization's vanity domain (the part before .zslogin.net)",
                     "required": True,
                 },
+                {
+                    "name": "cloud",
+                    "type": "text",
+                    "label": "Cloud",
+                    "placeholder": "Leave Empty if .zslogin.net",
+                    "description": "Your organization's custom cloud parameter, i.e. mycompany.zslogin{cloud}.net",
+                    "required": False,
+                },
             ],
         }
 
@@ -134,6 +143,7 @@ class ZscalerService(BaseService):
             client_id=self.integration.client_id,
             client_secret=self.integration.client_secret,
             vanity_domain=self.integration.vanity_domain,
+            cloud=self.integration.cloud,
         )
         return RestAPICreds(
             base_url=f"{ONEAPI_BASE_URL}/zia",
@@ -148,6 +158,7 @@ class ZscalerService(BaseService):
             "ZSCALER_CLIENT_ID": self.integration.client_id,
             "ZSCALER_CLIENT_SECRET": self.integration.client_secret,
             "ZSCALER_VANITY_DOMAIN": self.integration.vanity_domain,
+            "ZSCALER_CLOUD": "" if not self.integration.cloud else self.integration.cloud,
         }
         return SDKCreds(envs=envs)
 
@@ -161,6 +172,7 @@ class ZscalerService(BaseService):
             "clientId": payload_task.creds.envs.get("ZSCALER_CLIENT_ID"),
             "clientSecret": payload_task.creds.envs.get("ZSCALER_CLIENT_SECRET"),
             "vanityDomain": payload_task.creds.envs.get("ZSCALER_VANITY_DOMAIN"),
+            "cloud": payload_task.creds.envs.get("ZSCALER_CLOUD"),
         }
 
         client = ZscalerClient(config)
