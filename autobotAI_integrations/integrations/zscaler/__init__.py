@@ -1,6 +1,7 @@
 import importlib
 import re
 from typing import List, Optional, Type, Union
+
 import requests
 from pydantic import Field
 
@@ -14,6 +15,7 @@ from autobotAI_integrations import (
     SDKCreds,
 )
 from autobotAI_integrations.models import IntegrationCategory
+
 
 def _parse_error_response(response: requests.Response) -> str:
     """
@@ -82,7 +84,9 @@ def _parse_error_response(response: requests.Response) -> str:
     return body or "Unknown error"
 
 
-def _get_token(client_id: str, client_secret: str, vanity_domain: str, cloud: Optional[str] = None) -> str:
+def _get_token(
+    client_id: str, client_secret: str, vanity_domain: str, cloud: Optional[str] = None
+) -> str:
     """
     Authenticate to Zscaler OneAPI using the OAuth2 client_credentials grant.
     Returns a Bearer access token on success or raises on failure.
@@ -147,17 +151,17 @@ class ZscalerService(BaseService):
     def _test_integration(self) -> dict:
         try:
             ONEAPI_BASE_URL = "https://api.zsapi.net"
-            self.integration.cloud = "" if not self.integration.cloud else self.integration.cloud
+            self.integration.cloud = (
+                "" if not self.integration.cloud else self.integration.cloud
+            )
             if self.integration.cloud:
                 ONEAPI_BASE_URL = f"https://api.{self.integration.cloud}.zscaler.com"
-
-
 
             token = _get_token(
                 client_id=self.integration.client_id,
                 client_secret=self.integration.client_secret,
                 vanity_domain=self.integration.vanity_domain.strip(),
-                cloud=self.integration.cloud
+                cloud=self.integration.cloud,
             )
             verify_resp = getattr(requests, self.integration.test_method, requests.get)(
                 f"{ONEAPI_BASE_URL}{self.integration.test_api}",
@@ -167,7 +171,10 @@ class ZscalerService(BaseService):
                 },
             )
             if verify_resp.status_code < 200 or verify_resp.status_code >= 300:
-                return {"success": False, "error": f"status code: {verify_resp.status_code}\nerror message: {verify_resp.text}"}
+                return {
+                    "success": False,
+                    "error": f"status code: {verify_resp.status_code}\nerror message: {verify_resp.text}",
+                }
             return {"success": True}
         except requests.exceptions.ConnectionError:
             return {
@@ -226,14 +233,20 @@ class ZscalerService(BaseService):
                     "placeholder": "API to hit to test integration, suffix after https://api.zsapi.net",
                     "description": "API to hit to test integration, suffix after https://api.zsapi.net",
                     "required": True,
+                    "default": "/zia/api/v1/status",
                 },
                 {
                     "name": "test_method",
-                    "type": "text",
+                    "type": "select",
                     "label": "Test Method",
                     "placeholder": "Method to hit the api with",
                     "description": "Method to hit the api with",
                     "required": True,
+                    "options": [
+                        {"label": "get", "value": "get"},
+                        {"label": "head", "value": "head"},
+                    ],
+                    "default": "get",
                 },
             ],
         }
@@ -258,7 +271,9 @@ class ZscalerService(BaseService):
         Authenticates via OneAPI client_credentials and returns REST API
         credentials with the Bearer token injected into the headers.
         """
-        self.integration.cloud = "" if not self.integration.cloud else self.integration.cloud
+        self.integration.cloud = (
+            "" if not self.integration.cloud else self.integration.cloud
+        )
         token = _get_token(
             client_id=self.integration.client_id,
             client_secret=self.integration.client_secret,
@@ -281,7 +296,9 @@ class ZscalerService(BaseService):
             "ZSCALER_CLIENT_ID": self.integration.client_id,
             "ZSCALER_CLIENT_SECRET": self.integration.client_secret,
             "ZSCALER_VANITY_DOMAIN": self.integration.vanity_domain,
-            "ZSCALER_CLOUD": "" if not self.integration.cloud else self.integration.cloud,
+            "ZSCALER_CLOUD": ""
+            if not self.integration.cloud
+            else self.integration.cloud,
         }
         return SDKCreds(envs=envs)
 
