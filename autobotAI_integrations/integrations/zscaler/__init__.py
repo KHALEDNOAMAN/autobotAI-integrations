@@ -220,19 +220,11 @@ class ZscalerService(BaseService):
                     "required": False,
                 },
                 {
-                    "name": "cloud",
-                    "type": "text",
-                    "label": "Cloud",
-                    "placeholder": "Leave Empty if .zslogin.net",
-                    "description": "Your organization's custom cloud parameter, i.e. mycompany.zslogin{cloud}.net",
-                    "required": False,
-                },
-                {
                     "name": "test_api",
                     "type": "text",
                     "label": "Test API",
-                    "placeholder": "API to hit to test integration",
-                    "description": "API to hit to test integration",
+                    "placeholder": "API to hit to test integration, suffix after https://api.zsapi.net",
+                    "description": "API to hit to test integration, suffix after https://api.zsapi.net",
                     "required": True,
                 },
                 {
