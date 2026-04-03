@@ -126,7 +126,6 @@ class ZscalerIntegration(BaseSchema):
     client_id: Optional[str] = Field(default=None, exclude=True)
     client_secret: Optional[str] = Field(default=None, exclude=True)
     vanity_domain: Optional[str] = Field(default=None, exclude=False)
-    cloud: Optional[str] = Field(default=None, exclude=False)
     test_method: Optional[str] = Field(default=None, exclude=False)
     test_api: Optional[str] = Field(default=None, exclude=False)
 
@@ -163,6 +162,7 @@ class ZscalerService(BaseService):
                 vanity_domain=self.integration.vanity_domain.strip(),
                 cloud=self.integration.cloud,
             )
+            # Verify the token works by hitting a lightweight ZIA endpoint
             verify_resp = getattr(requests, self.integration.test_method, requests.get)(
                 f"{ONEAPI_BASE_URL}{self.integration.test_api}",
                 headers={
@@ -170,7 +170,10 @@ class ZscalerService(BaseService):
                     "Authorization": f"Bearer {token}",
                 },
             )
-            if verify_resp.status_code < 200 or verify_resp.status_code >= 300:
+            if not (verify_resp.status_code < 200 or verify_resp.status_code >= 300):
+                return {"success": True}
+            else:
+                msg = _parse_error_response(verify_resp)
                 return {
                     "success": False,
                     "error": f"status code: {verify_resp.status_code}\nerror message: {verify_resp.text}",
@@ -219,17 +222,9 @@ class ZscalerService(BaseService):
                     "required": True,
                 },
                 {
-                    "name": "cloud",
-                    "type": "text",
-                    "label": "Cloud",
-                    "placeholder": "Leave Empty if .zslogin.net",
-                    "description": "Your organization's custom cloud parameter, i.e. mycompany.zslogin{cloud}.net",
-                    "required": False,
-                },
-                {
                     "name": "test_api",
                     "type": "text",
-                    "label": "Test API",
+                    "label": "Test HTTP API Path",
                     "placeholder": "API to hit to test integration, suffix after https://api.zsapi.net",
                     "description": "API to hit to test integration, suffix after https://api.zsapi.net",
                     "required": True,
@@ -238,13 +233,14 @@ class ZscalerService(BaseService):
                 {
                     "name": "test_method",
                     "type": "select",
-                    "label": "Test Method",
+                    "label": "Test HTTP Method",
                     "placeholder": "Method to hit the api with",
                     "description": "Method to hit the api with",
                     "required": True,
                     "options": [
                         {"label": "get", "value": "get"},
                         {"label": "head", "value": "head"},
+                        {"label": "post", "value": "post"},
                     ],
                     "default": "get",
                 },
