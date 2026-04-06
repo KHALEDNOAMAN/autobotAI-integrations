@@ -14,7 +14,7 @@ from autobotAI_integrations.models import IntegrationCategory, RestAPICreds
 class SecuronixIntegration(BaseSchema):
     base_url: Optional[str] = Field(
         default=None,
-        description="Securonix SNYPR base URL (e.g. https://<hostname>/Snypr)",
+        description="Securonix instance URL (e.g. https://<hostname>.securonix.net)",
     )
     token: Optional[str] = Field(default=None, exclude=True)
     test_method: Optional[str] = Field(default=None, exclude=False)
@@ -44,7 +44,7 @@ class SecuronixService(BaseService):
             if self.integration.skip_test:
                 return {"success": True}
 
-            test_api = self.integration.test_api or "/ws/token/validate"
+            test_api = self.integration.test_api or "/Snypr/ws/token/validate"
             test_method = self.integration.test_method or "get"
 
             response = getattr(requests, test_method)(
@@ -89,9 +89,9 @@ class SecuronixService(BaseService):
                 {
                     "name": "base_url",
                     "type": "text/url",
-                    "label": "Base URL",
-                    "placeholder": "https://<hostname>/Snypr",
-                    "description": "Securonix SNYPR base URL in the format https://<hostname or IP>/Snypr",
+                    "label": "Host URL",
+                    "placeholder": "https://<hostname>.securonix.net",
+                    "description": "Securonix instance URL (e.g. https://company.securonix.net)",
                     "required": True,
                 },
                 {
@@ -107,9 +107,9 @@ class SecuronixService(BaseService):
                     "type": "text",
                     "label": "Test API Path",
                     "placeholder": "API path to test integration",
-                    "description": "API path to test integration (e.g. /ws/token/validate)",
+                    "description": "API path to test integration (e.g. /Snypr/ws/token/validate)",
                     "required": True,
-                    "default": "/ws/token/validate",
+                    "default": "/Snypr/ws/token/validate",
                 },
                 {
                     "name": "test_method",
