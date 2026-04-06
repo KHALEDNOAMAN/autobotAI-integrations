@@ -16,6 +16,8 @@ from autobotAI_integrations import (
 )
 from autobotAI_integrations.models import IntegrationCategory
 
+ONEAPI_BASE_URL = "https://api.zsapi.net"
+
 
 def _parse_error_response(response: requests.Response) -> str:
     """
@@ -84,15 +86,11 @@ def _parse_error_response(response: requests.Response) -> str:
     return body or "Unknown error"
 
 
-def _get_token(
-    client_id: str, client_secret: str, vanity_domain: str, cloud: Optional[str] = None
-) -> str:
+def _get_token(client_id: str, client_secret: str, vanity_domain: str) -> str:
     """
     Authenticate to Zscaler OneAPI using the OAuth2 client_credentials grant.
     Returns a Bearer access token on success or raises on failure.
     """
-
-    # The SDK handles token acquisition and refresh automatically
     token_url = f"https://{vanity_domain.strip()}.zslogin.net/oauth2/v1/token"
     response = requests.post(
         token_url,
@@ -100,6 +98,7 @@ def _get_token(
             "grant_type": "client_credentials",
             "client_id": client_id,
             "client_secret": client_secret,
+            "audience": "https://api.zscaler.com",
         },
         headers={"Content-Type": "application/x-www-form-urlencoded"},
     )
@@ -108,15 +107,8 @@ def _get_token(
         raise requests.exceptions.HTTPError(
             f"{response.status_code} - {msg}", response=response
         )
-    access_token = None
-    try:
-        data = response.json()
-        access_token = data.get("access_token")
-    except:
-        match = re.search(r'authnToken:\s*"([^"]+)"', response.text)
-        if match:
-            access_token = match.group(1)
-
+    data = response.json()
+    access_token = data.get("access_token")
     if not access_token:
         raise ValueError("Token response did not contain an access_token")
     return access_token
@@ -153,18 +145,10 @@ class ZscalerService(BaseService):
             if self.integration.skip_test:
                 return {"success": True}
 
-            ONEAPI_BASE_URL = "https://api.zsapi.net"
-            self.integration.cloud = (
-                "" if not self.integration.cloud else self.integration.cloud
-            )
-            if self.integration.cloud:
-                ONEAPI_BASE_URL = f"https://api.{self.integration.cloud}.zscaler.com"
-
             token = _get_token(
                 client_id=self.integration.client_id,
                 client_secret=self.integration.client_secret,
-                vanity_domain=self.integration.vanity_domain.strip(),
-                cloud=self.integration.cloud,
+                vanity_domain=self.integration.vanity_domain,
             )
             # Verify the token works by hitting a lightweight ZIA endpoint
             verify_resp = getattr(requests, self.integration.test_method, requests.get)(
@@ -180,9 +164,8 @@ class ZscalerService(BaseService):
                 msg = _parse_error_response(verify_resp)
                 return {
                     "success": False,
-                    "error": f"status code: {verify_resp.status_code}\nerror message: {verify_resp.text}",
+                    "error": f"Token obtained but ZIA status check failed ({verify_resp.status_code}): {msg}",
                 }
-            return {"success": True}
         except requests.exceptions.ConnectionError:
             return {
                 "success": False,
@@ -277,6 +260,7 @@ class ZscalerService(BaseService):
     def supported_connection_interfaces():
         return [
             ConnectionInterfaces.REST_API,
+            ConnectionInterfaces.PYTHON_SDK,
         ]
 
     def generate_rest_api_creds(self) -> RestAPICreds:
@@ -284,18 +268,11 @@ class ZscalerService(BaseService):
         Authenticates via OneAPI client_credentials and returns REST API
         credentials with the Bearer token injected into the headers.
         """
-        self.integration.cloud = (
-            "" if not self.integration.cloud else self.integration.cloud
-        )
         token = _get_token(
             client_id=self.integration.client_id,
             client_secret=self.integration.client_secret,
             vanity_domain=self.integration.vanity_domain,
-            cloud=self.integration.cloud,
         )
-        ONEAPI_BASE_URL = "https://api.zsapi.net"
-        if self.integration.cloud:
-            ONEAPI_BASE_URL = f"https://api.{self.integration.cloud}.zscaler.com"
         return RestAPICreds(
             base_url=f"{ONEAPI_BASE_URL}/zia",
             headers={
@@ -309,9 +286,6 @@ class ZscalerService(BaseService):
             "ZSCALER_CLIENT_ID": self.integration.client_id,
             "ZSCALER_CLIENT_SECRET": self.integration.client_secret,
             "ZSCALER_VANITY_DOMAIN": self.integration.vanity_domain,
-            "ZSCALER_CLOUD": ""
-            if not self.integration.cloud
-            else self.integration.cloud,
         }
         return SDKCreds(envs=envs)
 
@@ -325,7 +299,6 @@ class ZscalerService(BaseService):
             "clientId": payload_task.creds.envs.get("ZSCALER_CLIENT_ID"),
             "clientSecret": payload_task.creds.envs.get("ZSCALER_CLIENT_SECRET"),
             "vanityDomain": payload_task.creds.envs.get("ZSCALER_VANITY_DOMAIN"),
-            "cloud": payload_task.creds.envs.get("ZSCALER_CLOUD"),
         }
 
         client = ZscalerClient(config)
