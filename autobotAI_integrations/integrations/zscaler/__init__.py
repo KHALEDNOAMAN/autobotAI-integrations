@@ -120,6 +120,7 @@ class ZscalerIntegration(BaseSchema):
     vanity_domain: Optional[str] = Field(default=None, exclude=False)
     test_method: Optional[str] = Field(default=None, exclude=False)
     test_api: Optional[str] = Field(default=None, exclude=False)
+    skip_test: Optional[bool] = Field(default=None, exclude=False)
 
     name: Optional[str] = "Zscaler"
     category: Optional[str] = IntegrationCategory.SECURITY_TOOLS.value
@@ -141,6 +142,9 @@ class ZscalerService(BaseService):
 
     def _test_integration(self) -> dict:
         try:
+            if self.integration.skip_test:
+                return {"success": True}
+
             token = _get_token(
                 client_id=self.integration.client_id,
                 client_secret=self.integration.client_secret,
@@ -226,6 +230,19 @@ class ZscalerService(BaseService):
                         {"label": "post", "value": "post"},
                     ],
                     "default": "get",
+                },
+                {
+                    "name": "skip_test",
+                    "type": "select",
+                    "label": "Skip Test Integration",
+                    "placeholder": "Skip the integration test",
+                    "description": "If enabled, skips the integration test (useful when API is not accessible)",
+                    "required": True,
+                    "options": [
+                        {"label": "No", "value": False},
+                        {"label": "Yes", "value": True},
+                    ],
+                    "default": False,
                 },
             ],
         }
