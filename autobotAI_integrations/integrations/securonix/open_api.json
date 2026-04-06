@@ -7,18 +7,11 @@
   },
   "servers": [
     {
-      "url": "https://{host}/Snypr",
-      "description": "Securonix SNYPR instance",
-      "variables": {
-        "host": {
-          "default": "example.securonix.net",
-          "description": "Hostname or IP address of the Securonix instance"
-        }
-      }
+      "url": "{base_url}"
     }
   ],
   "paths": {
-    "/ws/incident/get": {
+    "/Snypr/ws/incident/get": {
       "get": {
         "summary": "Get Incident",
         "description": "Retrieve incident details by type and incident ID.",
@@ -57,7 +50,7 @@
         }
       }
     },
-    "/ws/spotter/index/search": {
+    "/Snypr/ws/spotter/index/search": {
       "get": {
         "summary": "Search Spotter Index (Activity)",
         "description": "Search events from the Spotter index for activity logs, threat data, and security events. Best practice is to search no more than 7 days at a time.",
@@ -151,7 +144,7 @@
         }
       }
     },
-    "/ws/spotter/index/search/asset": {
+    "/Snypr/ws/spotter/index/search/asset": {
       "get": {
         "summary": "Search Spotter Index (Asset)",
         "description": "Search assets from the Spotter index. Use this endpoint to query asset data such as vulnerability scan results, endpoint information, and other asset-related data. Note: Pipe (|) operator searches are not supported.",
@@ -227,7 +220,7 @@
         }
       }
     },
-    "/ws/spotter/index/search/lookup": {
+    "/Snypr/ws/spotter/index/search/lookup": {
       "get": {
         "summary": "Search Spotter Index (Lookup)",
         "description": "Search lookup data from the Spotter index. Lookup tables store reference information such as critical keywords, competitors, non-business domains, malicious file extensions, job portals, etc. Used for enriching security events during activity ingestion.",
@@ -303,7 +296,7 @@
         }
       }
     },
-    "/ws/spotter/index/search/violation": {
+    "/Snypr/ws/spotter/index/search/violation": {
       "get": {
         "summary": "Search Spotter Index (Violation)",
         "description": "Search violations from the Spotter index. Use this endpoint to query violation data within a specified time range.",
@@ -397,7 +390,7 @@
         }
       }
     },
-    "/ws/incident/createWatchlist": {
+    "/Snypr/ws/incident/createWatchlist": {
       "post": {
         "summary": "Create New Watchlist",
         "description": "Create a new watchlist. Watchlists are used for keeping a close watch on entities based on inherent risks. This API is only available for version 6.2 CU4 SP5 and above.",
@@ -436,7 +429,7 @@
         }
       }
     },
-    "/ws/incident/listWatchlist": {
+    "/Snypr/ws/incident/listWatchlist": {
       "get": {
         "summary": "List All Existing Watchlists",
         "description": "List all existing watchlists. This API is only available for version 6.2 CU4 SP5 and above.",
@@ -465,7 +458,7 @@
         }
       }
     },
-    "/ws/incident/checkIfWatchlisted": {
+    "/Snypr/ws/incident/checkIfWatchlisted": {
       "get": {
         "summary": "Check if an Entity is Watchlisted",
         "description": "Check if an entity is part of a watchlist. This API is only available for version 6.2 CU4 SP5 and above.",
@@ -512,7 +505,7 @@
         }
       }
     },
-    "/ws/incident/addToWatchlist": {
+    "/Snypr/ws/incident/addToWatchlist": {
       "post": {
         "summary": "Add Entities to Watchlist",
         "description": "Add one or more entities to an existing watchlist. Maximum 5 comma-separated entities. This API is only available for version 6.2 CU4 SP5 and above.",
@@ -588,7 +581,7 @@
         }
       }
     },
-    "/ws/incident/listWatchlistEntities": {
+    "/Snypr/ws/incident/listWatchlistEntities": {
       "get": {
         "summary": "List Entities in Watchlist",
         "description": "List all entities present in an existing watchlist. This API is only available for version 6.2 CU4 SP5 and above.",
@@ -626,7 +619,7 @@
         }
       }
     },
-    "/ws/incident/checkEntityList": {
+    "/Snypr/ws/incident/checkEntityList": {
       "get": {
         "summary": "Check Watchlists for Multiple Entities",
         "description": "Check which watchlists one or more entities are part of. This API is only available for version 6.2 CU4 SP5 and above.",
@@ -664,7 +657,7 @@
         }
       }
     },
-    "/ws/spotter/index/search/watchlist": {
+    "/Snypr/ws/spotter/index/search/watchlist": {
       "get": {
         "summary": "Search Spotter Index (Watchlist)",
         "description": "Search watchlist data from the Spotter index. Get information on entities in the watchlist by their attributes.",
@@ -740,7 +733,7 @@
         }
       }
     },
-    "/ws/incident/createGlobalWhitelist": {
+    "/Snypr/ws/incident/createGlobalWhitelist": {
       "post": {
         "summary": "Create New Global Whitelist",
         "description": "Create a new global whitelist. Whitelists allow you to create lists of entities to exclude from policies.",
@@ -789,7 +782,7 @@
         }
       }
     },
-    "/ws/incident/removeFromWhitelist": {
+    "/Snypr/ws/incident/removeFromWhitelist": {
       "delete": {
         "summary": "Remove Value from Whitelist",
         "description": "Remove a value from an existing whitelist. Can be used for both Global and Attribute whitelists.",
@@ -865,13 +858,13 @@
         }
       }
     },
-    "/ws/incident/addToWhitelist": {
+    "/Snypr/ws/incident/addToWhitelist": {
       "post": {
         "summary": "Add Entity or Attribute to Whitelist",
         "description": "Add an entity or attribute to an existing whitelist."
       }
     },
-    "/ws/incident/getlistofWhitelist": {
+    "/Snypr/ws/incident/getlistofWhitelist": {
       "get": {
         "summary": "Get List of Whitelists",
         "description": "Get a list of all existing whitelists.",
@@ -919,7 +912,7 @@
         }
       }
     },
-    "/ws/incident/listWhitelistEntities": {
+    "/Snypr/ws/incident/listWhitelistEntities": {
       "get": {
         "summary": "List Entities in Whitelist",
         "description": "List all entities present in a whitelist.",
