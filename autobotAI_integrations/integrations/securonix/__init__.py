@@ -17,6 +17,9 @@ class SecuronixIntegration(BaseSchema):
         description="Securonix SNYPR base URL (e.g. https://<hostname>/Snypr)",
     )
     token: Optional[str] = Field(default=None, exclude=True)
+    test_method: Optional[str] = Field(default=None, exclude=False)
+    test_api: Optional[str] = Field(default=None, exclude=False)
+    skip_test: Optional[bool] = Field(default=None, exclude=False)
 
     name: str = "Securonix"
     category: Optional[str] = IntegrationCategory.SECURITY_TOOLS.value
@@ -38,16 +41,22 @@ class SecuronixService(BaseService):
 
     def _test_integration(self) -> dict:
         try:
-            response = requests.get(
-                f"{self.integration.base_url.rstrip('/')}/ws/token/validate",
+            if self.integration.skip_test:
+                return {"success": True}
+
+            test_api = self.integration.test_api or "/ws/token/validate"
+            test_method = self.integration.test_method or "get"
+
+            response = getattr(requests, test_method)(
+                f"{self.integration.base_url.rstrip('/')}{test_api}",
                 headers={"token": self.integration.token},
             )
-            if response.status_code == 200 and response.text.strip().lower() == "valid":
+            if response.status_code == 200:
                 return {"success": True}
             else:
                 return {
                     "success": False,
-                    "error": f"Token validation failed ({response.status_code}): {response.text.strip()}",
+                    "error": f"API test failed ({response.status_code}): {response.text.strip()}",
                 }
         except requests.exceptions.ConnectionError:
             return {
@@ -78,6 +87,42 @@ class SecuronixService(BaseService):
                     "placeholder": "Enter your Securonix WS API token",
                     "description": "Pre-generated WS authentication token from Securonix",
                     "required": True,
+                },
+                {
+                    "name": "test_api",
+                    "type": "text",
+                    "label": "Test API Path",
+                    "placeholder": "API path to test integration",
+                    "description": "API path to test integration (e.g. /ws/token/validate)",
+                    "required": True,
+                    "default": "/ws/token/validate",
+                },
+                {
+                    "name": "test_method",
+                    "type": "select",
+                    "label": "Test HTTP Method",
+                    "placeholder": "Method to hit the API with",
+                    "description": "HTTP method to use for testing",
+                    "required": True,
+                    "options": [
+                        {"label": "get", "value": "get"},
+                        {"label": "post", "value": "post"},
+                        {"label": "head", "value": "head"},
+                    ],
+                    "default": "get",
+                },
+                {
+                    "name": "skip_test",
+                    "type": "select",
+                    "label": "Skip Test Integration",
+                    "placeholder": "Skip the integration test",
+                    "description": "If enabled, skips the integration test (useful when API is not accessible)",
+                    "required": True,
+                    "options": [
+                        {"label": "No", "value": False},
+                        {"label": "Yes", "value": True},
+                    ],
+                    "default": False,
                 },
             ],
         }
