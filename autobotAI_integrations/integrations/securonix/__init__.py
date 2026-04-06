@@ -54,9 +54,23 @@ class SecuronixService(BaseService):
             if response.status_code == 200:
                 return {"success": True}
             else:
+                error_msg = response.text.strip()
+                if "<html" in error_msg.lower():
+                    import re
+
+                    title_match = re.search(
+                        r"<title>([^<]+)</title>", error_msg, re.IGNORECASE
+                    )
+                    desc_match = re.search(
+                        r"<p><b>Description</b>([^<]+)</p>", error_msg, re.IGNORECASE
+                    )
+                    if title_match:
+                        error_msg = title_match.group(1)
+                        if desc_match:
+                            error_msg += f" - {desc_match.group(1).strip()}"
                 return {
                     "success": False,
-                    "error": f"API test failed ({response.status_code}): {response.text.strip()}",
+                    "error": f"API test failed ({response.status_code}): {error_msg}",
                 }
         except requests.exceptions.ConnectionError:
             return {
