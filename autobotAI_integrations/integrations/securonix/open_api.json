@@ -1,0 +1,954 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Securonix SIEM REST API",
+    "version": "6.0",
+    "description": "Securonix Unified Defense SIEM REST API for incident operations, asset searches, and security analytics."
+  },
+  "servers": [
+    {
+      "url": "{base_url}"
+    }
+  ],
+  "paths": {
+    "/Snypr/ws/incident/get": {
+      "get": {
+        "summary": "Get Incident",
+        "description": "Retrieve incident details by type and incident ID.",
+        "parameters": [
+          {
+            "name": "type",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": ["metaInfo", "actionInfo", "workflowInfo"]
+            },
+            "description": "The type of incident information to retrieve."
+          },
+          {
+            "name": "incidentId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The unique identifier of the incident."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Incident details",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/Snypr/ws/spotter/index/search": {
+      "get": {
+        "summary": "Search Spotter Index (Activity)",
+        "description": "Search events from the Spotter index for activity logs, threat data, and security events. Best practice is to search no more than 7 days at a time.",
+        "parameters": [
+          {
+            "name": "query",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Search query in the format: index=activity AND resourcegroupname=<datasourcename> AND <additional conditions>. Optionally add tenantname=<tenantname> to filter by tenant."
+          },
+          {
+            "name": "eventtime_from",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Event time start range in format MM/dd/yyyy HH:mm:ss."
+          },
+          {
+            "name": "eventtime_to",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Event time end range in format MM/dd/yyyy HH:mm:ss."
+          },
+          {
+            "name": "tz",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Timezone. If empty, the application timezone will be selected."
+          },
+          {
+            "name": "prettyJson",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": ["true", "false"]
+            },
+            "description": "If set to true, returns the REST response in pretty JSON format. Default: false."
+          },
+          {
+            "name": "max",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Number of records to return. Default: 1000, Max: 10000. Only available for version 6.2 CU4 SP4 and above."
+          },
+          {
+            "name": "queryId",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Used for pagination. Use the queryId from the previous response to get the next set of records. Only available for version 6.2 CU4 SP4 and above."
+          },
+          {
+            "name": "data_labels",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": ["true", "false"]
+            },
+            "description": "If set to true, returns data dictionary labels instead of Securonix attributes. Default: true."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Search results",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/Snypr/ws/spotter/index/search/asset": {
+      "get": {
+        "summary": "Search Spotter Index (Asset)",
+        "description": "Search assets from the Spotter index. Use this endpoint to query asset data such as vulnerability scan results, endpoint information, and other asset-related data. Note: Pipe (|) operator searches are not supported.",
+        "parameters": [
+          {
+            "name": "query",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Search query in the format: index=asset and entityname = \"<asset_name>\". Example: index=asset and entityname = \"QUALYSTEST|30489654_42428\""
+          },
+          {
+            "name": "tz",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Timezone. If empty, the application timezone will be selected."
+          },
+          {
+            "name": "prettyJson",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": ["true", "false"]
+            },
+            "description": "If set to true, returns the REST response in pretty JSON format. Default: false."
+          },
+          {
+            "name": "max",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Number of records to return. Default: 1000, Max: 10000. Only available for version 6.2 CU4 SP4 and above."
+          },
+          {
+            "name": "queryId",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Used for pagination. Use the queryId from the previous response to get the next set of records. Only available for version 6.2 CU4 SP4 and above."
+          },
+          {
+            "name": "data_labels",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": ["true", "false"]
+            },
+            "description": "If set to true, returns data dictionary labels instead of Securonix attributes. Default: true."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Asset search results",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/Snypr/ws/spotter/index/search/lookup": {
+      "get": {
+        "summary": "Search Spotter Index (Lookup)",
+        "description": "Search lookup data from the Spotter index. Lookup tables store reference information such as critical keywords, competitors, non-business domains, malicious file extensions, job portals, etc. Used for enriching security events during activity ingestion.",
+        "parameters": [
+          {
+            "name": "query",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Search query in the format: index=lookup and lookupname = \"<lookup_name>\". Example: index=lookup and lookupname = \"VulnerableHostLookUpTable\""
+          },
+          {
+            "name": "tz",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Timezone. If empty, the application timezone will be selected."
+          },
+          {
+            "name": "prettyJson",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": ["true", "false"]
+            },
+            "description": "If set to true, returns the REST response in pretty JSON format. Default: false."
+          },
+          {
+            "name": "max",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Number of records to return. Default: 1000, Max: 10000. Only available for version 6.2 CU4 SP4 and above."
+          },
+          {
+            "name": "queryId",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Used for pagination. Use the queryId from the previous response to get the next set of records. Only available for version 6.2 CU4 SP4 and above."
+          },
+          {
+            "name": "data_labels",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": ["true", "false"]
+            },
+            "description": "If set to true, returns data dictionary labels instead of Securonix attributes. Default: true."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Lookup search results",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/Snypr/ws/spotter/index/search/violation": {
+      "get": {
+        "summary": "Search Spotter Index (Violation)",
+        "description": "Search violations from the Spotter index. Use this endpoint to query violation data within a specified time range.",
+        "parameters": [
+          {
+            "name": "query",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Search query in the format: index=violation"
+          },
+          {
+            "name": "generationtime_from",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Violation time start range in format MM/dd/yyyy HH:mm:ss."
+          },
+          {
+            "name": "generationtime_to",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Violation time end range in format MM/dd/yyyy HH:mm:ss."
+          },
+          {
+            "name": "tz",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Timezone. If empty, the application timezone will be selected."
+          },
+          {
+            "name": "prettyJson",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": ["true", "false"]
+            },
+            "description": "If set to true, returns the REST response in pretty JSON format. Default: false."
+          },
+          {
+            "name": "max",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Number of records to return. Default: 1000, Max: 10000. Only available for version 6.2 CU4 SP4 and above."
+          },
+          {
+            "name": "queryId",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Used for pagination. Use the queryId from the previous response to get the next set of records. Only available for version 6.2 CU4 SP4 and above."
+          },
+          {
+            "name": "data_labels",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": ["true", "false"]
+            },
+            "description": "If set to true, returns data dictionary labels instead of Securonix attributes. Default: true."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Violation search results",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/Snypr/ws/incident/createWatchlist": {
+      "post": {
+        "summary": "Create New Watchlist",
+        "description": "Create a new watchlist. Watchlists are used for keeping a close watch on entities based on inherent risks. This API is only available for version 6.2 CU4 SP5 and above.",
+        "parameters": [
+          {
+            "name": "watchlistname",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The name of the watchlist that you want to create."
+          },
+          {
+            "name": "tenantname",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The name of the tenant where the watchlist will be created (MSSP)."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Watchlist created successfully",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string",
+                  "example": "New watchlist created successfully..!"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/Snypr/ws/incident/listWatchlist": {
+      "get": {
+        "summary": "List All Existing Watchlists",
+        "description": "List all existing watchlists. This API is only available for version 6.2 CU4 SP5 and above.",
+        "parameters": [
+          {
+            "name": "tenantname",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The name of the tenant whose watchlists will be listed (MSSP)."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of watchlists",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/Snypr/ws/incident/checkIfWatchlisted": {
+      "get": {
+        "summary": "Check if an Entity is Watchlisted",
+        "description": "Check if an entity is part of a watchlist. This API is only available for version 6.2 CU4 SP5 and above.",
+        "parameters": [
+          {
+            "name": "entityId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The entity ID. The entityId is employeeid when entitytype is Users."
+          },
+          {
+            "name": "watchlistname",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The watchlist name to check if the entity is a part of. If not specified, returns all watchlists the entity is part of."
+          },
+          {
+            "name": "tenantname",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The name of the tenant where you want to check if the entity is watchlisted (MSSP)."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Watchlist check results",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/Snypr/ws/incident/addToWatchlist": {
+      "post": {
+        "summary": "Add Entities to Watchlist",
+        "description": "Add one or more entities to an existing watchlist. Maximum 5 comma-separated entities. This API is only available for version 6.2 CU4 SP5 and above.",
+        "parameters": [
+          {
+            "name": "watchlistname",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The watchlist name to add the entity."
+          },
+          {
+            "name": "entityType",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": ["Users", "Activityaccount", "Resource", "Activityip"]
+            },
+            "description": "The type of the entity (Users, Activityaccount, Resource, Activityip)."
+          },
+          {
+            "name": "expirydays",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Number of days the entity will be assigned to the watchlist."
+          },
+          {
+            "name": "entityId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The entity ID. Maximum 5 comma-separated entities. The entityId is employeeid when entitytype is Users."
+          },
+          {
+            "name": "resourcegroupid",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The resource group ID of the entity. Specify -1 for entitytype Users."
+          },
+          {
+            "name": "tenantname",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The name of the tenant where you want to add an entity to a watchlist (MSSP)."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Entity added to watchlist",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string",
+                  "example": "Add to watchlist successful..!"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/Snypr/ws/incident/listWatchlistEntities": {
+      "get": {
+        "summary": "List Entities in Watchlist",
+        "description": "List all entities present in an existing watchlist. This API is only available for version 6.2 CU4 SP5 and above.",
+        "parameters": [
+          {
+            "name": "watchlistname",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The watchlist name to list all entities."
+          },
+          {
+            "name": "tenantname",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The name of the tenant where the watchlist is available."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of entities in watchlist",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/Snypr/ws/incident/checkEntityList": {
+      "get": {
+        "summary": "Check Watchlists for Multiple Entities",
+        "description": "Check which watchlists one or more entities are part of. This API is only available for version 6.2 CU4 SP5 and above.",
+        "parameters": [
+          {
+            "name": "entityId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The entity ID (comma-separated). The entityId is employeeid when the entitytype is Users."
+          },
+          {
+            "name": "tenantname",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The name of the tenant where the watchlist is available (MSSP)."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Entities and their watchlists",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/Snypr/ws/spotter/index/search/watchlist": {
+      "get": {
+        "summary": "Search Spotter Index (Watchlist)",
+        "description": "Search watchlist data from the Spotter index. Get information on entities in the watchlist by their attributes.",
+        "parameters": [
+          {
+            "name": "query",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Search query in the format: index=watchlist AND watchlistname=\"<watchlist_name>\". Example: index=watchlist AND watchlistname=\"Flight Risk Users\""
+          },
+          {
+            "name": "tz",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Timezone. If empty, the application timezone will be selected."
+          },
+          {
+            "name": "prettyJson",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": ["true", "false"]
+            },
+            "description": "If set to true, returns the REST response in pretty JSON format. Default: false."
+          },
+          {
+            "name": "max",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Number of records to return. Default: 1000, Max: 10000. Only available for version 6.2 CU4 SP4 and above."
+          },
+          {
+            "name": "queryId",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Used for pagination. Use the queryId from the previous response to get the next set of records. Only available for version 6.2 CU4 SP4 and above."
+          },
+          {
+            "name": "data_labels",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": ["true", "false"]
+            },
+            "description": "If set to true, returns data dictionary labels instead of Securonix attributes. Default: true."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Watchlist search results",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/Snypr/ws/incident/createGlobalWhitelist": {
+      "post": {
+        "summary": "Create New Global Whitelist",
+        "description": "Create a new global whitelist. Whitelists allow you to create lists of entities to exclude from policies.",
+        "parameters": [
+          {
+            "name": "whitelistname",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The name of the whitelist to create."
+          },
+          {
+            "name": "tenantname",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The name of the tenant the whitelist should belong to."
+          },
+          {
+            "name": "entitytype",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": ["Users", "Activityaccount", "Resources", "IpAddress"]
+            },
+            "description": "The type of entity that the whitelist is intended to hold (Users, Activityaccount, Resources, IpAddress)."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Whitelist created successfully",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string",
+                  "example": "New Global whitelist created Successfully ..!"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/Snypr/ws/incident/removeFromWhitelist": {
+      "delete": {
+        "summary": "Remove Value from Whitelist",
+        "description": "Remove a value from an existing whitelist. Can be used for both Global and Attribute whitelists.",
+        "parameters": [
+          {
+            "name": "whitelistname",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The name of the whitelist to remove the value from."
+          },
+          {
+            "name": "tenantname",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The name of the tenant the whitelist belongs to."
+          },
+          {
+            "name": "whitelisttype",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": ["Global", "Attribute"]
+            },
+            "description": "The type of whitelist (Global or Attribute)."
+          },
+          {
+            "name": "entityId",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The entityId value to remove (employeeId for Users, accountname for ActivityAccount, resourcename for Resources, ipadress for IpAddress). Required if whitelisttype is Global."
+          },
+          {
+            "name": "attributename",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The name of the attribute being removed. Required if whitelisttype is Attribute. Examples: accountname, transactionstring, sourcetype."
+          },
+          {
+            "name": "attributevalue",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The value of the attribute being removed. Required if whitelisttype is Attribute."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Entity removed from whitelist",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string",
+                  "example": "Entity removed from whitelist Successfully ..!"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/Snypr/ws/incident/addToWhitelist": {
+      "post": {
+        "summary": "Add Entity or Attribute to Whitelist",
+        "description": "Add an entity or attribute to an existing whitelist."
+      }
+    },
+    "/Snypr/ws/incident/getlistofWhitelist": {
+      "get": {
+        "summary": "Get List of Whitelists",
+        "description": "Get a list of all existing whitelists.",
+        "parameters": [
+          {
+            "name": "tenantname",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The name of the tenant the whitelist belongs to."
+          },
+          {
+            "name": "whitelistname",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The name of the whitelist to list."
+          },
+          {
+            "name": "entitytype",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": ["Users", "Activityaccount", "Activityip", "Resources"]
+            },
+            "description": "The type of entity (Users, Activityaccount, Activityip, Resources)."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of whitelists",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/Snypr/ws/incident/listWhitelistEntities": {
+      "get": {
+        "summary": "List Entities in Whitelist",
+        "description": "List all entities present in a whitelist.",
+        "parameters": [
+          {
+            "name": "whitelistname",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The name of the whitelist to list entities from."
+          },
+          {
+            "name": "tenantname",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The name of the tenant the whitelist belongs to."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of entities in whitelist",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
