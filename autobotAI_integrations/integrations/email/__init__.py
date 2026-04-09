@@ -27,7 +27,7 @@ class IMAPIntegration(BaseSchema):
     username: Optional[str] = Field(default=None, exclude=True)
     password: Optional[str] = Field(default=None, exclude=True)
 
-    category: Optional[str] = IntegrationCategory.MONITORING_TOOLS.value
+    category: Optional[str] = IntegrationCategory.NOTIFICATIONS_AND_COMMUNICATIONS.value
     description: Optional[str] = "IMAP is a protocol for email access and management."
 
 
