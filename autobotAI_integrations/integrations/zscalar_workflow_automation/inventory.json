@@ -1,0 +1,352 @@
+{
+  "zscaler": [
+    {
+      "name": "zscaler_admin_user",
+      "all_columns": [
+        "id",
+        "login_name",
+        "username",
+        "email",
+        "role",
+        "is_default_admin",
+        "is_auditor",
+        "is_password_login_allowed",
+        "is_security_report_comm_enabled",
+        "is_service_update_comm_enabled",
+        "is_product_update_comm_enabled",
+        "is_exec_mobile_app_enabled",
+        "admin_scope_type",
+        "disabled",
+        "comments"
+      ],
+      "included": [],
+      "excluded": [],
+      "inventory_supported": true
+    },
+    {
+      "name": "zscaler_user",
+      "all_columns": [
+        "id",
+        "name",
+        "email",
+        "groups",
+        "department",
+        "comments",
+        "temp_auth_email",
+        "admin_user",
+        "type",
+        "is_non_editable",
+        "deleted"
+      ],
+      "included": [],
+      "excluded": [],
+      "inventory_supported": true
+    },
+    {
+      "name": "zscaler_group",
+      "all_columns": ["id", "name", "comments", "is_non_editable"],
+      "included": [],
+      "excluded": [],
+      "inventory_supported": true
+    },
+    {
+      "name": "zscaler_department",
+      "all_columns": [
+        "id",
+        "name",
+        "comments",
+        "deleted",
+        "idp_id",
+        "is_non_editable"
+      ],
+      "included": [],
+      "excluded": [],
+      "inventory_supported": true
+    },
+    {
+      "name": "zscaler_location",
+      "all_columns": [
+        "id",
+        "name",
+        "description",
+        "country",
+        "state",
+        "city",
+        "tz",
+        "ip_addresses",
+        "ports",
+        "auth_required",
+        "ssl_scan_enabled",
+        "xff_forward_enabled",
+        "surrogate_ip",
+        "idle_time_in_minutes",
+        "display_time_unit",
+        "surrogate_ip_enforced_for_known_browsers",
+        "surrogate_refresh_time_in_minutes",
+        "surrogate_refresh_time_unit",
+        "ofw_enabled",
+        "ips_control",
+        "aup_enabled",
+        "caution_enabled",
+        "aup_block_internet_until_accepted",
+        "aup_timeout_in_days",
+        "up_bandwidth",
+        "dn_bandwidth",
+        "vpn_credentials",
+        "profile"
+      ],
+      "included": [],
+      "excluded": [],
+      "inventory_supported": true
+    },
+    {
+      "name": "zscaler_url_category",
+      "all_columns": [
+        "id",
+        "configured_name",
+        "super_category",
+        "type",
+        "urls",
+        "db_categorized_urls",
+        "custom_category",
+        "editable",
+        "description",
+        "urls_retaining_parent_category_count",
+        "val",
+        "custom_urls_count",
+        "scopes",
+        "keywords",
+        "keywords_retaining_parent_category"
+      ],
+      "included": [],
+      "excluded": [],
+      "inventory_supported": true
+    },
+    {
+      "name": "zscaler_url_filtering_rule",
+      "all_columns": [
+        "id",
+        "name",
+        "order",
+        "state",
+        "action",
+        "url_categories",
+        "protocols",
+        "request_methods",
+        "rank",
+        "locations",
+        "groups",
+        "departments",
+        "users",
+        "time_windows",
+        "location_groups",
+        "block_override",
+        "enforce_time_validity",
+        "validity_start_time",
+        "validity_end_time",
+        "validity_time_zone_id",
+        "last_modified_time",
+        "last_modified_by",
+        "description"
+      ],
+      "included": [],
+      "excluded": [],
+      "inventory_supported": true
+    },
+    {
+      "name": "zscaler_firewall_rule",
+      "all_columns": [
+        "id",
+        "name",
+        "order",
+        "state",
+        "action",
+        "rank",
+        "access_control",
+        "enable_full_logging",
+        "description",
+        "src_ips",
+        "src_ip_groups",
+        "dest_addresses",
+        "dest_ip_categories",
+        "dest_ip_groups",
+        "dest_countries",
+        "nw_services",
+        "nw_service_groups",
+        "nw_applications",
+        "nw_application_groups",
+        "locations",
+        "location_groups",
+        "departments",
+        "groups",
+        "users",
+        "time_windows",
+        "last_modified_time",
+        "last_modified_by",
+        "default_rule",
+        "predefined"
+      ],
+      "included": [],
+      "excluded": [],
+      "inventory_supported": true
+    },
+    {
+      "name": "zscaler_dlp_dictionary",
+      "all_columns": [
+        "id",
+        "name",
+        "description",
+        "confidence_threshold",
+        "phrases",
+        "custom_phrase_match_type",
+        "patterns",
+        "dictionary_type",
+        "exact_data_match_details",
+        "idm_profile_match_accuracy",
+        "proximity",
+        "name_l10n_tag",
+        "threshold_type",
+        "custom"
+      ],
+      "included": [],
+      "excluded": [],
+      "inventory_supported": true
+    },
+    {
+      "name": "zscaler_dlp_engine",
+      "all_columns": [
+        "id",
+        "name",
+        "description",
+        "engine_expression",
+        "custom_dlp_engine",
+        "predefined_engine_name"
+      ],
+      "included": [],
+      "excluded": [],
+      "inventory_supported": true
+    },
+    {
+      "name": "zscaler_ip_source_group",
+      "all_columns": [
+        "id",
+        "name",
+        "ip_addresses",
+        "description",
+        "is_non_editable"
+      ],
+      "included": [],
+      "excluded": [],
+      "inventory_supported": true
+    },
+    {
+      "name": "zscaler_ip_destination_group",
+      "all_columns": [
+        "id",
+        "name",
+        "type",
+        "addresses",
+        "ip_categories",
+        "countries",
+        "description",
+        "is_non_editable"
+      ],
+      "included": [],
+      "excluded": [],
+      "inventory_supported": true
+    },
+    {
+      "name": "zscaler_network_service",
+      "all_columns": [
+        "id",
+        "name",
+        "tag",
+        "src_tcp_ports",
+        "dest_tcp_ports",
+        "src_udp_ports",
+        "dest_udp_ports",
+        "type",
+        "description",
+        "is_name_l10n_tag"
+      ],
+      "included": [],
+      "excluded": [],
+      "inventory_supported": true
+    },
+    {
+      "name": "zscaler_vpn_credential",
+      "all_columns": [
+        "id",
+        "type",
+        "fqdn",
+        "ip_address",
+        "pre_shared_key",
+        "comments",
+        "location"
+      ],
+      "included": [],
+      "excluded": [],
+      "inventory_supported": true
+    },
+    {
+      "name": "zscaler_sandbox_report",
+      "all_columns": [
+        "md5",
+        "sha256",
+        "file_type",
+        "status",
+        "category",
+        "detected_malware",
+        "zscaler_score",
+        "summary",
+        "duration",
+        "start_time",
+        "classification"
+      ],
+      "included": [],
+      "excluded": [],
+      "inventory_supported": false
+    },
+    {
+      "name": "zscaler_security_policy",
+      "all_columns": [
+        "whitelist_urls",
+        "blacklist_urls",
+        "blocklist_urls",
+        "allowlist_urls"
+      ],
+      "included": [],
+      "excluded": [],
+      "inventory_supported": true
+    },
+    {
+      "name": "zscaler_admin_role",
+      "all_columns": [
+        "id",
+        "name",
+        "rank",
+        "policy_access",
+        "alerting_access",
+        "dashboard_access",
+        "report_access",
+        "analysis_access",
+        "username_access",
+        "admin_acct_access",
+        "is_auditor",
+        "permissions",
+        "is_non_editable",
+        "logs_limit"
+      ],
+      "included": [],
+      "excluded": [],
+      "inventory_supported": true
+    },
+    {
+      "name": "zscaler_activation_status",
+      "all_columns": ["status"],
+      "included": [],
+      "excluded": [],
+      "inventory_supported": true
+    }
+  ]
+}
