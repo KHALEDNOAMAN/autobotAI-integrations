@@ -134,7 +134,7 @@ def _get_zwa_token(key_id: str, key_secret: str, cloud: str) -> str:
     return access_token
 
 
-class ZscalarWorkflowAutomationIntegration(BaseSchema):
+class ZscalerWorkflowAutomationIntegration(BaseSchema):
     # Credentials — excluded from serialization
     key_id: Optional[str] = Field(default=None, exclude=True)
     key_secret: Optional[str] = Field(default=None, exclude=True)
@@ -148,7 +148,7 @@ class ZscalarWorkflowAutomationIntegration(BaseSchema):
     test_body: Optional[str] = Field(default=json.dumps({"fields": [{"name": "priority","value": ["HIGH"]}]}), exclude=False)
     skip_test: Optional[bool] = Field(default=False, exclude=False)
 
-    name: Optional[str] = "zscalar_workflow_automation"
+    name: Optional[str] = "zscaler_workflow_automation"
     category: Optional[str] = IntegrationCategory.SECURITY_TOOLS.value
     description: Optional[str] = (
         "Zscaler Workflow Automation (ZWA) enables automated security workflows, "
@@ -158,13 +158,13 @@ class ZscalarWorkflowAutomationIntegration(BaseSchema):
     )
 
 
-class ZscalarWorkflowAutomationService(BaseService):
-    def __init__(self, ctx: dict, integration: Union[ZscalarWorkflowAutomationIntegration, dict]):
+class ZscalerWorkflowAutomationService(BaseService):
+    def __init__(self, ctx: dict, integration: Union[ZscalerWorkflowAutomationIntegration, dict]):
         """
         Integration should have all the data regarding the ZWA integration.
         """
-        if not isinstance(integration, ZscalarWorkflowAutomationIntegration):
-            integration = ZscalarWorkflowAutomationIntegration(**integration)
+        if not isinstance(integration, ZscalerWorkflowAutomationIntegration):
+            integration = ZscalerWorkflowAutomationIntegration(**integration)
         super().__init__(ctx, integration)
 
     def _resolved_base_url(self) -> str:
@@ -186,7 +186,7 @@ class ZscalarWorkflowAutomationService(BaseService):
             test_url = f"{base_url}{self.integration.test_api}"
             http_method = getattr(requests, self.integration.test_method, requests.get)
             data = None
-            if http_method == "post":
+            if self.integration.test_method == "post":
                 data = self.integration.test_body if isinstance(self.integration.test_body, str) else json.dumps(self.integration.test_body)
             verify_resp = http_method(
                 test_url,
@@ -327,7 +327,7 @@ class ZscalarWorkflowAutomationService(BaseService):
 
     @staticmethod
     def get_schema(ctx=None) -> Type[BaseSchema]:
-        return ZscalarWorkflowAutomationIntegration
+        return ZscalerWorkflowAutomationIntegration
 
     @classmethod
     def get_details(cls):
@@ -364,7 +364,6 @@ class ZscalarWorkflowAutomationService(BaseService):
         Returns environment variables compatible with the Zscaler Python SDK's
         LegacyZWAClient, which reads ZWA_CLIENT_ID, ZWA_CLIENT_SECRET, and ZWA_CLOUD.
         """
-        print(self._test_integration())
         envs = {
             "ZWA_CLIENT_ID": self.integration.key_id,
             "ZWA_CLIENT_SECRET": self.integration.key_secret,
@@ -396,7 +395,7 @@ class ZscalarWorkflowAutomationService(BaseService):
         return [
             {
                 "clients": {
-                    "zscalar": client,
+                    "zscaler": client,
                 },
                 "params": self.prepare_params(payload_task.params),
                 "context": payload_task.context,

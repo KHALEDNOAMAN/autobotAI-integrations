@@ -2,7 +2,7 @@ import os
 import uuid
 import dotenv
 
-from autobotAI_integrations.integrations.zscalar_workflow_automation import ZscalarWorkflowAutomationIntegration
+from autobotAI_integrations.integrations.zscaler_workflow_automation import ZscalerWorkflowAutomationIntegration
 
 dotenv.load_dotenv()
 
@@ -13,9 +13,69 @@ from autobotAI_integrations.payload_schema import Payload, PayloadTask, PayloadT
 from autobotAI_integrations.handlers import handle_payload
 
 code = """
+# Import your modules here
+import json
+
+
 def executor(context):
-    print(context)
-    return [{"result": True}]
+
+    params = context["params"]
+    clients = context["clients"]
+
+    # Zscaler client (Legacy ZWA)
+    client = clients["zscaler"]
+
+    # Default parameters (aligned with your original config)
+    test_method = params.get("test_method", "post")  # Not used by SDK
+    test_api = params.get("test_api", "/dlp/v1/incidents/search")  # Informational
+    test_body = params.get(
+        "test_body",
+        json.dumps({
+            "fields": [
+                {"name": "severity", "value": ["high"]}
+            ]
+        })
+    )
+
+    result = []
+
+    try:
+        # Ensure body is a dict
+        if isinstance(test_body, str):
+            body = json.loads(test_body)
+        else:
+            body = test_body
+
+        # Execute SDK method
+        # Reference: dlp_incidents.search_dlp_incidents
+        response, status_code, err = client.zwa.dlp_incidents.dlp_incident_search(
+            **body
+        )
+        print(response, status_code, err)
+
+        if err:
+            result.append({
+                "error": str(err),
+                "api": test_api,
+                "method": test_method
+            })
+        else:
+            result.append({
+                "status_code": status_code,
+                "api": test_api,
+                "method": test_method,
+                "response": response
+            })
+
+    except Exception as e:
+        result.append({
+            "error": str(e),
+            "api": test_api,
+            "method": test_method
+        })
+
+    # Always return a list
+    return result
 """
 
 linux_config_str = """
@@ -28,8 +88,8 @@ zscalar_workflow_automation_json = {
     "userId": "vishalshandilya2121@gmail.com",
     "accountId": "175c0fa813244bc5a1aa6264e7ba20cc*",
     "integrationState": "INACTIVE",
-    "cspName": "zscalar_workflow_automation",
-    "alias": "test-zscalar_workflow_automation-integrations",
+    "cspName": "zscaler_workflow_automation",
+    "alias": "test-zscaler_workflow_automation-integrations",
     "connection_type": "DIRECT",
     "groups": ["zscalar", "shunyeka", "integrations-v2"],
     "agent_ids": [],
@@ -58,7 +118,7 @@ context = {
 
 
 def generate_zscalar_workflow_automation_python_payload(zscalar_workflow_automation_json=zscalar_workflow_automation_json) -> Payload:
-    integration = ZscalarWorkflowAutomationIntegration(**zscalar_workflow_automation_json)
+    integration = ZscalerWorkflowAutomationIntegration(**zscalar_workflow_automation_json)
     service = integration_service_factory.get_service(None, integration)
     creds = service.generate_python_sdk_creds()
     task_dict = {
