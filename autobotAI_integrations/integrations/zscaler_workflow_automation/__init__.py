@@ -184,7 +184,7 @@ class ZscalerWorkflowAutomationService(BaseService):
             )
 
             base_url = self._resolved_base_url()
-            test_url = f"{base_url}{self.integration.test_api}"
+            test_url = f"https://{base_url}{self.integration.test_api}"
             http_method = getattr(requests, self.integration.test_method, requests.get)
             data = None
             if self.integration.test_method == "post":
