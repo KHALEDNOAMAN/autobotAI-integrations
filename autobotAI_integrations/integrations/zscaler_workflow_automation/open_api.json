@@ -6,9 +6,9 @@
   },
   "servers": [
     {
-      "url": "https://{baseUrl}",
+      "url": "https://{base_url}",
       "variables": {
-        "baseUrl": {
+        "base_url": {
           "default": "api.example.com"
         }
       }
