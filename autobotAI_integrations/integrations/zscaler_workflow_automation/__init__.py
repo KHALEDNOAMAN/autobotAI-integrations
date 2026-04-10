@@ -2,6 +2,7 @@ import importlib
 import json
 import re
 from typing import List, Optional, Type, Union
+import ast
 
 import requests
 from pydantic import Field
@@ -187,7 +188,7 @@ class ZscalerWorkflowAutomationService(BaseService):
             http_method = getattr(requests, self.integration.test_method, requests.get)
             data = None
             if self.integration.test_method == "post":
-                data = self.integration.test_body if isinstance(self.integration.test_body, str) else json.dumps(self.integration.test_body)
+                data = json.dumps(ast.literal_eval(self.integration.test_body)) if isinstance(self.integration.test_body, str) else json.dumps(self.integration.test_body)
             verify_resp = http_method(
                 test_url,
                 headers={
