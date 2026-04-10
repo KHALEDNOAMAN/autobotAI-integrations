@@ -26,7 +26,6 @@ class IntegrationSchema(BaseModel):
     userId: str  # The user creating the Integration
     accountId: str  # Unique ID for the integration, For AWS it is Account ID, Azure it is subscription id and GCP it is project id, if no unique id available we generate an unique id.
     integrationState: IntegrationStates = IntegrationStates.INACTIVE.value
-    category: Optional[str] = None
     cspName: str  # AWS, AZURE, GCP, GITLAB etc.
     alias: str  # Name given by User
     connection_type: ConnectionTypes = ConnectionTypes.DIRECT.value  # Direct means we get the credentials, Agent means we don't have the creds, our agent is installed in the customer's environment.
