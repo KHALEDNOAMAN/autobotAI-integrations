@@ -9,42 +9,43 @@ def executor(context):
 
     params = context["params"]
     clients = context["clients"]
-    print(context)
 
-    client = clients["zscaler"]  # legacy ZWA client
+    # Zscaler client (Legacy ZWA)
+    client = clients["zscaler"]
 
-    # Defaults (can be overridden via params)
-    method = params.get("test_method", "post").lower()
-    api = params.get("test_api", "/dlp/v1/incidents/search")
-    body = params.get(
+    # Default parameters (aligned with your original config)
+    test_body = params.get(
         "test_body",
-        json.dumps({"fields": [{"name": "priority", "value": ["HIGH"]}]})
+        json.dumps({
+            "fields": [
+                {"name": "severity", "value": ["HIGH"]}
+            ],
+            "time_range": {"startTime": "2025-03-03T18:04:52.074Z", "endTime": "2026-04-09T18:04:52.074Z"}
+        })
     )
 
     result = []
 
-    try:
-        # Parse body if string
-        if isinstance(body, str):
-            body = json.loads(body)
+    # Ensure body is a dict
+    if isinstance(test_body, str):
+        body = json.loads(test_body)
+    else:
+        body = test_body
 
-        # Legacy ZWA raw request pattern
-        # Assumes client.zwa.request exists
-        resp, status, err = client.zwa.request(
-            method=method,
-            path=api,
-            json=body
-        )
+    # Execute SDK method
+    # Reference: dlp_incidents.search_dlp_incidents
+    response, status_code, err = client.zwa.dlp_incidents.dlp_incident_search(
+        **body
+    )
+    print(response, status_code, err, body)
 
-        if err:
-            result.append({"error": str(err)})
-        else:
-            result.append({
-                "status": status,
-                "response": resp
-            })
+    if err:
+        raise Exception(err)
+    else:
+        result.append({
+            "status_code": status_code,
+            "response": response
+        })
 
-    except Exception as e:
-        result.append({"error": str(e)})
-
+    # Always return a list
     return result

@@ -416,7 +416,7 @@ def executor(context):
                 "user_id": payload_task.context.execution_details.caller.user_id,
                 "root_user_id": payload_task.context.execution_details.caller.root_user_id,
             }
-            if getattr(payload_task.context.integration, "category") not in [
+            if getattr(payload_task.context.integration, "category", None) not in [
                 IntegrationCategory.AI.value
             ] and payload_task.context.integration.cspName not in ["python"]:
                 default_data["integration_id"] = (
