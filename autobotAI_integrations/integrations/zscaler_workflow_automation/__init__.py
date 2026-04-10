@@ -21,12 +21,12 @@ from autobotAI_integrations.models import IntegrationCategory
 # ZWA uses a cloud-specific base URL, NOT the OneAPI endpoint (api.zsapi.net).
 # The cloud attribute (e.g. "us1", "eu1") determines the subdomain.
 # Default cloud is "us1".
-ZWA_BASE_URL_TEMPLATE = "https://api.{cloud}.zsworkflow.net"
+ZWA_BASE_URL_TEMPLATE = "api.{cloud}.zsworkflow.net"
 ZWA_DEFAULT_CLOUD = "us1"
 
 # ZWA authenticates via its own key_id / key_secret pair (legacy auth, NOT OAuth2/ZIdentity).
 # Token endpoint pattern — cloud-specific.
-ZWA_TOKEN_URL_TEMPLATE = f"{ZWA_BASE_URL_TEMPLATE}/v1/auth/api-key/token"
+ZWA_TOKEN_URL_TEMPLATE = f"https://{ZWA_BASE_URL_TEMPLATE}/v1/auth/api-key/token"
 
 
 def _parse_error_response(response: requests.Response) -> str:
