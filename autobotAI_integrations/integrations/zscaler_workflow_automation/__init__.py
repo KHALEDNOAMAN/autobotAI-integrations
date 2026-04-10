@@ -148,7 +148,7 @@ class ZscalerWorkflowAutomationIntegration(BaseSchema):
     test_body: Optional[str] = Field(default=json.dumps({"fields": [{"name": "priority","value": ["HIGH"]}]}), exclude=False)
     skip_test: Optional[bool] = Field(default=False, exclude=False)
 
-    name: Optional[str] = "zscaler_workflow_automation"
+    name: Optional[str] = "Zscaler Workflow Automation"
     category: Optional[str] = IntegrationCategory.SECURITY_TOOLS.value
     description: Optional[str] = (
         "Zscaler Workflow Automation (ZWA) enables automated security workflows, "
