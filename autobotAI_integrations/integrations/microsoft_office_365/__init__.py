@@ -28,8 +28,6 @@ class MicrosoftIntegration(BaseSchema):
         # - If omitted (new behaviour), fall back to tenant_id or let BaseSchema handle it.
         if kwargs.get("subscription_id"):
             kwargs.setdefault("accountId", kwargs["subscription_id"] + "_microsoft365")
-        elif kwargs.get("tenant_id") and not kwargs.get("accountId"):
-            kwargs.setdefault("accountId", kwargs["tenant_id"] + "_microsoft365")
         super().__init__(**kwargs)
 
 
