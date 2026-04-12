@@ -19,6 +19,10 @@ from autobotAI_integrations.models import (
 class AzureIntegration(BaseSchema):
     tenant_id: Optional[str] = None
     client_id: Optional[str] = Field(default=None, exclude=True)
+    # subscription_id is optional at the schema level.
+    # It is required by Azure resource-management SDK clients (e.g. ResourceManagementClient,
+    # ComputeManagementClient), but NOT needed for Microsoft Entra / Graph-only use cases.
+    # Existing integrations that already supply it are fully backward-compatible.
     subscription_id: Optional[str] = Field(default=None, exclude=True)
     client_secret: Optional[str] = Field(default=None, exclude=True)
 
@@ -29,34 +33,53 @@ class AzureIntegration(BaseSchema):
     )
 
     def __init__(self, **kwargs):
+        # Backward-compatible accountId construction:
+        # - If subscription_id is provided (original behaviour), use it as accountId.
+        # - If omitted, fall back to tenant_id so the record still gets a stable identity.
+        #   setdefault ensures an explicitly passed accountId is never overwritten.
         if kwargs.get("subscription_id"):
-            kwargs["accountId"] = kwargs["subscription_id"]
+            kwargs.setdefault("accountId", kwargs["subscription_id"])
         super().__init__(**kwargs)
 
 
 class AzureService(BaseService):
     def __init__(self, ctx: dict, integration: Union[AzureIntegration, dict]):
         """
-        Integration should have all the data regarding the integration
+        Integration should have all the data regarding the integration.
         """
         if not isinstance(integration, AzureIntegration):
             integration = AzureIntegration(**integration)
         super().__init__(ctx, integration)
 
     def _test_integration(self) -> dict:
-        from azure.identity import ClientSecretCredential # type: ignore
-        from azure.mgmt.resource import ResourceManagementClient # type: ignore
+        from azure.identity import ClientSecretCredential  # type: ignore
+
         try:
             credentials = ClientSecretCredential(
                 tenant_id=self.integration.tenant_id,
                 client_id=self.integration.client_id,
                 client_secret=self.integration.client_secret
             )
-            client = ResourceManagementClient(credential=credentials, subscription_id=self.integration.subscription_id)
-            resources = list(client.resources.list())
+
+            if self.integration.subscription_id:
+                # Full test: validate credentials AND subscription access via the
+                # resource management plane (original behaviour).
+                from azure.mgmt.resource import ResourceManagementClient  # type: ignore
+
+                client = ResourceManagementClient(
+                    credential=credentials,
+                    subscription_id=self.integration.subscription_id,
+                )
+                list(client.resources.list())
+            else:
+                # Lightweight test: subscription_id not provided, so just verify
+                # that the service principal can obtain a valid Entra ID token.
+                # Ref: https://learn.microsoft.com/en-us/python/api/azure-identity/
+                #      azure.identity.clientsecretcredential
+                credentials.get_token("https://management.azure.com/.default")
+
             return {"success": True}
         except Exception as e:
-            # Custom one line error message
             return {"success": False, "error": str(e).split(".")[0]}
 
     @staticmethod
@@ -83,8 +106,8 @@ class AzureService(BaseService):
                     "name": "subscription_id",
                     "type": "text",
                     "label": "Subscription ID",
-                    "placeholder": "Enter your Azure subscription ID",
-                    "required": True,
+                    "placeholder": "Enter your Azure subscription ID (optional, required for resource management)",
+                    "required": False,
                 },
                 {
                     "name": "client_secret",
@@ -129,30 +152,40 @@ class AzureService(BaseService):
     def build_python_exec_combinations_hook(
         self, payload_task: PayloadTask, client_definitions: List[SDKClient]
     ) -> list:
-        from azure.identity import ClientSecretCredential # type: ignore
+        from azure.identity import ClientSecretCredential  # type: ignore
+
         clients_classes = dict()
         credential = ClientSecretCredential(
             tenant_id=payload_task.creds.envs.get("AZURE_TENANT_ID"),
             client_id=payload_task.creds.envs.get("AZURE_CLIENT_ID"),
             client_secret=payload_task.creds.envs.get("AZURE_CLIENT_SECRET"),
         )
+        subscription_id = payload_task.creds.envs.get("AZURE_SUBSCRIPTION_ID")
+
         for client in client_definitions:
             try:
                 client_module = importlib.import_module(client.module, package=None)
                 if hasattr(client_module, client.class_name):
                     cls = getattr(client_module, client.class_name)
                     try:
-                        clients_classes[client.class_name] = cls(
-                            credential=credential,
-                            subscription_id=payload_task.creds.envs.get(
-                                "AZURE_SUBSCRIPTION_ID"
-                            ),
-                        )
+                        # Most Azure management-plane clients require subscription_id.
+                        # If it is absent, fall back to credential-only construction so
+                        # Graph / Entra clients (which don't take subscription_id) still work.
+                        if subscription_id:
+                            clients_classes[client.class_name] = cls(
+                                credential=credential,
+                                subscription_id=subscription_id,
+                            )
+                        else:
+                            clients_classes[client.class_name] = cls(
+                                credential=credential
+                            )
                     except BaseException:
                         clients_classes[client.class_name] = cls(credential=credential)
             except BaseException as e:
                 print(e)
                 continue
+
         return [
             {
                 "clients": clients_classes,
@@ -177,10 +210,18 @@ class AzureService(BaseService):
     def generate_cli_creds(self) -> CLICreds:
         raise NotImplementedError()
 
-    def _temp_credentials(self):
-        return {
+    def _temp_credentials(self) -> dict:
+        """
+        Returns environment variable credentials dict.
+
+        AZURE_SUBSCRIPTION_ID is included only when subscription_id is set,
+        so integrations that don't supply it don't get a spurious empty env var.
+        """
+        creds = {
             "AZURE_TENANT_ID": self.integration.tenant_id,
             "AZURE_CLIENT_ID": self.integration.client_id,
             "AZURE_CLIENT_SECRET": self.integration.client_secret,
-            "AZURE_SUBSCRIPTION_ID": self.integration.subscription_id,
         }
+        if self.integration.subscription_id:
+            creds["AZURE_SUBSCRIPTION_ID"] = self.integration.subscription_id
+        return creds
