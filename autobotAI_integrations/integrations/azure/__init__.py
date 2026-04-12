@@ -39,8 +39,6 @@ class AzureIntegration(BaseSchema):
         #   setdefault ensures an explicitly passed accountId is never overwritten.
         if kwargs.get("subscription_id"):
             kwargs.setdefault("accountId", kwargs["subscription_id"])
-        elif kwargs.get("tenant_id"):
-            kwargs.setdefault("accountId", kwargs["tenant_id"])
         super().__init__(**kwargs)
 
 
