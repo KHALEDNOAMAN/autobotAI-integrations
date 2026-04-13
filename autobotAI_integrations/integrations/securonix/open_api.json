@@ -14,7 +14,7 @@
     "/Snypr/ws/incident/get": {
       "get": {
         "summary": "Get Incident",
-        "description": "Retrieve incident details by type and incident ID.",
+        "description": "Retrieve incident details by type and incident ID, get possible actions for an incident, or list incidents by date range when type is 'list'.",
         "parameters": [
           {
             "name": "type",
@@ -22,23 +22,152 @@
             "required": true,
             "schema": {
               "type": "string",
-              "enum": ["metaInfo", "actionInfo", "workflowInfo"]
+              "enum": [
+                "metaInfo",
+                "actionInfo",
+                "workflowInfo",
+                "actions",
+                "list"
+              ]
             },
-            "description": "The type of incident information to retrieve."
+            "description": "The type of incident information to retrieve. Use 'actions' to get possible actions for an incident, or 'list' to get incidents within a date range."
           },
           {
             "name": "incidentId",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The unique identifier of the incident. Required when type is metaInfo, actionInfo, workflowInfo, or actions."
+          },
+          {
+            "name": "from",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Start time in epoch milliseconds. Required when type is 'list'."
+          },
+          {
+            "name": "to",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "End time in epoch milliseconds. Required when type is 'list'."
+          },
+          {
+            "name": "rangeType",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": ["opened", "closed", "updated"]
+            },
+            "description": "The type of date range filter. Required when type is 'list'."
+          },
+          {
+            "name": "max",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Maximum number of incidents to return. Used when type is 'list'."
+          },
+          {
+            "name": "tenantname",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The name of the tenant (MSSP). Used when type is 'list'."
+          },
+          {
+            "name": "order",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": ["asc", "desc"]
+            },
+            "description": "Sort order for the results. Used when type is 'list'."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Incident details or list of incidents",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/Snypr/ws/incident/actions": {
+      "post": {
+        "summary": "Take Action on an Incident",
+        "description": "Perform an action on an incident. Use 'Possible Actions Available for an Incident' API (type=actions) to view available actions. For general actions, provide incidentId and actionName. To update incident criticality, set actionName to 'ChangeIncidentCriticality' and provide criticality, changecriticality, and bulkcaseids parameters.",
+        "parameters": [
+          {
+            "name": "actionName",
             "in": "query",
             "required": true,
             "schema": {
               "type": "string"
             },
-            "description": "The unique identifier of the incident."
+            "description": "The action to perform on the incident. Use 'ChangeIncidentCriticality' to update criticality. Run the Available Threat Actions API to view other available actions. This parameter is case sensitive."
+          },
+          {
+            "name": "incidentId",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The incident ID on which you want to perform an action. Required for general incident actions (not required for ChangeIncidentCriticality)."
+          },
+          {
+            "name": "criticality",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": ["high", "low", "medium", "none", "custom"]
+            },
+            "description": "The criticality level to set. Required when actionName is 'ChangeIncidentCriticality'."
+          },
+          {
+            "name": "changecriticality",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": ["true"]
+            },
+            "description": "Must be set to 'true' when actionName is 'ChangeIncidentCriticality'. This parameter is case sensitive."
+          },
+          {
+            "name": "bulkcaseids",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Incident ID(s) to update criticality for. For multiple incidents, repeat this parameter (e.g. bulkcaseids=id1&bulkcaseids=id2). Required when actionName is 'ChangeIncidentCriticality'."
           }
         ],
         "responses": {
           "200": {
-            "description": "Incident details",
+            "description": "Action submitted successfully",
             "content": {
               "application/json": {
                 "schema": {
