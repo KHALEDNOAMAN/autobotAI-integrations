@@ -182,7 +182,7 @@ class ZscalerService(BaseService):
     @staticmethod
     def get_forms():
         return {
-            "label": "Zscaler",
+            "label": "Zscaler OneAPI",
             "type": "form",
             "children": [
                 {

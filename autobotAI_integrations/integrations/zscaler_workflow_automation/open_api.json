@@ -1,0 +1,300 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Zscaler Workflow Automation API",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "https://{base_url}",
+      "variables": {
+        "base_url": {
+          "default": "api.example.com"
+        }
+      }
+    }
+  ],
+  "paths": {
+    "/v1/auth/api-key/token": {
+      "post": {
+        "summary": "Get token by API key",
+        "operationId": "getTokenByApiKey",
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/dlp/v1/incidents/search": {
+      "post": {
+        "summary": "Search DLP incidents (generic)",
+        "operationId": "searchDlpIncidents",
+        "description": "Covers search by labels, priority, engine, transaction id, time range, incident group ids",
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/dlp/v1/incidents/transactions/{transactionId}": {
+      "get": {
+        "summary": "Get DLP incidents by transaction ID",
+        "operationId": "getIncidentsByTransactionId",
+        "parameters": [
+          {
+            "name": "transactionId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/dlp/v1/incidents/{incidentId}": {
+      "get": {
+        "summary": "Get DLP incident details",
+        "operationId": "getIncidentDetails",
+        "parameters": [
+          {
+            "name": "incidentId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete DLP incident",
+        "operationId": "deleteIncident",
+        "parameters": [
+          {
+            "name": "incidentId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Deleted"
+          }
+        }
+      }
+    },
+    "/dlp/v1/incidents/{incidentId}/evidence": {
+      "get": {
+        "summary": "Get incident evidence",
+        "operationId": "getIncidentEvidence",
+        "parameters": [
+          {
+            "name": "incidentId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/dlp/v1/incidents/{incidentId}/triggers": {
+      "get": {
+        "summary": "Get incident triggers",
+        "operationId": "getIncidentTriggers",
+        "parameters": [
+          {
+            "name": "incidentId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/dlp/v1/incidents/{incidentId}/change-history": {
+      "get": {
+        "summary": "Get incident change history",
+        "operationId": "getIncidentChangeHistory",
+        "parameters": [
+          {
+            "name": "incidentId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/dlp/v1/incidents/{incidentId}/tickets": {
+      "get": {
+        "summary": "Get incident tickets",
+        "operationId": "getIncidentTickets",
+        "parameters": [
+          {
+            "name": "incidentId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/dlp/v1/incidents/{incidentId}/labels": {
+      "post": {
+        "summary": "Attach label to incident",
+        "operationId": "attachLabel",
+        "parameters": [
+          {
+            "name": "incidentId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Label attached"
+          }
+        }
+      }
+    },
+    "/dlp/v1/incidents/{incidentId}/notes": {
+      "post": {
+        "summary": "Attach note to incident",
+        "operationId": "attachNote",
+        "parameters": [
+          {
+            "name": "incidentId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Note attached"
+          }
+        }
+      }
+    },
+    "/dlp/v1/incidents/{incidentId}/close": {
+      "post": {
+        "summary": "Close DLP incident",
+        "operationId": "closeIncident",
+        "parameters": [
+          {
+            "name": "incidentId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Closed"
+          }
+        }
+      }
+    },
+    "/dlp/v1/incidents/{incidentId}/incident-groups/search": {
+      "post": {
+        "summary": "Search incident groups",
+        "operationId": "searchIncidentGroups",
+        "parameters": [
+          {
+            "name": "incidentId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/dlp/v1/customer/audit": {
+      "post": {
+        "summary": "Search audit logs",
+        "operationId": "searchAuditLogs",
+        "parameters": [
+          {
+            "name": "pageSize",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "default": 10
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "default": 1
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    }
+  }
+}
