@@ -78,8 +78,8 @@ setup(
     classifiers=[
         "License :: Other/Proprietary License",
         "Operating System :: OS Independent",
-        "Programming Language :: Python :: 3.10",
+        "Programming Language :: Python :: 3.12",
     ],
-    python_requires=">=3.10",
+    python_requires=">=3.12",
     include_package_data=True,
 )
