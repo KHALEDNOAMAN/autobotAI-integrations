@@ -317,6 +317,7 @@ class OpenApiParser:
                     integration_type=integration_type,
                     parameters_definition=parameters,
                     header_details=self.security,
+                    output_selector=path.output_selector,
                 )
             )
         return actions
