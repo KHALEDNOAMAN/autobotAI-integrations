@@ -41,13 +41,11 @@ class OpenAPIPathModel(BaseModel):
     description: Optional[str] = ""
     parameters: List[OpenAPIPathParams] = []
     operationId: Optional[str] = Field(default=None, alias="operationId")
-    output_selector: Optional[str] = Field(default=None, alias="x-output-selector")
+    output_selector: Optional[str] = Field(default=None, alias="output-selector")
 
     def __init__(self,*args ,**kwargs):
         if "method" in kwargs:
             kwargs["method"] = kwargs["method"].upper()
-        if "output_selector" not in kwargs:
-            kwargs["output_selector"] = kwargs.get("x-output-selector") or kwargs.get("output_selector")
         super().__init__(*args, **kwargs)
 
 
