@@ -130,6 +130,7 @@
             "get": {
                 "summary": "Check an IP address",
                 "description": "Retrieve information about an IP address, including its abuse history and confidence score.\n",
+                "x-output-selector": "$.data",
                 "parameters": [
                     {
                         "name": "ipAddress",
