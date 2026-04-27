@@ -17,53 +17,18 @@ class GoogleChatWebhookClient:
         resp = request.urlopen(req)
 
     def send(self, title, body, buttons=[]):
-        btns = []
-        if buttons and isinstance(buttons, str):
-            try:
-                buttons = json.loads(buttons)
-            except Exception as e:
-                raise ValueError(f"Failed to parse 'buttons' parameter. Expected a valid JSON string or a list. Error: {str(e)}")
 
-        if buttons:
-            if not isinstance(buttons, list):
-                raise TypeError(f"'buttons' parameter must be a list, but received {type(buttons).__name__}")
-            
+        btns = []
+        if buttons and isinstance(buttons, list):
             for button in buttons:
-                if not isinstance(button, dict):
-                    continue
-                # Extract URL, checking multiple possible keys
-                url = button.get("link") or button.get("url")
-                if not url:
-                    continue
-                    
-                # Extract label, checking multiple possible keys
-                label = button.get("name") or button.get("text") or button.get("label") or "Click"
-                
                 btns.append(
                     {
-                        "text": label,
+                        "text": button["name"],
                         "onClick": {
-                            "openLink": {"url": url}
+                            "openLink": {"url": button.get("link", button.get("url"))}
                         },
                     }
                 )
-
-        widgets = []
-        if body:
-            widgets.append({"textParagraph": {"text": body}})
-        
-        if btns:
-            widgets.append({"buttonList": {"buttons": btns}})
-            
-        if not widgets:
-            raise ValueError("Both message body and buttons are empty. Google Chat requires at least one widget.")
-
-        section = {
-            "uncollapsibleWidgetsCount": 1,
-            "widgets": widgets,
-        }
-        if title:
-            section["header"] = title
 
         bot_message = {
             "cardsV2": [
@@ -71,7 +36,16 @@ class GoogleChatWebhookClient:
                     "cardId": "c1",
                     "card": {
                         "header": {"title": self.header},
-                        "sections": [section],
+                        "sections": [
+                            {
+                                "header": title,
+                                "uncollapsibleWidgetsCount": 1,
+                                "widgets": [
+                                    {"textParagraph": {"text": body}},
+                                    {"buttonList": {"buttons": btns}},
+                                ],
+                            }
+                        ],
                     },
                 }
             ]
@@ -83,16 +57,5 @@ class GoogleChatWebhookClient:
             data=byte_encoded,
         )
         req.add_header("Content-Type", "application/json; charset=UTF-8")
-        
-        try:
-            resp = request.urlopen(req, timeout=10)
-            return {
-                "success": True,
-                "status_code": resp.getcode(),
-                "data": json.loads(resp.read().decode("utf-8"))
-            }
-        except request.HTTPError as e:
-            error_body = e.read().decode("utf-8")
-            raise Exception(f"Google Chat HTTP {e.code}: {e.reason}. Details: {error_body}")
-        except Exception as e:
-            raise Exception(f"Google Chat Webhook Error: {str(e)}")
+        resp = request.urlopen(req)
+        return resp
