@@ -20,14 +20,12 @@ class GoogleChatWebhookClient:
         btns = []
         if buttons and isinstance(buttons, str):
             try:
+                import json
                 buttons = json.loads(buttons)
-            except Exception as e:
-                raise ValueError(f"Failed to parse 'buttons' parameter. Expected a valid JSON string or a list. Error: {str(e)}")
+            except:
+                pass
 
-        if buttons:
-            if not isinstance(buttons, list):
-                raise TypeError(f"'buttons' parameter must be a list, but received {type(buttons).__name__}")
-            
+        if buttons and isinstance(buttons, list):
             for button in buttons:
                 if not isinstance(button, dict):
                     continue
