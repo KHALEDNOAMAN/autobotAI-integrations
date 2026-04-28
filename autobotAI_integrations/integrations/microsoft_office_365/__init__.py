@@ -137,29 +137,6 @@ class MicrosoftService(BaseService):
             conf_path=conf_path,
             config=config,
         )
-    def _get_token(self):
-        tenant_id = self.integration.tenant_id
-        client_id = self.integration.client_id
-        client_secret = self.integration.client_secret
-
-
-        url = f"https://login.microsoftonline.com/{tenant_id}/oauth2/v2.0/token"
-
-        data = {
-            "client_id": client_id,
-            "client_secret": client_secret,
-            "grant_type": "client_credentials",
-            "scope": "https://api.security.microsoft.com/.default"
-        }
-
-        return requests.post(url, data=data).json()["access_token"]
-
-    def generate_rest_api_creds(self) -> RestAPICreds:
-        return RestAPICreds(
-            base_url="https://graph.microsoft.com/v1.0/",
-            headers={
-            "Authorization": f"Bearer {self._get_token()}"}
-        )
     def build_python_exec_combinations_hook(
         self, payload_task: PayloadTask, client_definitions: List[SDKClient]
     ) -> list:
@@ -175,8 +152,7 @@ class MicrosoftService(BaseService):
         )
         scopes = ["https://graph.microsoft.com/.default"]
         msgraph = importlib.import_module(client_definitions[0].import_library_names[0], package=None)
-
-        return [
+        item = [
             {
                 "clients": {
                     "msgraph": msgraph.GraphServiceClient(
@@ -187,6 +163,14 @@ class MicrosoftService(BaseService):
                 "context": payload_task.context,
             }
         ]
+        try:
+            defender_client = msgraph.GraphServiceClient(
+                credentials=credential, scopes=scopes + ["https://api.security.microsoft.com/.default"]
+            )
+            item[0]["clients"]["msgraph-defender"] = defender_client
+        except:
+            pass
+        return item
 
     def generate_python_sdk_creds(self, requested_clients=None) -> SDKCreds:
         creds = self._temp_credentials()
