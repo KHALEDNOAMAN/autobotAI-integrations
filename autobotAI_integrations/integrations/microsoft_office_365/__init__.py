@@ -2,7 +2,8 @@ from typing import List, Optional, Type, Union
 from pydantic import Field
 
 from autobotAI_integrations import BaseService, list_of_unique_elements, PayloadTask
-from autobotAI_integrations.models import BaseSchema, CLICreds, ConnectionInterfaces, IntegrationCategory, SDKClient, SDKCreds, SteampipeCreds
+from autobotAI_integrations.models import BaseSchema, CLICreds, ConnectionInterfaces, IntegrationCategory, SDKClient, \
+    SDKCreds, SteampipeCreds, RestAPICreds
 
 import importlib
 import requests
@@ -136,7 +137,29 @@ class MicrosoftService(BaseService):
             conf_path=conf_path,
             config=config,
         )
+    def _get_token(self):
+        tenant_id = self.integration.tenant_id
+        client_id = self.integration.client_id
+        client_secret = self.integration.client_secret
 
+
+        url = f"https://login.microsoftonline.com/{tenant_id}/oauth2/v2.0/token"
+
+        data = {
+            "client_id": client_id,
+            "client_secret": client_secret,
+            "grant_type": "client_credentials",
+            "scope": "https://api.security.microsoft.com/.default"
+        }
+
+        return requests.post(url, data=data).json()["access_token"]
+
+    def generate_rest_api_creds(self) -> RestAPICreds:
+        return RestAPICreds(
+            base_url="https://graph.microsoft.com/v1.0/",
+            headers={
+            "Authorization": f"Bearer {self._get_token()}"}
+        )
     def build_python_exec_combinations_hook(
         self, payload_task: PayloadTask, client_definitions: List[SDKClient]
     ) -> list:
