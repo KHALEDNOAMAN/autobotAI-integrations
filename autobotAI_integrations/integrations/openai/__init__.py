@@ -239,6 +239,11 @@ class OpenAIService(AIBaseService):
 
         llm = OpenAI(api_key=self.integration.api_key, model=model, **kwargs)
         return llm
+    
+    def generate_llm_credentials(self):
+        return {
+            "api_key": self.integration.api_key
+        }
 
     def prompt_executor(
         self,

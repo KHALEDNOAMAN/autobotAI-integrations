@@ -369,6 +369,15 @@ class AWSBedrockService(AIBaseService):
             **kwargs,
         )
         return llm
+    
+    def generate_llm_credentials(self):
+        credentials = self._temp_credentials()
+        return {
+            "access_key": credentials["AWS_ACCESS_KEY_ID"],
+            "secret_key": credentials["AWS_SECRET_ACCESS_KEY"],
+            "session_token": credentials["AWS_SESSION_TOKEN"],
+            "region": self.integration.region
+        }
 
     def prompt_executor(
         self,
