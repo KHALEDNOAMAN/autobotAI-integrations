@@ -2,7 +2,7 @@ from setuptools import find_packages, setup
 
 setup(
     name="autobotAI_integrations",
-    version="1.2.1",
+    version="1.2.3",
     author="ShunyEka Systems Private Limited",
     author_email="hello@shunyeka.com",
     description="A python package that contains all the integrations for autobotAI",

@@ -872,6 +872,9 @@ class AIBaseService(BaseService):
         Returns Langchaain LLM model object
         """
         raise NotImplementedError()
+    
+    def generate_llm_credentials(self):
+        raise NotImplementedError()
 
     def check_context_length(self, data: str, model_name: str) -> dict:
         try:
