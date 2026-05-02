@@ -14,8 +14,18 @@
     "/Snypr/ws/incident/get": {
       "get": {
         "summary": "Get Incident",
-        "description": "Retrieve incident details by type and incident ID, get possible actions for an incident, or list incidents by date range when type is 'list'.",
+        "description": "Retrieve incident details, status, workflow, possible actions, child cases, activity history, or list incidents by date range. Send 'Accept: application/vnd.snypr.app-v6.0+json' to receive the full enriched response payload (without it, list/metaInfo responses are returned in a reduced legacy format). Per Securonix docs: v2.0+json is the documented Accept for type=metaInfo, v3.0+json for type=list, v6.0+json works for both and is recommended.",
         "parameters": [
+          {
+            "name": "Accept",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": "application/vnd.snypr.app-v6.0+json"
+            },
+            "description": "Versioned response media type. Use 'application/vnd.snypr.app-v6.0+json' for the richest response. Omit (or use '*/*') only if the deployment rejects versioned Accept headers."
+          },
           {
             "name": "type",
             "in": "query",
@@ -24,13 +34,19 @@
               "type": "string",
               "enum": [
                 "metaInfo",
-                "actionInfo",
-                "workflowInfo",
+                "status",
+                "workflow",
+                "workflows",
+                "workflowDetails",
+                "defaultAssignee",
                 "actions",
+                "actionInfo",
+                "childCaseInfo",
+                "activityStreamInfo",
                 "list"
               ]
             },
-            "description": "The type of incident information to retrieve. Use 'actions' to get possible actions for an incident, or 'list' to get incidents within a date range."
+            "description": "The type of incident information to retrieve. metaInfo: full incident details. status: incident status only. workflow: workflow name for an incident. workflows: list all available workflows. workflowDetails: details for a named workflow (use with workflowname). defaultAssignee: default assignee for a workflow (use with workflow). actions: possible actions for an incident. actionInfo: check if a specific action is available (use with actionName). childCaseInfo: child case IDs for a parent incident. activityStreamInfo: case activity history. list: incidents within a date range (requires from, to, rangeType)."
           },
           {
             "name": "incidentId",
@@ -39,7 +55,34 @@
             "schema": {
               "type": "string"
             },
-            "description": "The unique identifier of the incident. Required when type is metaInfo, actionInfo, workflowInfo, or actions."
+            "description": "The unique identifier of the incident. Required when type is metaInfo, status, workflow, actions, actionInfo, childCaseInfo, or activityStreamInfo."
+          },
+          {
+            "name": "workflowname",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Workflow name. Required when type is workflowDetails."
+          },
+          {
+            "name": "workflow",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Workflow name. Required when type is defaultAssignee."
+          },
+          {
+            "name": "actionName",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Action name to check. Required when type is actionInfo."
           },
           {
             "name": "from",
@@ -191,7 +234,7 @@
             "schema": {
               "type": "string"
             },
-            "description": "Search query in the format: index=activity AND resourcegroupname=<datasourcename> AND <additional conditions>. Optionally add tenantname=<tenantname> to filter by tenant."
+            "description": "Spotter query string. String literals MUST be double-quoted (e.g. @tenantname = \"Persistent\"); single quotes are rejected as Invalid. Format: index=activity and @resourcegroupname = \"<datasourcename>\" and <additional conditions>. Optionally add @tenantname = \"<tenantname>\" to filter by tenant. Example: index=activity and @resourcegroupname = \"PSL-Cloud-IDC-O365-OUTLOOK\" and @tenantname = \"Persistent\""
           },
           {
             "name": "eventtime_from",
@@ -437,7 +480,7 @@
             "schema": {
               "type": "string"
             },
-            "description": "Search query in the format: index=violation"
+            "description": "Spotter query string. String literals MUST be double-quoted (e.g. @tenantname = \"Persistent\"); single quotes are rejected as Invalid. Format: index=violation and <additional conditions>. Example: index=violation and @policyname = \"Abnormal Number of Emails to Nonbusiness Domains\" and @tenantname = \"Persistent\""
           },
           {
             "name": "generationtime_from",
