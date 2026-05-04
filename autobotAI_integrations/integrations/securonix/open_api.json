@@ -234,7 +234,7 @@
             "schema": {
               "type": "string"
             },
-            "description": "Spotter query string. STRICT SYNTAX RULES (violating any returns HTTP 400): (1) Query MUST begin with 'index=<type>', where <type> is one of: activity, violation, asset, lookup, watchlist. (2) Multiple conditions MUST be joined with the keyword 'and' (or 'AND'). NEVER use commas, semicolons, or whitespace alone to separate conditions — that was the cause of the 400 in the prior failure: 'index=violation policyname=\"X\" ipaddress=Y' was rejected because 'and' was missing between every clause. (3) String literals MUST be wrapped in double quotes (\"...\"); single quotes are rejected as Invalid. (4) Put a space on each side of '='. (5) Use correct attribute names — the tenant filter is 'tenantname' (NOT 'tenant'). Common attributes by index: activity → resourcegroupname, accountname, ipaddress, transactionstring, tenantname; violation → policyname, ipaddress, resourcegroupname, accountname, tenantname; asset → entityname, tenantname; lookup → lookupname, key; watchlist → watchlistname, entityname. Working examples (copy this shape exactly): activity → 'index=activity and resourcegroupname = \"Cloud-IDC-O365-OUTLOOK\" and tenantname = \"Acme\"'; violation → 'index=violation and policyname = \"Possible Exploitation or Misuse of Remote Management Services\" and ipaddress = \"1.2.3.4\" and resourcegroupname = \"Cloud-AWS-VPCFlow-Corp\" and tenantname = \"Acme\"'; lookup → 'index=lookup and lookupname = \"VulnerableHostLookUpTable\"'; watchlist → 'index=watchlist and watchlistname = \"Flight Risk Users\"'; asset → 'index=asset and entityname = \"ASSET-EXAMPLE|12345_67890\"'."
+            "description": "Spotter query string. STRICT SYNTAX RULES — every rule below has caused a real 400. (1) Query MUST begin with index=<type> where <type> is one of: activity, violation, asset, lookup, watchlist. (2) Multiple conditions MUST be joined with the keyword and (or AND). Never use commas, semicolons, or whitespace alone — Securonix returned 400 on a query that read: index=violation policyname=\"X\" ipaddress=Y because and was missing between clauses. (3) STRING LITERALS MUST USE DOUBLE QUOTES — the character \" — and never single quotes ('). Single quotes are the #1 cause of 400 errors here: passing accountname = 'johndoe' returns 400; you must pass accountname = \"johndoe\". This applies even when the string has no spaces. (4) Put a space on each side of =. (5) Attribute names are lowercase — use tenantname (not tenant or @tenantName). The leading @ on attribute names is optional and may be omitted; if you do use it, lowercase it. (6) Common attributes by index: activity → resourcegroupname, accountname, ipaddress, transactionstring, tenantname; violation → policyname, ipaddress, resourcegroupname, accountname, tenantname; asset → entityname, tenantname; lookup → lookupname, key; watchlist → watchlistname, entityname. ----- WRONG vs RIGHT pairs (study these before composing a query) ----- WRONG (single quotes, 400): index=activity and accountname = 'johndoe' and tenantname = 'Acme' --- RIGHT: index=activity and accountname = \"johndoe\" and tenantname = \"Acme\" ----- WRONG (no and between clauses, 400): index=violation policyname=\"X\" ipaddress=\"1.2.3.4\" --- RIGHT: index=violation and policyname = \"X\" and ipaddress = \"1.2.3.4\" ----- WRONG (eventtime params with index=violation, 400): query: index=violation and policyname = \"X\" with eventtime_from=...&eventtime_to=... --- RIGHT: same query but pass generationtime_from / generationtime_to instead — violation searches DO NOT accept eventtime_*. ----- More correct examples — activity: index=activity and resourcegroupname = \"Cloud-IDC-O365-OUTLOOK\" and tenantname = \"Acme\" --- violation: index=violation and policyname = \"Abnormal Number of Emails to Nonbusiness Domains\" and accountname = \"johndoe@example.com\" and resourcegroupname = \"Cloud-IDC-O365-OUTLOOK\" and tenantname = \"Acme\" (and pass generationtime_from / generationtime_to, NOT eventtime_*) --- lookup: index=lookup and lookupname = \"VulnerableHostLookUpTable\" --- watchlist: index=watchlist and watchlistname = \"Flight Risk Users\" --- asset: index=asset and entityname = \"ASSET-EXAMPLE|12345_67890\""
           },
           {
             "name": "eventtime_from",
@@ -243,7 +243,7 @@
             "schema": {
               "type": "string"
             },
-            "description": "Event time start range in format MM/dd/yyyy HH:mm:ss. REQUIRED when index=activity. Omit for asset, lookup, and watchlist searches. For violation searches use generationtime_from instead."
+            "description": "Event time start range in format MM/dd/yyyy HH:mm:ss. Use this ONLY when index=activity. DO NOT pass eventtime_from when index=violation — violation queries with eventtime_from return HTTP 400; use generationtime_from instead. Omit entirely for index=asset, index=lookup, and index=watchlist."
           },
           {
             "name": "eventtime_to",
@@ -252,7 +252,7 @@
             "schema": {
               "type": "string"
             },
-            "description": "Event time end range in format MM/dd/yyyy HH:mm:ss. REQUIRED when index=activity. Omit for asset, lookup, and watchlist searches. For violation searches use generationtime_to instead."
+            "description": "Event time end range in format MM/dd/yyyy HH:mm:ss. Use this ONLY when index=activity. DO NOT pass eventtime_to when index=violation — violation queries with eventtime_to return HTTP 400; use generationtime_to instead. Omit entirely for index=asset, index=lookup, and index=watchlist."
           },
           {
             "name": "generationtime_from",
@@ -261,7 +261,7 @@
             "schema": {
               "type": "string"
             },
-            "description": "Violation generation time start range in format MM/dd/yyyy HH:mm:ss. REQUIRED when index=violation. Omit for activity, asset, lookup, and watchlist searches."
+            "description": "Violation generation time start range in format MM/dd/yyyy HH:mm:ss. REQUIRED when index=violation. DO NOT also pass eventtime_from in the same call — pick one time-range pair based on the index. Omit entirely for index=activity, index=asset, index=lookup, and index=watchlist."
           },
           {
             "name": "generationtime_to",
@@ -270,7 +270,7 @@
             "schema": {
               "type": "string"
             },
-            "description": "Violation generation time end range in format MM/dd/yyyy HH:mm:ss. REQUIRED when index=violation. Omit for activity, asset, lookup, and watchlist searches."
+            "description": "Violation generation time end range in format MM/dd/yyyy HH:mm:ss. REQUIRED when index=violation. DO NOT also pass eventtime_to in the same call — pick one time-range pair based on the index. Omit entirely for index=activity, index=asset, index=lookup, and index=watchlist."
           },
           {
             "name": "tz",
