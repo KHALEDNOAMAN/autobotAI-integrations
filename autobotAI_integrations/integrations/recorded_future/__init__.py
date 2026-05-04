@@ -15,6 +15,7 @@ RECORDED_FUTURE_BASE_URL = "https://api.recordedfuture.com"
 
 class RecordedFutureIntegration(BaseSchema):
     api_token: Optional[str] = Field(default=None, exclude=True)
+    skip_test: Optional[bool] = Field(default=None, exclude=False)
 
     name: str = "Recorded Future"
     category: Optional[str] = IntegrationCategory.SECURITY_TOOLS.value
@@ -32,6 +33,8 @@ class RecordedFutureService(BaseService):
 
     def _test_integration(self) -> dict:
         try:
+            if self.integration.skip_test:
+                return {"success": True}
             response = requests.get(
                 f"{RECORDED_FUTURE_BASE_URL}/v2/ip/8.8.8.8",
                 params={"fields": "entity"},
@@ -64,7 +67,20 @@ class RecordedFutureService(BaseService):
                     "label": "API Token",
                     "placeholder": "Enter the Recorded Future API Token",
                     "required": True,
-                }
+                },
+                {
+                    "name": "skip_test",
+                    "type": "select",
+                    "label": "Skip Test Integration",
+                    "placeholder": "Skip the integration test",
+                    "description": "If enabled, skips the integration test (useful when API is not accessible)",
+                    "required": True,
+                    "options": [
+                        {"label": "No", "value": False},
+                        {"label": "Yes", "value": True},
+                    ],
+                    "default": False,
+                },
             ],
         }
 
