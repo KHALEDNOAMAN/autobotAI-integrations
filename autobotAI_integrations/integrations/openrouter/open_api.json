@@ -1,0 +1,140 @@
+{
+    "openapi": "3.0.3",
+    "info": {
+        "title": "OpenRouter API",
+        "description": "OpenRouter is a unified API gateway that provides access to hundreds of large language models from multiple providers through a single OpenAI-compatible interface.",
+        "version": "1.0.0",
+        "contact": {
+            "name": "OpenRouter",
+            "url": "https://openrouter.ai/docs"
+        }
+    },
+    "servers": [
+        {
+            "url": "https://openrouter.ai/api/v1",
+            "description": "Production server"
+        }
+    ],
+    "security": [
+        {
+            "BearerAuth": []
+        }
+    ],
+    "paths": {
+        "/chat/completions": {
+            "post": {
+                "summary": "Create chat completion",
+                "description": "Create a model response for the given chat conversation. OpenAI-compatible.",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "required": ["model", "messages"],
+                                "properties": {
+                                    "model": {
+                                        "type": "string",
+                                        "description": "The model identifier, e.g. 'openai/gpt-4o-mini' or 'anthropic/claude-sonnet-4-6'."
+                                    },
+                                    "messages": {
+                                        "type": "array",
+                                        "description": "List of chat messages in OpenAI format.",
+                                        "items": {
+                                            "type": "object",
+                                            "properties": {
+                                                "role": {
+                                                    "type": "string",
+                                                    "enum": ["system", "user", "assistant", "tool"]
+                                                },
+                                                "content": {"type": "string"}
+                                            }
+                                        }
+                                    },
+                                    "temperature": {"type": "number"},
+                                    "max_tokens": {"type": "integer"},
+                                    "top_p": {"type": "number"},
+                                    "stream": {"type": "boolean"},
+                                    "response_format": {"type": "object"},
+                                    "tools": {"type": "array", "items": {"type": "object"}},
+                                    "tool_choice": {}
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {"description": "Chat completion response"}
+                }
+            }
+        },
+        "/completions": {
+            "post": {
+                "summary": "Create text completion",
+                "description": "Create a non-chat completion for the given prompt.",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "required": ["model", "prompt"],
+                                "properties": {
+                                    "model": {"type": "string"},
+                                    "prompt": {"type": "string"},
+                                    "max_tokens": {"type": "integer"},
+                                    "temperature": {"type": "number"}
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {"200": {"description": "Completion response"}}
+            }
+        },
+        "/models": {
+            "get": {
+                "summary": "List available models",
+                "description": "Returns the list of models accessible through OpenRouter, including pricing and context length metadata.",
+                "responses": {"200": {"description": "List of models"}}
+            }
+        },
+        "/auth/key": {
+            "get": {
+                "summary": "Get current API key info",
+                "description": "Returns metadata about the API key including label, usage, limit, and rate limits.",
+                "responses": {"200": {"description": "API key info"}}
+            }
+        },
+        "/credits": {
+            "get": {
+                "summary": "Get credit balance",
+                "description": "Returns the remaining credits and total purchased for the current account.",
+                "responses": {"200": {"description": "Credit balance info"}}
+            }
+        },
+        "/generation": {
+            "get": {
+                "summary": "Get generation metadata",
+                "description": "Returns details for a single generation, including token counts and cost.",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "query",
+                        "required": true,
+                        "schema": {"type": "string"}
+                    }
+                ],
+                "responses": {"200": {"description": "Generation details"}}
+            }
+        }
+    },
+    "components": {
+        "securitySchemes": {
+            "BearerAuth": {
+                "type": "http",
+                "scheme": "bearer"
+            }
+        }
+    }
+}
