@@ -224,8 +224,8 @@
     },
     "/Snypr/ws/spotter/index/search": {
       "get": {
-        "summary": "Search Spotter Index (Activity)",
-        "description": "Search events from the Spotter index for activity logs, threat data, and security events. Best practice is to search no more than 7 days at a time.",
+        "summary": "Search Spotter Index",
+        "description": "Universal Spotter search endpoint. Use this single endpoint for every index type — activity, violation, asset, lookup, watchlist — by setting the 'index=<type>' clause inside the query string. There are NO per-index sub-endpoints; all searches go here. Pipe (|) operator searches and OR operators are not supported. Best practice for activity searches: limit each call to 7 days.",
         "parameters": [
           {
             "name": "query",
@@ -234,25 +234,43 @@
             "schema": {
               "type": "string"
             },
-            "description": "Spotter query string. String literals MUST be double-quoted (e.g. @tenantname = \"Acme\"); single quotes are rejected as Invalid. Format: index=activity and @resourcegroupname = \"<datasourcename>\" and <additional conditions>. Optionally add @tenantname = \"<tenantname>\" to filter by tenant. Example: index=activity and @resourcegroupname = \"Cloud-IDC-O365-OUTLOOK\" and @tenantname = \"Acme\""
+            "description": "Spotter query string. STRICT SYNTAX RULES (violating any returns HTTP 400): (1) Query MUST begin with 'index=<type>', where <type> is one of: activity, violation, asset, lookup, watchlist. (2) Multiple conditions MUST be joined with the keyword 'and' (or 'AND'). NEVER use commas, semicolons, or whitespace alone to separate conditions — that was the cause of the 400 in the prior failure: 'index=violation policyname=\"X\" ipaddress=Y' was rejected because 'and' was missing between every clause. (3) String literals MUST be wrapped in double quotes (\"...\"); single quotes are rejected as Invalid. (4) Put a space on each side of '='. (5) Use correct attribute names — the tenant filter is 'tenantname' (NOT 'tenant'). Common attributes by index: activity → resourcegroupname, accountname, ipaddress, transactionstring, tenantname; violation → policyname, ipaddress, resourcegroupname, accountname, tenantname; asset → entityname, tenantname; lookup → lookupname, key; watchlist → watchlistname, entityname. Working examples (copy this shape exactly): activity → 'index=activity and resourcegroupname = \"Cloud-IDC-O365-OUTLOOK\" and tenantname = \"Acme\"'; violation → 'index=violation and policyname = \"Possible Exploitation or Misuse of Remote Management Services\" and ipaddress = \"1.2.3.4\" and resourcegroupname = \"Cloud-AWS-VPCFlow-Corp\" and tenantname = \"Acme\"'; lookup → 'index=lookup and lookupname = \"VulnerableHostLookUpTable\"'; watchlist → 'index=watchlist and watchlistname = \"Flight Risk Users\"'; asset → 'index=asset and entityname = \"ASSET-EXAMPLE|12345_67890\"'."
           },
           {
             "name": "eventtime_from",
             "in": "query",
-            "required": true,
+            "required": false,
             "schema": {
               "type": "string"
             },
-            "description": "Event time start range in format MM/dd/yyyy HH:mm:ss."
+            "description": "Event time start range in format MM/dd/yyyy HH:mm:ss. REQUIRED when index=activity. Omit for asset, lookup, and watchlist searches. For violation searches use generationtime_from instead."
           },
           {
             "name": "eventtime_to",
             "in": "query",
-            "required": true,
+            "required": false,
             "schema": {
               "type": "string"
             },
-            "description": "Event time end range in format MM/dd/yyyy HH:mm:ss."
+            "description": "Event time end range in format MM/dd/yyyy HH:mm:ss. REQUIRED when index=activity. Omit for asset, lookup, and watchlist searches. For violation searches use generationtime_to instead."
+          },
+          {
+            "name": "generationtime_from",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Violation generation time start range in format MM/dd/yyyy HH:mm:ss. REQUIRED when index=violation. Omit for activity, asset, lookup, and watchlist searches."
+          },
+          {
+            "name": "generationtime_to",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Violation generation time end range in format MM/dd/yyyy HH:mm:ss. REQUIRED when index=violation. Omit for activity, asset, lookup, and watchlist searches."
           },
           {
             "name": "tz",
@@ -305,252 +323,6 @@
         "responses": {
           "200": {
             "description": "Search results",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/Snypr/ws/spotter/index/search/asset": {
-      "get": {
-        "summary": "Search Spotter Index (Asset)",
-        "description": "Search assets from the Spotter index. Use this endpoint to query asset data such as vulnerability scan results, endpoint information, and other asset-related data. Note: Pipe (|) operator searches are not supported.",
-        "parameters": [
-          {
-            "name": "query",
-            "in": "query",
-            "required": true,
-            "schema": {
-              "type": "string"
-            },
-            "description": "Search query in the format: index=asset and entityname = \"<asset_name>\". Example: index=asset and entityname = \"ASSET-EXAMPLE|12345_67890\""
-          },
-          {
-            "name": "tz",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "type": "string"
-            },
-            "description": "Timezone. If empty, the application timezone will be selected."
-          },
-          {
-            "name": "prettyJson",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "enum": ["true", "false"]
-            },
-            "description": "If set to true, returns the REST response in pretty JSON format. Default: false."
-          },
-          {
-            "name": "max",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "type": "integer"
-            },
-            "description": "Number of records to return. Default: 1000, Max: 10000. Only available for version 6.2 CU4 SP4 and above."
-          },
-          {
-            "name": "queryId",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "type": "string"
-            },
-            "description": "Used for pagination. Use the queryId from the previous response to get the next set of records. Only available for version 6.2 CU4 SP4 and above."
-          },
-          {
-            "name": "data_labels",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "enum": ["true", "false"]
-            },
-            "description": "If set to true, returns data dictionary labels instead of Securonix attributes. Default: true."
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Asset search results",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/Snypr/ws/spotter/index/search/lookup": {
-      "get": {
-        "summary": "Search Spotter Index (Lookup)",
-        "description": "Search lookup data from the Spotter index. Lookup tables store reference information such as critical keywords, competitors, non-business domains, malicious file extensions, job portals, etc. Used for enriching security events during activity ingestion.",
-        "parameters": [
-          {
-            "name": "query",
-            "in": "query",
-            "required": true,
-            "schema": {
-              "type": "string"
-            },
-            "description": "Search query in the format: index=lookup and lookupname = \"<lookup_name>\". Example: index=lookup and lookupname = \"VulnerableHostLookUpTable\""
-          },
-          {
-            "name": "tz",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "type": "string"
-            },
-            "description": "Timezone. If empty, the application timezone will be selected."
-          },
-          {
-            "name": "prettyJson",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "enum": ["true", "false"]
-            },
-            "description": "If set to true, returns the REST response in pretty JSON format. Default: false."
-          },
-          {
-            "name": "max",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "type": "integer"
-            },
-            "description": "Number of records to return. Default: 1000, Max: 10000. Only available for version 6.2 CU4 SP4 and above."
-          },
-          {
-            "name": "queryId",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "type": "string"
-            },
-            "description": "Used for pagination. Use the queryId from the previous response to get the next set of records. Only available for version 6.2 CU4 SP4 and above."
-          },
-          {
-            "name": "data_labels",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "enum": ["true", "false"]
-            },
-            "description": "If set to true, returns data dictionary labels instead of Securonix attributes. Default: true."
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Lookup search results",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/Snypr/ws/spotter/index/search/violation": {
-      "get": {
-        "summary": "Search Spotter Index (Violation)",
-        "description": "Search violations from the Spotter index. Use this endpoint to query violation data within a specified time range.",
-        "parameters": [
-          {
-            "name": "query",
-            "in": "query",
-            "required": true,
-            "schema": {
-              "type": "string"
-            },
-            "description": "Spotter query string. String literals MUST be double-quoted (e.g. @tenantname = \"Acme\"); single quotes are rejected as Invalid. Format: index=violation and <additional conditions>. Example: index=violation and @policyname = \"Abnormal Number of Emails to Nonbusiness Domains\" and @tenantname = \"Acme\""
-          },
-          {
-            "name": "generationtime_from",
-            "in": "query",
-            "required": true,
-            "schema": {
-              "type": "string"
-            },
-            "description": "Violation time start range in format MM/dd/yyyy HH:mm:ss."
-          },
-          {
-            "name": "generationtime_to",
-            "in": "query",
-            "required": true,
-            "schema": {
-              "type": "string"
-            },
-            "description": "Violation time end range in format MM/dd/yyyy HH:mm:ss."
-          },
-          {
-            "name": "tz",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "type": "string"
-            },
-            "description": "Timezone. If empty, the application timezone will be selected."
-          },
-          {
-            "name": "prettyJson",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "enum": ["true", "false"]
-            },
-            "description": "If set to true, returns the REST response in pretty JSON format. Default: false."
-          },
-          {
-            "name": "max",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "type": "integer"
-            },
-            "description": "Number of records to return. Default: 1000, Max: 10000. Only available for version 6.2 CU4 SP4 and above."
-          },
-          {
-            "name": "queryId",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "type": "string"
-            },
-            "description": "Used for pagination. Use the queryId from the previous response to get the next set of records. Only available for version 6.2 CU4 SP4 and above."
-          },
-          {
-            "name": "data_labels",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "enum": ["true", "false"]
-            },
-            "description": "If set to true, returns data dictionary labels instead of Securonix attributes. Default: true."
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Violation search results",
             "content": {
               "application/json": {
                 "schema": {
@@ -818,82 +590,6 @@
         "responses": {
           "200": {
             "description": "Entities and their watchlists",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/Snypr/ws/spotter/index/search/watchlist": {
-      "get": {
-        "summary": "Search Spotter Index (Watchlist)",
-        "description": "Search watchlist data from the Spotter index. Get information on entities in the watchlist by their attributes.",
-        "parameters": [
-          {
-            "name": "query",
-            "in": "query",
-            "required": true,
-            "schema": {
-              "type": "string"
-            },
-            "description": "Search query in the format: index=watchlist AND watchlistname=\"<watchlist_name>\". Example: index=watchlist AND watchlistname=\"Flight Risk Users\""
-          },
-          {
-            "name": "tz",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "type": "string"
-            },
-            "description": "Timezone. If empty, the application timezone will be selected."
-          },
-          {
-            "name": "prettyJson",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "enum": ["true", "false"]
-            },
-            "description": "If set to true, returns the REST response in pretty JSON format. Default: false."
-          },
-          {
-            "name": "max",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "type": "integer"
-            },
-            "description": "Number of records to return. Default: 1000, Max: 10000. Only available for version 6.2 CU4 SP4 and above."
-          },
-          {
-            "name": "queryId",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "type": "string"
-            },
-            "description": "Used for pagination. Use the queryId from the previous response to get the next set of records. Only available for version 6.2 CU4 SP4 and above."
-          },
-          {
-            "name": "data_labels",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "enum": ["true", "false"]
-            },
-            "description": "If set to true, returns data dictionary labels instead of Securonix attributes. Default: true."
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Watchlist search results",
             "content": {
               "application/json": {
                 "schema": {
