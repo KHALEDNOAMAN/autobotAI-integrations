@@ -24,6 +24,7 @@ OPENROUTER_BASE_URL = "https://openrouter.ai/api/v1"
 
 class OpenRouterIntegration(BaseSchema):
     api_key: Optional[str] = Field(default=None, exclude=True)
+    skip_test: Optional[bool] = Field(default=None, exclude=False)
 
     name: Optional[str] = "OpenRouter"
     category: Optional[str] = IntegrationCategory.AI.value
@@ -40,6 +41,8 @@ class OpenRouterService(AIBaseService):
 
     def _test_integration(self):
         try:
+            if self.integration.skip_test:
+                return {"success": True}
             response = requests.get(
                 f"{OPENROUTER_BASE_URL}/auth/key",
                 headers={"Authorization": f"Bearer {self.integration.api_key}"},
@@ -120,7 +123,20 @@ class OpenRouterService(AIBaseService):
                     "label": "OpenRouter API Key",
                     "placeholder": "Enter the OpenRouter API Key",
                     "required": True,
-                }
+                },
+                {
+                    "name": "skip_test",
+                    "type": "select",
+                    "label": "Skip Test Integration",
+                    "placeholder": "Skip the integration test",
+                    "description": "If enabled, skips the integration test (useful when API is not accessible)",
+                    "required": True,
+                    "options": [
+                        {"label": "No", "value": False},
+                        {"label": "Yes", "value": True},
+                    ],
+                    "default": False,
+                },
             ],
         }
 
