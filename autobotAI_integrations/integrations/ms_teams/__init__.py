@@ -19,6 +19,10 @@ class MsTeamsIntegration(BaseSchema):
 
 
 class MsTeamsService(BaseService):
+    # MS Teams MessageCard payloads cap around 28 KB end-to-end; we render
+    # rich-text/HTML inside, so footers use HTML formatting.
+    notification_body_limit = {"max_bytes": 26_000, "format": "html"}
+
     def __init__(self, ctx: dict, integration: Union[MsTeamsIntegration, dict]):
         """
         Integration should have all the data regarding the integration

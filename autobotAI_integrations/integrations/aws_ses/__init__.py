@@ -43,6 +43,11 @@ class AwsSesIntegration(BaseSchema):
 
 
 class AwsSesService(BaseService):
+    # SES allows ~10 MB per message; we cap at 1 MB to keep notification
+    # bodies sane while still letting email render thousands of resources.
+    # HTML format because aws_ses messages are commonly HTML-formatted.
+    notification_body_limit = {"max_bytes": 1_000_000, "format": "html"}
+
     def __init__(self, ctx: dict, integration: Union[AwsSesIntegration, dict]):
         """
         Integration should have all the data regarding the integration
