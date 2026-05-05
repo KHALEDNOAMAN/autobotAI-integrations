@@ -156,6 +156,39 @@ class SkillConfig(BaseModel):
 
 
 # ---------------------------------------------------------------------------
+# User-attached files
+# ---------------------------------------------------------------------------
+
+
+class FileConfig(BaseModel):
+    """A user-attached file made available to the agent in workspace/files/.
+
+    The server generates a 1-hour presigned GET URL and ships filename +
+    description so the agent can decide whether to download it. The file_id
+    is the FileStore record ID; agents use it (or the filename) to detect
+    that a file is already present and skip re-downloading.
+    """
+
+    file_id: str = Field(..., description="FileStore record ID")
+    name: str = Field(
+        ...,
+        description=(
+            "Original filename; used as the on-disk name under workspace/files/."
+        ),
+    )
+    presigned_url: str = Field(
+        ..., description="Presigned GET URL for the file (valid 1 hour)"
+    )
+    description: Optional[str] = Field(
+        None,
+        description=(
+            "Optional human-readable description; surfaced to the agent so it "
+            "can decide whether the file is relevant to the task."
+        ),
+    )
+
+
+# ---------------------------------------------------------------------------
 # Deep Agent payload — extends autobotAI Payload
 # ---------------------------------------------------------------------------
 
@@ -229,6 +262,17 @@ class DeepAgentPayload(Payload):
     skills: Optional[List[SkillConfig]] = Field(
         None,
         description="Skills to install or remove in workspace/skills/ during setup",
+    )
+
+    # --- User-attached files -----------------------------------------------
+    files: List[FileConfig] = Field(
+        default_factory=list,
+        description=(
+            "User-attached files to materialise under workspace/files/ before "
+            "the agent runs. Each entry carries a 1-hour presigned URL plus "
+            "filename and (optional) description; the agent should skip "
+            "re-downloading any file already present in the workspace."
+        ),
     )
 
     # --- Timeout -----------------------------------------------------------
