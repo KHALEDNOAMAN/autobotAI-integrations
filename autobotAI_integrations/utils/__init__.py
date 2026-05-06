@@ -441,7 +441,7 @@ def extract(resources: Union[List[Any], Dict[str, Any]], selector: str, logger) 
 
         return results
 
-    except (JSONPathError, Exception):
+    except (JSONPathError, Exception) as e:
         logger.error(f"Invalid JSONPath selector: {selector}")
         logger.error(traceback.format_exc())
-        return []
+        raise ValueError(f"Invalid JSONPath selector '{selector}': {str(e)}")
