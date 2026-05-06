@@ -3,7 +3,7 @@ from datetime import datetime
 import importlib.machinery
 import importlib.util
 import traceback
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Union
 import uuid
 from pathlib import Path
 import json
@@ -14,7 +14,7 @@ from autobotAI_integrations.integration_schema import ConnectionTypes
 from autobotAI_integrations.open_api_schema import MCPServerAction, MCPTransport
 from autobotAI_integrations.utils.security_measures import validate_code
 from autobotAI_integrations.payload_schema import OpenAPIPathParams, Param, PayloadTask
-from jsonpath_ng import parse
+from jsonpath_ng.ext import parse
 from jsonpath_ng.exceptions import JSONPathError
 
 def fromisoformat(strdate):
@@ -391,7 +391,7 @@ def get_header_params(headers):
         )
     return params
 
-def extract(resources: List[Any], selector: str, logger) -> List[Dict[str, Any]]:
+def extract(resources: Union[List[Any], Dict[str, Any]], selector: str, logger) -> List[Dict[str, Any]]:
     """
     Extract data from resources using JSONPath selector.
     Returns flat list with common fields merged.
@@ -399,12 +399,18 @@ def extract(resources: List[Any], selector: str, logger) -> List[Dict[str, Any]]
     if not resources or not selector.strip():
         return resources
 
-    # Extract common fields once
-    common_fields = {
-        k: resources[0].get(k)
-        for k in ["integration_id", "integration_type", "user_id", "root_user_id"]
-        if resources[0].get(k) is not None
-    }
+    # Ensure resources is a list for iteration, but evaluate the JSONPath over the whole structure
+    # However, if it's already a list, the previous logic iterated over each item in the list
+    # Let's preserve backwards compatibility by trying both? Or better, if it's a dict, don't break.
+    
+    first_item = resources[0] if isinstance(resources, list) and len(resources) > 0 else resources
+    common_fields = {}
+    if isinstance(first_item, dict):
+        common_fields = {
+            k: first_item.get(k)
+            for k in ["integration_id", "integration_type", "user_id", "root_user_id"]
+            if first_item.get(k) is not None
+        }
 
     # Parse JSONPath
     jsonpath_expr = selector.strip()
@@ -415,7 +421,9 @@ def extract(resources: List[Any], selector: str, logger) -> List[Dict[str, Any]]
         expr = parse(jsonpath_expr)
         results = []
 
-        for resource in resources:
+        items_to_process = resources if isinstance(resources, list) else [resources]
+
+        for resource in items_to_process:
             for match in expr.find(resource):
                 if match.value is None:
                     continue
@@ -431,9 +439,9 @@ def extract(resources: List[Any], selector: str, logger) -> List[Dict[str, Any]]
                 else:
                     results.append({str(match.path): match.value, **common_fields})
 
-        return results if results else resources
+        return results
 
     except (JSONPathError, Exception):
         logger.error(f"Invalid JSONPath selector: {selector}")
         logger.error(traceback.format_exc())
-        return resources
+        return []
