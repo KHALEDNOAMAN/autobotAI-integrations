@@ -48,6 +48,7 @@ class LLMConfig(BaseModel):
     )
     temperature: float = Field(0.7, description="Sampling temperature")
     max_tokens: int = Field(8192, description="Maximum tokens in response")
+    max_iterations: int | None = Field(50, description="Max number of iteration agent can do on single run.")
 
 
 # ---------------------------------------------------------------------------
