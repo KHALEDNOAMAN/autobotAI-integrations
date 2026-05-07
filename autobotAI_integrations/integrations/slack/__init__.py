@@ -34,6 +34,10 @@ class SlackIntegration(BaseSchema):
 
 
 class SlackService(BaseService):
+    # Slack accepts up to 40_000 chars in the message text field; we leave
+    # headroom for surrounding chrome and emit markdown-style footers.
+    notification_body_limit = {"max_bytes": 38_000, "format": "markdown"}
+
     def __init__(self, ctx, integration: SlackIntegration):
         if not isinstance(integration, SlackIntegration):
             integration = SlackIntegration(**integration)

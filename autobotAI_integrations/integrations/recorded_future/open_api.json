@@ -1,0 +1,862 @@
+{
+    "openapi": "3.0.3",
+    "info": {
+        "title": "Recorded Future API",
+        "description": "Aggregated OpenAPI definition covering Recorded Future Connect, Identity, Detection Rule, Detection Rule Relation, Entity Match, Links, List, Playbook Alert, Threat, Malware Intelligence, Analyst Note, Risk History, Fusion, SOAR, Alert and Collective Insights APIs.",
+        "version": "1.0.0",
+        "contact": {
+            "name": "Recorded Future",
+            "url": "https://api.recordedfuture.com/index.html"
+        }
+    },
+    "servers": [
+        {
+            "url": "https://api.recordedfuture.com",
+            "description": "Production server"
+        }
+    ],
+    "security": [
+        {
+            "RFTokenAuth": []
+        }
+    ],
+    "components": {
+        "securitySchemes": {
+            "RFTokenAuth": {
+                "type": "apiKey",
+                "in": "header",
+                "name": "X-RFToken"
+            }
+        }
+    },
+    "paths": {
+        "/v2/ip/{ip}": {
+            "get": {
+                "tags": ["Connect"],
+                "summary": "Lookup IP enrichment",
+                "description": "Retrieve risk score, evidence details, related entities, and metadata for an IP address.",
+                "parameters": [
+                    {"name": "ip", "in": "path", "required": true, "schema": {"type": "string"}, "description": "The IP address to look up."},
+                    {"name": "fields", "in": "query", "required": false, "schema": {"type": "string"}, "description": "Comma-separated list of fields to return."}
+                ],
+                "responses": {"200": {"description": "IP enrichment data"}}
+            }
+        },
+        "/v2/domain/{domain}": {
+            "get": {
+                "tags": ["Connect"],
+                "summary": "Lookup domain enrichment",
+                "parameters": [
+                    {"name": "domain", "in": "path", "required": true, "schema": {"type": "string"}},
+                    {"name": "fields", "in": "query", "required": false, "schema": {"type": "string"}}
+                ],
+                "responses": {"200": {"description": "Domain enrichment data"}}
+            }
+        },
+        "/v2/url/{url}": {
+            "get": {
+                "tags": ["Connect"],
+                "summary": "Lookup URL enrichment",
+                "parameters": [
+                    {"name": "url", "in": "path", "required": true, "schema": {"type": "string"}},
+                    {"name": "fields", "in": "query", "required": false, "schema": {"type": "string"}}
+                ],
+                "responses": {"200": {"description": "URL enrichment data"}}
+            }
+        },
+        "/v2/hash/{hash}": {
+            "get": {
+                "tags": ["Connect"],
+                "summary": "Lookup file hash enrichment",
+                "parameters": [
+                    {"name": "hash", "in": "path", "required": true, "schema": {"type": "string"}},
+                    {"name": "fields", "in": "query", "required": false, "schema": {"type": "string"}}
+                ],
+                "responses": {"200": {"description": "Hash enrichment data"}}
+            }
+        },
+        "/v2/vulnerability/{vulnerability}": {
+            "get": {
+                "tags": ["Connect"],
+                "summary": "Lookup vulnerability enrichment",
+                "parameters": [
+                    {"name": "vulnerability", "in": "path", "required": true, "schema": {"type": "string"}, "description": "CVE identifier."},
+                    {"name": "fields", "in": "query", "required": false, "schema": {"type": "string"}}
+                ],
+                "responses": {"200": {"description": "Vulnerability enrichment data"}}
+            }
+        },
+        "/v2/ip/search": {
+            "get": {
+                "tags": ["Connect"],
+                "summary": "Search IPs",
+                "parameters": [
+                    {"name": "limit", "in": "query", "schema": {"type": "integer"}},
+                    {"name": "from", "in": "query", "schema": {"type": "integer"}},
+                    {"name": "fields", "in": "query", "schema": {"type": "string"}},
+                    {"name": "riskScore", "in": "query", "schema": {"type": "string"}, "description": "e.g. '[80,100]'"}
+                ],
+                "responses": {"200": {"description": "Search results"}}
+            }
+        },
+        "/v2/domain/search": {
+            "get": {
+                "tags": ["Connect"],
+                "summary": "Search domains",
+                "parameters": [
+                    {"name": "limit", "in": "query", "schema": {"type": "integer"}},
+                    {"name": "from", "in": "query", "schema": {"type": "integer"}},
+                    {"name": "fields", "in": "query", "schema": {"type": "string"}}
+                ],
+                "responses": {"200": {"description": "Search results"}}
+            }
+        },
+        "/v2/hash/search": {
+            "get": {
+                "tags": ["Connect"],
+                "summary": "Search hashes",
+                "parameters": [
+                    {"name": "limit", "in": "query", "schema": {"type": "integer"}},
+                    {"name": "from", "in": "query", "schema": {"type": "integer"}},
+                    {"name": "fields", "in": "query", "schema": {"type": "string"}}
+                ],
+                "responses": {"200": {"description": "Search results"}}
+            }
+        },
+        "/v2/url/search": {
+            "get": {
+                "tags": ["Connect"],
+                "summary": "Search URLs",
+                "responses": {"200": {"description": "Search results"}}
+            }
+        },
+        "/v2/vulnerability/search": {
+            "get": {
+                "tags": ["Connect"],
+                "summary": "Search vulnerabilities",
+                "parameters": [
+                    {"name": "limit", "in": "query", "schema": {"type": "integer"}},
+                    {"name": "from", "in": "query", "schema": {"type": "integer"}},
+                    {"name": "fields", "in": "query", "schema": {"type": "string"}}
+                ],
+                "responses": {"200": {"description": "Search results"}}
+            }
+        },
+        "/v2/fusion/files/{path}": {
+            "get": {
+                "tags": ["Connect", "Fusion"],
+                "summary": "Download a Fusion file",
+                "parameters": [
+                    {"name": "path", "in": "path", "required": true, "schema": {"type": "string"}, "description": "URL-encoded Fusion file path."}
+                ],
+                "responses": {"200": {"description": "File content"}}
+            }
+        },
+        "/identity/detections": {
+            "post": {
+                "tags": ["Identity"],
+                "summary": "Identity detections",
+                "description": "Retrieve detections filtered by organization, domain, type, and date criteria.",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "organization_id": {"type": "string"},
+                                    "domains": {"type": "array", "items": {"type": "string"}},
+                                    "detection_type": {"type": "array", "items": {"type": "string"}},
+                                    "created": {
+                                        "type": "object",
+                                        "properties": {
+                                            "gte": {"type": "string", "format": "date-time"},
+                                            "lt": {"type": "string", "format": "date-time"}
+                                        }
+                                    },
+                                    "limit": {"type": "integer"},
+                                    "offset": {"type": "integer"}
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {"200": {"description": "Detections"}}
+            }
+        },
+        "/identity/credentials/search": {
+            "post": {
+                "tags": ["Identity"],
+                "summary": "Search compromised credentials",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "domains": {"type": "array", "items": {"type": "string"}},
+                                    "filter": {"type": "object"},
+                                    "limit": {"type": "integer"},
+                                    "offset": {"type": "integer"}
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {"200": {"description": "Compromised subjects"}}
+            }
+        },
+        "/identity/credentials/lookup": {
+            "post": {
+                "tags": ["Identity"],
+                "summary": "Lookup leaked credential data for given subjects",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "subjects": {"type": "array", "items": {"type": "string"}},
+                                    "filter": {"type": "object"},
+                                    "limit": {"type": "integer"},
+                                    "offset": {"type": "integer"}
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {"200": {"description": "Leaked credentials"}}
+            }
+        },
+        "/identity/password/lookup": {
+            "post": {
+                "tags": ["Identity"],
+                "summary": "Check whether passwords appear in exposures",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "passwords": {"type": "array", "items": {"type": "string"}}
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {"200": {"description": "Password exposure results"}}
+            }
+        },
+        "/identity/hostname/lookup": {
+            "post": {
+                "tags": ["Identity"],
+                "summary": "Get leaked credentials tied to a hostname",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "hostnames": {"type": "array", "items": {"type": "string"}},
+                                    "limit": {"type": "integer"},
+                                    "offset": {"type": "integer"}
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {"200": {"description": "Hostname leak results"}}
+            }
+        },
+        "/identity/ip/lookup": {
+            "post": {
+                "tags": ["Identity"],
+                "summary": "Get credentials associated with an IP or IP range",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "ips": {"type": "array", "items": {"type": "string"}},
+                                    "limit": {"type": "integer"},
+                                    "offset": {"type": "integer"}
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {"200": {"description": "IP leak results"}}
+            }
+        },
+        "/identity/incident/report": {
+            "post": {
+                "tags": ["Identity"],
+                "summary": "Generate exposure incident reports from malware logs",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {"type": "object"}
+                        }
+                    }
+                },
+                "responses": {"200": {"description": "Incident report"}}
+            }
+        },
+        "/identity/metadata/dump/search": {
+            "post": {
+                "tags": ["Identity"],
+                "summary": "Query dump metadata by name",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "name": {"type": "string"},
+                                    "limit": {"type": "integer"},
+                                    "offset": {"type": "integer"}
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {"200": {"description": "Dump metadata"}}
+            }
+        },
+        "/detection-rule/search": {
+            "post": {
+                "tags": ["Detection Rule"],
+                "summary": "Search detection rules",
+                "description": "Search Recorded Future detection rules by entity, rule type, or other filters.",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "entity": {"type": "string"},
+                                    "type": {"type": "array", "items": {"type": "string"}},
+                                    "limit": {"type": "integer"},
+                                    "offset": {"type": "integer"}
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {"200": {"description": "Detection rule search results"}}
+            }
+        },
+        "/detection-rule/download": {
+            "post": {
+                "tags": ["Detection Rule"],
+                "summary": "Download detection rules",
+                "description": "Download detection rule contents (Yara/Sigma/Snort) for the provided rule IDs.",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "ids": {"type": "array", "items": {"type": "string"}}
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {"200": {"description": "Detection rule contents"}}
+            }
+        },
+        "/detection-rule-relation/search": {
+            "post": {
+                "tags": ["Detection Rule Relation"],
+                "summary": "Search entities linked to detection rules",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {"type": "object"}
+                        }
+                    }
+                },
+                "responses": {"200": {"description": "Detection rule relation results"}}
+            }
+        },
+        "/entity-match": {
+            "post": {
+                "tags": ["Entity Match"],
+                "summary": "Locate entity IDs and reverse lookups",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "name": {"type": "array", "items": {"type": "string"}},
+                                    "type": {"type": "array", "items": {"type": "string"}}
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {"200": {"description": "Entity match results"}}
+            }
+        },
+        "/links/search": {
+            "post": {
+                "tags": ["Links"],
+                "summary": "Retrieve verified links between entities",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "entities": {"type": "array", "items": {"type": "string"}},
+                                    "type": {"type": "array", "items": {"type": "string"}},
+                                    "limit": {"type": "integer"},
+                                    "offset": {"type": "integer"}
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {"200": {"description": "Linked entities"}}
+            }
+        },
+        "/list/search": {
+            "post": {
+                "tags": ["List"],
+                "summary": "Search custom lists",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {"type": "object"}
+                        }
+                    }
+                },
+                "responses": {"200": {"description": "Lists"}}
+            }
+        },
+        "/list/{list_id}/entities": {
+            "get": {
+                "tags": ["List"],
+                "summary": "Get entities in a list",
+                "parameters": [
+                    {"name": "list_id", "in": "path", "required": true, "schema": {"type": "string"}}
+                ],
+                "responses": {"200": {"description": "List entities"}}
+            },
+            "post": {
+                "tags": ["List"],
+                "summary": "Add entities to a list",
+                "parameters": [
+                    {"name": "list_id", "in": "path", "required": true, "schema": {"type": "string"}}
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "entities": {"type": "array", "items": {"type": "object"}}
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {"200": {"description": "Updated list"}}
+            }
+        },
+        "/list/{list_id}/entities/delete": {
+            "post": {
+                "tags": ["List"],
+                "summary": "Remove entities from a list",
+                "parameters": [
+                    {"name": "list_id", "in": "path", "required": true, "schema": {"type": "string"}}
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "entities": {"type": "array", "items": {"type": "object"}}
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {"200": {"description": "Removal result"}}
+            }
+        },
+        "/playbook-alert/search": {
+            "post": {
+                "tags": ["Playbook Alert"],
+                "summary": "Search playbook alerts",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "category": {"type": "array", "items": {"type": "string"}},
+                                    "priority": {"type": "array", "items": {"type": "string"}},
+                                    "status": {"type": "array", "items": {"type": "string"}},
+                                    "from": {"type": "integer"},
+                                    "limit": {"type": "integer"}
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {"200": {"description": "Playbook alerts"}}
+            }
+        },
+        "/playbook-alert/{category}/{alert_id}": {
+            "get": {
+                "tags": ["Playbook Alert"],
+                "summary": "Get a single playbook alert",
+                "parameters": [
+                    {"name": "category", "in": "path", "required": true, "schema": {"type": "string"}},
+                    {"name": "alert_id", "in": "path", "required": true, "schema": {"type": "string"}}
+                ],
+                "responses": {"200": {"description": "Playbook alert details"}}
+            }
+        },
+        "/playbook-alert/{category}/{alert_id}/status": {
+            "put": {
+                "tags": ["Playbook Alert"],
+                "summary": "Update playbook alert status",
+                "parameters": [
+                    {"name": "category", "in": "path", "required": true, "schema": {"type": "string"}},
+                    {"name": "alert_id", "in": "path", "required": true, "schema": {"type": "string"}}
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "status": {"type": "string"},
+                                    "priority": {"type": "string"},
+                                    "log_message": {"type": "string"}
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {"200": {"description": "Updated"}}
+            }
+        },
+        "/threat/searches": {
+            "get": {
+                "tags": ["Threat"],
+                "summary": "List configured threat searches",
+                "responses": {"200": {"description": "Threat searches"}}
+            }
+        },
+        "/threat/searches/{search_id}": {
+            "get": {
+                "tags": ["Threat"],
+                "summary": "Run a configured threat search",
+                "parameters": [
+                    {"name": "search_id", "in": "path", "required": true, "schema": {"type": "string"}}
+                ],
+                "responses": {"200": {"description": "Threat search results"}}
+            }
+        },
+        "/threat/actors": {
+            "get": {
+                "tags": ["Threat"],
+                "summary": "Search threat actors",
+                "parameters": [
+                    {"name": "limit", "in": "query", "schema": {"type": "integer"}},
+                    {"name": "from", "in": "query", "schema": {"type": "integer"}}
+                ],
+                "responses": {"200": {"description": "Threat actor list"}}
+            }
+        },
+        "/threat/maps": {
+            "get": {
+                "tags": ["Threat"],
+                "summary": "List threat maps",
+                "responses": {"200": {"description": "Threat maps"}}
+            }
+        },
+        "/malware-intelligence/search": {
+            "post": {
+                "tags": ["Malware Intelligence"],
+                "summary": "Search malware intelligence",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {"type": "object"}
+                        }
+                    }
+                },
+                "responses": {"200": {"description": "Malware intelligence results"}}
+            }
+        },
+        "/malware-intelligence/yara/auto": {
+            "get": {
+                "tags": ["Malware Intelligence"],
+                "summary": "Retrieve automated Yara rules",
+                "responses": {"200": {"description": "Yara rules"}}
+            }
+        },
+        "/analyst-note/search": {
+            "post": {
+                "tags": ["Analyst Note"],
+                "summary": "Search analyst notes",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "entity": {"type": "string"},
+                                    "topic": {"type": "string"},
+                                    "published": {"type": "string"},
+                                    "limit": {"type": "integer"}
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {"200": {"description": "Analyst notes"}}
+            }
+        },
+        "/analyst-note/lookup/{note_id}": {
+            "get": {
+                "tags": ["Analyst Note"],
+                "summary": "Lookup analyst note by ID",
+                "parameters": [
+                    {"name": "note_id", "in": "path", "required": true, "schema": {"type": "string"}}
+                ],
+                "responses": {"200": {"description": "Analyst note"}}
+            }
+        },
+        "/analyst-note/publish": {
+            "post": {
+                "tags": ["Analyst Note"],
+                "summary": "Publish a new analyst note",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "title": {"type": "string"},
+                                    "text": {"type": "string"},
+                                    "topic": {"type": "array", "items": {"type": "string"}},
+                                    "note_entities": {"type": "array", "items": {"type": "string"}},
+                                    "context_entities": {"type": "array", "items": {"type": "string"}},
+                                    "validation_urls": {"type": "array", "items": {"type": "string"}},
+                                    "source": {"type": "string"}
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {"200": {"description": "Published"}}
+            }
+        },
+        "/analyst-note/delete/{note_id}": {
+            "delete": {
+                "tags": ["Analyst Note"],
+                "summary": "Delete an analyst note",
+                "parameters": [
+                    {"name": "note_id", "in": "path", "required": true, "schema": {"type": "string"}}
+                ],
+                "responses": {"200": {"description": "Deleted"}}
+            }
+        },
+        "/risk/{entity_type}/{entity}": {
+            "get": {
+                "tags": ["Risk History"],
+                "summary": "Retrieve risk history for an entity",
+                "parameters": [
+                    {"name": "entity_type", "in": "path", "required": true, "schema": {"type": "string"}, "description": "ip, domain, hash, vulnerability, etc."},
+                    {"name": "entity", "in": "path", "required": true, "schema": {"type": "string"}}
+                ],
+                "responses": {"200": {"description": "Risk history"}}
+            }
+        },
+        "/fusion/v3/files": {
+            "get": {
+                "tags": ["Fusion"],
+                "summary": "List Fusion files",
+                "responses": {"200": {"description": "Fusion files"}}
+            }
+        },
+        "/fusion/v3/files/{path}": {
+            "get": {
+                "tags": ["Fusion"],
+                "summary": "Download a Fusion file",
+                "parameters": [
+                    {"name": "path", "in": "path", "required": true, "schema": {"type": "string"}, "description": "URL-encoded Fusion file path."}
+                ],
+                "responses": {"200": {"description": "File content"}}
+            },
+            "put": {
+                "tags": ["Fusion"],
+                "summary": "Upload a Fusion file",
+                "parameters": [
+                    {"name": "path", "in": "path", "required": true, "schema": {"type": "string"}}
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/octet-stream": {"schema": {"type": "string", "format": "binary"}}
+                    }
+                },
+                "responses": {"200": {"description": "Uploaded"}}
+            },
+            "delete": {
+                "tags": ["Fusion"],
+                "summary": "Delete a Fusion file",
+                "parameters": [
+                    {"name": "path", "in": "path", "required": true, "schema": {"type": "string"}}
+                ],
+                "responses": {"200": {"description": "Deleted"}}
+            }
+        },
+        "/soar/v3/enrichment/{entity_type}": {
+            "post": {
+                "tags": ["SOAR"],
+                "summary": "Bulk enrichment for SOAR workflows",
+                "parameters": [
+                    {"name": "entity_type", "in": "path", "required": true, "schema": {"type": "string"}, "description": "ip, domain, url, hash, vulnerability."}
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "entities": {"type": "array", "items": {"type": "string"}},
+                                    "fields": {"type": "array", "items": {"type": "string"}}
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {"200": {"description": "Enrichment results"}}
+            }
+        },
+        "/alert/search": {
+            "get": {
+                "tags": ["Alert"],
+                "summary": "Search alerts",
+                "parameters": [
+                    {"name": "alertRule", "in": "query", "schema": {"type": "string"}},
+                    {"name": "triggered", "in": "query", "schema": {"type": "string"}, "description": "e.g. '[2025-01-01,2025-01-31]'"},
+                    {"name": "status", "in": "query", "schema": {"type": "string"}},
+                    {"name": "limit", "in": "query", "schema": {"type": "integer"}},
+                    {"name": "from", "in": "query", "schema": {"type": "integer"}}
+                ],
+                "responses": {"200": {"description": "Alerts"}}
+            }
+        },
+        "/alert/{alert_id}": {
+            "get": {
+                "tags": ["Alert"],
+                "summary": "Get an alert",
+                "parameters": [
+                    {"name": "alert_id", "in": "path", "required": true, "schema": {"type": "string"}}
+                ],
+                "responses": {"200": {"description": "Alert detail"}}
+            }
+        },
+        "/alert/update": {
+            "post": {
+                "tags": ["Alert"],
+                "summary": "Bulk update alerts",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "array",
+                                "items": {
+                                    "type": "object",
+                                    "properties": {
+                                        "id": {"type": "string"},
+                                        "status": {"type": "string"},
+                                        "note": {"type": "string"},
+                                        "assignee": {"type": "string"}
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {"200": {"description": "Updated"}}
+            }
+        },
+        "/alert/rule": {
+            "get": {
+                "tags": ["Alert"],
+                "summary": "List alert rules",
+                "parameters": [
+                    {"name": "freetext", "in": "query", "schema": {"type": "string"}},
+                    {"name": "limit", "in": "query", "schema": {"type": "integer"}}
+                ],
+                "responses": {"200": {"description": "Alert rules"}}
+            }
+        },
+        "/alert/rule/{rule_id}": {
+            "get": {
+                "tags": ["Alert"],
+                "summary": "Get an alert rule",
+                "parameters": [
+                    {"name": "rule_id", "in": "path", "required": true, "schema": {"type": "string"}}
+                ],
+                "responses": {"200": {"description": "Alert rule"}}
+            }
+        },
+        "/collective-insights/detections": {
+            "post": {
+                "tags": ["Collective Insights"],
+                "summary": "Submit detections to Collective Insights",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "data": {"type": "array", "items": {"type": "object"}},
+                                    "options": {"type": "object"},
+                                    "organization_ids": {"type": "array", "items": {"type": "string"}}
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {"200": {"description": "Submitted"}}
+            }
+        }
+    }
+}
