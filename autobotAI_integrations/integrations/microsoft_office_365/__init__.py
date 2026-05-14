@@ -2,7 +2,8 @@ from typing import List, Optional, Type, Union
 from pydantic import Field
 
 from autobotAI_integrations import BaseService, list_of_unique_elements, PayloadTask
-from autobotAI_integrations.models import BaseSchema, CLICreds, ConnectionInterfaces, IntegrationCategory, SDKClient, SDKCreds, SteampipeCreds
+from autobotAI_integrations.models import BaseSchema, CLICreds, ConnectionInterfaces, IntegrationCategory, SDKClient, \
+    SDKCreds, SteampipeCreds, RestAPICreds
 
 import importlib
 import requests
@@ -136,7 +137,6 @@ class MicrosoftService(BaseService):
             conf_path=conf_path,
             config=config,
         )
-
     def build_python_exec_combinations_hook(
         self, payload_task: PayloadTask, client_definitions: List[SDKClient]
     ) -> list:
@@ -152,8 +152,7 @@ class MicrosoftService(BaseService):
         )
         scopes = ["https://graph.microsoft.com/.default"]
         msgraph = importlib.import_module(client_definitions[0].import_library_names[0], package=None)
-
-        return [
+        item = [
             {
                 "clients": {
                     "msgraph": msgraph.GraphServiceClient(
@@ -164,6 +163,14 @@ class MicrosoftService(BaseService):
                 "context": payload_task.context,
             }
         ]
+        try:
+            defender_client = msgraph.GraphServiceClient(
+                credentials=credential, scopes=scopes + ["https://api.security.microsoft.com/.default"]
+            )
+            item[0]["clients"]["msgraph-defender"] = defender_client
+        except:
+            pass
+        return item
 
     def generate_python_sdk_creds(self, requested_clients=None) -> SDKCreds:
         creds = self._temp_credentials()

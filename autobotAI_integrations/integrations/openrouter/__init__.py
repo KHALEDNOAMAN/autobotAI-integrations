@@ -7,7 +7,6 @@ from pathlib import Path
 
 from autobotAI_integrations import (
     BaseSchema,
-    SteampipeCreds,
     RestAPICreds,
     SDKCreds,
     CLICreds,
@@ -20,32 +19,33 @@ from autobotAI_integrations.models import IntegrationCategory
 from autobotAI_integrations.utils.logging_config import logger
 
 
-class OpenAIIntegration(BaseSchema):
-    api_key: Optional[str] = Field(default=None, exclude=True)
+OPENROUTER_BASE_URL = "https://openrouter.ai/api/v1"
 
-    name: Optional[str] = "OpenAI"
+
+class OpenRouterIntegration(BaseSchema):
+    api_key: Optional[str] = Field(default=None, exclude=True)
+    skip_test: Optional[bool] = Field(default=None, exclude=False)
+
+    name: Optional[str] = "OpenRouter"
     category: Optional[str] = IntegrationCategory.AI.value
     description: Optional[str] = (
-        "A research company developing and providing access to powerful large language models."
+        "A unified API gateway that provides access to hundreds of large language models from multiple providers through a single OpenAI-compatible interface."
     )
 
 
-class OpenAIService(AIBaseService):
-    def __init__(self, ctx, integration: OpenAIIntegration):
+class OpenRouterService(AIBaseService):
+    def __init__(self, ctx, integration: OpenRouterIntegration):
         if isinstance(integration, dict):
-            integration = OpenAIIntegration(**integration)
+            integration = OpenRouterIntegration(**integration)
         super().__init__(ctx, integration)
 
     def _test_integration(self):
         try:
-            response = requests.post(
-                "https://api.openai.com/v1/chat/completions",
+            if self.integration.skip_test:
+                return {"success": True}
+            response = requests.get(
+                f"{OPENROUTER_BASE_URL}/auth/key",
                 headers={"Authorization": f"Bearer {self.integration.api_key}"},
-                json={
-                    "model": "gpt-3.5-turbo",
-                    "messages": [{"role": "user", "content": "Say this is a test!"}],
-                    "temperature": 0.7,
-                },
             )
             if response.status_code == 200:
                 return {"success": True}
@@ -60,33 +60,25 @@ class OpenAIService(AIBaseService):
 
     def get_integration_specific_details(self) -> dict:
         try:
-            # available_models = [
-            #     "gpt-5.4",
-            #     "gpt-5.4-mini",
-            #     "gpt-5.4-nano",
-            #     "gpt-5.4-pro",
-            #     "o3",
-            # ]
             available_models = [
-                "gpt-5",
-                "gpt-5-mini",
-                "gpt-5-nano",
-                "gpt-5.2",
-                "gpt-5.4",
-                "gpt-5.4-mini",
-                "gpt-5.4-nano",
+                "openai/gpt-5",
+                "openai/gpt-5-mini",
+                "openai/gpt-4o",
+                "openai/gpt-4o-mini",
+                "anthropic/claude-opus-4-7",
+                "anthropic/claude-sonnet-4-6",
+                "anthropic/claude-haiku-4-5",
+                "google/gemini-2.5-pro",
+                "google/gemini-2.5-flash",
+                "meta-llama/llama-3.3-70b-instruct",
+                "mistralai/mistral-large",
+                "deepseek/deepseek-r1",
             ]
-
             return {
                 "integration_id": self.integration.accountId,
                 "models": available_models,
-                "embedding_models": [
-                    "text-embedding-3-small",
-                    "text-embedding-3-large",
-                    "text-embedding-ada-002",
-                ]
             }
-        except Exception as e:
+        except Exception:
             return {"error": "Details can not be fetched"}
 
     @staticmethod
@@ -94,7 +86,7 @@ class OpenAIService(AIBaseService):
         current_directory = Path(__file__).resolve().parent
         with open(os.path.join(current_directory, "ai_evaluator_code.py")) as f:
             return {
-                "integration_type": "openai",
+                "integration_type": "openrouter",
                 "ai_client": "openai",
                 "param_definitions": [
                     {
@@ -122,30 +114,41 @@ class OpenAIService(AIBaseService):
     @staticmethod
     def get_forms():
         return {
-            "label": "OpenAI",
+            "label": "OpenRouter",
             "type": "form",
             "children": [
                 {
                     "name": "api_key",
                     "type": "text/password",
-                    "label": "OpenAI api_key",
-                    "placeholder": "Enter the OpenAI API Key",
+                    "label": "OpenRouter API Key",
+                    "placeholder": "Enter the OpenRouter API Key",
                     "required": True,
-                }
+                },
+                {
+                    "name": "skip_test",
+                    "type": "select",
+                    "label": "Skip Test Integration",
+                    "placeholder": "Skip the integration test",
+                    "description": "If enabled, skips the integration test (useful when API is not accessible)",
+                    "required": True,
+                    "options": [
+                        {"label": "No", "value": False},
+                        {"label": "Yes", "value": True},
+                    ],
+                    "default": False,
+                },
             ],
         }
 
     @staticmethod
     def get_schema(ctx=None):
-        return OpenAIIntegration
+        return OpenRouterIntegration
 
     @staticmethod
     def supported_connection_interfaces():
         return [
             ConnectionInterfaces.REST_API,
-            ConnectionInterfaces.CLI,
             ConnectionInterfaces.PYTHON_SDK,
-            ConnectionInterfaces.STEAMPIPE,
         ]
 
     def build_python_exec_combinations_hook(
@@ -159,7 +162,8 @@ class OpenAIService(AIBaseService):
             {
                 "clients": {
                     "openai": openai.OpenAI(
-                        api_key=payload_task.creds.envs.get("OPENAI_API_KEY")
+                        api_key=payload_task.creds.envs.get("OPENROUTER_API_KEY"),
+                        base_url=OPENROUTER_BASE_URL,
                     )
                 },
                 "params": self.prepare_params(payload_task.params),
@@ -167,30 +171,18 @@ class OpenAIService(AIBaseService):
             }
         ]
 
-    def generate_steampipe_creds(self) -> SteampipeCreds:
-        envs = {
-            "OPENAI_API_KEY": self.integration.api_key,
-        }
-        conf_path = "~/.steampipe/config/openai.spc"
-        config_str = """connection "openai" {
-  plugin = "openai"
-}
-"""
-        return SteampipeCreds(
-            envs=envs,
-            plugin_name="openai",
-            connection_name="openai",
-            conf_path=conf_path,
-            config=config_str,
-        )
-
     def generate_rest_api_creds(self) -> RestAPICreds:
         headers = {"Authorization": f"Bearer {self.integration.api_key}"}
-        return RestAPICreds(api_key=self.integration.api_key, headers=headers)
+        return RestAPICreds(
+            base_url=OPENROUTER_BASE_URL,
+            api_key=self.integration.api_key,
+            headers=headers,
+        )
 
     def generate_python_sdk_creds(self) -> SDKCreds:
         envs = {
-            "OPENAI_API_KEY": self.integration.api_key,
+            "OPENROUTER_API_KEY": self.integration.api_key,
+            "OPENROUTER_BASE_URL": OPENROUTER_BASE_URL,
         }
         return SDKCreds(envs=envs)
 
@@ -205,45 +197,28 @@ class OpenAIService(AIBaseService):
         return Agent(model_instance, system_prompt=system_prompt, tools=tools, **options)
 
     def get_pydantic_model(self, model_name: str):
-        from pydantic_ai.models.openai import OpenAIResponsesModel
+        from pydantic_ai.models.openai import OpenAIModel
         from pydantic_ai.providers.openai import OpenAIProvider
-        model = OpenAIResponsesModel(
+        model = OpenAIModel(
             model_name=model_name,
-            provider=OpenAIProvider(api_key=self.integration.api_key),
+            provider=OpenAIProvider(
+                api_key=self.integration.api_key,
+                base_url=OPENROUTER_BASE_URL,
+            ),
         )
         return model
 
-    def load_llama_index_embedding_model(self, model_name: Optional[str] = None, **kwargs):
-        """
-        Returns Llama Index Embedding model object and model dimensions as tuple
-        """
-        if not model_name:
-            model_name = "text-embedding-3-small"
-        from llama_index.embeddings.openai import OpenAIEmbedding
-
-        embed_model = OpenAIEmbedding(
-            api_key=self.integration.api_key, model=model_name, **kwargs
-        )
-
-        # embeddings = embed_model.get_text_embedding(
-        #     "Open AI new Embeddings models is great."
-        # )
-
-        # dimensions = len(embeddings)
-
-        # return embed_model, dimensions
-        return embed_model
-
     def load_llama_index_llm(self, model, **kwargs):
-        from llama_index.llms.openai import OpenAI
+        from llama_index.llms.openai_like import OpenAILike
 
-        llm = OpenAI(api_key=self.integration.api_key, model=model, **kwargs)
+        llm = OpenAILike(
+            api_key=self.integration.api_key,
+            api_base=OPENROUTER_BASE_URL,
+            model=model,
+            is_chat_model=True,
+            **kwargs,
+        )
         return llm
-    
-    def generate_llm_credentials(self):
-        return {
-            "api_key": self.integration.api_key
-        }
 
     def prompt_executor(
         self,
@@ -256,30 +231,33 @@ class OpenAIService(AIBaseService):
         from openai import OpenAI
 
         logger.info(f"Executing prompt: {prompt}")
-        client = OpenAI(api_key=self.integration.api_key)
-        if model:
-            message = {
-                "role": "user",
-                "content": prompt,
-            }
-            if "temperature" in options:
-                message["temperature"] = options["temperature"]
-            if "max_tokens" in options:
-                message["max_tokens"] = options["max_tokens"]
-            counter = 0
-            messages.append(message)
-            while counter < 5:
-                counter += 1
-                try:
-                    kwargs = {"messages": messages, "model": model}
-                    if params not in {"get_code", "approval", "chat", "params", "title", "message"}:
-                        kwargs["response_format"] = {"type": "json_object"}
-                    result = client.chat.completions.create(**kwargs)
-                    logger.info("result is %s", result)
-                    if result.choices[0].message.content:
-                        return result.choices[0].message.content
-                except Exception as e:
-                    logger.error(str(e))
-            return "AI-Execution Failed to Generate Result"
-        else:
+        client = OpenAI(
+            api_key=self.integration.api_key,
+            base_url=OPENROUTER_BASE_URL,
+        )
+        if not model:
             raise Exception("Model is Required")
+
+        message = {
+            "role": "user",
+            "content": prompt,
+        }
+        if "temperature" in options:
+            message["temperature"] = options["temperature"]
+        if "max_tokens" in options:
+            message["max_tokens"] = options["max_tokens"]
+        counter = 0
+        messages.append(message)
+        while counter < 5:
+            counter += 1
+            try:
+                kwargs = {"messages": messages, "model": model}
+                if params not in {"get_code", "approval", "chat", "params", "title", "message"}:
+                    kwargs["response_format"] = {"type": "json_object"}
+                result = client.chat.completions.create(**kwargs)
+                logger.info("result is %s", result)
+                if result.choices[0].message.content:
+                    return result.choices[0].message.content
+            except Exception as e:
+                logger.error(str(e))
+        return "AI-Execution Failed to Generate Result"

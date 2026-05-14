@@ -43,6 +43,17 @@ from autobotAI_integrations.utils.security_measures import SecurityError
 
 class BaseService:
 
+    # Per-platform body-size budget for notification / approval messages.
+    # Notification integrations (Slack, MS Teams, Google Chat, email …) override
+    # this with a dict of the shape:
+    #     {"max_bytes": int, "format": "markdown" | "html" | "text"}
+    # ``max_bytes`` is the hard ceiling the platform will accept for the
+    # message body; consumers (autobotAI-core) apply a safety margin on top.
+    # ``format`` selects how truncation footers are rendered.
+    # ``None`` means this integration is not a notification target — consumers
+    # should fall back to a default budget.
+    notification_body_limit = None
+
     def __init__(self, ctx: dict, integration: BaseSchema):
         """
         Integration should have all the data regarding the integration
@@ -871,6 +882,9 @@ class AIBaseService(BaseService):
         """
         Returns Langchaain LLM model object
         """
+        raise NotImplementedError()
+    
+    def generate_llm_credentials(self):
         raise NotImplementedError()
 
     def check_context_length(self, data: str, model_name: str) -> dict:

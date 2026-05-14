@@ -159,7 +159,6 @@ class SecuronixService(BaseService):
             base_url=self.integration.base_url,
             headers={
                 "token": self.integration.token,
-                "Accept": "application/vnd.snypr.app-v6.0+json",
                 "Content-Type": "application/json",
             },
         )
