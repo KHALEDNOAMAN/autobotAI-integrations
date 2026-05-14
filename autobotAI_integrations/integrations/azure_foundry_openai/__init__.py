@@ -3,7 +3,7 @@ import os
 from typing import List, Optional, Dict, Any
 from pathlib import Path
 
-from pydantic import Field
+from pydantic import Field, field_validator
 
 from autobotAI_integrations import (
     BaseSchema,
@@ -23,13 +23,20 @@ from autobotAI_integrations.utils.logging_config import logger
 class AzureFoundryOpenAIIntegration(BaseSchema):
     api_key: Optional[str] = Field(default=None, exclude=True)
     azure_endpoint: str
-    azure_api_version: Optional[str] = "2024-10-21"
+    openai_api_version: Optional[str] = "v1"
 
     name: Optional[str] = "Azure Foundry OpenAI"
     category: Optional[str] = IntegrationCategory.AI.value
     description: Optional[str] = (
         "Azure AI Foundry OpenAI integration."
     )
+
+    @field_validator("azure_endpoint", mode='before')
+    def validate_azure_endpoint(cls, value):
+        if not value.startswith("https://"):
+            raise ValueError("Host URL must start with 'https://'")
+        return value.strip('/')
+
 
 
 class AzureOpenAIService(AIBaseService):
@@ -40,11 +47,11 @@ class AzureOpenAIService(AIBaseService):
         super().__init__(ctx, integration)
 
     def get_openai_client(self):
-        from openai import AzureOpenAI
+        from openai import OpenAI
 
-        return AzureOpenAI(
+        return OpenAI(
             api_key=self.integration.api_key,
-            azure_endpoint=self.integration.azure_endpoint,
+            base_url=f"{self.integration.azure_endpoint}/openai/{self.integration.openai_api_version}/",
         )
 
     def _test_integration(self):
@@ -157,6 +164,13 @@ class AzureOpenAIService(AIBaseService):
                         "https://<resource>.openai.azure.com/"
                     ),
                     "required": True,
+                },
+                {
+                    "name": "openai_api_version",
+                    "type": "text",
+                    "label": "OpenAI API Version",
+                    "placeholder": "v1",
+                    "required": False,
                 }
             ],
         }
@@ -184,9 +198,9 @@ class AzureOpenAIService(AIBaseService):
             package=None,
         )
 
-        client = openai.AzureOpenAI(
+        client = openai.OpenAI(
             api_key=self.integration.api_key,
-            azure_endpoint=self.integration.azure_endpoint,
+            base_url=f"{self.integration.azure_endpoint}/openai/{self.integration.openai_api_version}/",
         )
 
         return [
