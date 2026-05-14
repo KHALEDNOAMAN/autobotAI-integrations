@@ -24,6 +24,7 @@ class AzureFoundryOpenAIIntegration(BaseSchema):
     api_key: Optional[str] = Field(default=None, exclude=True)
     azure_endpoint: str
     openai_api_version: Optional[str] = "v1"
+    test_model: Optional[str] = "gpt-4o-mini"
 
     name: Optional[str] = "Azure Foundry OpenAI"
     category: Optional[str] = IntegrationCategory.AI.value
@@ -59,7 +60,7 @@ class AzureOpenAIService(AIBaseService):
             client = self.get_openai_client()
 
             response = client.chat.completions.create(
-                model="gpt-4o-mini",
+                model=self.integration.test_model,
                 messages=[
                     {
                         "role": "user",
@@ -85,6 +86,7 @@ class AzureOpenAIService(AIBaseService):
     def get_integration_specific_details(self) -> dict:
         try:
             available_models = [
+                self.integration.test_model,
                 "gpt-4o",
                 "gpt-4o-mini",
                 "gpt-4.1",
@@ -171,6 +173,13 @@ class AzureOpenAIService(AIBaseService):
                     "label": "OpenAI API Version",
                     "placeholder": "v1",
                     "required": False,
+                },
+                {
+                    "name": "test_model",
+                    "type": "text",
+                    "label": "OpenAI Model to test the integration with",
+                    "placeholder": "gpt-4o-mini",
+                    "required": False,
                 }
             ],
         }
@@ -222,7 +231,7 @@ class AzureOpenAIService(AIBaseService):
                 self.integration.azure_endpoint
             ),
             "OPENAI_API_VERSION": (
-                self.integration.azure_api_version
+                self.integration.openai_api_version
             ),
         }
 
@@ -258,7 +267,7 @@ class AzureOpenAIService(AIBaseService):
                 self.integration.azure_endpoint
             ),
             "OPENAI_API_VERSION": (
-                self.integration.azure_api_version
+                self.integration.openai_api_version
             ),
         }
 
