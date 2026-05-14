@@ -44,7 +44,6 @@ class AzureOpenAIService(AIBaseService):
 
         return AzureOpenAI(
             api_key=self.integration.api_key,
-            api_version=self.integration.azure_api_version,
             azure_endpoint=self.integration.azure_endpoint,
         )
 
@@ -158,14 +157,7 @@ class AzureOpenAIService(AIBaseService):
                         "https://<resource>.openai.azure.com/"
                     ),
                     "required": True,
-                },
-                {
-                    "name": "azure_api_version",
-                    "type": "text",
-                    "label": "Azure API Version",
-                    "placeholder": "2024-10-21",
-                    "required": False,
-                },
+                }
             ],
         }
 
@@ -194,7 +186,6 @@ class AzureOpenAIService(AIBaseService):
 
         client = openai.AzureOpenAI(
             api_key=self.integration.api_key,
-            api_version=self.integration.azure_api_version,
             azure_endpoint=self.integration.azure_endpoint,
         )
 
@@ -317,7 +308,6 @@ class AzureOpenAIService(AIBaseService):
     #     embed_model = AzureOpenAIEmbedding(
     #         api_key=self.integration.api_key,
     #         azure_endpoint=self.integration.azure_endpoint,
-    #         api_version=self.integration.azure_api_version,
     #         deployment_name=model_name,
     #         model=model_name,
     #         **kwargs,
@@ -337,7 +327,6 @@ class AzureOpenAIService(AIBaseService):
     #     llm = AzureOpenAI(
     #         api_key=self.integration.api_key,
     #         azure_endpoint=self.integration.azure_endpoint,
-    #         api_version=self.integration.azure_api_version,
     #         deployment_name=model,
     #         model=model,
     #         **kwargs,
@@ -350,9 +339,6 @@ class AzureOpenAIService(AIBaseService):
             "api_key": self.integration.api_key,
             "azure_endpoint": (
                 self.integration.azure_endpoint
-            ),
-            "api_version": (
-                self.integration.azure_api_version
             ),
         }
 
