@@ -85,16 +85,16 @@ class AzureOpenAIService(AIBaseService):
 
     def get_integration_specific_details(self) -> dict:
         try:
-            available_models = [
+            available_models = list({
                 self.integration.test_model,
-                "gpt-4o",
-                "gpt-4o-mini",
-                "gpt-4.1",
-                "gpt-4.1-mini",
                 "gpt-5",
                 "gpt-5-mini",
-                "o3",
-            ]
+                "gpt-5-nano",
+                "gpt-5.2",
+                "gpt-5.4",
+                "gpt-5.4-mini",
+                "gpt-5.4-nano"
+            })
 
             return {
                 "integration_id": self.integration.accountId,
@@ -102,13 +102,11 @@ class AzureOpenAIService(AIBaseService):
                 "embedding_models": [
                     "text-embedding-3-small",
                     "text-embedding-3-large",
-                ],
+                    "text-embedding-ada-002",
+                ]
             }
-
-        except Exception:
-            return {
-                "error": "Details can not be fetched"
-            }
+        except Exception as e:
+            return {"error": "Details can not be fetched"}
 
     @staticmethod
     def ai_prompt_python_template():
