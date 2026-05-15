@@ -293,68 +293,49 @@ class AzureOpenAIService(AIBaseService):
         )
 
     def get_pydantic_model(self, model_name: str):
-        from pydantic_ai.models.openai import (
-            OpenAIResponsesModel,
-        )
-        from pydantic_ai.providers.openai import (
-            OpenAIProvider,
-        )
-
-        provider = OpenAIProvider(
-            api_key=self.integration.api_key,
-            base_url=(
-                f"{self.integration.azure_endpoint}/openai/v1/"
-            ),
-        )
-
+        from pydantic_ai.models.openai import OpenAIResponsesModel
+        from pydantic_ai.providers.openai import OpenAIProvider
         model = OpenAIResponsesModel(
             model_name=model_name,
-            provider=provider,
+            provider=OpenAIProvider(
+                api_key=self.integration.api_key,
+                base_url=f"{self.integration.azure_endpoint}/openai/{self.integration.azure_api_version}/"
+            ),
         )
-
         return model
 
-    def load_llama_index_embedding_model(
-        self,
-        model_name: Optional[str] = None,
-        **kwargs,
-    ):
+    def load_llama_index_embedding_model(self, model_name: Optional[str] = None, **kwargs):
+        """
+        Returns Llama Index Embedding model object and model dimensions as tuple
+        """
         if not model_name:
             model_name = "text-embedding-3-small"
+        from llama_index.embeddings.openai import OpenAIEmbedding
 
-        from llama_index.embeddings.azure_openai import (
-            AzureOpenAIEmbedding,
-        )
-
-        embed_model = AzureOpenAIEmbedding(
+        embed_model = OpenAIEmbedding(
             api_key=self.integration.api_key,
-            azure_endpoint=self.integration.azure_endpoint,
-            api_version=self.integration.azure_api_version,
-            deployment_name=model_name,
             model=model_name,
-            **kwargs,
+            api_base=f"{self.integration.azure_endpoint}/openai/{self.integration.azure_api_version}/",
+            **kwargs
         )
 
+        # embeddings = embed_model.get_text_embedding(
+        #     "Open AI new Embeddings models is great."
+        # )
+
+        # dimensions = len(embeddings)
+
+        # return embed_model, dimensions
         return embed_model
 
-    def load_llama_index_llm(
-        self,
-        model,
-        **kwargs,
-    ):
-        from llama_index.llms.azure_openai import (
-            AzureOpenAI,
-        )
+    def load_llama_index_llm(self, model, **kwargs):
+        from llama_index.llms.openai import OpenAI
 
-        llm = AzureOpenAI(
+        llm = OpenAI(
             api_key=self.integration.api_key,
-            azure_endpoint=self.integration.azure_endpoint,
-            deployment_name=model,
-            api_version=self.integration.azure_api_version,
+            api_base=f"{self.integration.azure_endpoint}/openai/{self.integration.azure_api_version}/",
             model=model,
-            **kwargs,
-        )
-
+            **kwargs)
         return llm
 
     def generate_llm_credentials(self):
