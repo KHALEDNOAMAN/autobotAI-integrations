@@ -23,7 +23,7 @@ from autobotAI_integrations.utils.logging_config import logger
 class AzureFoundryOpenAIIntegration(BaseSchema):
     api_key: Optional[str] = Field(default=None, exclude=True)
     azure_endpoint: str
-    openai_api_version: Optional[str] = "v1"
+    azure_api_version: Optional[str] = "v1"
     test_model: Optional[str] = "gpt-4o-mini"
 
     name: Optional[str] = "Azure Foundry OpenAI"
@@ -52,7 +52,7 @@ class AzureOpenAIService(AIBaseService):
 
         return OpenAI(
             api_key=self.integration.api_key,
-            base_url=f"{self.integration.azure_endpoint}/openai/{self.integration.openai_api_version}/",
+            base_url=f"{self.integration.azure_endpoint}/openai/{self.integration.azure_api_version}/",
         )
 
     def _test_integration(self):
@@ -166,9 +166,9 @@ class AzureOpenAIService(AIBaseService):
                     "required": True,
                 },
                 {
-                    "name": "openai_api_version",
+                    "name": "azure_api_version",
                     "type": "text",
-                    "label": "OpenAI API Version",
+                    "label": "Azure API Version",
                     "placeholder": "v1",
                     "required": False,
                 },
@@ -207,7 +207,7 @@ class AzureOpenAIService(AIBaseService):
 
         client = openai.OpenAI(
             api_key=self.integration.api_key,
-            base_url=f"{self.integration.azure_endpoint}/openai/{self.integration.openai_api_version}/",
+            base_url=f"{self.integration.azure_endpoint}/openai/{self.integration.azure_api_version}/",
         )
 
         return [
@@ -229,7 +229,7 @@ class AzureOpenAIService(AIBaseService):
                 self.integration.azure_endpoint
             ),
             "OPENAI_API_VERSION": (
-                self.integration.openai_api_version
+                self.integration.azure_api_version
             ),
         }
 
@@ -265,7 +265,7 @@ class AzureOpenAIService(AIBaseService):
                 self.integration.azure_endpoint
             ),
             "OPENAI_API_VERSION": (
-                self.integration.openai_api_version
+                self.integration.azure_api_version
             ),
         }
 
@@ -314,46 +314,48 @@ class AzureOpenAIService(AIBaseService):
 
         return model
 
-    # def load_llama_index_embedding_model(
-    #     self,
-    #     model_name: Optional[str] = None,
-    #     **kwargs,
-    # ):
-    #     if not model_name:
-    #         model_name = "text-embedding-3-small"
-    #
-    #     from llama_index.embeddings.azure_openai import (
-    #         AzureOpenAIEmbedding,
-    #     )
-    #
-    #     embed_model = AzureOpenAIEmbedding(
-    #         api_key=self.integration.api_key,
-    #         azure_endpoint=self.integration.azure_endpoint,
-    #         deployment_name=model_name,
-    #         model=model_name,
-    #         **kwargs,
-    #     )
-    #
-    #     return embed_model
+    def load_llama_index_embedding_model(
+        self,
+        model_name: Optional[str] = None,
+        **kwargs,
+    ):
+        if not model_name:
+            model_name = "text-embedding-3-small"
 
-    # def load_llama_index_llm(
-    #     self,
-    #     model,
-    #     **kwargs,
-    # ):
-    #     from llama_index.llms.azure_openai import (
-    #         AzureOpenAI,
-    #     )
-    #
-    #     llm = AzureOpenAI(
-    #         api_key=self.integration.api_key,
-    #         azure_endpoint=self.integration.azure_endpoint,
-    #         deployment_name=model,
-    #         model=model,
-    #         **kwargs,
-    #     )
-    #
-    #     return llm
+        from llama_index.embeddings.azure_openai import (
+            AzureOpenAIEmbedding,
+        )
+
+        embed_model = AzureOpenAIEmbedding(
+            api_key=self.integration.api_key,
+            azure_endpoint=self.integration.azure_endpoint,
+            api_version=self.integration.azure_api_version,
+            deployment_name=model_name,
+            model=model_name,
+            **kwargs,
+        )
+
+        return embed_model
+
+    def load_llama_index_llm(
+        self,
+        model,
+        **kwargs,
+    ):
+        from llama_index.llms.azure_openai import (
+            AzureOpenAI,
+        )
+
+        llm = AzureOpenAI(
+            api_key=self.integration.api_key,
+            azure_endpoint=self.integration.azure_endpoint,
+            deployment_name=model,
+            api_version=self.integration.azure_api_version,
+            model=model,
+            **kwargs,
+        )
+
+        return llm
 
     def generate_llm_credentials(self):
         return {
