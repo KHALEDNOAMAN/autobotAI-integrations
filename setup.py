@@ -66,6 +66,8 @@ setup(
             "pydantic-ai-slim[bedrock,openai,mcp]>=1.22.0",
             "llama-index==0.14.18",
             "llama-index-llms-openai==0.7.3",
+            "llama-index-llms-azure-openai",
+            "llama-index-embeddings-azure-openai",
             "llama-index-llms-bedrock",
             "llama-index-embeddings-openai==0.6.0",
             "llama-index-embeddings-bedrock",
