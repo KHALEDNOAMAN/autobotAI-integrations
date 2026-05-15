@@ -175,7 +175,7 @@ class AzureOpenAIService(AIBaseService):
                 {
                     "name": "test_model",
                     "type": "text",
-                    "label": "OpenAI Model to test the integration with",
+                    "label": "OpenAI Model to test the integration with\nNOTE: ENABLE `text-embedding-3-small` BEFORE USING MEMORY SPACES",
                     "placeholder": "gpt-4o-mini",
                     "required": False,
                 }
