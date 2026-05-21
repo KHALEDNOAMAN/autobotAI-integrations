@@ -3,3 +3,8 @@
     - msgraph
   pip_package_names:
     - msgraph-sdk>=1.52.0
+- name: msgraph-defender
+  import_library_names:
+    - msgraph
+  pip_package_names:
+    - msgraph-sdk>=1.52.0

@@ -60,25 +60,26 @@ class OpenAIService(AIBaseService):
 
     def get_integration_specific_details(self) -> dict:
         try:
-            # TODO: USE API
-            from openai import OpenAI
-            client = OpenAI(api_key=self.integration.api_key)
-            
-            models_list = client.models.list().data
-            
-            tool_calling_models = [
-                model.id for model in models_list
-                # Only including text based tool calling models
-                if any(k in model.id for k in ["gpt", "o1", "o2", "o3", "o4"])
-                # Removing old and embedding models
-                and not any(x in model.id for x in ["instruct", "embedding"])
+            # available_models = [
+            #     "gpt-5.4",
+            #     "gpt-5.4-mini",
+            #     "gpt-5.4-nano",
+            #     "gpt-5.4-pro",
+            #     "o3",
+            # ]
+            available_models = [
+                "gpt-5",
+                "gpt-5-mini",
+                "gpt-5-nano",
+                "gpt-5.2",
+                "gpt-5.4",
+                "gpt-5.4-mini",
+                "gpt-5.4-nano",
             ]
-            
-            tool_calling_models.sort()
-            
+
             return {
                 "integration_id": self.integration.accountId,
-                "models": tool_calling_models,
+                "models": available_models,
                 "embedding_models": [
                     "text-embedding-3-small",
                     "text-embedding-3-large",
@@ -174,6 +175,26 @@ class OpenAIService(AIBaseService):
                 credentials=creds,
             )
 
+        def model_agent(model_string: str, system_prompt: str = "", tools: Optional[list] = None, **agent_kwargs):
+            creds = payload_task.creds.envs if payload_task.creds else {}
+            return self.get_pydantic_agent(
+                model=model_string,
+                tools=tools or [],
+                system_prompt=system_prompt,
+                options=agent_kwargs,
+                credentials=creds,
+            )
+
+        def model_agent(model_string: str, system_prompt: str = "", tools: Optional[list] = None, **agent_kwargs):
+            creds = payload_task.creds.envs if payload_task.creds else {}
+            return self.get_pydantic_agent(
+                model=model_string,
+                tools=tools or [],
+                system_prompt=system_prompt,
+                options=agent_kwargs,
+                credentials=creds,
+            )
+
         return [
             {
                 "clients": {
@@ -233,7 +254,7 @@ class OpenAIService(AIBaseService):
             provider=OpenAIProvider(api_key=payload_creds.get("OPENAI_API_KEY")),
         )
         return model
-    
+
     def load_llama_index_embedding_model(self, model_name: Optional[str] = None, **kwargs):
         """
         Returns Llama Index Embedding model object and model dimensions as tuple
@@ -255,12 +276,16 @@ class OpenAIService(AIBaseService):
         # return embed_model, dimensions
         return embed_model
 
-    
     def load_llama_index_llm(self, model, **kwargs):
         from llama_index.llms.openai import OpenAI
-        
+
         llm = OpenAI(api_key=self.integration.api_key, model=model, **kwargs)
         return llm
+    
+    def generate_llm_credentials(self):
+        return {
+            "api_key": self.integration.api_key
+        }
 
     def prompt_executor(
         self,
@@ -271,7 +296,7 @@ class OpenAIService(AIBaseService):
         messages: List[Dict[str, Any]] = [],
     ):
         from openai import OpenAI
-        
+
         logger.info(f"Executing prompt: {prompt}")
         client = OpenAI(api_key=self.integration.api_key)
         if model:
@@ -300,43 +325,3 @@ class OpenAIService(AIBaseService):
             return "AI-Execution Failed to Generate Result"
         else:
             raise Exception("Model is Required")
-        # if "assistant_id" not in options:
-        #     logger.error(
-        #         "assistant_id is required if model is not provided, and no default assistant was defined"
-        #     )
-        #     raise Exception("assistant_id is required if model is not provided")
-
-        # thread_id = options.get("thread_id", None)
-        # if not thread_id:
-        #     thread = client.beta.threads.create()
-        #     thread_id = thread.id
-
-        #     message = client.beta.threads.messages.create(
-        #         thread_id=thread_id,
-        #         role="user",
-        #         content=prompt,
-        #     )
-
-        # run_id = options.get("run_id", None)
-        # if not run_id:
-        #     run = client.beta.threads.runs.create(
-        #         thread_id=thread_id,
-        #         assistant_id=options.get("assistant_id"),
-        #         extra_headers={"OpenAI-Beta": "assistants=v2"},
-        #     )
-        #     run_id = run.id
-        # print("run is ",run)
-        # print("run status is ",run.status)
-        # while run.status!='completed':
-
-        #     run = client.beta.threads.runs.retrieve(thread_id=thread_id, run_id=run_id)
-        # # if run.status != "completed":
-        # #     return {"thread_id": thread_id, "run_id": run.id, "status": run.status}
-
-        # print("run status is after ",run.status)
-        # messages = client.beta.threads.messages.list(thread_id=thread_id)
-        # print("message is ",message)
-        # new_message = messages.data[0].content[0].text.value
-
-        # print("new message os ",new_message)
-        # return {"status": run.status, "response": new_message}

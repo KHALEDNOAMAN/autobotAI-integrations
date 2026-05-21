@@ -27,11 +27,14 @@ class IMAPIntegration(BaseSchema):
     username: Optional[str] = Field(default=None, exclude=True)
     password: Optional[str] = Field(default=None, exclude=True)
 
-    category: Optional[str] = IntegrationCategory.MONITORING_TOOLS.value
+    category: Optional[str] = IntegrationCategory.NOTIFICATIONS_AND_COMMUNICATIONS.value
     description: Optional[str] = "IMAP is a protocol for email access and management."
 
 
 class IMAPService(BaseService):
+    # Used as an SMTP sender too (see ``smtp_host`` field). Same generous
+    # 1 MB cap as AWS SES with HTML-formatted footers.
+    notification_body_limit = {"max_bytes": 1_000_000, "format": "html"}
 
     def __init__(self, ctx: dict, integration: Union[IMAPIntegration, dict]):
         """

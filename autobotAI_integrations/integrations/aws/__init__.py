@@ -121,27 +121,27 @@ class AWSService(BaseService):
                         }
                     ]
                 },
-                {
-                    "label": "AccessKey / SecretKey Integration",
-                    "type": "form",
-                    "formId": AWSAuthTypes.ACCESS_KEY_INTEGRATION.value,
-                    "children": [
-                        {
-                            "name": "access_key",
-                            "type": "text",
-                            "label": "Access Key",
-                            "placeholder": "Enter your AWS access key",
-                            "required": True
-                        },
-                        {
-                            "name": "secret_key",
-                            "type": "text/password",
-                            "label": "Secret Key",
-                            "placeholder": "Enter your AWS secret key",
-                            "required": True
-                        }
-                    ]
-                }
+                # {
+                #     "label": "AccessKey / SecretKey Integration",
+                #     "type": "form",
+                #     "formId": AWSAuthTypes.ACCESS_KEY_INTEGRATION.value,
+                #     "children": [
+                #         {
+                #             "name": "access_key",
+                #             "type": "text",
+                #             "label": "Access Key",
+                #             "placeholder": "Enter your AWS access key",
+                #             "required": True
+                #         },
+                #         {
+                #             "name": "secret_key",
+                #             "type": "text/password",
+                #             "label": "Secret Key",
+                #             "placeholder": "Enter your AWS secret key",
+                #             "required": True
+                #         }
+                #     ]
+                # }
             ]
         }
 

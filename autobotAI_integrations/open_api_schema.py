@@ -18,6 +18,7 @@ class OpenAPIAction(BaseModel):
     executable_type: Optional[str] = ConnectionInterfaces.REST_API.value
     category: Optional[str] = None
     parameters_definition: Optional[List[OpenAPIPathParams]] = []
+    output_selector: Optional[str] = None
 
 class MCPTransport(str, Enum):
     STREAMABLE_HTTP = "streamable_http"
@@ -40,6 +41,7 @@ class OpenAPIPathModel(BaseModel):
     description: Optional[str] = ""
     parameters: List[OpenAPIPathParams] = []
     operationId: Optional[str] = Field(default=None, alias="operationId")
+    output_selector: Optional[str] = Field(default=None, alias="output-selector")
 
     def __init__(self,*args ,**kwargs):
         if "method" in kwargs:

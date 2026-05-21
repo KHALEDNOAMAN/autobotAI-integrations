@@ -2,7 +2,8 @@ from typing import List, Optional, Type, Union
 from pydantic import Field
 
 from autobotAI_integrations import BaseService, list_of_unique_elements, PayloadTask
-from autobotAI_integrations.models import BaseSchema, CLICreds, ConnectionInterfaces, IntegrationCategory, SDKClient, SDKCreds, SteampipeCreds
+from autobotAI_integrations.models import BaseSchema, CLICreds, ConnectionInterfaces, IntegrationCategory, SDKClient, \
+    SDKCreds, SteampipeCreds, RestAPICreds
 
 import importlib
 import requests
@@ -11,6 +12,8 @@ import requests
 class MicrosoftIntegration(BaseSchema):
     tenant_id: Optional[str] = None
     client_id: Optional[str] = Field(default=None, exclude=True)
+    # subscription_id is optional — used when Azure Resource Management APIs are needed.
+    # Microsoft 365 / Graph-only integrations can omit it entirely.
     subscription_id: Optional[str] = Field(default=None, exclude=True)
     user_id: Optional[str] = Field(default=None, exclude=True)
     client_secret: Optional[str] = Field(default=None, exclude=True)
@@ -21,8 +24,11 @@ class MicrosoftIntegration(BaseSchema):
     )
 
     def __init__(self, **kwargs):
+        # Backward-compatible accountId construction:
+        # - If subscription_id is provided (old behaviour), suffix it with "_microsoft365".
+        # - If omitted (new behaviour), fall back to tenant_id or let BaseSchema handle it.
         if kwargs.get("subscription_id"):
-            kwargs["accountId"] = kwargs["subscription_id"] + "_microsoft365"
+            kwargs.setdefault("accountId", kwargs["subscription_id"] + "_microsoft365")
         super().__init__(**kwargs)
 
 
@@ -30,7 +36,7 @@ class MicrosoftService(BaseService):
 
     def __init__(self, ctx: dict, integration: Union[MicrosoftIntegration, dict]):
         """
-        Integration should have all the data regarding the integration
+        Integration should have all the data regarding the integration.
         """
         if not isinstance(integration, MicrosoftIntegration):
             integration = MicrosoftIntegration(**integration)
@@ -82,7 +88,7 @@ class MicrosoftService(BaseService):
                     "name": "subscription_id",
                     "type": "text",
                     "label": "Subscription ID",
-                    "placeholder": "Enter your Microsoft subscription ID",
+                    "placeholder": "Enter your Microsoft subscription ID (optional, required for Azure resource management)",
                     "required": False,
                 },
                 {
@@ -131,11 +137,14 @@ class MicrosoftService(BaseService):
             conf_path=conf_path,
             config=config,
         )
-
     def build_python_exec_combinations_hook(
         self, payload_task: PayloadTask, client_definitions: List[SDKClient]
     ) -> list:
+        # Ref: https://learn.microsoft.com/en-us/python/api/azure-identity/azure.identity.clientsecretcredential
+        # ClientSecretCredential(tenant_id, client_id, client_secret) — subscription_id is NOT
+        # a credential parameter; it is passed to management-plane clients separately when needed.
         from azure.identity import ClientSecretCredential
+
         credential = ClientSecretCredential(
             tenant_id=payload_task.creds.envs.get("AZURE_TENANT_ID"),
             client_id=payload_task.creds.envs.get("AZURE_CLIENT_ID"),
@@ -143,7 +152,7 @@ class MicrosoftService(BaseService):
         )
         scopes = ["https://graph.microsoft.com/.default"]
         msgraph = importlib.import_module(client_definitions[0].import_library_names[0], package=None)
-        return [
+        item = [
             {
                 "clients": {
                     "msgraph": msgraph.GraphServiceClient(
@@ -154,6 +163,14 @@ class MicrosoftService(BaseService):
                 "context": payload_task.context,
             }
         ]
+        try:
+            defender_client = msgraph.GraphServiceClient(
+                credentials=credential, scopes=scopes + ["https://api.security.microsoft.com/.default"]
+            )
+            item[0]["clients"]["msgraph-defender"] = defender_client
+        except:
+            pass
+        return item
 
     def generate_python_sdk_creds(self, requested_clients=None) -> SDKCreds:
         creds = self._temp_credentials()
@@ -171,9 +188,19 @@ class MicrosoftService(BaseService):
     def generate_cli_creds(self) -> CLICreds:
         raise NotImplementedError()
 
-    def _temp_credentials(self):
-        return {
+    def _temp_credentials(self) -> dict:
+        """
+        Returns environment variable credentials dict.
+
+        AZURE_SUBSCRIPTION_ID is included only when subscription_id is set,
+        so downstream Azure management-plane SDK clients can consume it
+        when present without breaking Graph-only integrations that omit it.
+        """
+        creds = {
             "AZURE_TENANT_ID": self.integration.tenant_id,
             "AZURE_CLIENT_ID": self.integration.client_id,
             "AZURE_CLIENT_SECRET": self.integration.client_secret
         }
+        if self.integration.subscription_id:
+            creds["AZURE_SUBSCRIPTION_ID"] = self.integration.subscription_id
+        return creds
