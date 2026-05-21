@@ -76,7 +76,7 @@ class GitService(BaseService):
                 stderr=subprocess.DEVNULL,
             )
             return True
-        except subprocess.CalledProcessError:
+        except (subprocess.CalledProcessError, FileNotFoundError):
             return False
 
     def _install_git_with_python(self):
