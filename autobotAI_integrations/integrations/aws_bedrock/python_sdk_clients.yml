@@ -6,3 +6,5 @@
   name: bedrock-agent
 - is_regional: true
   name: bedrock-agent-runtime
+- is_regional: false
+  name: Agent

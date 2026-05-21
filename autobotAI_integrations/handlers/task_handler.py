@@ -78,15 +78,15 @@ def handle_task(task: PayloadTask) -> TaskResult:
     
     logger.info(f"TASK OUTPUT SELECTOR: {getattr(task, 'output_selector', 'N/A')}")
     if result.resources and hasattr(task, "output_selector") and task.output_selector:
-        logger.info(f"BEFORE EXTRACT: {result.resources}")
-        logger.info(f"OUTPUT SELECTOR: {task.output_selector}")
+        logger.debug(f"BEFORE EXTRACT: {result.resources}")
+        logger.debug(f"OUTPUT SELECTOR: {task.output_selector}")
         try:
             result.resources = extract(result.resources, task.output_selector, logger)
         except Exception as e:
             logger.error(f"Error during JSONPath extraction: {str(e)}")
             result.errors.append({"message": str(e), "type": "JSONPathError"})
             result.resources = []
-        logger.info(f"AFTER EXTRACT: {result.resources}")
+        logger.debug(f"AFTER EXTRACT: {result.resources}")
 
     result.errors = [ResponseError(**error) for error in output[1]]
     if result.errors:
