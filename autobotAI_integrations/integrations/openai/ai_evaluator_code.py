@@ -1,129 +1,53 @@
+from pydantic import BaseModel, Field
+from typing import List
 import json
-import traceback
 
 
 def executor(context):
-    openai = context["clients"]["openai"]
+    agent = context["clients"]["Agent"]
     prompt = context["params"]["prompt"]
     model = context["params"]["model"]
     resources = json.loads(json.dumps(context["params"]["resources"], default=str))
+
+    class ResourceEvaluation(BaseModel):
+        name: str = Field(..., description="Matches unique resource 'name' field")
+        action_required: bool = Field(..., description="Whether action is required")
+        probability_score: int = Field(..., ge=1, le=100, description="Probability score between 1 and 100")
+        confidence_score: int = Field(..., ge=0, le=100, description="Confidence score between 0 and 100")
+        reason: str = Field(..., description="Explanation for the scores")
+        fields_evaluated: List[str] = Field(..., description="List of fields that were evaluated")
+
+
+    system_prompt = f"""You are an AI evaluator that returns decision-making JSON data only.Given the prompt and resource list, evaluate each resource based on the following field descriptions:\n
+    1. **name**: The unique name of the resource being evaluated. It should match exactly with the resource 'name' field value.\n
+    2. **action_required**: A Boolean indicating whether action is advisable for the resource. Determine this based on `probability_score` and `confidence_score`. Return `true` if action is recommended; otherwise, return `false`.\n
+    3. **probability_score**: An integer (1-100) representing the likelihood of a specific outcome occurring. Higher scores suggest automation or action; lower scores suggest manual intervention or no action.\n
+    4. **confidence_score**: An integer (0-100) reflecting the confidence in the evaluation's accuracy. Lower scores imply that more assumptions were needed to reach the result.\n
+    5. **reason**: A textual explanation justifying the `action_required` value, based on the `probability_score` and `confidence_score`.\n
+    6. **fields_evaluated**: A list of the field names considered in determining the above values.\n
+
+    Your response must be a JSON array with one object per resource, strictly following this schema: {ResourceEvaluation.model_json_schema()}
+
+    Rules:\n
+    - Return only a JSON array, structured for direct parsing using `json.loads(response)` in Python.\n
+    - No extra text, symbols, or markdown.\n
+    - Each object must contain all required fields."""
+
+    user_prompt = f"""
+    System Instructions: {system_prompt}
+    Resources: {resources}
+    Prompt: {prompt}
+
+    Response: """
+
+    agent_instance = agent(model)
+
+    # Execute agent
+    result = agent_instance.run_sync(
+        f"{system_prompt}\n\n{user_prompt}"
+    )
+
+    return [result.output]
+
+
     
-    MAX_TOKEN = 8192
-
-    if not isinstance(resources, list):
-        resources = [resources]
-
-    sample_json = """
-    {
-        "name": "string (matches unique resource 'name' field)",
-        "action_required": "Boolean",
-        "probability_score": "int (1-100)",
-        "confidence_score": "int (0-100)",
-        "reason": "string (explanation for scores)",
-        "fields_evaluated": ["field1", "field2", "field3", ..., "fieldN"]
-    }
-    """
-
-    user_prompt = f"""Generate JSON output based on the following field descriptions and instructions:
-    
-    1. **name**: The unique name of the resource being evaluated. It should match exactly with the resource 'name' field value.
-    2. **action_required**: A Boolean indicating whether action is advisable for the resource. Determine this based on `probability_score` and `confidence_score`. Return `true` if action is recommended; otherwise, return `false`.
-    3. **probability_score**: An integer (1-100) representing the likelihood of a specific outcome occurring. Higher scores suggest automation or action; lower scores suggest manual intervention or no action.
-    4. **confidence_score**: An integer (0-100) reflecting the confidence in the evaluation's accuracy. Lower scores imply that more assumptions were needed to reach the result.
-    5. **reason**: A textual explanation justifying the `action_required` value, based on the `probability_score` and `confidence_score`.
-    6. **fields_evaluated**: A list of the field names considered in determining the above values.
-
-    Return JSON strictly in the format of this example: {sample_json} for each prompt JSON provided. No extra text or symbols; respond with JSON output only.
-    """
-    # Initializing prompts with an explanatory prompt for the model
-    prompts = [
-        {
-            "role": "system",
-            "content": f"You are an AI evaluator that returns decision-making JSON data only. Given the prompt and resource list, evaluate each resource according to: {user_prompt}. Return only a JSON array with one JSON object per resource, structured for direct parsing using `json.loads(response)` in Python. No other text should be included.",
-        },
-    ]
-    prompts.append(
-        {
-            "role": "user",
-            "content": f"Resources: ",
-        }
-    )
-    prompts.append(
-        {
-            "role": "user",
-            "content": f"Prompt: {prompt}",
-        }
-    )
-
-    # Adding individual resources to prompts
-    current_prompt_len = 2300 + len(prompt) # prompt length
-    parsable_resource_count = 0
-    for resource in enumerate(resources):
-        resource_len = len(str(resource))
-        if current_prompt_len + resource_len < MAX_TOKEN * 3:
-            prompts.append(
-                {
-                    "role": "user",
-                    "content": json.dumps(resource, default=str),
-                }
-            )
-            current_prompt_len += resource_len
-            parsable_resource_count += 1
-            continue
-        break
-
-    resources = resources[:min(parsable_resource_count, 10)]
-
-    # Final signal to process resources
-    prompts.append(
-        {
-            "role": "user",
-            "content": "All resources are provided; return a JSON array of results for each resource in order.",
-        }
-    )
-
-    # Retry mechanism to handle transient issues
-    counter = 0
-    results = None
-    while counter < 3:  # 3 Retries
-        chat_completion = openai.chat.completions.create(
-            messages=prompts,
-            model=model,
-        )
-        try:
-            message_content = chat_completion.choices[0].message.content
-            print(message_content)
-            if message_content:
-                if message_content.startswith('```json') and message_content.endswith('```'):
-                    message_content = message_content.strip('```').strip('json')
-                results = json.loads(message_content)
-                return combine_resources_with_decision(resources, results)
-        except json.decoder.JSONDecodeError as e:
-            results = {
-                "error": "Response too large or invalid JSON format.",
-                "evaluated-response": str(message_content),
-            }
-        except Exception as e:
-            results = {
-                "error": str(e),
-                "evaluated-response": str(message_content),
-            }
-        counter += 1
-    print("Completed Evaluation with ", counter, "tries.")
-    return results
-
-
-def combine_resources_with_decision(resources, decisions):
-    results = []
-    if isinstance(decisions, dict):
-        decisions = [decisions]
-    for resource in resources:
-        for decision in decisions:
-            if resource["name"] == decision["name"]:
-                resource["decision"] = decision
-                results.append(resource)
-                break
-    if results:
-        return results
-    else:
-        raise Exception("Something Went Wrong, Please try again.")

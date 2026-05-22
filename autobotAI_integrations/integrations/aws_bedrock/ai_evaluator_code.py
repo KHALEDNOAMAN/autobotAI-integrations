@@ -4,8 +4,6 @@ import json
 
 
 def executor(context):
-
-    
     agent = context["clients"]["Agent"]
     prompt = context["params"]["prompt"]
     model = context["params"]["model"]
@@ -20,32 +18,36 @@ def executor(context):
         fields_evaluated: List[str] = Field(..., description="List of fields that were evaluated")
 
 
-    system_prompt = f"""You are an AI evaluator that returns decision-making JSON data only.
+    system_prompt = f"""You are an AI evaluator that returns decision-making JSON data only.Given the prompt and resource list, evaluate each resource based on the following field descriptions:\n
+    1. **name**: The unique name of the resource being evaluated. It should match exactly with the resource 'name' field value.\n
+    2. **action_required**: A Boolean indicating whether action is advisable for the resource. Determine this based on `probability_score` and `confidence_score`. Return `true` if action is recommended; otherwise, return `false`.\n
+    3. **probability_score**: An integer (1-100) representing the likelihood of a specific outcome occurring. Higher scores suggest automation or action; lower scores suggest manual intervention or no action.\n
+    4. **confidence_score**: An integer (0-100) reflecting the confidence in the evaluation's accuracy. Lower scores imply that more assumptions were needed to reach the result.\n
+    5. **reason**: A textual explanation justifying the `action_required` value, based on the `probability_score` and `confidence_score`.\n
+    6. **fields_evaluated**: A list of the field names considered in determining the above values.\n
 
-    Given the prompt and resource list, evaluate each resource based on the following field descriptions:
+    Your response must be a JSON array with one object per resource, strictly following this schema: {ResourceEvaluation.model_json_schema()}
 
-    1. **name**: The unique name of the resource being evaluated. It should match exactly with the resource 'name' field value.
-    2. **action_required**: A Boolean indicating whether action is advisable for the resource. Determine this based on `probability_score` and `confidence_score`. Return `true` if action is recommended; otherwise, return `false`.
-    3. **probability_score**: An integer (1-100) representing the likelihood of a specific outcome occurring. Higher scores suggest automation or action; lower scores suggest manual intervention or no action.
-    4. **confidence_score**: An integer (0-100) reflecting the confidence in the evaluation's accuracy. Lower scores imply that more assumptions were needed to reach the result.
-    5. **reason**: A textual explanation justifying the `action_required` value, based on the `probability_score` and `confidence_score`.
-    6. **fields_evaluated**: A list of the field names considered in determining the above values.
-
-    Your response must be a JSON array with one object per resource, strictly following this schema:
-    {ResourceEvaluation.model_json_schema()}
-
-    Rules:
-    - Return only a JSON array, structured for direct parsing using `json.loads(response)` in Python.
-    - No extra text, symbols, or markdown.
-    - Each object must contain all required fields.
-    """
+    Rules:\n
+    - Return only a JSON array, structured for direct parsing using `json.loads(response)` in Python.\n
+    - No extra text, symbols, or markdown.\n
+    - Each object must contain all required fields."""
 
     user_prompt = f"""
     System Instructions: {system_prompt}
-
     Resources: {resources}
-
     Prompt: {prompt}
 
-    Response:
-    """
+    Response: """
+
+    agent_instance = agent(model)
+
+    # Execute agent
+    result = agent_instance.run_sync(
+        f"{system_prompt}\n\n{user_prompt}"
+    )
+
+    return [result.output]
+
+
+    
