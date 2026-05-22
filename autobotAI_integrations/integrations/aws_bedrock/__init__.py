@@ -316,14 +316,7 @@ class AWSBedrockService(AIBaseService):
     ):
         from pydantic_ai.agent import Agent
 
-        model_instance = self.get_pydantic_model(model)
-        return Agent(
-            model_instance, system_prompt=system_prompt, tools=tools, **options
-        )
-
-    def get_pydantic_model(self, model_name: str):
-
-        model_instance = self.get_pydantic_model(model, credentials=credentials)
+        model_instance = self.get_pydantic_model(model,credentials=credentials)
         return Agent(
             model_instance, system_prompt=system_prompt, tools=tools, **options
         )
@@ -331,16 +324,13 @@ class AWSBedrockService(AIBaseService):
     def get_pydantic_model(self, model_name: str, credentials: Optional[dict] = None):
         from pydantic_ai.models.bedrock import BedrockConverseModel
         from pydantic_ai.providers.bedrock import BedrockProvider
-
-        credentials = self._temp_credentials()
-
-        payload_creds = credentials if credentials else self._temp_credentials()
+  
         model = BedrockConverseModel(
             model_name=model_name,
             provider=BedrockProvider(
-                aws_access_key_id=payload_creds.get("AWS_ACCESS_KEY_ID"),
-                aws_secret_access_key=payload_creds.get("AWS_SECRET_ACCESS_KEY"),
-                aws_session_token=payload_creds.get("AWS_SESSION_TOKEN"),  # None if no role assumption
+                aws_access_key_id=credentials.get("AWS_ACCESS_KEY_ID"),
+                aws_secret_access_key=credentials.get("AWS_SECRET_ACCESS_KEY"),
+                aws_session_token=credentials.get("AWS_SESSION_TOKEN"),  # None if no role assumption
                 region_name=self.integration.region,
             ),
         )
