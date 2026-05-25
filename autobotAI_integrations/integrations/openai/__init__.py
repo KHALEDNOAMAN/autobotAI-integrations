@@ -95,7 +95,7 @@ class OpenAIService(AIBaseService):
         with open(os.path.join(current_directory, "ai_evaluator_code.py")) as f:
             return {
                 "integration_type": "openai",
-                "ai_client": "Agent",
+                "ai_client": "openai",
                 "param_definitions": [
                     {
                         "name": "prompt",
@@ -165,35 +165,6 @@ class OpenAIService(AIBaseService):
                 credentials=creds,
             )
 
-        def model_agent(model_string: str, system_prompt: str = "", tools: Optional[list] = None, **agent_kwargs):
-            creds = payload_task.creds.envs if payload_task.creds else {}
-            return self.get_pydantic_agent(
-                model=model_string,
-                tools=tools or [],
-                system_prompt=system_prompt,
-                options=agent_kwargs,
-                credentials=creds,
-            )
-
-        def model_agent(model_string: str, system_prompt: str = "", tools: Optional[list] = None, **agent_kwargs):
-            creds = payload_task.creds.envs if payload_task.creds else {}
-            return self.get_pydantic_agent(
-                model=model_string,
-                tools=tools or [],
-                system_prompt=system_prompt,
-                options=agent_kwargs,
-                credentials=creds,
-            )
-
-        def model_agent(model_string: str, system_prompt: str = "", tools: Optional[list] = None, **agent_kwargs):
-            creds = payload_task.creds.envs if payload_task.creds else {}
-            return self.get_pydantic_agent(
-                model=model_string,
-                tools=tools or [],
-                system_prompt=system_prompt,
-                options=agent_kwargs,
-                credentials=creds,
-            )
 
         return [
             {
