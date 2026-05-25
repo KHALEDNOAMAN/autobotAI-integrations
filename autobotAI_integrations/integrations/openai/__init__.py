@@ -94,8 +94,8 @@ class OpenAIService(AIBaseService):
         current_directory = Path(__file__).resolve().parent
         with open(os.path.join(current_directory, "ai_evaluator_code.py")) as f:
             return {
-                "integration_type": "Agent",
-                "ai_client": "openai",
+                "integration_type": "openai",
+                "ai_client": "Agent",
                 "param_definitions": [
                     {
                         "name": "prompt",
