@@ -166,7 +166,7 @@ class AWSBedrockService(AIBaseService):
         with open(os.path.join(current_directory, "ai_evaluator_code.py")) as f:
             return {
                 "integration_type": "aws_bedrock",
-                "ai_client": "bedrock-runtime",
+                "ai_client": "Agent",
                 "param_definitions": [
                     {
                         "name": "prompt",
