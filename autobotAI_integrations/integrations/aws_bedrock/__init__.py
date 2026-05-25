@@ -326,14 +326,13 @@ class AWSBedrockService(AIBaseService):
         from pydantic_ai.providers.bedrock import BedrockProvider
 
         
-        payload_creds = credentials if credentials else self._temp_credentials()
   
         model = BedrockConverseModel(
             model_name=model_name,
             provider=BedrockProvider(
-                aws_access_key_id=payload_creds.get("AWS_ACCESS_KEY_ID"),
-                aws_secret_access_key=payload_creds.get("AWS_SECRET_ACCESS_KEY"),
-                aws_session_token=payload_creds.get("AWS_SESSION_TOKEN"),  # None if no role assumption
+                aws_access_key_id=credentials.get("AWS_ACCESS_KEY_ID"),
+                aws_secret_access_key=credentials.get("AWS_SECRET_ACCESS_KEY"),
+                aws_session_token=credentials.get("AWS_SESSION_TOKEN"),  # None if no role assumption
                 region_name=self.integration.region,
             ),
         )

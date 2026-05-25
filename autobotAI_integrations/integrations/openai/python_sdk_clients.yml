@@ -3,4 +3,4 @@
     - openai
   pip_package_names:
     - openai
-  name: Agent
+- name: Agent
