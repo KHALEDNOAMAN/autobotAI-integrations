@@ -1,5 +1,5 @@
 import traceback
-from typing import Type, Union
+from typing import Any, Dict, Type, Union
 from enum import Enum
 
 import uuid
@@ -215,20 +215,32 @@ class AWSService(BaseService):
         resolver = current_aws_creds_resolver.get()
         use_refreshable = resolver is not None
 
+        # Memoize one refreshable session per scope so all clients in the
+        # same scope share one credentials object (and one refresh cycle).
+        # Without this, every client would have its own RefreshableCredentials
+        # and would re-invoke the resolver independently — wasteful and a
+        # source of duplicate cred-refresh traffic.
+        _global_session: list = []  # mutable cell for closure
+        _regional_sessions: Dict[str, Any] = {}
+
         def _global_client(name: str):
             if use_refreshable:
-                session = build_refreshable_aws_session(
-                    resolver, payload_task.task_id, region_name=None
-                )
-                return session.client(name)
+                if not _global_session:
+                    _global_session.append(
+                        build_refreshable_aws_session(
+                            resolver, payload_task.task_id, region_name=None
+                        )
+                    )
+                return _global_session[0].client(name)
             return boto3.client(name, **creds)
 
         def _regional_client(name: str, region: str):
             if use_refreshable:
-                session = build_refreshable_aws_session(
-                    resolver, payload_task.task_id, region_name=region
-                )
-                return session.client(name, region_name=region)
+                if region not in _regional_sessions:
+                    _regional_sessions[region] = build_refreshable_aws_session(
+                        resolver, payload_task.task_id, region_name=region
+                    )
+                return _regional_sessions[region].client(name, region_name=region)
             return boto3.client(name, region_name=region, **creds)
 
         if global_clients:

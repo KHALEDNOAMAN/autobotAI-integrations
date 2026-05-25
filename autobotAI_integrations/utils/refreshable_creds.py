@@ -46,8 +46,11 @@ _DEFAULT_TTL_SECONDS = 3500
 
 # Callable signature: takes the task_id (so a single resolver can serve
 # multiple tasks in the same process) and returns the botocore-shaped creds.
-# When the resolver has no creds for the given task_id, returning ``None``
-# tells the caller to fall through to the static-creds path.
+# The caller (``AWSService.build_python_exec_combinations_hook``) decides
+# whether to invoke this path at all by checking the contextvar — once
+# ``build_refreshable_aws_session`` is called, the resolver MUST return
+# valid creds for the requested task_id on every call (including the
+# initial one), or a ``ValueError`` will be raised.
 AWSCredsResolver = Callable[[Optional[str]], Optional[Dict[str, Any]]]
 
 current_aws_creds_resolver: "contextvars.ContextVar[Optional[AWSCredsResolver]]" = (
