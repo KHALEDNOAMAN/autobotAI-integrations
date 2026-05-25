@@ -13,6 +13,10 @@ from autobotAI_integrations import BaseService, list_of_unique_elements, Payload
 from autobotAI_integrations.models import *
 from autobotAI_integrations.utils.boto3_helper import Boto3Helper
 from autobotAI_integrations.utils.logging_config import logger
+from autobotAI_integrations.utils.refreshable_creds import (
+    build_refreshable_aws_session,
+    current_aws_creds_resolver,
+)
 
 
 class Forms:
@@ -197,13 +201,39 @@ class AWSService(BaseService):
         regional_clients = pydash.filter_(client_definitions, lambda x: x.is_regional is True)
         creds = {
             "aws_access_key_id": payload_task.creds.envs["AWS_ACCESS_KEY_ID"],
-            "aws_secret_access_key": payload_task.creds.envs["AWS_SECRET_ACCESS_KEY"],            
+            "aws_secret_access_key": payload_task.creds.envs["AWS_SECRET_ACCESS_KEY"],
         }
         if payload_task.creds.envs.get("AWS_SESSION_TOKEN"):
             creds["aws_session_token"] = payload_task.creds.envs.get("AWS_SESSION_TOKEN")
+
+        # Long-running agent sessions (autobotAI deep agent) set a
+        # contextvar holding a refresh callable.  When present, build boto3
+        # clients with RefreshableCredentials so credentials auto-refresh
+        # per AWS API call — no ExpiredToken mid-call even if a single
+        # python_sdk task runs longer than the STS TTL.  Lambda/CLI callers
+        # leave the contextvar unset and get the existing static-creds path.
+        resolver = current_aws_creds_resolver.get()
+        use_refreshable = resolver is not None
+
+        def _global_client(name: str):
+            if use_refreshable:
+                session = build_refreshable_aws_session(
+                    resolver, payload_task.task_id, region_name=None
+                )
+                return session.client(name)
+            return boto3.client(name, **creds)
+
+        def _regional_client(name: str, region: str):
+            if use_refreshable:
+                session = build_refreshable_aws_session(
+                    resolver, payload_task.task_id, region_name=region
+                )
+                return session.client(name, region_name=region)
+            return boto3.client(name, region_name=region, **creds)
+
         if global_clients:
             for client in global_clients:
-                built_clients["global"][client.name] = boto3.client(client.name, **creds)
+                built_clients["global"][client.name] = _global_client(client.name)
         if regional_clients:
             active_regions = self.integration.activeRegions
             if not active_regions:
@@ -213,8 +243,9 @@ class AWSService(BaseService):
                 built_clients["regional"].setdefault(region, {})
                 for client in regional_clients:
                     try:
-                        built_clients["regional"][region][client.name] = boto3.client(client.name, region_name=region,
-                                                                                      **creds)
+                        built_clients["regional"][region][client.name] = _regional_client(
+                            client.name, region
+                        )
                     except ImportError:
                         logger.exception(f"Failed create client for {client['name']}")
         combinations = []
