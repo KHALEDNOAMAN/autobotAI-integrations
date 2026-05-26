@@ -47,7 +47,28 @@ def executor(context):
         f"{system_prompt}\n\n{user_prompt}"
     )
 
-    return [result.output]
+    message_content = result.output
+    if isinstance(message_content, str):
+        if message_content.startswith('```json') and message_content.endswith('```'):
+            message_content = message_content.strip('```').strip('json')
+        decisions = json.loads(message_content)
+    else:
+        decisions = message_content
+
+    return combine_resources_with_decision(resources, decisions)
 
 
-    
+def combine_resources_with_decision(resources, decisions):
+    results = []
+    if isinstance(decisions, dict):
+        decisions = [decisions]
+    for resource in resources:
+        for decision in decisions:
+            if resource["name"] == decision["name"]:
+                resource["decision"] = decision
+                results.append(resource)
+                break
+    if results:
+        return results
+    else:
+        raise Exception("Something Went Wrong, Please try again.")

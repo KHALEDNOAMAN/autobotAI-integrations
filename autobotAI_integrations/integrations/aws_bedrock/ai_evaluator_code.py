@@ -1,6 +1,6 @@
 from pydantic import BaseModel, Field
 from typing import List
-import json
+import json, re
 
 
 def executor(context):
@@ -47,7 +47,38 @@ def executor(context):
         f"{system_prompt}\n\n{user_prompt}"
     )
 
-    return [result.output]
+    generated_text = result.output
+    try:
+        try:
+            results = json.loads(generated_text)
+        except json.decoder.JSONDecodeError as e:
+            # Search for the first occurrence of text inside triple backticks
+            match = re.search(r"```(?:json)?\s*(.*?)\s*```", generated_text, re.DOTALL)
+            if match:
+                results = json.loads(match.group(1).strip())
+            else:
+                raise e
+        return combine_resources_with_decision(resources, results)
+    except Exception as e:
+        return {
+            "error": str(e),
+            "evaluated-response": str(generated_text),
+        }
+
+def combine_resources_with_decision(resources, decisions):
+    results = []
+    if isinstance(decisions, dict):
+        decisions = [decisions]
+    for resource in resources:
+        for decision in decisions:
+            if resource["name"] == decision["name"]:
+                resource["decision"] = decision
+                results.append(resource)
+                break
+    if results:
+        return results
+    else:
+        raise Exception("Something Went Wrong, Please try again.")
 
 
     
