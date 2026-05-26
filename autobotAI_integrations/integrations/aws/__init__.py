@@ -72,21 +72,25 @@ class AWSService(BaseService):
 
     def _get_aws_client(self, aws_client_name: str):
         if self.integration.roleArn not in ["None", None]:
+            # IAM Role: assume_role via STS through Boto3Helper
             boto3_helper = Boto3Helper(
                 self.ctx, integration=self.integration.dump_all_data()
             )
             return boto3_helper.get_client(aws_client_name)
-        else:
+        elif self.integration.session_token not in [None, "None"]:
+            # Access key + session token provided: use directly, no STS call
             return boto3.client(
                 aws_client_name,
                 aws_access_key_id=str(self.integration.access_key),
                 aws_secret_access_key=str(self.integration.secret_key),
-                aws_session_token=(
-                    str(self.integration.session_token)
-                    if self.integration.session_token not in [None, "None"]
-                    else None
-                ),
+                aws_session_token=str(self.integration.session_token),
             )
+        else:
+            # Access key only (no session token): generate temp creds via STS get_session_token
+            boto3_helper = Boto3Helper(
+                self.ctx, integration=self.integration.dump_all_data()
+            )
+            return boto3_helper.get_client(aws_client_name)
 
     def _test_integration(self) -> dict:
         try:
@@ -125,27 +129,34 @@ class AWSService(BaseService):
                         }
                     ]
                 },
-                # {
-                #     "label": "AccessKey / SecretKey Integration",
-                #     "type": "form",
-                #     "formId": AWSAuthTypes.ACCESS_KEY_INTEGRATION.value,
-                #     "children": [
-                #         {
-                #             "name": "access_key",
-                #             "type": "text",
-                #             "label": "Access Key",
-                #             "placeholder": "Enter your AWS access key",
-                #             "required": True
-                #         },
-                #         {
-                #             "name": "secret_key",
-                #             "type": "text/password",
-                #             "label": "Secret Key",
-                #             "placeholder": "Enter your AWS secret key",
-                #             "required": True
-                #         }
-                #     ]
-                # }
+                {
+                    "label": "AccessKey / SecretKey Integration",
+                    "type": "form",
+                    "formId": AWSAuthTypes.ACCESS_KEY_INTEGRATION.value,
+                    "children": [
+                        {
+                            "name": "access_key",
+                            "type": "text",
+                            "label": "Access Key",
+                            "placeholder": "Enter your AWS access key",
+                            "required": True
+                        },
+                        {
+                            "name": "secret_key",
+                            "type": "text/password",
+                            "label": "Secret Key",
+                            "placeholder": "Enter your AWS secret key",
+                            "required": True
+                        },
+                        {
+                            "name": "session_token",
+                            "type": "text/password",
+                            "label": "Session Token",
+                            "placeholder": "Enter your AWS session token (optional)",
+                            "required": False
+                        }
+                    ]
+                }
             ]
         }
 
@@ -316,6 +327,7 @@ class AWSService(BaseService):
 
     def _temp_credentials(self):
         if self.integration.roleArn not in ["None", None]:
+            # IAM Role: assume_role via STS through Boto3Helper
             boto3_helper = Boto3Helper(
                 self.ctx, integration=self.integration.model_dump()
             )
@@ -324,11 +336,21 @@ class AWSService(BaseService):
                 "AWS_SECRET_ACCESS_KEY": boto3_helper.get_secret_key(),
                 "AWS_SESSION_TOKEN": boto3_helper.get_session_token(),
             }
-        else:
-            creds = {
+        elif self.integration.session_token not in [None, "None"]:
+            # Access key + session token provided: use directly, no STS call
+            return {
                 "AWS_ACCESS_KEY_ID": str(self.integration.access_key),
                 "AWS_SECRET_ACCESS_KEY": str(self.integration.secret_key),
+                "AWS_SESSION_TOKEN": str(self.integration.session_token),
             }
-            if self.integration.session_token not in [None, "None"]:
-                creds["AWS_SESSION_TOKEN"] = str(self.integration.session_token)
-            return creds
+        else:
+            # Access key only (no session token): generate temp creds via STS get_session_token
+            # Must use dump_all_data() so access_key/secret_key (exclude=True fields) are in the dict
+            boto3_helper = Boto3Helper(
+                self.ctx, integration=self.integration.dump_all_data()
+            )
+            return {
+                "AWS_ACCESS_KEY_ID": boto3_helper.get_access_key(),
+                "AWS_SECRET_ACCESS_KEY": boto3_helper.get_secret_key(),
+                "AWS_SESSION_TOKEN": boto3_helper.get_session_token(),
+            }
