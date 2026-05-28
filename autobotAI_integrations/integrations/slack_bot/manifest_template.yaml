@@ -1,0 +1,36 @@
+# Slack App manifest for the autobotAI bi-directional bot.
+# Core renders {request_url} = https://{PUBLIC_API_HOST}/v2/webhook/{listener_id}
+# (same URL for events AND interactivity — the Slack signature scheme is identical).
+display_information:
+  name: Optimus (autobotAI)
+  description: autobotAI's guardian security agent — talk to it and approve actions in Slack.
+  background_color: "#1f2733"
+features:
+  bot_user:
+    display_name: Optimus
+    always_online: true
+oauth_config:
+  scopes:
+    bot:
+      - app_mentions:read
+      - chat:write
+      - chat:write.public
+      - im:history
+      - im:read
+      - im:write
+      - channels:history
+      - groups:history
+      - users:read
+      - users:read.email
+settings:
+  event_subscriptions:
+    request_url: "{request_url}"
+    bot_events:
+      - app_mention
+      - message.im
+  interactivity:
+    is_enabled: true
+    request_url: "{request_url}"
+  org_deploy_enabled: false
+  socket_mode_enabled: false
+  token_rotation_enabled: false
