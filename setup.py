@@ -7,6 +7,15 @@ setup(
     author_email="hello@shunyeka.com",
     description="A python package that contains all the integrations for autobotAI",
     packages=find_packages(),
+    # Ship non-Python files alongside __init__: manifests, JSON inventories,
+    # YAML client definitions, logo images, sample-payload markdown. Without
+    # these, integrations like slack_bot (manifest_template.yaml) or aws
+    # (python_sdk_clients.yml + inventory.json) lose half their payload
+    # in the installed wheel.
+    include_package_data=True,
+    package_data={
+        "": ["*.yaml", "*.yml", "*.json", "*.md", "logo-img/*"],
+    },
     install_requires=[
         # Base requirements
         "boto3>=1.40.0",
