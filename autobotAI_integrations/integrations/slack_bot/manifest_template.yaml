@@ -1,36 +1,82 @@
-# Slack App manifest for the autobotAI bi-directional bot.
-# Core renders {request_url} = https://{PUBLIC_API_HOST}/v2/webhook/{listener_id}
-# (same URL for events AND interactivity — the Slack signature scheme is identical).
+# Slack App manifest for the autobotAI bi-directional Optimus bot.
+#
+# IMPORTANT — Request URL placeholder:
+#   Slack rejects manifests whose Request URL is not a valid HTTPS URL,
+#   AND verifies the URL the moment you save Event Subscriptions. We can't
+#   know the real URL until Optimus mints the listener on integration save.
+#   Workflow:
+#     1. Create the app from this manifest (the placeholder URL below makes
+#        Slack accept the manifest but verification will FAIL until step 4).
+#     2. Install the app to your workspace → grab xoxb- token + signing secret.
+#     3. POST those to Optimus  /integrations  (cspName: slack_bot). The
+#        response carries the real webhook_url.
+#     4. Back in the Slack App config, paste that URL into BOTH:
+#          - Event Subscriptions → Request URL  (Slack will verify it now;
+#                                                 expect a green check)
+#          - Interactivity & Shortcuts → Request URL  (no verification)
+#        and click "Save Changes" on each.
+#     5. Reinstall the app (Slack requires this after scope/URL changes).
 display_information:
   name: Optimus (autobotAI)
-  description: autobotAI's guardian security agent — talk to it and approve actions in Slack.
+  description: autobotAI's guardian security agent — chat with it and approve actions in Slack.
+  long_description: >
+    Optimus is a persistent, autonomous security-operations agent that drives
+    every finding to resolution. This Slack app is the bi-directional
+    interface: DM Optimus to ask questions, mention it in a channel, or
+    approve/decline its proposed remediations via interactive buttons.
   background_color: "#1f2733"
 features:
   bot_user:
     display_name: Optimus
     always_online: true
+  # Reserve the App Home tab; the renderer for it isn't wired yet but
+  # declaring it now means we don't need a manifest update later.
+  app_home:
+    home_tab_enabled: false
+    messages_tab_enabled: true
+    messages_tab_read_only_enabled: false
 oauth_config:
   scopes:
     bot:
-      - app_mentions:read
-      - chat:write
-      - chat:write.public
-      - im:history
-      - im:read
-      - im:write
-      - channels:history
-      - groups:history
+      # --- core conversational scopes ---
+      - app_mentions:read       # @Optimus pings in channels
+      - chat:write              # post messages
+      - chat:write.public       # post in channels the bot isn't a member of
+      - im:history              # read 1:1 DM history (turn context)
+      - im:read                 # list 1:1 DM channels
+      - im:write                # open a 1:1 DM
+      - mpim:history            # group-DM history
+      - mpim:read               # list group DMs
+      - mpim:write              # open / write group DMs
+      - channels:history        # public-channel history (when invited)
+      - groups:history          # private-channel history (when invited)
+      # --- identity (needed by the SlackEventDispatcher's
+      #     resolve_identity port to map Slack user -> Optimus user via email) ---
       - users:read
       - users:read.email
+      # --- nice-to-haves the agent will use for UX polish ---
+      - reactions:write         # 👀 ack on receipt of a message
+      - team:read               # team name for slack_thread_mapping audit
 settings:
   event_subscriptions:
-    request_url: "{request_url}"
+    # Replace with the webhook_url Optimus returns AFTER you save the slack_bot
+    # integration (cspName=slack_bot). Slack will url_verify on save — Optimus
+    # short-circuits that synchronously inside the webhook handler, so you
+    # should see a green check immediately.
+    request_url: https://example.com/replace-after-optimus-integration-save
     bot_events:
-      - app_mention
-      - message.im
+      - app_mention             # @Optimus in any channel/DM
+      - message.im              # message in a 1:1 DM
+      - message.mpim            # message in a group DM
+      # message.channels / message.groups intentionally OMITTED — the bot
+      # would otherwise receive every channel message it's invited to and
+      # turn that into agent runs. Add only if you want Optimus to passively
+      # listen to channel activity.
   interactivity:
     is_enabled: true
-    request_url: "{request_url}"
-  org_deploy_enabled: false
-  socket_mode_enabled: false
-  token_rotation_enabled: false
+    # Same URL as Event Subscriptions — Slack uses the identical signature
+    # scheme for both, and Optimus's listener handles both shapes.
+    request_url: https://example.com/replace-after-optimus-integration-save
+  org_deploy_enabled: false      # single-workspace install
+  socket_mode_enabled: false     # we use HTTPS webhook, not Socket Mode
+  token_rotation_enabled: false  # static xoxb- bot token
