@@ -1,13 +1,16 @@
 from pydantic import BaseModel, Field
 from typing import List
 import json, re
+from pydantic_ai.settings import ModelSettings
 
 
-def executor(context):
+
+async def executor(context):
     agent = context["clients"]["Agent"]
     prompt = context["params"]["prompt"]
     model = context["params"]["model"]
     resources = json.loads(json.dumps(context["params"]["resources"], default=str))
+    MAX_TOKEN = context['params'].get('output_token',8192)
 
     class ResourceEvaluation(BaseModel):
         name: str = Field(..., description="Matches unique resource 'name' field")
@@ -34,18 +37,13 @@ def executor(context):
     - Each object must contain all required fields."""
 
     user_prompt = f"""
-    System Instructions: {system_prompt}
     Resources: {resources}
-    Prompt: {prompt}
+    Prompt: {prompt}"""
 
-    Response: """
-
-    agent_instance = agent(model)
+    agent_instance = agent(model,system_prompt=system_prompt,model_settings=ModelSettings(max_tokens=MAX_TOKEN))
 
     # Execute agent
-    result = agent_instance.run_sync(
-        f"{system_prompt}\n\n{user_prompt}"
-    )
+    result = await agent_instance.run(user_prompt)
 
     generated_text = result.output
     try:

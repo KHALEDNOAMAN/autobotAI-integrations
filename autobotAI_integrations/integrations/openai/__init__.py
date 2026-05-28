@@ -115,6 +115,12 @@ class OpenAIService(AIBaseService):
                         "description": "The resources to use for the AI model",
                         "required": True,
                     },
+                    {
+                        "name": "output_token",
+                        "type": "int",
+                        "description": "The max token for the output response from the AI model",
+                        "required": False,
+                    }
                 ],
                 "code": f.read(),
             }
