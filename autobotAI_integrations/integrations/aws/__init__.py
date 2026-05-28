@@ -153,6 +153,7 @@ class AWSService(BaseService):
                             "type": "text/password",
                             "label": "Session Token",
                             "placeholder": "Enter your AWS session token (optional)",
+                            "description": "The integration requires at least the ec2:DescribeRegions IAM permission for basic connectivity.",
                             "required": False
                         }
                     ]
