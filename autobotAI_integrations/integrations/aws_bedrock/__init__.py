@@ -322,6 +322,9 @@ class AWSBedrockService(AIBaseService):
     ):
         from pydantic_ai.agent import Agent
 
+        if not credentials:
+            credentials = self._temp_credentials()
+
         model_instance = self.get_pydantic_model(model,credentials=credentials)
         return Agent(
             model_instance, system_prompt=system_prompt, tools=tools, **options
@@ -331,7 +334,8 @@ class AWSBedrockService(AIBaseService):
         from pydantic_ai.models.bedrock import BedrockConverseModel
         from pydantic_ai.providers.bedrock import BedrockProvider
 
-        
+        if not credentials:
+            credentials = self._temp_credentials()
   
         model = BedrockConverseModel(
             model_name=model_name,
