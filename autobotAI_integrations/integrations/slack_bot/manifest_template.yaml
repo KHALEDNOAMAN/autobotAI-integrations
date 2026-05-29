@@ -35,6 +35,21 @@ features:
     home_tab_enabled: false
     messages_tab_enabled: true
     messages_tab_read_only_enabled: false
+  # Register Optimus as a Slack AI assistant/agent so it appears in Slack's
+  # dedicated "Agents & AI Apps" section (split-pane assistant container)
+  # instead of as a plain bot DM under "Apps". Requires the assistant:write
+  # scope + the assistant_thread_* bot events declared below.
+  assistant_view:
+    assistant_description: >
+      Optimus is an autonomous security-operations agent. Ask about findings,
+      and approve or decline its proposed remediations right here.
+    suggested_prompts:
+      - title: "Open security findings"
+        message: "Show me the open security findings and their status."
+      - title: "What needs my approval?"
+        message: "List anything currently waiting on my approval."
+      - title: "Explain a finding"
+        message: "Explain the most recent finding and what you recommend."
 oauth_config:
   scopes:
     bot:
@@ -54,6 +69,8 @@ oauth_config:
       #     resolve_identity port to map Slack user -> Optimus user via email) ---
       - users:read
       - users:read.email
+      # --- AI assistant/agent container (Agents & AI Apps section) ---
+      - assistant:write         # render in the assistant pane; set status/title/prompts
       # --- nice-to-haves the agent will use for UX polish ---
       - reactions:write         # 👀 ack on receipt of a message
       - team:read               # team name for slack_thread_mapping audit
@@ -68,6 +85,12 @@ settings:
       - app_mention             # @Optimus in any channel/DM
       - message.im              # message in a 1:1 DM
       - message.mpim            # message in a group DM
+      # AI assistant container lifecycle — fired when a user opens the
+      # Optimus assistant pane. The dispatcher safely ignores these today
+      # (Slack renders the static suggested_prompts itself); subscribing is
+      # required for the app to register as an assistant.
+      - assistant_thread_started
+      - assistant_thread_context_changed
       # message.channels / message.groups intentionally OMITTED — the bot
       # would otherwise receive every channel message it's invited to and
       # turn that into agent runs. Add only if you want Optimus to passively
