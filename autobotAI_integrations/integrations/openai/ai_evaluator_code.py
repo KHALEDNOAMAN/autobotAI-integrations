@@ -11,6 +11,24 @@ async def executor(context):
     resources = json.loads(json.dumps(context["params"]["resources"], default=str))
     MAX_TOKEN = context['params'].get('output_token',8192)
 
+    if not isinstance(resources, list):
+        resources = [resources]
+    
+    parsable_resources_count = 0
+    try:
+        current_words_length = 2300 + len(prompt) # prompt length
+        for resource in resources:
+            resource_len = len(str(resource))
+            if resource_len + current_words_length < MAX_TOKEN * 3:
+                parsable_resources_count += 1
+                current_words_length += resource_len
+                continue
+            break
+    except:
+        pass
+    else:
+        resources = resources[: min(parsable_resources_count, 20)]
+
     class ResourceEvaluation(BaseModel):
         name: str = Field(..., description="Matches unique resource 'name' field")
         action_required: bool = Field(..., description="Whether action is required")

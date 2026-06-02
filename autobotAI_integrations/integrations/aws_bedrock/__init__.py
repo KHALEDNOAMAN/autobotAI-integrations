@@ -189,7 +189,7 @@ class AWSBedrockService(AIBaseService):
                     {
                         "name": "output_token",
                         "type": "int",
-                        "description": "The max token for the output response from the AI model",
+                        "description": "Output Token controls the maximum length of the AI model response. Higher values support larger outputs.",
                         "required": False,
                     }
                 ],
