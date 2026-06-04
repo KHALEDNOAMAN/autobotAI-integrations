@@ -1,0 +1,217 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "IPQualityScore API",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "https://www.ipqualityscore.com/api/json"
+    }
+  ],
+  "paths": {
+    "/ip": {
+      "get": {
+        "operationId": "ip_reputation",
+        "summary": "Check IP Reputation",
+        "description": "Checks the reputation of an IP address to see if it is a VPN, Proxy, Tor, or associated with malicious activity.",
+        "parameters": [
+          {
+            "name": "ip",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The IP address to lookup."
+          },
+          {
+            "name": "strictness",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "enum": [
+                0,
+                1,
+                2,
+                3
+              ],
+              "default": 0
+            },
+            "description": "How strict the lookup should be. 0 is lowest strictness, 3 is highest."
+          },
+          {
+            "name": "allow_public_access_points",
+            "in": "query",
+            "schema": {
+              "type": "boolean",
+              "default": false
+            },
+            "description": "Allow Corporate/Public Connections?"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful IP Lookup"
+          }
+        }
+      }
+    },
+    "/email": {
+      "get": {
+        "operationId": "email_validation",
+        "summary": "Validate Email Address",
+        "description": "Checks an email address for valid syntax, active mail server records, and disposable email provider status.",
+        "parameters": [
+          {
+            "name": "email",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The email address to validate."
+          },
+          {
+            "name": "fast",
+            "in": "query",
+            "schema": {
+              "type": "boolean",
+              "default": false
+            },
+            "description": "Speeds up the API response time by bypassing certain checks."
+          },
+          {
+            "name": "timeout",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "default": 7
+            },
+            "description": "Maximum number of seconds to wait for a response."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Email Lookup"
+          }
+        }
+      }
+    },
+    "/url": {
+      "get": {
+        "operationId": "url_scanner",
+        "summary": "Scan Malicious URL",
+        "description": "Checks if a URL is suspected of phishing, malware, or spam.",
+        "parameters": [
+          {
+            "name": "url",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The URL to scan (must be URL encoded)."
+          },
+          {
+            "name": "strictness",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "enum": [
+                0,
+                1,
+                2,
+                3
+              ],
+              "default": 0
+            },
+            "description": "How strict the lookup should be."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful URL Scan"
+          }
+        }
+      }
+    },
+    "/phone": {
+      "get": {
+        "operationId": "phone_validation",
+        "summary": "Validate Phone Number",
+        "description": "Retrieve details about a phone number and check its reputation.",
+        "parameters": [
+          {
+            "name": "phone",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The phone number to validate."
+          },
+          {
+            "name": "country",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Two letter country code to assume for the number."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Phone Validation"
+          }
+        }
+      }
+    },
+    "/leaked/email": {
+      "get": {
+        "operationId": "leaked_data_email",
+        "summary": "Check Leaked Data (Email)",
+        "description": "Verify if an email address has been exposed in known data breaches.",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The email address to check against leaked databases."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Leaked Data Lookup"
+          }
+        }
+      }
+    },
+    "/malware/scan": {
+      "get": {
+        "operationId": "malware_scanner",
+        "summary": "Malware Scanner",
+        "description": "Analyze a file or URL in a live sandbox environment to detect threats.",
+        "parameters": [
+          {
+            "name": "url",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The URL of the file to scan for malware."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Malware Scan"
+          }
+        }
+      }
+    }
+  }
+}
