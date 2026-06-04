@@ -47,12 +47,17 @@ class IPQSService(BaseService):
         
         return {"success": False, "error": f"HTTP {response.status_code}: {response.text}"}
 
+    @classmethod
+    def get_details(cls):
+        details = super().get_details()
+        details["preview"] = True
+        return details
+
     @staticmethod
     def get_forms():
         return {
             "label": "IPQualityScore (IPQS)",
             "type": "form",
-            "preview": True,
             "children": [
                 {
                     "name": "api_key",

@@ -76,12 +76,17 @@ class TrellixDLPService(BaseService):
         except Exception as e:
             return {"success": False, "error": f"Trellix DLP integration test failed: {str(e)}"}
 
+    @classmethod
+    def get_details(cls):
+        details = super().get_details()
+        details["preview"] = True
+        return details
+
     @staticmethod
     def get_forms():
         return {
             "label": "Trellix DLP",
             "type": "form",
-            "preview": True,
             "children": [
                 {
                     "name": "client_id",
