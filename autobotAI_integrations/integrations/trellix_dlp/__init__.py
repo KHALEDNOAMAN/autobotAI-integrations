@@ -81,6 +81,7 @@ class TrellixDLPService(BaseService):
         return {
             "label": "Trellix DLP",
             "type": "form",
+            "preview": True,
             "children": [
                 {
                     "name": "client_id",

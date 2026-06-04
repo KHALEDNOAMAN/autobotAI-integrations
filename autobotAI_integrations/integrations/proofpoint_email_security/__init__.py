@@ -43,6 +43,7 @@ class ProofpointEmailSecurityService(BaseService):
         return {
             "label": "Proofpoint Email Security",
             "type": "form",
+            "preview": True,
             "children": [
                 {
                     "name": "principal",

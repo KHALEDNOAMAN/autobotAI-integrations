@@ -50,8 +50,9 @@ class IPQSService(BaseService):
     @staticmethod
     def get_forms():
         return {
-            "label": "IPQS",
+            "label": "IPQualityScore (IPQS)",
             "type": "form",
+            "preview": True,
             "children": [
                 {
                     "name": "api_key",

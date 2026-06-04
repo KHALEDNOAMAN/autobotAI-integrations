@@ -81,6 +81,7 @@ class ProofpointITMService(BaseService):
         return {
             "label": "Endpoint DLP",
             "type": "form",
+            "preview": True,
             "children": [
                 {
                     "name": "base_url",

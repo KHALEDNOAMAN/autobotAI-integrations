@@ -62,6 +62,7 @@ class ProofpointTRAPService(BaseService):
         return {
             "label": "Proofpoint TRAP",
             "type": "form",
+            "preview": True,
             "children": [
                 {
                     "name": "base_url",
