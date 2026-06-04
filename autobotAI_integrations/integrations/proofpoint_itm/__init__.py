@@ -76,12 +76,17 @@ class ProofpointITMService(BaseService):
         except Exception as e:
             return {"success": False, "error": f"Proofpoint ITM integration test failed: {str(e)}"}
 
+    @classmethod
+    def get_details(cls):
+        details = super().get_details()
+        details["preview"] = True
+        return details
+
     @staticmethod
     def get_forms():
         return {
             "label": "Endpoint DLP",
             "type": "form",
-            "preview": True,
             "children": [
                 {
                     "name": "base_url",
