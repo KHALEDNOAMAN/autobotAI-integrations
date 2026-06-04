@@ -1,0 +1,111 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Proofpoint TAP API",
+    "version": "v2"
+  },
+  "servers": [
+    {
+      "url": "https://tap-api-v2.proofpoint.com/v2"
+    }
+  ],
+  "paths": {
+    "/siem/all": {
+      "get": {
+        "operationId": "get_siem_all",
+        "summary": "Get All SIEM Events",
+        "description": "Returns all blocked and permitted clicks and delivered and blocked messages.",
+        "parameters": [
+          {
+            "name": "sinceSeconds",
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Number of seconds in the past to fetch events (e.g., 3600 for the last hour)."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful request"
+          }
+        }
+      }
+    },
+    "/siem/issues": {
+      "get": {
+        "operationId": "get_siem_issues",
+        "summary": "Get SIEM Issues",
+        "description": "Returns only events flagged as issues (blocked clicks, permitted clicks to malicious URLs, and blocked messages).",
+        "parameters": [
+          {
+            "name": "sinceSeconds",
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Number of seconds in the past to fetch events."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful request"
+          }
+        }
+      }
+    },
+    "/forensics": {
+      "get": {
+        "operationId": "get_forensics",
+        "summary": "Get Threat Forensics",
+        "description": "Retrieves detailed forensic evidence for a specific threat or campaign.",
+        "parameters": [
+          {
+            "name": "threatId",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "description": "The ID of the threat to lookup."
+          },
+          {
+            "name": "campaignId",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "description": "The ID of the campaign to lookup (use either threatId or campaignId)."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful request"
+          }
+        }
+      }
+    },
+    "/campaign/{campaignId}": {
+      "get": {
+        "operationId": "get_campaign_details",
+        "summary": "Get Campaign Details",
+        "description": "Retrieves high-level information about a specific campaign.",
+        "parameters": [
+          {
+            "name": "campaignId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The ID of the campaign."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful request"
+          }
+        }
+      }
+    }
+  }
+}
