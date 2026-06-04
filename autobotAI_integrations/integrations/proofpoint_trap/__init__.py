@@ -57,6 +57,12 @@ class ProofpointTRAPService(BaseService):
         except Exception as e:
             return {"success": False, "error": f"Proofpoint TRAP integration test failed: {str(e)}"}
 
+    @classmethod
+    def get_details(cls):
+        details = super().get_details()
+        details["preview"] = True
+        return details
+
     @staticmethod
     def get_forms():
         return {

@@ -38,6 +38,12 @@ class ProofpointEmailSecurityService(BaseService):
     def supported_connection_interfaces():
         return [ConnectionInterfaces.REST_API]
 
+    @classmethod
+    def get_details(cls):
+        details = super().get_details()
+        details["preview"] = True
+        return details
+
     @staticmethod
     def get_forms():
         return {
