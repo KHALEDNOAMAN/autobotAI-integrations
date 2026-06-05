@@ -1,5 +1,5 @@
 from typing import Optional, Type, Union
-from pydantic import Field
+from pydantic import Field, field_validator
 import requests
 
 from autobotAI_integrations import BaseSchema, BaseService, ConnectionInterfaces
@@ -20,12 +20,21 @@ class ProofpointDLPIntegration(BaseSchema):
         "user groups, and audit trail via the Proofpoint REST API."
     )
 
+    @field_validator("subdomain")
+    @classmethod
+    def validate_subdomain(cls, v: Optional[str]) -> Optional[str]:
+        if v is None or v.strip() == "":
+            raise ValueError(
+                "subdomain is required and cannot be empty. "
+                "Enter the part of your portal URL before '.tessian-app.com' or '.tessian-platform.com'."
+            )
+        return v.strip()
+
     @property
     def base_url(self) -> str:
-        subdomain = (self.subdomain or "").strip()
         if self.region == "eu":
-            return f"https://{subdomain}.tessian-platform.com"
-        return f"https://{subdomain}.tessian-app.com"
+            return f"https://{self.subdomain}.tessian-platform.com"
+        return f"https://{self.subdomain}.tessian-app.com"
 
 
 class ProofpointDLPService(BaseService):
@@ -120,6 +129,16 @@ class ProofpointDLPService(BaseService):
     @staticmethod
     def get_schema(ctx=None) -> Type[ProofpointDLPIntegration]:
         return ProofpointDLPIntegration
+
+    @classmethod
+    def get_details(cls):
+        return {
+            "clients": [],
+            "supported_executor": "ecs",
+            "compliance_supported": False,
+            "supported_interfaces": cls.supported_connection_interfaces(),
+            "preview": True,
+        }
 
     @staticmethod
     def supported_connection_interfaces():
