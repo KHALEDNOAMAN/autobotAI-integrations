@@ -240,6 +240,15 @@ class DeepAgentPayload(Payload):
         True,
         description="True = autonomous execution, False = human-in-the-loop",
     )
+    # Distinct from `autonomous` (which gates approve-before-each-action on
+    # execute/write_file). This is the single switch for whether a human is in
+    # the loop at all: when True the agent gets the request_approval HITL tool
+    # and the chat thread accepts user messages; when False the run is headless
+    # — no HITL pause, and core stops the ECS task once the work completes.
+    allow_user_interaction: bool = Field(
+        True,
+        description="True = HITL tools + UI chat messages available; False = headless run, no human pause.",
+    )
     filesystem_enabled: bool = Field(
         True,
         description="Allow agent to read/write workspace files",
