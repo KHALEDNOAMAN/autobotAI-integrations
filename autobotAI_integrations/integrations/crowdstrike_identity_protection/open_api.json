@@ -1,0 +1,404 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "CrowdStrike Falcon Identity Protection",
+    "description": "CrowdStrike Falcon Identity Protection REST API. Manage identity-based security: query sensors, retrieve entity and incident data via GraphQL, and manage policy rules.",
+    "version": "1.5.3",
+    "contact": {
+      "name": "CrowdStrike Developer Center",
+      "url": "https://developer.crowdstrike.com/api-reference/collections/identity-protection/"
+    }
+  },
+  "servers": [
+    {
+      "url": "{base_url}",
+      "variables": {
+        "base_url": {
+          "default": "https://api.us-2.crowdstrike.com"
+        }
+      }
+    }
+  ],
+  "components": {
+    "securitySchemes": {
+      "BearerAuth": {
+        "type": "http",
+        "scheme": "bearer"
+      }
+    },
+    "schemas": {
+      "SensorAggregateRequest": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "date_ranges": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "from": { "type": "string" },
+                  "to": { "type": "string" }
+                }
+              }
+            },
+            "exclude": { "type": "string" },
+            "field": { "type": "string" },
+            "filter": { "type": "string" },
+            "from": { "type": "integer" },
+            "include": { "type": "string" },
+            "interval": { "type": "string" },
+            "max_doc_count": { "type": "integer" },
+            "min_doc_count": { "type": "integer" },
+            "missing": { "type": "string" },
+            "name": { "type": "string" },
+            "q": { "type": "string" },
+            "ranges": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "From": { "type": "integer" },
+                  "To": { "type": "integer" }
+                }
+              }
+            },
+            "size": { "type": "integer" },
+            "sort": { "type": "string" },
+            "sub_aggregates": {
+              "type": "array",
+              "items": { "type": "object" }
+            },
+            "time_zone": { "type": "string" },
+            "type": { "type": "string" }
+          }
+        }
+      },
+      "SensorDetailsRequest": {
+        "type": "object",
+        "required": ["ids"],
+        "properties": {
+          "ids": {
+            "oneOf": [
+              { "type": "string" },
+              {
+                "type": "array",
+                "items": { "type": "string" }
+              }
+            ],
+            "description": "Sensor IDs to retrieve (max 5000)"
+          }
+        }
+      },
+      "GraphQLRequest": {
+        "type": "object",
+        "required": ["query"],
+        "properties": {
+          "query": {
+            "type": "string",
+            "description": "GraphQL query string"
+          },
+          "variables": {
+            "type": "object",
+            "description": "Variables for the GraphQL query"
+          }
+        }
+      },
+      "PolicyRuleRequest": {
+        "type": "object",
+        "properties": {
+          "action": { "type": "string" },
+          "activity": { "type": "object" },
+          "destination": { "type": "object" },
+          "enabled": { "type": "boolean" },
+          "name": { "type": "string" },
+          "simulationMode": { "type": "boolean" },
+          "sourceEndpoint": { "type": "object" },
+          "sourceUser": { "type": "object" },
+          "trigger": { "type": "string" }
+        }
+      },
+      "ApiResponse": {
+        "type": "object",
+        "properties": {
+          "resources": { "type": "array", "items": { "type": "object" } },
+          "errors": { "type": "array", "items": { "type": "object" } },
+          "meta": { "type": "object" }
+        }
+      }
+    }
+  },
+  "security": [
+    {
+      "BearerAuth": []
+    }
+  ],
+  "paths": {
+    "/identity-protection/aggregates/devices/GET/v1": {
+      "post": {
+        "operationId": "get_sensor_aggregates",
+        "summary": "Get sensor aggregates",
+        "description": "Get sensor aggregates as specified via JSON in the request body.",
+        "tags": ["Identity Protection"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SensorAggregateRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/identity-protection/entities/devices/GET/v1": {
+      "post": {
+        "operationId": "get_sensor_details",
+        "summary": "Get sensor details",
+        "description": "Get details on one or more sensors by providing device IDs in a POST body. Supports up to 5000 IDs.",
+        "tags": ["Identity Protection"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SensorDetailsRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/identity-protection/queries/devices/v1": {
+      "get": {
+        "operationId": "query_sensors",
+        "summary": "Query sensors by filter",
+        "description": "Search for sensors in your environment by hostname, IP, and other criteria.",
+        "tags": ["Identity Protection"],
+        "parameters": [
+          {
+            "name": "filter",
+            "in": "query",
+            "description": "Filter expression to limit results (FQL syntax)",
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "Maximum records to return (1-200)",
+            "schema": { "type": "integer" }
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "description": "Offset to start retrieving records from",
+            "schema": { "type": "integer" }
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "description": "Property to sort by (e.g. status.desc or hostname.asc)",
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/identity-protection/combined/graphql/v1": {
+      "post": {
+        "operationId": "graphql",
+        "summary": "Identity Protection GraphQL API",
+        "description": "Retrieve entities, timeline activities, identity-based incidents, and security assessments. Perform actions on entities and identity-based incidents.",
+        "tags": ["Identity Protection"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GraphQLRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/identity-protection/entities/policy-rules/v1": {
+      "get": {
+        "operationId": "get_policy_rules",
+        "summary": "Get policy rules",
+        "description": "Get policy rules by rule IDs.",
+        "tags": ["Identity Protection"],
+        "parameters": [
+          {
+            "name": "ids",
+            "in": "query",
+            "required": true,
+            "description": "Policy rule IDs (comma-separated or repeated)",
+            "schema": {
+              "type": "array",
+              "items": { "type": "string" }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "operationId": "create_policy_rule",
+        "summary": "Create policy rule",
+        "description": "Create a new identity protection policy rule.",
+        "tags": ["Identity Protection"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PolicyRuleRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "operationId": "delete_policy_rules",
+        "summary": "Delete policy rules",
+        "description": "Delete policy rules by rule IDs.",
+        "tags": ["Identity Protection"],
+        "parameters": [
+          {
+            "name": "ids",
+            "in": "query",
+            "required": true,
+            "description": "Policy rule IDs to delete",
+            "schema": {
+              "type": "array",
+              "items": { "type": "string" }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/identity-protection/queries/policy-rules/v1": {
+      "get": {
+        "operationId": "query_policy_rules",
+        "summary": "Query policy rule IDs",
+        "description": "Query policy rule IDs by name, enabled status, or simulation mode.",
+        "tags": ["Identity Protection"],
+        "parameters": [
+          {
+            "name": "enabled",
+            "in": "query",
+            "description": "Filter by enabled status",
+            "schema": { "type": "boolean" }
+          },
+          {
+            "name": "simulation_mode",
+            "in": "query",
+            "description": "Filter by simulation mode",
+            "schema": { "type": "boolean" }
+          },
+          {
+            "name": "name",
+            "in": "query",
+            "description": "Filter by rule name",
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

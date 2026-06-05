@@ -1,0 +1,7 @@
+- class_name: IdentityProtection
+  module: falconpy
+  name: identity_protection
+  import_library_names:
+    - falconpy
+  pip_package_names:
+    - crowdstrike-falconpy
