@@ -1,0 +1,112 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "Trellix DLP API",
+    "description": "API integration for Trellix Data Loss Prevention (DLP) SaaS Incidents.",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "https://api.manage.trellix.com"
+    }
+  ],
+  "paths": {
+    "/dpim/v2/incident": {
+      "get": {
+        "summary": "Retrieve DLP Incidents",
+        "description": "Retrieve data protection incidents in bulk, supporting pagination and filtering.",
+        "operationId": "getDlpIncidents",
+        "parameters": [
+          {
+            "name": "page[limit]",
+            "in": "query",
+            "description": "The maximum number of incidents to return (max 500).",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 100
+            }
+          },
+          {
+            "name": "page[cursor]",
+            "in": "query",
+            "description": "Cursor for pagination to fetch the next set of results.",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "filter",
+            "in": "query",
+            "description": "RSQL expression to filter incidents (e.g., severity=='HIGH').",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "description": "Sort order (e.g., -incidentTime for descending).",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful retrieval of incidents",
+            "content": {
+              "application/vnd.api+json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/dpim/v2/incident/{incidentId}": {
+      "get": {
+        "summary": "Get Incident Details",
+        "description": "Retrieve comprehensive details for a specific DLP incident by its ID.",
+        "operationId": "getIncidentDetails",
+        "parameters": [
+          {
+            "name": "incidentId",
+            "in": "path",
+            "required": true,
+            "description": "The unique ID of the incident.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "include",
+            "in": "query",
+            "required": false,
+            "description": "Include related resources (e.g., endpoint details, user metadata).",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful retrieval of incident details",
+            "content": {
+              "application/vnd.api+json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

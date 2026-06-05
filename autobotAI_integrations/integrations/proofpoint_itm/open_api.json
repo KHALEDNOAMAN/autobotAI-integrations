@@ -1,0 +1,87 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "Proofpoint ITM API",
+    "description": "API integration for Proofpoint Insider Threat Management (Endpoint DLP).",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "https://tenant.itmsaas.proofpoint.com",
+      "description": "User configured ITM Base URL"
+    }
+  ],
+  "paths": {
+    "/v2/alerts": {
+      "get": {
+        "summary": "Retrieve Alerts",
+        "description": "Retrieve a list of recent Endpoint DLP or Insider Threat alerts.",
+        "operationId": "getItmAlerts",
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "Maximum number of alerts to return.",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 100
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful retrieval of ITM alerts",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v2/explorations/events": {
+      "get": {
+        "summary": "Get User Activity Events",
+        "description": "Retrieve raw endpoint activity events (file movements, USB insertions, application usage) for investigations.",
+        "operationId": "getItmExplorationEvents",
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "Maximum number of events to return.",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 100
+            }
+          },
+          {
+            "name": "timestamp_start",
+            "in": "query",
+            "description": "Start timestamp in ISO 8601 format.",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful retrieval of endpoint events",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

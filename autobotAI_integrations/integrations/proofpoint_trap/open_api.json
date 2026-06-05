@@ -1,0 +1,127 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "Proofpoint TRAP API",
+    "description": "API integration for Proofpoint Threat Response Auto-Pull (TRAP).",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "https://trap.example.com",
+      "description": "User configured TRAP Base URL"
+    }
+  ],
+  "paths": {
+    "/api/incidents": {
+      "get": {
+        "summary": "Retrieve Incidents",
+        "description": "Retrieve a list of security incidents tracked by Threat Response.",
+        "operationId": "getTrapIncidents",
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "Maximum number of items to return.",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 100
+            }
+          },
+          {
+            "name": "state",
+            "in": "query",
+            "description": "Filter by incident state (e.g., open, closed, ignorable).",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful retrieval of incidents",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/lists": {
+      "get": {
+        "summary": "Get TRAP Lists",
+        "description": "Retrieve all custom remediation and exception lists configured in TRAP.",
+        "operationId": "getTrapLists",
+        "responses": {
+          "200": {
+            "description": "Successful retrieval of TRAP lists",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/lists/{list_id}/members": {
+      "post": {
+        "summary": "Add Member to List",
+        "description": "Add a new indicator (e.g., IP, domain, email) to a TRAP List for blocking or safe-listing.",
+        "operationId": "addTrapListMember",
+        "parameters": [
+          {
+            "name": "list_id",
+            "in": "path",
+            "required": true,
+            "description": "The unique ID of the TRAP List.",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "Member details to add to the list.",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "member": {
+                    "type": "string",
+                    "description": "The value to add (e.g. 1.2.3.4, bad-domain.com)."
+                  },
+                  "description": {
+                    "type": "string",
+                    "description": "Optional description for why this member was added."
+                  }
+                },
+                "required": ["member"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successfully added member to the list",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
