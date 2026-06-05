@@ -1,0 +1,778 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Microsoft Defender for Office 365 API",
+    "description": "REST API specification for Microsoft Defender for Office 365 (MDO) via Microsoft Defender XDR (api.security.microsoft.com) and Microsoft Graph Security API. Covers Alerts, Incidents, Advanced Hunting, Threat Intelligence, Email Events, and Remediation actions.\n\n**Authentication:** OAuth2 Client Credentials Flow via Azure AD.\n- Token URL: `https://login.microsoftonline.com/{tenant_id}/oauth2/v2.0/token`\n- Scope: `https://api.security.microsoft.com/.default` or `https://graph.microsoft.com/.default`\n\n**Required Azure AD App Permissions:**\n- `Alert.Read.All`\n- `Alert.ReadWrite.All`\n- `Incident.Read.All`\n- `AdvancedHunting.Read.All`\n- `SecurityEvents.Read.All` (Graph API)\n- `ThreatIntelligence.Read.All`",
+    "version": "1.0.0",
+    "contact": {
+      "name": "Microsoft Security API Docs",
+      "url": "https://learn.microsoft.com/en-us/defender-xdr/api-overview"
+    },
+    "license": {
+      "name": "Microsoft API Terms",
+      "url": "https://docs.microsoft.com/en-us/legal/microsoft-apis/ms-apis-tos"
+    }
+  },
+  "servers": [
+    {
+      "url": "https://api.security.microsoft.com",
+      "description": "Microsoft Defender XDR API (Global)"
+    },
+    {
+      "url": "https://api-us.security.microsoft.com",
+      "description": "Microsoft Defender XDR API (US)"
+    },
+    {
+      "url": "https://api-eu.security.microsoft.com",
+      "description": "Microsoft Defender XDR API (EU)"
+    },
+    {
+      "url": "https://graph.microsoft.com/v1.0",
+      "description": "Microsoft Graph Security API"
+    }
+  ],
+  "security": [
+    {
+      "BearerAuth": []
+    },
+    {
+      "OAuth2ClientCredentials": ["https://api.security.microsoft.com/.default"]
+    }
+  ],
+  "components": {
+    "securitySchemes": {
+      "BearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT",
+        "description": "Bearer token obtained from Azure AD OAuth2 token endpoint."
+      },
+      "OAuth2ClientCredentials": {
+        "type": "oauth2",
+        "description": "Azure AD OAuth2 Client Credentials flow",
+        "flows": {
+          "clientCredentials": {
+            "tokenUrl": "https://login.microsoftonline.com/{tenant_id}/oauth2/v2.0/token",
+            "scopes": {
+              "https://api.security.microsoft.com/.default": "Access to Microsoft Defender XDR API",
+              "https://graph.microsoft.com/.default": "Access to Microsoft Graph Security API"
+            }
+          }
+        }
+      }
+    },
+    "parameters": {
+      "TopParam": {
+        "name": "$top",
+        "in": "query",
+        "description": "Maximum number of records to return (OData).",
+        "required": false,
+        "schema": { "type": "integer", "default": 25, "maximum": 100 }
+      },
+      "SkipParam": {
+        "name": "$skip",
+        "in": "query",
+        "description": "Number of records to skip (OData pagination).",
+        "required": false,
+        "schema": { "type": "integer", "default": 0 }
+      },
+      "FilterParam": {
+        "name": "$filter",
+        "in": "query",
+        "description": "OData filter expression. E.g. `status eq 'New'`",
+        "required": false,
+        "schema": { "type": "string" }
+      },
+      "OrderByParam": {
+        "name": "$orderby",
+        "in": "query",
+        "description": "OData orderby clause. E.g. `createdTime desc`",
+        "required": false,
+        "schema": { "type": "string" }
+      }
+    },
+    "schemas": {
+      "Alert": {
+        "type": "object",
+        "description": "Represents a security alert from Microsoft Defender for Office 365.",
+        "properties": {
+          "id": { "type": "string", "description": "Unique alert identifier.", "example": "da637292082891366787_322129023" },
+          "incidentId": { "type": "string", "description": "ID of the incident this alert belongs to.", "example": "924520" },
+          "investigationId": { "type": "string", "description": "Automated investigation ID.", "nullable": true },
+          "assignedTo": { "type": "string", "description": "Owner/analyst the alert is assigned to.", "nullable": true },
+          "severity": {
+            "type": "string",
+            "description": "Alert severity level.",
+            "enum": ["Unknown", "Informational", "Low", "Medium", "High"]
+          },
+          "status": {
+            "type": "string",
+            "description": "Current alert status.",
+            "enum": ["Unknown", "New", "InProgress", "Resolved"]
+          },
+          "classification": {
+            "type": "string",
+            "description": "Alert classification.",
+            "enum": ["Unknown", "FalsePositive", "TruePositive", "InformationalExpectedActivity"],
+            "nullable": true
+          },
+          "determination": {
+            "type": "string",
+            "description": "Alert determination.",
+            "enum": ["NotAvailable", "Apt", "Malware", "SecurityPersonnel", "SecurityTesting", "UnwantedSoftware", "Other", "MultiStagedAttack", "CompromisedAccount", "Phishing", "MaliciousUserActivity", "NotMalicious", "NotEnoughDataToValidate", "ConfirmedUserActivity", "LineOfBusinessApplication"],
+            "nullable": true
+          },
+          "detectionSource": { "type": "string", "description": "Detection source/product.", "example": "OfficeATP" },
+          "detectorId": { "type": "string", "description": "ID of the detector that triggered the alert." },
+          "tenantId": { "type": "string", "description": "Azure AD tenant ID.", "format": "uuid" },
+          "title": { "type": "string", "description": "Alert title.", "example": "Phishing email detected" },
+          "description": { "type": "string", "description": "Detailed description of the alert." },
+          "alertWebUrl": { "type": "string", "format": "uri", "description": "URL to the alert in Microsoft Defender portal." },
+          "incidentWebUrl": { "type": "string", "format": "uri", "description": "URL to the related incident." },
+          "actorDisplayName": { "type": "string", "nullable": true, "description": "Name of threat actor, if identified." },
+          "threatDisplayName": { "type": "string", "nullable": true },
+          "threatFamilyName": { "type": "string", "nullable": true },
+          "mitreTechniques": {
+            "type": "array",
+            "items": { "type": "string" },
+            "description": "List of MITRE ATT&CK techniques.",
+            "example": ["T1566.001", "T1078"]
+          },
+          "createdDateTime": { "type": "string", "format": "date-time", "description": "Alert creation timestamp." },
+          "lastUpdateDateTime": { "type": "string", "format": "date-time", "description": "Last update timestamp." },
+          "resolvedDateTime": { "type": "string", "format": "date-time", "nullable": true },
+          "firstActivityDateTime": { "type": "string", "format": "date-time" },
+          "lastActivityDateTime": { "type": "string", "format": "date-time" },
+          "systemTags": { "type": "array", "items": { "type": "string" } },
+          "comments": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/AlertComment" }
+          },
+          "evidence": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/AlertEvidence" }
+          }
+        }
+      },
+      "AlertComment": {
+        "type": "object",
+        "properties": {
+          "comment": { "type": "string" },
+          "createdByDisplayName": { "type": "string" },
+          "createdDateTime": { "type": "string", "format": "date-time" }
+        }
+      },
+      "AlertEvidence": {
+        "type": "object",
+        "description": "Evidence entity linked to an alert (email, user, file, IP, etc.)",
+        "properties": {
+          "evidenceType": {
+            "type": "string",
+            "enum": ["mailbox", "mailMessage", "mailCluster", "file", "process", "registryValue", "network", "user", "url", "ip", "cloudApplication", "device"]
+          },
+          "verdict": {
+            "type": "string",
+            "enum": ["unknown", "suspicious", "malicious", "noThreatsFound", "unknownFutureValue"]
+          },
+          "remediationStatus": { "type": "string" },
+          "createdDateTime": { "type": "string", "format": "date-time" },
+          "firstSeenDateTime": { "type": "string", "format": "date-time", "nullable": true },
+          "mdeDeviceId": { "type": "string", "nullable": true },
+          "roles": {
+            "type": "array",
+            "items": { "type": "string", "enum": ["attacker", "compromised", "victim", "unknown"] }
+          },
+          "tags": { "type": "array", "items": { "type": "string" } }
+        }
+      },
+      "Incident": {
+        "type": "object",
+        "description": "A security incident grouping multiple related alerts.",
+        "properties": {
+          "id": { "type": "string", "example": "924520" },
+          "displayName": { "type": "string", "description": "Incident display name.", "example": "Multi-stage phishing attack" },
+          "tenantId": { "type": "string", "format": "uuid" },
+          "incidentWebUrl": { "type": "string", "format": "uri" },
+          "redirectIncidentId": { "type": "string", "nullable": true },
+          "assignedTo": { "type": "string", "nullable": true },
+          "classification": {
+            "type": "string",
+            "enum": ["unknown", "falsePositive", "truePositive", "informationalExpectedActivity", "unknownFutureValue"]
+          },
+          "determination": { "type": "string" },
+          "status": {
+            "type": "string",
+            "enum": ["active", "resolved", "redirected", "unknownFutureValue"]
+          },
+          "severity": {
+            "type": "string",
+            "enum": ["unknown", "informational", "low", "medium", "high"]
+          },
+          "createdDateTime": { "type": "string", "format": "date-time" },
+          "lastUpdateDateTime": { "type": "string", "format": "date-time" },
+          "lastModifiedBy": { "type": "string" },
+          "tags": { "type": "array", "items": { "type": "string" } },
+          "comments": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/AlertComment" }
+          },
+          "alerts": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/Alert" }
+          }
+        }
+      },
+      "HuntingQueryRequest": {
+        "type": "object",
+        "required": ["Query"],
+        "properties": {
+          "Query": {
+            "type": "string",
+            "description": "Kusto Query Language (KQL) query string.",
+            "example": "EmailEvents | where ThreatTypes has 'Phish' | project NetworkMessageId, SenderFromAddress, RecipientEmailAddress, Subject, ThreatTypes | limit 50"
+          }
+        }
+      },
+      "HuntingQueryResponse": {
+        "type": "object",
+        "properties": {
+          "Stats": {
+            "type": "object",
+            "properties": {
+              "ExecutionTime": { "type": "number", "description": "Query execution time in seconds." },
+              "resource_usage": { "type": "object" },
+              "dataset_statistics": { "type": "array", "items": { "type": "object" } }
+            }
+          },
+          "Schema": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "Name": { "type": "string" },
+                "Type": { "type": "string" }
+              }
+            }
+          },
+          "Results": {
+            "type": "array",
+            "description": "Array of result rows as key-value objects.",
+            "items": { "type": "object", "additionalProperties": true }
+          }
+        }
+      },
+      "EmailEvent": {
+        "type": "object",
+        "description": "Represents an email event from the EmailEvents advanced hunting table.",
+        "properties": {
+          "Timestamp": { "type": "string", "format": "date-time" },
+          "NetworkMessageId": { "type": "string", "format": "uuid" },
+          "InternetMessageId": { "type": "string" },
+          "SenderMailFromAddress": { "type": "string", "format": "email" },
+          "SenderFromAddress": { "type": "string", "format": "email" },
+          "SenderDisplayName": { "type": "string" },
+          "SenderIPv4": { "type": "string", "format": "ipv4" },
+          "SenderIPv6": { "type": "string", "format": "ipv6" },
+          "RecipientEmailAddress": { "type": "string", "format": "email" },
+          "Subject": { "type": "string" },
+          "BodyFingerprintBin1": { "type": "integer" },
+          "AntispamDirection": { "type": "string", "enum": ["Inbound", "Outbound", "Intraorg"] },
+          "DeliveryAction": { "type": "string", "enum": ["Delivered", "Junked", "Blocked", "Replaced"] },
+          "DeliveryLocation": { "type": "string", "enum": ["Inbox", "Junk Email folder", "Quarantine", "External", "Failed", "Dropped", "Deleted items folder"] },
+          "ThreatTypes": { "type": "string", "description": "Comma-separated threat type flags.", "example": "Phish, Malware" },
+          "ThreatNames": { "type": "string" },
+          "DetectionMethods": { "type": "string" },
+          "ConfidenceLevel": { "type": "string" },
+          "AuthenticationDetails": { "type": "string" },
+          "AttachmentCount": { "type": "integer" },
+          "UrlCount": { "type": "integer" },
+          "EmailAction": { "type": "string" },
+          "EmailActionPolicy": { "type": "string" },
+          "EmailActionPolicyGuid": { "type": "string", "format": "uuid" },
+          "ReportId": { "type": "string" }
+        }
+      },
+      "ThreatSubmission": {
+        "type": "object",
+        "description": "Email threat submission for manual review.",
+        "required": ["networkMessageId", "recipientEmailAddress"],
+        "properties": {
+          "networkMessageId": { "type": "string", "format": "uuid" },
+          "recipientEmailAddress": { "type": "string", "format": "email" },
+          "submittedBy": { "type": "string" },
+          "category": {
+            "type": "string",
+            "enum": ["notJunk", "spam", "phishing", "malware"]
+          }
+        }
+      },
+      "ThreatSubmissionResponse": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string" },
+          "tenantId": { "type": "string", "format": "uuid" },
+          "status": {
+            "type": "string",
+            "enum": ["submitted", "junk", "notJunk", "phishing", "malware", "unknownFutureValue"]
+          },
+          "source": { "type": "string", "enum": ["administrator", "user"] },
+          "createdDateTime": { "type": "string", "format": "date-time" },
+          "createdBy": { "type": "object" },
+          "networkMessageId": { "type": "string", "format": "uuid" },
+          "recipientEmailAddress": { "type": "string", "format": "email" },
+          "originalCategory": { "type": "string" },
+          "resultCategory": { "type": "string" },
+          "category": { "type": "string" },
+          "adminReview": { "type": "object", "nullable": true },
+          "clientSource": { "type": "string", "nullable": true }
+        }
+      },
+      "RemediationAction": {
+        "type": "object",
+        "description": "Represents an email remediation/soft-delete action.",
+        "required": ["action", "description", "displayName"],
+        "properties": {
+          "action": {
+            "type": "string",
+            "enum": ["moveToJunk", "moveToDeletedItems", "softDelete", "hardDelete", "moveToInbox"]
+          },
+          "description": { "type": "string" },
+          "displayName": { "type": "string" },
+          "purgeType": {
+            "type": "string",
+            "enum": ["recoverable", "nonrecoverable"],
+            "nullable": true
+          }
+        }
+      },
+      "UpdateAlertRequest": {
+        "type": "object",
+        "description": "Request body for updating an alert.",
+        "properties": {
+          "status": { "type": "string", "enum": ["New", "InProgress", "Resolved"] },
+          "assignedTo": { "type": "string" },
+          "classification": { "type": "string", "enum": ["Unknown", "FalsePositive", "TruePositive", "InformationalExpectedActivity"] },
+          "determination": { "type": "string" },
+          "comment": { "type": "string" }
+        }
+      },
+      "UpdateIncidentRequest": {
+        "type": "object",
+        "description": "Request body for updating an incident.",
+        "properties": {
+          "status": { "type": "string", "enum": ["active", "resolved"] },
+          "assignedTo": { "type": "string" },
+          "classification": { "type": "string" },
+          "determination": { "type": "string" },
+          "tags": { "type": "array", "items": { "type": "string" } },
+          "comment": { "type": "string" }
+        }
+      },
+      "ODataAlertList": {
+        "type": "object",
+        "properties": {
+          "@odata.context": { "type": "string" },
+          "@odata.count": { "type": "integer" },
+          "@odata.nextLink": { "type": "string", "description": "URL to the next page of results." },
+          "value": { "type": "array", "items": { "$ref": "#/components/schemas/Alert" } }
+        }
+      },
+      "ODataIncidentList": {
+        "type": "object",
+        "properties": {
+          "@odata.context": { "type": "string" },
+          "@odata.count": { "type": "integer" },
+          "@odata.nextLink": { "type": "string" },
+          "value": { "type": "array", "items": { "$ref": "#/components/schemas/Incident" } }
+        }
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "properties": {
+          "error": {
+            "type": "object",
+            "properties": {
+              "code": { "type": "string", "example": "Forbidden" },
+              "message": { "type": "string", "example": "Missing application roles. API required roles: Alert.Read.All" },
+              "innerError": { "type": "object", "nullable": true }
+            }
+          }
+        }
+      }
+    },
+    "responses": {
+      "Unauthorized": {
+        "description": "Authentication token missing or invalid.",
+        "content": {
+          "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } }
+        }
+      },
+      "Forbidden": {
+        "description": "Insufficient API permissions.",
+        "content": {
+          "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } }
+        }
+      },
+      "NotFound": {
+        "description": "Resource not found.",
+        "content": {
+          "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } }
+        }
+      },
+      "TooManyRequests": {
+        "description": "Rate limit exceeded. Retry after the duration specified in the Retry-After header.",
+        "headers": {
+          "Retry-After": { "schema": { "type": "integer" } }
+        }
+      }
+    }
+  },
+  "tags": [
+    { "name": "Alerts", "description": "Manage and retrieve security alerts from Defender for Office 365." },
+    { "name": "Incidents", "description": "Work with security incidents and correlated alerts." },
+    { "name": "Advanced Hunting", "description": "Run KQL queries on email, threat, and security event data." },
+    { "name": "Threat Submissions", "description": "Submit emails for threat analysis (via Microsoft Graph)." },
+    { "name": "Remediation", "description": "Perform email remediation actions." }
+  ],
+  "paths": {
+    "/api/alerts": {
+      "get": {
+        "tags": ["Alerts"],
+        "summary": "List alerts",
+        "description": "Returns a list of security alerts. Supports OData filtering, ordering, and pagination.",
+        "operationId": "listAlerts",
+        "parameters": [
+          { "$ref": "#/components/parameters/TopParam" },
+          { "$ref": "#/components/parameters/SkipParam" },
+          { "$ref": "#/components/parameters/FilterParam" },
+          { "$ref": "#/components/parameters/OrderByParam" }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response with list of alerts.",
+            "content": {
+              "application/json": { "schema": { "$ref": "#/components/schemas/ODataAlertList" } }
+            }
+          },
+          "401": { "$ref": "#/components/responses/Unauthorized" },
+          "403": { "$ref": "#/components/responses/Forbidden" },
+          "429": { "$ref": "#/components/responses/TooManyRequests" }
+        },
+        "security": [{ "OAuth2ClientCredentials": ["https://api.security.microsoft.com/.default"] }]
+      }
+    },
+    "/api/alerts/{alertId}": {
+      "get": {
+        "tags": ["Alerts"],
+        "summary": "Get alert by ID",
+        "operationId": "getAlert",
+        "parameters": [
+          {
+            "name": "alertId",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" },
+            "description": "The unique identifier of the alert.",
+            "example": "da637292082891366787_322129023"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Alert object.",
+            "content": {
+              "application/json": { "schema": { "$ref": "#/components/schemas/Alert" } }
+            }
+          },
+          "401": { "$ref": "#/components/responses/Unauthorized" },
+          "403": { "$ref": "#/components/responses/Forbidden" },
+          "404": { "$ref": "#/components/responses/NotFound" }
+        }
+      },
+      "patch": {
+        "tags": ["Alerts"],
+        "summary": "Update alert",
+        "description": "Update alert status, assignment, classification, or add a comment.",
+        "operationId": "updateAlert",
+        "parameters": [
+          {
+            "name": "alertId",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": { "schema": { "$ref": "#/components/schemas/UpdateAlertRequest" } }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Updated alert object.",
+            "content": {
+              "application/json": { "schema": { "$ref": "#/components/schemas/Alert" } }
+            }
+          },
+          "401": { "$ref": "#/components/responses/Unauthorized" },
+          "403": { "$ref": "#/components/responses/Forbidden" },
+          "404": { "$ref": "#/components/responses/NotFound" }
+        }
+      }
+    },
+    "/api/incidents": {
+      "get": {
+        "tags": ["Incidents"],
+        "summary": "List incidents",
+        "operationId": "listIncidents",
+        "parameters": [
+          { "$ref": "#/components/parameters/TopParam" },
+          { "$ref": "#/components/parameters/SkipParam" },
+          { "$ref": "#/components/parameters/FilterParam" },
+          { "$ref": "#/components/parameters/OrderByParam" }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of incidents.",
+            "content": {
+              "application/json": { "schema": { "$ref": "#/components/schemas/ODataIncidentList" } }
+            }
+          },
+          "401": { "$ref": "#/components/responses/Unauthorized" },
+          "403": { "$ref": "#/components/responses/Forbidden" }
+        }
+      }
+    },
+    "/api/incidents/{incidentId}": {
+      "get": {
+        "tags": ["Incidents"],
+        "summary": "Get incident by ID",
+        "operationId": "getIncident",
+        "parameters": [
+          {
+            "name": "incidentId",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" },
+            "example": "924520"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Incident with all related alerts.",
+            "content": {
+              "application/json": { "schema": { "$ref": "#/components/schemas/Incident" } }
+            }
+          },
+          "401": { "$ref": "#/components/responses/Unauthorized" },
+          "403": { "$ref": "#/components/responses/Forbidden" },
+          "404": { "$ref": "#/components/responses/NotFound" }
+        }
+      },
+      "patch": {
+        "tags": ["Incidents"],
+        "summary": "Update incident",
+        "operationId": "updateIncident",
+        "parameters": [
+          {
+            "name": "incidentId",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": { "schema": { "$ref": "#/components/schemas/UpdateIncidentRequest" } }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Updated incident.",
+            "content": {
+              "application/json": { "schema": { "$ref": "#/components/schemas/Incident" } }
+            }
+          },
+          "401": { "$ref": "#/components/responses/Unauthorized" },
+          "403": { "$ref": "#/components/responses/Forbidden" }
+        }
+      }
+    },
+    "/api/incidents/{incidentId}/alerts": {
+      "get": {
+        "tags": ["Incidents"],
+        "summary": "List alerts for an incident",
+        "operationId": "listIncidentAlerts",
+        "parameters": [
+          {
+            "name": "incidentId",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Alerts belonging to the incident.",
+            "content": {
+              "application/json": { "schema": { "$ref": "#/components/schemas/ODataAlertList" } }
+            }
+          },
+          "401": { "$ref": "#/components/responses/Unauthorized" },
+          "403": { "$ref": "#/components/responses/Forbidden" },
+          "404": { "$ref": "#/components/responses/NotFound" }
+        }
+      }
+    },
+    "/api/advancedhunting/run": {
+      "post": {
+        "tags": ["Advanced Hunting"],
+        "summary": "Run Advanced Hunting (KQL) query",
+        "description": "Execute a Kusto Query Language (KQL) query against Microsoft Defender XDR tables including EmailEvents, EmailAttachmentInfo, EmailUrlInfo, EmailPostDeliveryEvents, UrlClickEvents, and more.",
+        "operationId": "runAdvancedHuntingQuery",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/HuntingQueryRequest" },
+              "examples": {
+                "PhishingEmails": {
+                  "summary": "Find phishing emails in last 7 days",
+                  "value": { "Query": "EmailEvents | where Timestamp > ago(7d) | where ThreatTypes has 'Phish' | project Timestamp, SenderFromAddress, RecipientEmailAddress, Subject, DeliveryAction, ThreatTypes | limit 100" }
+                },
+                "MaliciousURLClicks": {
+                  "summary": "Find malicious URL clicks",
+                  "value": { "Query": "UrlClickEvents | where Timestamp > ago(7d) | where ActionType == 'ClickBlocked' | project Timestamp, AccountUpn, Url, Workload | limit 50" }
+                },
+                "QuarantinedEmails": {
+                  "summary": "Find quarantined emails",
+                  "value": { "Query": "EmailEvents | where DeliveryLocation == 'Quarantine' | where Timestamp > ago(24h) | project Timestamp, NetworkMessageId, SenderFromAddress, Subject | limit 100" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Query results.",
+            "content": {
+              "application/json": { "schema": { "$ref": "#/components/schemas/HuntingQueryResponse" } }
+            }
+          },
+          "400": {
+            "description": "Invalid query syntax.",
+            "content": {
+              "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } }
+            }
+          },
+          "401": { "$ref": "#/components/responses/Unauthorized" },
+          "403": { "$ref": "#/components/responses/Forbidden" },
+          "429": { "$ref": "#/components/responses/TooManyRequests" }
+        }
+      }
+    },
+    "https://graph.microsoft.com/v1.0/security/threatSubmission/emailThreats": {
+      "get": {
+        "tags": ["Threat Submissions"],
+        "summary": "List email threat submissions",
+        "operationId": "listThreatSubmissions",
+        "parameters": [
+          { "$ref": "#/components/parameters/TopParam" },
+          { "$ref": "#/components/parameters/FilterParam" }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of email threat submissions.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "value": { "type": "array", "items": { "$ref": "#/components/schemas/ThreatSubmissionResponse" } }
+                  }
+                }
+              }
+            }
+          },
+          "401": { "$ref": "#/components/responses/Unauthorized" },
+          "403": { "$ref": "#/components/responses/Forbidden" }
+        }
+      },
+      "post": {
+        "tags": ["Threat Submissions"],
+        "summary": "Submit email as threat",
+        "description": "Submit an email message for threat analysis (phishing, malware, junk, not-junk).",
+        "operationId": "submitEmailThreat",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/ThreatSubmission" },
+              "example": {
+                "networkMessageId": "49f9a8e4-9d3b-4e2a-9c55-8a4b7f0cb3c9",
+                "recipientEmailAddress": "user@contoso.com",
+                "category": "phishing"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Submission created.",
+            "content": {
+              "application/json": { "schema": { "$ref": "#/components/schemas/ThreatSubmissionResponse" } }
+            }
+          },
+          "401": { "$ref": "#/components/responses/Unauthorized" },
+          "403": { "$ref": "#/components/responses/Forbidden" }
+        }
+      }
+    },
+    "https://graph.microsoft.com/v1.0/security/threatSubmission/emailThreats/{submissionId}": {
+      "get": {
+        "tags": ["Threat Submissions"],
+        "summary": "Get threat submission by ID",
+        "operationId": "getThreatSubmission",
+        "parameters": [
+          {
+            "name": "submissionId",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Threat submission details.",
+            "content": {
+              "application/json": { "schema": { "$ref": "#/components/schemas/ThreatSubmissionResponse" } }
+            }
+          },
+          "401": { "$ref": "#/components/responses/Unauthorized" },
+          "403": { "$ref": "#/components/responses/Forbidden" },
+          "404": { "$ref": "#/components/responses/NotFound" }
+        }
+      }
+    },
+    "https://graph.microsoft.com/v1.0/security/cases/ediscoveryCases": {
+      "get": {
+        "tags": ["Remediation"],
+        "summary": "List eDiscovery cases (for email holds/remediation)",
+        "operationId": "listEdiscoveryCases",
+        "responses": {
+          "200": {
+            "description": "List of eDiscovery cases.",
+            "content": {
+              "application/json": {
+                "schema": { "type": "object", "properties": { "value": { "type": "array", "items": { "type": "object" } } } }
+              }
+            }
+          },
+          "401": { "$ref": "#/components/responses/Unauthorized" },
+          "403": { "$ref": "#/components/responses/Forbidden" }
+        }
+      }
+    }
+  }
+}
