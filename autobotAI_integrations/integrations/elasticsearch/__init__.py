@@ -115,7 +115,7 @@ class ElasticsearchService(BaseService):
     def supported_connection_interfaces():
         return [
             ConnectionInterfaces.PYTHON_SDK,
-            ConnectionInterfaces.REST_API,
+            # ConnectionInterfaces.REST_API
         ]
 
     def generate_python_sdk_creds(self) -> SDKCreds:
@@ -125,12 +125,12 @@ class ElasticsearchService(BaseService):
         }
         return SDKCreds(envs=envs)
 
-    def generate_rest_api_creds(self) -> RestAPICreds:
-        return RestAPICreds(
-            base_url=self.integration.base_url,
-            headers={
-                "Authorization": f"ApiKey {self.integration.token}",
-                "Content-Type": "application/json",
-                "Accept": "application/json",
-            },
-        )
+    # def generate_rest_api_creds(self) -> RestAPICreds:
+    #     return RestAPICreds(
+    #         base_url=self.integration.base_url,
+    #         headers={
+    #             "Authorization": f"ApiKey {self.integration.token}",
+    #             "Content-Type": "application/json",
+    #             "Accept": "application/json",
+    #         },
+    #     )
