@@ -116,7 +116,6 @@ class AutobotAIService(BaseService):
     
     def generate_mcp_creds(self) -> MCPCreds:
         return MCPCreds(
-            base_url=f'{self.integration.base_url}/mcp/integrations',
             headers={
                 "Authorization": f"ApiKey {self.integration.api_key}",
             },
