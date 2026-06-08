@@ -1,0 +1,471 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "CyberMindr API",
+    "description": "CyberMindr Continuous Threat Exposure Management (CTEM) REST API. Covers external asset discovery, vulnerability findings, attack path analysis, report access, and remediation recommendations.\n\n> **Note for senior:** Endpoint paths are inferred from CyberMindr's public platform documentation. Please validate against your tenant's Swagger UI (typically at `{base_url}/swagger` or `{base_url}/api/docs`) and adjust paths if needed.",
+    "version": "1.0.0",
+    "contact": {
+      "name": "CyberMindr Support",
+      "url": "https://www.cybermindr.com/contact-us"
+    }
+  },
+  "servers": [
+    {
+      "url": "{base_url}",
+      "description": "CyberMindr tenant platform URL (e.g. https://app.cybermindr.com)",
+      "variables": {
+        "base_url": {
+          "default": "https://app.cybermindr.com",
+          "description": "Your CyberMindr tenant base URL"
+        }
+      }
+    }
+  ],
+  "security": [
+    {
+      "BearerAuth": []
+    }
+  ],
+  "components": {
+    "securitySchemes": {
+      "BearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "description": "API key generated from CyberMindr dashboard: Settings -> API -> Generate New API Key. Pass as: Authorization: Bearer <api_key>"
+      }
+    },
+    "schemas": {
+      "PaginationParams": {
+        "type": "object",
+        "properties": {
+          "page": {
+            "type": "integer",
+            "description": "Page number (1-indexed).",
+            "default": 1
+          },
+          "limit": {
+            "type": "integer",
+            "description": "Number of results per page.",
+            "default": 50
+          }
+        }
+      }
+    }
+  },
+  "paths": {
+    "/api/v1/assets": {
+      "get": {
+        "tags": ["Assets"],
+        "operationId": "listAssets",
+        "summary": "List Discovered Assets",
+        "description": "Retrieve a paginated list of all external assets discovered by CyberMindr for your organization. Assets include domains, subdomains, IP addresses, ports, technologies, and other exposed digital footprint elements.",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "schema": { "type": "integer", "default": 1 },
+            "description": "Page number for pagination (1-indexed)."
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": { "type": "integer", "default": 50 },
+            "description": "Number of assets to return per page."
+          },
+          {
+            "name": "asset_type",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": ["domain", "subdomain", "ip", "port", "technology"]
+            },
+            "description": "Filter assets by type."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Paginated list of discovered assets.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": { "type": "object" },
+                      "description": "List of asset objects."
+                    },
+                    "total": { "type": "integer", "description": "Total number of assets." },
+                    "page": { "type": "integer" },
+                    "limit": { "type": "integer" }
+                  }
+                }
+              }
+            }
+          },
+          "401": { "description": "Unauthorized — invalid or missing API key." },
+          "403": { "description": "Forbidden — API key lacks required permissions." }
+        }
+      }
+    },
+    "/api/v1/findings": {
+      "get": {
+        "tags": ["Findings"],
+        "operationId": "listFindings",
+        "summary": "List Findings",
+        "description": "Retrieve a paginated list of security findings (vulnerabilities, misconfigurations, exposures) discovered and validated by CyberMindr's multi-stage attack engine. Supports filtering by severity and status.",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "schema": { "type": "integer", "default": 1 },
+            "description": "Page number for pagination."
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": { "type": "integer", "default": 50 },
+            "description": "Number of findings per page."
+          },
+          {
+            "name": "severity",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": ["critical", "high", "medium", "low", "info"]
+            },
+            "description": "Filter findings by severity level."
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": ["open", "resolved", "accepted", "in_progress"]
+            },
+            "description": "Filter findings by remediation status."
+          },
+          {
+            "name": "asset_id",
+            "in": "query",
+            "required": false,
+            "schema": { "type": "string" },
+            "description": "Filter findings for a specific asset ID."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Paginated list of security findings.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": { "type": "object" }
+                    },
+                    "total": { "type": "integer" },
+                    "page": { "type": "integer" },
+                    "limit": { "type": "integer" }
+                  }
+                }
+              }
+            }
+          },
+          "401": { "description": "Unauthorized — invalid or missing API key." },
+          "403": { "description": "Forbidden — insufficient permissions." }
+        }
+      }
+    },
+    "/api/v1/findings/{findingId}": {
+      "get": {
+        "tags": ["Findings"],
+        "operationId": "getFinding",
+        "summary": "Get Finding by ID",
+        "description": "Retrieve detailed information about a specific security finding by its ID, including full vulnerability description, affected asset, severity score, proof of exploitability, and remediation guidance.",
+        "parameters": [
+          {
+            "name": "findingId",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" },
+            "description": "The unique identifier of the finding."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Detailed finding object.",
+            "content": {
+              "application/json": {
+                "schema": { "type": "object" }
+              }
+            }
+          },
+          "401": { "description": "Unauthorized." },
+          "404": { "description": "Finding not found." }
+        }
+      }
+    },
+    "/api/v1/attack-paths": {
+      "get": {
+        "tags": ["Attack Paths"],
+        "operationId": "listAttackPaths",
+        "summary": "List Attack Paths",
+        "description": "Retrieve a paginated list of multi-stage attack paths discovered by CyberMindr's attack engine. Each attack path represents a validated chain of vulnerabilities that could be exploited by an attacker to compromise assets.",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "schema": { "type": "integer", "default": 1 },
+            "description": "Page number for pagination."
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": { "type": "integer", "default": 50 },
+            "description": "Number of attack paths per page."
+          },
+          {
+            "name": "severity",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": ["critical", "high", "medium", "low"]
+            },
+            "description": "Filter attack paths by severity."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Paginated list of attack paths.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": { "type": "object" }
+                    },
+                    "total": { "type": "integer" },
+                    "page": { "type": "integer" },
+                    "limit": { "type": "integer" }
+                  }
+                }
+              }
+            }
+          },
+          "401": { "description": "Unauthorized." },
+          "403": { "description": "Forbidden." }
+        }
+      }
+    },
+    "/api/v1/attack-paths/{attackPathId}": {
+      "get": {
+        "tags": ["Attack Paths"],
+        "operationId": "getAttackPath",
+        "summary": "Get Attack Path by ID",
+        "description": "Retrieve the full detail of a specific attack path, including each step in the attack chain, the vulnerabilities exploited at each stage, affected assets, and recommended mitigations.",
+        "parameters": [
+          {
+            "name": "attackPathId",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" },
+            "description": "The unique identifier of the attack path."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Detailed attack path object.",
+            "content": {
+              "application/json": {
+                "schema": { "type": "object" }
+              }
+            }
+          },
+          "401": { "description": "Unauthorized." },
+          "404": { "description": "Attack path not found." }
+        }
+      }
+    },
+    "/api/v1/reports": {
+      "get": {
+        "tags": ["Reports"],
+        "operationId": "listReports",
+        "summary": "List Reports",
+        "description": "Retrieve a list of security reports generated by CyberMindr. Reports provide a comprehensive view of the organization's security posture, including identified vulnerabilities, their criticality, and suggested actions.",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "schema": { "type": "integer", "default": 1 },
+            "description": "Page number for pagination."
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": { "type": "integer", "default": 20 },
+            "description": "Number of reports per page."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of available reports.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": { "type": "object" }
+                    },
+                    "total": { "type": "integer" },
+                    "page": { "type": "integer" },
+                    "limit": { "type": "integer" }
+                  }
+                }
+              }
+            }
+          },
+          "401": { "description": "Unauthorized." }
+        }
+      }
+    },
+    "/api/v1/reports/{reportId}": {
+      "get": {
+        "tags": ["Reports"],
+        "operationId": "getReport",
+        "summary": "Get Report by ID",
+        "description": "Retrieve the metadata and summary of a specific CyberMindr report by its ID.",
+        "parameters": [
+          {
+            "name": "reportId",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" },
+            "description": "The unique identifier of the report."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Report metadata and summary.",
+            "content": {
+              "application/json": {
+                "schema": { "type": "object" }
+              }
+            }
+          },
+          "401": { "description": "Unauthorized." },
+          "404": { "description": "Report not found." }
+        }
+      }
+    },
+    "/api/v1/remediations": {
+      "get": {
+        "tags": ["Remediations"],
+        "operationId": "listRemediations",
+        "summary": "List Remediation Recommendations",
+        "description": "Retrieve a paginated list of actionable remediation recommendations generated by CyberMindr based on discovered findings. Each recommendation includes step-by-step guidance to address identified vulnerabilities and improve security posture.",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "schema": { "type": "integer", "default": 1 },
+            "description": "Page number for pagination."
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": { "type": "integer", "default": 50 },
+            "description": "Number of remediations per page."
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": ["pending", "in_progress", "completed"]
+            },
+            "description": "Filter remediations by status."
+          },
+          {
+            "name": "finding_id",
+            "in": "query",
+            "required": false,
+            "schema": { "type": "string" },
+            "description": "Filter remediations linked to a specific finding ID."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Paginated list of remediation recommendations.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": { "type": "object" }
+                    },
+                    "total": { "type": "integer" },
+                    "page": { "type": "integer" },
+                    "limit": { "type": "integer" }
+                  }
+                }
+              }
+            }
+          },
+          "401": { "description": "Unauthorized." }
+        }
+      }
+    },
+    "/api/v1/remediations/{remediationId}": {
+      "get": {
+        "tags": ["Remediations"],
+        "operationId": "getRemediation",
+        "summary": "Get Remediation by ID",
+        "description": "Retrieve detailed information for a specific remediation recommendation, including the linked finding, step-by-step fix instructions, affected assets, and current status.",
+        "parameters": [
+          {
+            "name": "remediationId",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" },
+            "description": "The unique identifier of the remediation."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Detailed remediation recommendation.",
+            "content": {
+              "application/json": {
+                "schema": { "type": "object" }
+              }
+            }
+          },
+          "401": { "description": "Unauthorized." },
+          "404": { "description": "Remediation not found." }
+        }
+      }
+    }
+  }
+}
