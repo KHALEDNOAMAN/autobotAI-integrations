@@ -2,6 +2,8 @@ import json
 import traceback
 from pathlib import Path
 
+import pytest
+
 from autobotAI_integrations.handlers.task_handler import handle_task
 from autobotAI_integrations.integrations import integration_service_factory
 from autobotAI_integrations.integrations.cybermindr import (
@@ -95,7 +97,7 @@ class TestClassCyberMindr:
 
     def test_cybermindr_token(self, get_keys, sample_integration_dict):
         if "CYBERMINDR_API_KEY" not in get_keys or "CYBERMINDR_BASE_URL" not in get_keys:
-            return
+            pytest.skip("CyberMindr live credentials are not configured")
         tokens = {
             "api_key": get_keys["CYBERMINDR_API_KEY"],
             "base_url": get_keys["CYBERMINDR_BASE_URL"]
@@ -103,7 +105,6 @@ class TestClassCyberMindr:
         integration = sample_integration_dict("cybermindr", tokens)
         service = integration_service_factory.get_service(None, integration)
         res = service.is_active()
-        print(res)
         assert res["success"]
 
         tokens = {
@@ -113,12 +114,11 @@ class TestClassCyberMindr:
         integration = sample_integration_dict("cybermindr", tokens)
         service = integration_service_factory.get_service(None, integration)
         res = service.is_active()
-        print(res)
         assert not res["success"]
 
     def test_actions_run(self, get_keys, sample_restapi_task, sample_integration_dict):
         if "CYBERMINDR_API_KEY" not in get_keys or "CYBERMINDR_BASE_URL" not in get_keys:
-            return
+            pytest.skip("CyberMindr live credentials are not configured")
         tokens = {
             "api_key": get_keys["CYBERMINDR_API_KEY"],
             "base_url": get_keys["CYBERMINDR_BASE_URL"]
@@ -132,6 +132,6 @@ class TestClassCyberMindr:
                     integration, action.code, action.parameters_definition
                 )
                 result = handle_task(task)
-                print(result.model_dump_json(indent=2))
             except Exception:
                 traceback.print_exc()
+                raise

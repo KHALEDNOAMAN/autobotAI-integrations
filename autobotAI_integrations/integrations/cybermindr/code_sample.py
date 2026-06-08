@@ -20,8 +20,12 @@ def executor(context):
             "limit": limit,
         }
         if severity:
+            if severity not in ["critical", "high", "medium", "low", "info"]:
+                return [{"status": "error", "error": f"Invalid severity: {severity}. Must be one of critical, high, medium, low, info."}]
             query_params["severity"] = severity
         if status:
+            if status not in ["open", "resolved", "accepted", "in_progress"]:
+                return [{"status": "error", "error": f"Invalid status: {status}. Must be one of open, resolved, accepted, in_progress."}]
             query_params["status"] = status
 
         # The REST executor automatically attaches base_url and Authorization header.

@@ -8,7 +8,7 @@ from autobotAI_integrations.models import IntegrationCategory, RestAPICreds
 
 
 class CyberMindrIntegration(BaseSchema):
-    api_key: Optional[str] = Field(default=None, exclude=True)
+    api_key: str = Field(..., exclude=True)
     base_url: Optional[str] = Field(default=None)
 
     name: str = "CyberMindr"
