@@ -15,6 +15,7 @@ from autobotAI_integrations import (
     ConnectionInterfaces,
     PayloadTask,
     SDKClient,
+    list_of_unique_elements,
 )
 from autobotAI_integrations.models import IntegrationCategory
 from autobotAI_integrations.utils.logging_config import logger
@@ -186,6 +187,17 @@ class AzureOpenAIService(AIBaseService):
     def get_schema(ctx=None):
         return AzureFoundryOpenAIIntegration
 
+    @classmethod
+    def get_details(cls):
+        return {
+            "clients": list_of_unique_elements(cls.get_all_python_sdk_clients()),
+            "supported_executor": "ecs",
+            "compliance_supported": False,
+            "supported_interfaces": cls.supported_connection_interfaces(),
+            "python_code_sample": cls.get_code_sample(),
+            "preview": True,
+        }
+
     @staticmethod
     def supported_connection_interfaces():
         return [
@@ -339,11 +351,11 @@ class AzureOpenAIService(AIBaseService):
         return llm
 
     def generate_llm_credentials(self):
+        api_version = self.integration.azure_api_version or "v1"
+        endpoint = self.integration.azure_endpoint.rstrip("/")
         return {
             "api_key": self.integration.api_key,
-            "azure_endpoint": (
-                self.integration.azure_endpoint
-            ),
+            "base_url": f"{endpoint}/openai/{api_version}/",
         }
 
     def prompt_executor(

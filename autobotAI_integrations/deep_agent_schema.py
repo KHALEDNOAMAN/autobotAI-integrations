@@ -30,7 +30,10 @@ class LLMConfig(BaseModel):
 
     provider: str = Field(
         ...,
-        description="LLM provider: openai, anthropic, bedrock, google_genai",
+        description=(
+            "LLM provider: openai, anthropic, aws_bedrock, "
+            "azure_foundry_openai, google_genai"
+        ),
     )
     model: str = Field(
         ...,
