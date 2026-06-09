@@ -30,14 +30,13 @@ class MXToolboxClient:
     def __init__(self, api_key: str):
         self.api_key = api_key
         self.base_url = "https://api.mxtoolbox.com/api/v1"
-        self.session = requests.Session()
 
     def lookup(self, command: str, argument: str) -> requests.Response:
         url = f"{self.base_url}/lookup/{command.strip('/')}/{argument.strip('/')}"
         headers = {}
         if self.api_key:
             headers["Authorization"] = self.api_key
-        return self.session.get(url, headers=headers)
+        return requests.get(url, headers=headers)
 
 
 class MXToolboxService(BaseService):
