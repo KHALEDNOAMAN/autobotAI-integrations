@@ -1,0 +1,4 @@
+- name: mxtoolbox
+  import_library_names:
+    - autobotAI_integrations.integrations.mxtoolbox
+  pip_package_names: []
