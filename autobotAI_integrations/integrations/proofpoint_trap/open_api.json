@@ -5,12 +5,6 @@
     "description": "API integration for Proofpoint Threat Response Auto-Pull (TRAP).",
     "version": "1.0.0"
   },
-  "servers": [
-    {
-      "url": "https://trap.example.com",
-      "description": "User configured TRAP Base URL"
-    }
-  ],
   "paths": {
     "/api/incidents": {
       "get": {

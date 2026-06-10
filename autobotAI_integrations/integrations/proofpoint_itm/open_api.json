@@ -5,12 +5,6 @@
     "description": "API integration for Proofpoint Insider Threat Management (Endpoint DLP).",
     "version": "1.0.0"
   },
-  "servers": [
-    {
-      "url": "https://tenant.itmsaas.proofpoint.com",
-      "description": "User configured ITM Base URL"
-    }
-  ],
   "paths": {
     "/v2/alerts": {
       "get": {
