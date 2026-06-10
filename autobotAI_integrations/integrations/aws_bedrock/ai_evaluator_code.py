@@ -10,7 +10,7 @@ async def executor(context):
     prompt = context["params"]["prompt"]
     model = context["params"]["model"]
     resources = json.loads(json.dumps(context["params"]["resources"], default=str))
-    MAX_TOKEN = context['params'].get('output_token',8192)
+    MAX_TOKEN = context['params'].get('output_token') or 8192
 
     if not isinstance(resources, list):
         resources = [resources]
