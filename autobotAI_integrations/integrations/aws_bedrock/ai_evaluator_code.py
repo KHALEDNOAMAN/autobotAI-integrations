@@ -12,6 +12,9 @@ async def executor(context):
     resources = json.loads(json.dumps(context["params"]["resources"], default=str))
     MAX_TOKEN = context['params'].get('output_token') or 8192
 
+    if model.startswith("meta.llama3"):
+        MAX_TOKEN = 2048
+
     if not isinstance(resources, list):
         resources = [resources]
     
