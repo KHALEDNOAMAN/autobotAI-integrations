@@ -73,6 +73,23 @@ class OpenRouterService(AIBaseService):
                 "meta-llama/llama-3.3-70b-instruct",
                 "mistralai/mistral-large",
                 "deepseek/deepseek-r1",
+                "deepseek/deepseek-v4-flash",
+                "openrouter/owl-alpha",
+                "qwen/qwen3.7-max",
+                "moonshotai/kimi-k2.6",
+                "minimax/minimax-m3",
+                "tencent/hy3-preview",
+                "deepseek/deepseek-v4-pro",
+                "xiaomi/mimo-v2.5",
+                "anthropic/claude-sonnet-4.6",
+                "anthropic/claude-opus-4.7",
+                "anthropic/claude-opus-4.8",
+                "stepfun/step-3.7-flash",
+                "nvidia/nemotron-3-ultra-550b-a55b:free",
+                "google/gemini-3.5-flash",
+                "nvidia/nemotron-3-super-120b-a12b:free",
+                "openai/gpt-oss-120b",
+                "z-ai/glm-5.1",
             ]
             return {
                 "integration_id": self.integration.accountId,
@@ -188,6 +205,17 @@ class OpenRouterService(AIBaseService):
 
     def generate_cli_creds(self) -> CLICreds:
         pass
+
+    def generate_llm_credentials(self):
+        # OpenRouter is an OpenAI-compatible gateway, so the deep-agent runtime
+        # talks to it through an OpenAI client pointed at OPENROUTER_BASE_URL.
+        # NOTE: the consuming runtime (agent_core) must map provider="openrouter"
+        # onto that OpenAI-compatible client using base_url for this to work end
+        # to end; returning the creds here is necessary but not sufficient.
+        return {
+            "api_key": self.integration.api_key,
+            "base_url": OPENROUTER_BASE_URL,
+        }
 
     def get_pydantic_agent(
         self, model: str, tools, system_prompt: str, options: dict = {}
