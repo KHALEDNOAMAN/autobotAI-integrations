@@ -1,0 +1,181 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Rapid7 InsightVM",
+    "description": "Rapid7 Insight Platform Cloud API (v4) for vulnerability and asset management.",
+    "version": "4.0.0"
+  },
+  "servers": [
+    {
+      "url": "https://us.api.insight.rapid7.com",
+      "description": "US Region (default)"
+    },
+    {
+      "url": "https://eu.api.insight.rapid7.com",
+      "description": "EU Region"
+    },
+    {
+      "url": "https://ap.api.insight.rapid7.com",
+      "description": "Asia Pacific Region"
+    }
+  ],
+  "paths": {
+    "/validate": {
+      "get": {
+        "summary": "Validate API Key",
+        "description": "Validates the provided Insight Platform API key and checks platform connectivity.",
+        "operationId": "validateApiKey"
+      }
+    },
+    "/ivm/v4/assets": {
+      "get": {
+        "summary": "List Assets",
+        "description": "Retrieve a paginated list of all assets in the InsightVM inventory.",
+        "operationId": "getAssets",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "schema": { "type": "integer", "default": 0 },
+            "description": "Page number (0-indexed)"
+          },
+          {
+            "name": "size",
+            "in": "query",
+            "required": false,
+            "schema": { "type": "integer", "default": 25 },
+            "description": "Number of results per page"
+          }
+        ]
+      }
+    },
+    "/ivm/v4/assets/{id}": {
+      "get": {
+        "summary": "Get Asset",
+        "description": "Retrieve detailed information for a single asset by its unique ID.",
+        "operationId": "getAsset",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" },
+            "description": "The unique identifier of the asset"
+          }
+        ]
+      }
+    },
+    "/ivm/v4/assets/{id}/vulnerabilities": {
+      "get": {
+        "summary": "Get Asset Vulnerabilities",
+        "description": "List all vulnerabilities found on a specific asset.",
+        "operationId": "getAssetVulnerabilities",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" },
+            "description": "The unique identifier of the asset"
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "schema": { "type": "integer", "default": 0 },
+            "description": "Page number (0-indexed)"
+          },
+          {
+            "name": "size",
+            "in": "query",
+            "required": false,
+            "schema": { "type": "integer", "default": 25 },
+            "description": "Number of results per page"
+          }
+        ]
+      }
+    },
+    "/ivm/v4/vulnerabilities": {
+      "get": {
+        "summary": "List Vulnerabilities",
+        "description": "Retrieve a paginated list of all known vulnerabilities across the platform.",
+        "operationId": "getVulnerabilities",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "schema": { "type": "integer", "default": 0 },
+            "description": "Page number (0-indexed)"
+          },
+          {
+            "name": "size",
+            "in": "query",
+            "required": false,
+            "schema": { "type": "integer", "default": 25 },
+            "description": "Number of results per page"
+          }
+        ]
+      }
+    },
+    "/ivm/v4/vulnerabilities/{id}": {
+      "get": {
+        "summary": "Get Vulnerability",
+        "description": "Retrieve detailed information for a specific vulnerability by its ID.",
+        "operationId": "getVulnerability",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" },
+            "description": "The unique identifier of the vulnerability"
+          }
+        ]
+      }
+    },
+    "/ivm/v4/scan-engines": {
+      "get": {
+        "summary": "List Scan Engines",
+        "description": "List all scan engines configured in the Insight Platform.",
+        "operationId": "getScanEngines"
+      }
+    },
+    "/ivm/v4/sites": {
+      "get": {
+        "summary": "List Sites",
+        "description": "List all sites (scan target groups) configured in the platform.",
+        "operationId": "getSites",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "schema": { "type": "integer", "default": 0 },
+            "description": "Page number (0-indexed)"
+          },
+          {
+            "name": "size",
+            "in": "query",
+            "required": false,
+            "schema": { "type": "integer", "default": 25 },
+            "description": "Number of results per page"
+          }
+        ]
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "ApiKeyAuth": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "X-Api-Key"
+      }
+    }
+  },
+  "security": [
+    { "ApiKeyAuth": [] }
+  ]
+}

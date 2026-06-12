@@ -1,0 +1,19 @@
+<svg version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 240" width="100%" height="100%">
+  <!-- Background circle -->
+  <circle cx="60" cy="120" r="44" fill="#E8002D" />
+
+  <!-- White "R" letterform inside circle -->
+  <rect x="42" y="90" width="10" height="60" fill="#FFFFFF" />
+  <path d="M52,90 L76,90 Q88,90 88,108 Q88,122 76,124 L88,150 L76,150 L65,126 L52,126 Z" fill="#FFFFFF" />
+  <rect x="52" y="90" width="24" height="10" rx="2" fill="#FFFFFF" />
+  <rect x="52" y="108" width="20" height="10" rx="2" fill="#FFFFFF" />
+
+  <!-- "RAPID7" text -->
+  <text x="112" y="112" font-family="'Arial Black', 'Arial Bold', sans-serif" font-size="22" font-weight="900" fill="#F3F4F6" letter-spacing="1">RAPID7</text>
+
+  <!-- Tagline -->
+  <text x="112" y="135" font-family="Arial, sans-serif" font-size="11" font-weight="400" fill="#9CA3AF" letter-spacing="0.5">InsightVM</text>
+
+  <!-- Decorative underline -->
+  <line x1="112" y1="142" x2="228" y2="142" stroke="#E8002D" stroke-width="2.5" />
+</svg>
