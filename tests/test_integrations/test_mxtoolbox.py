@@ -38,3 +38,8 @@ def executor(context):
         result = handle_task(task)
         test_result_format(result)
 
+    def test_get_details_flags(self):
+        service = integration_service_factory.get_service_cls("mxtoolbox")
+        details = service.get_details()
+        assert details["preview"] is True
+

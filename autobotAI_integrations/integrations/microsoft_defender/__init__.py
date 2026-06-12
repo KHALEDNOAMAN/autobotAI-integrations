@@ -84,6 +84,12 @@ class MicrosoftDefenderService(BaseService):
     def get_schema(ctx=None) -> Type[BaseSchema]:
         return MicrosoftDefenderIntegration
 
+    @classmethod
+    def get_details(cls):
+        details = super().get_details()
+        details["preview"] = True
+        return details
+
     def _get_access_token(self, scope: str) -> str:
         url = (
             f"https://login.microsoftonline.com/{self.integration.tenant_id}"
