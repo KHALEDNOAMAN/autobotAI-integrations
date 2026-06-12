@@ -140,3 +140,9 @@ class TestClassCrowdstrikeIdentityProtection:
         assert "FALCON_CLIENT_ID" in creds.envs
         assert "FALCON_CLIENT_SECRET" in creds.envs
         assert "FALCON_CLOUD" in creds.envs
+
+    def test_get_details_flags(self):
+        service = integration_service_factory.get_service_cls("crowdstrike_identity_protection")
+        details = service.get_details()
+        assert details["preview"] is True
+

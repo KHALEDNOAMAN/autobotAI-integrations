@@ -116,3 +116,9 @@ class TestClassMicrosoftDefender:
         assert "AZURE_TENANT_ID" in creds.envs
         assert "AZURE_CLIENT_ID" in creds.envs
         assert "AZURE_CLIENT_SECRET" in creds.envs
+
+    def test_get_details_flags(self):
+        service = integration_service_factory.get_service_cls("microsoft_defender")
+        details = service.get_details()
+        assert details["preview"] is True
+
