@@ -115,6 +115,12 @@ class OpenAIService(AIBaseService):
                         "description": "The resources to use for the AI model",
                         "required": True,
                     },
+                    {
+                        "name": "output_token",
+                        "type": "int",
+                        "description": "Output Token controls the maximum length of the AI model response. Higher values support larger outputs.",
+                        "required": False,
+                    }
                 ],
                 "code": f.read(),
             }
@@ -155,12 +161,24 @@ class OpenAIService(AIBaseService):
             client_definitions[0].import_library_names[0], package=None
         )
 
+        def model_agent(model_string: str, system_prompt: str = "", tools: Optional[list] = None, **agent_kwargs):
+            creds = payload_task.creds.envs if payload_task.creds else {}
+            return self.get_pydantic_agent(
+                model=model_string,
+                tools=tools or [],
+                system_prompt=system_prompt,
+                options=agent_kwargs,
+                credentials=creds,
+            )
+
+
         return [
             {
                 "clients": {
                     "openai": openai.OpenAI(
                         api_key=payload_task.creds.envs.get("OPENAI_API_KEY")
-                    )
+                    ),
+                    "Agent": model_agent,
                 },
                 "params": self.prepare_params(payload_task.params),
                 "context": payload_task.context,
@@ -198,18 +216,19 @@ class OpenAIService(AIBaseService):
         pass
 
     def get_pydantic_agent(
-        self, model: str, tools, system_prompt: str, options: dict = {}
+        self, model: str, tools, system_prompt: str, options: dict = {}, credentials: Optional[dict] = None
     ):
         from pydantic_ai import Agent
-        model_instance = self.get_pydantic_model(model)
+        model_instance = self.get_pydantic_model(model, credentials)
         return Agent(model_instance, system_prompt=system_prompt, tools=tools, **options)
 
-    def get_pydantic_model(self, model_name: str):
+    def get_pydantic_model(self, model_name: str,credentials: Optional[dict] = None):
         from pydantic_ai.models.openai import OpenAIResponsesModel
         from pydantic_ai.providers.openai import OpenAIProvider
+        payload_creds = credentials if credentials else {"OPENAI_API_KEY": self.integration.api_key}
         model = OpenAIResponsesModel(
             model_name=model_name,
-            provider=OpenAIProvider(api_key=self.integration.api_key),
+            provider=OpenAIProvider(api_key=payload_creds.get("OPENAI_API_KEY")),
         )
         return model
 
@@ -239,6 +258,11 @@ class OpenAIService(AIBaseService):
 
         llm = OpenAI(api_key=self.integration.api_key, model=model, **kwargs)
         return llm
+    
+    def generate_llm_credentials(self):
+        return {
+            "api_key": self.integration.api_key
+        }
 
     def prompt_executor(
         self,

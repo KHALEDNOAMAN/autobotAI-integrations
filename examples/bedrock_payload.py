@@ -55,32 +55,65 @@ context = {
     "global_variables": {"default_aws_region": "ap-south-1"},
 }
 code = """
+from pydantic import BaseModel, Field
+from typing import List
 import json
+
+
 def executor(context):
-    client = context["clients"]["bedrock-runtime"]
-    model_id = "meta.llama3-8b-instruct-v1:0"
-    user_message = "Describe the purpose of a 'hello world' program in one line."
-    prompt = f\"""
-    <|begin_of_text|>
-    <|start_header_id|>user<|end_header_id|>
-    {user_message}
-    <|eot_id|>
-    <|start_header_id|>assistant<|end_header_id|>
-    \"""
-    request = {
-        "prompt": prompt,
-        # Optional inference parameters:
-        "max_gen_len": 512,
-        "temperature": 0.5,
-        "top_p": 0.9,
-    }
+    agent = context["clients"]["Agent"]
+    prompt = 'generate summary'
+    model =  'global.anthropic.claude-sonnet-4-6'
+    resources = 'this is resource list'
 
-    # Encode and send the request.
-    response = client.invoke_model(body=json.dumps(request), modelId=model_id)
+    class ResourceEvaluation(BaseModel):
+        name: str = Field(..., description="Matches unique resource 'name' field")
+        action_required: bool = Field(..., description="Whether action is required")
+        probability_score: int = Field(..., ge=1, le=100, description="Probability score between 1 and 100")
+        confidence_score: int = Field(..., ge=0, le=100, description="Confidence score between 0 and 100")
+        reason: str = Field(..., description="Explanation for the scores")
+        fields_evaluated: List[str] = Field(..., description="List of fields that were evaluated")
 
-    # Decode the native response body.
-    model_response = json.loads(response["body"].read())
-    return [model_response]
+
+    system_prompt = f\"\"\"You are an AI evaluator that returns decision-making JSON data only.
+
+Given the prompt and resource list, evaluate each resource based on the following field descriptions:
+
+1. **name**: The unique name of the resource being evaluated. It should match exactly with the resource 'name' field value.
+
+2. **action_required**: A Boolean indicating whether action is advisable for the resource. Determine this based on `probability_score` and `confidence_score`. Return `true` if action is recommended; otherwise, return `false`.
+
+3. **probability_score**: An integer (1-100) representing the likelihood of a specific outcome occurring. Higher scores suggest automation or action; lower scores suggest manual intervention or no action.
+
+4. **confidence_score**: An integer (0-100) reflecting the confidence in the evaluation's accuracy. Lower scores imply that more assumptions were needed to reach the result.
+
+5. **reason**: A textual explanation justifying the `action_required` value, based on the `probability_score` and `confidence_score`.
+
+6. **fields_evaluated**: A list of the field names considered in determining the above values.
+
+Your response must be a JSON array with one object per resource, strictly following this schema:
+{ResourceEvaluation.model_json_schema()}
+
+Rules:
+- Return only a JSON array, structured for direct parsing using `json.loads(response)` in Python.
+- No extra text, symbols, or markdown.
+- Each object must contain all required fields.\"\"\"
+
+    user_prompt = f\"\"\"
+    System Instructions: {system_prompt}
+    Resources: {resources}
+    Prompt: {prompt}
+
+    Response: \"\"\"
+
+    agent_instance = agent(model)
+
+    # Execute agent
+    result = agent_instance.run_sync(
+        f"{system_prompt}\\n\\n{user_prompt}"
+    )
+
+    return [result.output]
 """
 
 def generate_aws_python_payload(aws_json=aws_json):
@@ -102,7 +135,7 @@ def generate_aws_python_payload(aws_json=aws_json):
         "creds": creds,
         "connection_interface": ConnectionInterfaces.PYTHON_SDK,
         "executable": code,
-        "clients": ["bedrock", "bedrock-runtime"],
+        "clients": ["bedrock", "bedrock-runtime", "bedrock-agent-runtime", "Agent"],
         "params": [Param(**param)],
         "node_details": {"filter_resources": False},
         "context": PayloadTaskContext(**context, **{"integration": aws_integration}),

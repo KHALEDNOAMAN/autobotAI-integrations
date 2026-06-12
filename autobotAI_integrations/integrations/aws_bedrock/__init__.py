@@ -166,7 +166,7 @@ class AWSBedrockService(AIBaseService):
         with open(os.path.join(current_directory, "ai_evaluator_code.py")) as f:
             return {
                 "integration_type": "aws_bedrock",
-                "ai_client": "bedrock-runtime",
+                "ai_client": "Agent",
                 "param_definitions": [
                     {
                         "name": "prompt",
@@ -186,6 +186,12 @@ class AWSBedrockService(AIBaseService):
                         "description": "The resources to use for the AI model",
                         "required": True,
                     },
+                    {
+                        "name": "output_token",
+                        "type": "int",
+                        "description": "Output Token controls the maximum length of the AI model response. Higher values support larger outputs.",
+                        "required": False,
+                    }
                 ],
                 "code": f.read(),
             }
@@ -208,6 +214,16 @@ class AWSBedrockService(AIBaseService):
     def build_python_exec_combinations_hook(
         self, payload_task: PayloadTask, client_definitions: List[SDKClient]
     ) -> list:
+        def model_agent(model_string: str, system_prompt: str = "", tools: Optional[list] = None, **agent_kwargs):
+            creds = payload_task.creds.envs if payload_task.creds else {}
+            return self.get_pydantic_agent(
+                model=model_string,
+                tools=tools or [],
+                system_prompt=system_prompt,
+                options=agent_kwargs,
+                credentials=creds,
+            )
+
         return [
             {
                 "metadata": {"region": self.integration.region},
@@ -224,6 +240,7 @@ class AWSBedrockService(AIBaseService):
                     "bedrock-agent-runtime": boto3.client(
                         "bedrock-agent-runtime", region_name=self.integration.region
                     ),
+                    "Agent": model_agent,
                 },
                 "params": self.prepare_params(
                     self.filer_combo_params(
@@ -301,26 +318,31 @@ class AWSBedrockService(AIBaseService):
         return request
 
     def get_pydantic_agent(
-        self, model: str, tools, system_prompt: str, options: dict = {}
+        self, model: str, tools, system_prompt: str, options: dict = {}, credentials: Optional[dict] = None
     ):
         from pydantic_ai.agent import Agent
 
-        model_instance = self.get_pydantic_model(model)
+        if not credentials:
+            credentials = self._temp_credentials()
+
+        model_instance = self.get_pydantic_model(model,credentials=credentials)
         return Agent(
             model_instance, system_prompt=system_prompt, tools=tools, **options
         )
 
-    def get_pydantic_model(self, model_name: str):
+    def get_pydantic_model(self, model_name: str, credentials: Optional[dict] = None):
         from pydantic_ai.models.bedrock import BedrockConverseModel
         from pydantic_ai.providers.bedrock import BedrockProvider
 
-        credentials = self._temp_credentials()
+        if not credentials:
+            credentials = self._temp_credentials()
+  
         model = BedrockConverseModel(
             model_name=model_name,
             provider=BedrockProvider(
-                aws_access_key_id=credentials["AWS_ACCESS_KEY_ID"],
-                aws_secret_access_key=credentials["AWS_SECRET_ACCESS_KEY"],
-                aws_session_token=credentials["AWS_SESSION_TOKEN"],
+                aws_access_key_id=credentials.get("AWS_ACCESS_KEY_ID"),
+                aws_secret_access_key=credentials.get("AWS_SECRET_ACCESS_KEY"),
+                aws_session_token=credentials.get("AWS_SESSION_TOKEN"),  # None if no role assumption
                 region_name=self.integration.region,
             ),
         )
@@ -369,6 +391,15 @@ class AWSBedrockService(AIBaseService):
             **kwargs,
         )
         return llm
+    
+    def generate_llm_credentials(self):
+        credentials = self._temp_credentials()
+        return {
+            "access_key": credentials["AWS_ACCESS_KEY_ID"],
+            "secret_key": credentials["AWS_SECRET_ACCESS_KEY"],
+            "session_token": credentials["AWS_SESSION_TOKEN"],
+            "region": self.integration.region
+        }
 
     def prompt_executor(
         self,

@@ -1,0 +1,472 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Proofpoint DLP (ICES) API",
+    "description": "Proofpoint Intelligent Cloud Email Security REST API — formerly Tessian. Covers security events, user groups, user monitoring, email remediation, audit trail, and custom policy configuration.",
+    "version": "1.0.1",
+    "contact": {
+      "name": "Proofpoint Support",
+      "email": "tessian-support@proofpoint.com",
+      "url": "https://developer.tessian.com/documentation/api/index.html"
+    }
+  },
+  "servers": [
+    {
+      "url": "{base_url}",
+      "description": "Tenant-specific Proofpoint base URL (e.g. https://yourcompany.tessian-app.com)"
+    }
+  ],
+  "security": [
+    {
+      "ApiTokenAuth": []
+    }
+  ],
+  "components": {
+    "securitySchemes": {
+      "ApiTokenAuth": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "Authorization",
+        "description": "Pass your token as: API-Token <your-api-token>"
+      }
+    }
+  },
+  "paths": {
+    "/api/v1/events": {
+      "get": {
+        "tags": ["Security Events"],
+        "summary": "Get Security Events",
+        "description": "Retrieve DLP security events from Defender, Guardian, and Architect. Supports pagination via checkpoint.",
+        "parameters": [
+          {
+            "name": "created_after",
+            "in": "query",
+            "required": false,
+            "schema": { "type": "string", "format": "date-time" },
+            "description": "Only include events created after this time (ISO 8601). Use either this or after_checkpoint, not both."
+          },
+          {
+            "name": "after_checkpoint",
+            "in": "query",
+            "required": false,
+            "schema": { "type": "string" },
+            "description": "Pagination checkpoint returned by a previous request. Resumes from where you left off."
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": { "type": "integer" },
+            "description": "Maximum number of events to return."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Paginated list of security events with checkpoint for next page.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "checkpoint": { "type": "string" },
+                    "additional_results": { "type": "boolean" },
+                    "results": { "type": "array", "items": { "type": "object" } }
+                  }
+                }
+              }
+            }
+          },
+          "401": { "description": "Invalid token or API is not enabled." },
+          "429": { "description": "Rate limited — wait a few seconds and retry." }
+        }
+      }
+    },
+    "/api/v1/groups": {
+      "get": {
+        "tags": ["User Groups"],
+        "summary": "Get Groups",
+        "description": "Fetch a paginated list of all user groups.",
+        "parameters": [
+          {
+            "name": "after_checkpoint",
+            "in": "query",
+            "required": false,
+            "schema": { "type": "string" },
+            "description": "Pagination checkpoint from a previous response."
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": { "type": "integer" },
+            "description": "Maximum number of groups to return."
+          }
+        ],
+        "responses": {
+          "200": { "description": "List of user groups." }
+        }
+      },
+      "post": {
+        "tags": ["User Groups"],
+        "summary": "Create Group",
+        "description": "Create a new named user group.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["name"],
+                "properties": {
+                  "name": { "type": "string", "description": "Unique name for the group." }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Created group details." }
+        }
+      }
+    },
+    "/api/v1/groups/{groupId}": {
+      "get": {
+        "tags": ["User Groups"],
+        "summary": "Read Group",
+        "description": "Retrieve details of a specific user group by ID.",
+        "parameters": [
+          {
+            "name": "groupId",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "integer" },
+            "description": "The numeric group ID."
+          }
+        ],
+        "responses": {
+          "200": { "description": "Group details." }
+        }
+      },
+      "put": {
+        "tags": ["User Groups"],
+        "summary": "Update Group",
+        "description": "Update the name of an existing user group.",
+        "parameters": [
+          {
+            "name": "groupId",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "integer" }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": { "type": "string" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Updated group." }
+        }
+      },
+      "delete": {
+        "tags": ["User Groups"],
+        "summary": "Delete Group",
+        "description": "Delete a user group by ID.",
+        "parameters": [
+          {
+            "name": "groupId",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "integer" }
+          }
+        ],
+        "responses": {
+          "200": { "description": "Deletion confirmed." }
+        }
+      }
+    },
+    "/api/v1/groups/{groupId}/members/add": {
+      "post": {
+        "tags": ["User Groups"],
+        "summary": "Add Group Members",
+        "description": "Add email addresses or domains as members of a group.",
+        "parameters": [
+          {
+            "name": "groupId",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "integer" }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "members": {
+                    "type": "array",
+                    "items": { "type": "string" },
+                    "description": "List of email addresses or wildcard domains."
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Members added." }
+        }
+      }
+    },
+    "/api/v1/groups/{groupId}/members/remove": {
+      "post": {
+        "tags": ["User Groups"],
+        "summary": "Remove Group Members",
+        "description": "Remove email addresses or domains from a group.",
+        "parameters": [
+          {
+            "name": "groupId",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "integer" }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "members": {
+                    "type": "array",
+                    "items": { "type": "string" }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Members removed." }
+        }
+      }
+    },
+    "/api/v1/users": {
+      "get": {
+        "tags": ["User Monitoring"],
+        "summary": "Get Users",
+        "description": "Retrieve a paginated list of users monitored by Proofpoint.",
+        "parameters": [
+          {
+            "name": "after_checkpoint",
+            "in": "query",
+            "required": false,
+            "schema": { "type": "string" },
+            "description": "Pagination checkpoint."
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": { "type": "integer" }
+          }
+        ],
+        "responses": {
+          "200": { "description": "Paginated list of users." }
+        }
+      }
+    },
+    "/api/v1/email-exfiltration-anomalies": {
+      "get": {
+        "tags": ["Email Exfiltration Anomalies"],
+        "summary": "Get Email Exfiltration Anomalies",
+        "description": "Retrieve anomalous email exfiltration events detected by Proofpoint.",
+        "parameters": [
+          {
+            "name": "created_after",
+            "in": "query",
+            "required": false,
+            "schema": { "type": "string", "format": "date-time" },
+            "description": "Filter events created after this timestamp (ISO 8601)."
+          },
+          {
+            "name": "after_checkpoint",
+            "in": "query",
+            "required": false,
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": { "type": "integer" }
+          }
+        ],
+        "responses": {
+          "200": { "description": "Email exfiltration anomaly events." }
+        }
+      }
+    },
+    "/api/v1/quarantine/release": {
+      "post": {
+        "tags": ["Remediation"],
+        "summary": "Release Email from Quarantine",
+        "description": "Release a quarantined email and deliver it to the recipient.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["event_id"],
+                "properties": {
+                  "event_id": { "type": "string", "description": "The security event ID to release." }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Email released from quarantine." }
+        }
+      }
+    },
+    "/api/v1/quarantine/delete": {
+      "post": {
+        "tags": ["Remediation"],
+        "summary": "Delete Email from Quarantine",
+        "description": "Permanently delete a quarantined email.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["event_id"],
+                "properties": {
+                  "event_id": { "type": "string", "description": "The security event ID to delete." }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Email deleted from quarantine." }
+        }
+      }
+    },
+    "/api/v1/inbox/delete": {
+      "post": {
+        "tags": ["Remediation"],
+        "summary": "Delete Email from Inbox",
+        "description": "Delete an email directly from a user's inbox.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["event_id"],
+                "properties": {
+                  "event_id": { "type": "string", "description": "The security event ID." }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Email deleted from inbox." }
+        }
+      }
+    },
+    "/api/v1/audit-logs": {
+      "get": {
+        "tags": ["Audit Trail"],
+        "summary": "Get Audit Logs",
+        "description": "Retrieve the Proofpoint Portal audit trail — covers admin actions, token creation/deletion, policy changes.",
+        "parameters": [
+          {
+            "name": "created_after",
+            "in": "query",
+            "required": false,
+            "schema": { "type": "string", "format": "date-time" }
+          },
+          {
+            "name": "after_checkpoint",
+            "in": "query",
+            "required": false,
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": { "type": "integer" }
+          }
+        ],
+        "responses": {
+          "200": { "description": "Paginated audit log entries." }
+        }
+      }
+    },
+    "/api/v1/policy/config/{parameter}": {
+      "get": {
+        "tags": ["Custom Policy Configuration"],
+        "summary": "Get Policy Parameter Value",
+        "description": "Retrieve the current value of a custom policy configuration parameter.",
+        "parameters": [
+          {
+            "name": "parameter",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" },
+            "description": "The policy parameter name."
+          }
+        ],
+        "responses": {
+          "200": { "description": "Current parameter value." }
+        }
+      },
+      "put": {
+        "tags": ["Custom Policy Configuration"],
+        "summary": "Update Policy Parameter Value",
+        "description": "Update the value of a custom policy configuration parameter.",
+        "parameters": [
+          {
+            "name": "parameter",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "value": { "type": "string", "description": "New value for the parameter." }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Updated parameter value." }
+        }
+      }
+    }
+  }
+}

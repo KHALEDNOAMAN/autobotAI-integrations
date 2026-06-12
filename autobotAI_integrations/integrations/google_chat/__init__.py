@@ -21,6 +21,11 @@ class GoogleChatIntegration(BaseSchema):
 class GoogleChatService(BaseService):
     # TODO: This Service Can be Much More Better by Adding actual google.cloud.apis
     # More details: https://developers.google.com/workspace/chat/overview
+
+    # Google Chat webhook accepts ~32 KB per message; we leave a small margin
+    # and use markdown-style footers (Chat renders simple markdown).
+    notification_body_limit = {"max_bytes": 30_000, "format": "markdown"}
+
     def __init__(self, ctx: dict, integration: Union[GoogleChatIntegration, dict]):
         """
         Integration should have all the data regarding the integration

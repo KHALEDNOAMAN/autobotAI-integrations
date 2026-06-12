@@ -1,0 +1,41 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "MXToolbox",
+    "description": "MXToolbox diagnostic and lookup tools.",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "https://api.mxtoolbox.com/api/v1"
+    }
+  ],
+  "paths": {
+    "/lookup/{command}/{argument}": {
+      "get": {
+        "summary": "Perform a diagnostic lookup",
+        "operationId": "lookup",
+        "parameters": [
+          {
+            "name": "command",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The command type (e.g. mx, dns, blacklist, spf)"
+          },
+          {
+            "name": "argument",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The target domain or IP address"
+          }
+        ]
+      }
+    }
+  }
+}

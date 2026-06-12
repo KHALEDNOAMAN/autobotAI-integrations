@@ -57,6 +57,14 @@ class TestClassOpenRouter:
         # Multi-provider routing — names should be namespaced.
         assert any("/" in m for m in details["models"])
 
+    def test_generate_llm_credentials(self, sample_integration_dict):
+        # Deep-agent payload builder calls this to populate LLMConfig; OpenRouter
+        # is an OpenAI-compatible gateway so it must return api_key + base_url.
+        integration = sample_integration_dict("openrouter", {"api_key": "sk-or-test"})
+        service = integration_service_factory.get_service(None, integration)
+        creds = service.generate_llm_credentials()
+        assert creds == {"api_key": "sk-or-test", "base_url": OPENROUTER_BASE_URL}
+
     def test_ai_prompt_python_template(self):
         template = OpenRouterService.ai_prompt_python_template()
         assert template["integration_type"] == "openrouter"

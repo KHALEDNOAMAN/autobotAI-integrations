@@ -1,5 +1,5 @@
 import traceback
-from typing import Type, Union
+from typing import Any, Dict, Type, Union
 from enum import Enum
 
 import uuid
@@ -13,6 +13,10 @@ from autobotAI_integrations import BaseService, list_of_unique_elements, Payload
 from autobotAI_integrations.models import *
 from autobotAI_integrations.utils.boto3_helper import Boto3Helper
 from autobotAI_integrations.utils.logging_config import logger
+from autobotAI_integrations.utils.refreshable_creds import (
+    build_refreshable_aws_session,
+    current_aws_creds_resolver,
+)
 
 
 class Forms:
@@ -68,21 +72,25 @@ class AWSService(BaseService):
 
     def _get_aws_client(self, aws_client_name: str):
         if self.integration.roleArn not in ["None", None]:
+            # IAM Role: assume_role via STS through Boto3Helper
             boto3_helper = Boto3Helper(
                 self.ctx, integration=self.integration.dump_all_data()
             )
             return boto3_helper.get_client(aws_client_name)
-        else:
+        elif self.integration.session_token not in [None, "None"]:
+            # Access key + session token provided: use directly, no STS call
             return boto3.client(
                 aws_client_name,
                 aws_access_key_id=str(self.integration.access_key),
                 aws_secret_access_key=str(self.integration.secret_key),
-                aws_session_token=(
-                    str(self.integration.session_token)
-                    if self.integration.session_token not in [None, "None"]
-                    else None
-                ),
+                aws_session_token=str(self.integration.session_token),
             )
+        else:
+            # Access key only (no session token): generate temp creds via STS get_session_token
+            boto3_helper = Boto3Helper(
+                self.ctx, integration=self.integration.dump_all_data()
+            )
+            return boto3_helper.get_client(aws_client_name)
 
     def _test_integration(self) -> dict:
         try:
@@ -121,27 +129,35 @@ class AWSService(BaseService):
                         }
                     ]
                 },
-                # {
-                #     "label": "AccessKey / SecretKey Integration",
-                #     "type": "form",
-                #     "formId": AWSAuthTypes.ACCESS_KEY_INTEGRATION.value,
-                #     "children": [
-                #         {
-                #             "name": "access_key",
-                #             "type": "text",
-                #             "label": "Access Key",
-                #             "placeholder": "Enter your AWS access key",
-                #             "required": True
-                #         },
-                #         {
-                #             "name": "secret_key",
-                #             "type": "text/password",
-                #             "label": "Secret Key",
-                #             "placeholder": "Enter your AWS secret key",
-                #             "required": True
-                #         }
-                #     ]
-                # }
+                {
+                    "label": "AccessKey / SecretKey Integration",
+                    "type": "form",
+                    "formId": AWSAuthTypes.ACCESS_KEY_INTEGRATION.value,
+                    "children": [
+                        {
+                            "name": "access_key",
+                            "type": "text",
+                            "label": "Access Key",
+                            "placeholder": "Enter your AWS access key",
+                            "required": True
+                        },
+                        {
+                            "name": "secret_key",
+                            "type": "text/password",
+                            "label": "Secret Key",
+                            "placeholder": "Enter your AWS secret key",
+                            "required": True
+                        },
+                        {
+                            "name": "session_token",
+                            "type": "text/password",
+                            "label": "Session Token",
+                            "placeholder": "Enter your AWS session token (optional)",
+                            "description": "The integration requires at least the ec2:DescribeRegions IAM permission for basic connectivity.",
+                            "required": False
+                        }
+                    ]
+                }
             ]
         }
 
@@ -197,13 +213,51 @@ class AWSService(BaseService):
         regional_clients = pydash.filter_(client_definitions, lambda x: x.is_regional is True)
         creds = {
             "aws_access_key_id": payload_task.creds.envs["AWS_ACCESS_KEY_ID"],
-            "aws_secret_access_key": payload_task.creds.envs["AWS_SECRET_ACCESS_KEY"],            
+            "aws_secret_access_key": payload_task.creds.envs["AWS_SECRET_ACCESS_KEY"],
         }
         if payload_task.creds.envs.get("AWS_SESSION_TOKEN"):
             creds["aws_session_token"] = payload_task.creds.envs.get("AWS_SESSION_TOKEN")
+
+        # Long-running agent sessions (autobotAI deep agent) set a
+        # contextvar holding a refresh callable.  When present, build boto3
+        # clients with RefreshableCredentials so credentials auto-refresh
+        # per AWS API call — no ExpiredToken mid-call even if a single
+        # python_sdk task runs longer than the STS TTL.  Lambda/CLI callers
+        # leave the contextvar unset and get the existing static-creds path.
+        resolver = current_aws_creds_resolver.get()
+        use_refreshable = resolver is not None
+
+        # Memoize one refreshable session per scope so all clients in the
+        # same scope share one credentials object (and one refresh cycle).
+        # Without this, every client would have its own RefreshableCredentials
+        # and would re-invoke the resolver independently — wasteful and a
+        # source of duplicate cred-refresh traffic.
+        _global_session: list = []  # mutable cell for closure
+        _regional_sessions: Dict[str, Any] = {}
+
+        def _global_client(name: str):
+            if use_refreshable:
+                if not _global_session:
+                    _global_session.append(
+                        build_refreshable_aws_session(
+                            resolver, payload_task.task_id, region_name=None
+                        )
+                    )
+                return _global_session[0].client(name)
+            return boto3.client(name, **creds)
+
+        def _regional_client(name: str, region: str):
+            if use_refreshable:
+                if region not in _regional_sessions:
+                    _regional_sessions[region] = build_refreshable_aws_session(
+                        resolver, payload_task.task_id, region_name=region
+                    )
+                return _regional_sessions[region].client(name, region_name=region)
+            return boto3.client(name, region_name=region, **creds)
+
         if global_clients:
             for client in global_clients:
-                built_clients["global"][client.name] = boto3.client(client.name, **creds)
+                built_clients["global"][client.name] = _global_client(client.name)
         if regional_clients:
             active_regions = self.integration.activeRegions
             if not active_regions:
@@ -213,8 +267,9 @@ class AWSService(BaseService):
                 built_clients["regional"].setdefault(region, {})
                 for client in regional_clients:
                     try:
-                        built_clients["regional"][region][client.name] = boto3.client(client.name, region_name=region,
-                                                                                      **creds)
+                        built_clients["regional"][region][client.name] = _regional_client(
+                            client.name, region
+                        )
                     except ImportError:
                         logger.exception(f"Failed create client for {client['name']}")
         combinations = []
@@ -273,6 +328,7 @@ class AWSService(BaseService):
 
     def _temp_credentials(self):
         if self.integration.roleArn not in ["None", None]:
+            # IAM Role: assume_role via STS through Boto3Helper
             boto3_helper = Boto3Helper(
                 self.ctx, integration=self.integration.model_dump()
             )
@@ -281,11 +337,21 @@ class AWSService(BaseService):
                 "AWS_SECRET_ACCESS_KEY": boto3_helper.get_secret_key(),
                 "AWS_SESSION_TOKEN": boto3_helper.get_session_token(),
             }
-        else:
-            creds = {
+        elif self.integration.session_token not in [None, "None"]:
+            # Access key + session token provided: use directly, no STS call
+            return {
                 "AWS_ACCESS_KEY_ID": str(self.integration.access_key),
                 "AWS_SECRET_ACCESS_KEY": str(self.integration.secret_key),
+                "AWS_SESSION_TOKEN": str(self.integration.session_token),
             }
-            if self.integration.session_token not in [None, "None"]:
-                creds["AWS_SESSION_TOKEN"] = str(self.integration.session_token)
-            return creds
+        else:
+            # Access key only (no session token): generate temp creds via STS get_session_token
+            # Must use dump_all_data() so access_key/secret_key (exclude=True fields) are in the dict
+            boto3_helper = Boto3Helper(
+                self.ctx, integration=self.integration.dump_all_data()
+            )
+            return {
+                "AWS_ACCESS_KEY_ID": boto3_helper.get_access_key(),
+                "AWS_SECRET_ACCESS_KEY": boto3_helper.get_secret_key(),
+                "AWS_SESSION_TOKEN": boto3_helper.get_session_token(),
+            }

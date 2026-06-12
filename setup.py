@@ -2,7 +2,7 @@ from setuptools import find_packages, setup
 
 setup(
     name="autobotAI_integrations",
-    version="1.2.1",
+    version="1.2.3",
     author="ShunyEka Systems Private Limited",
     author_email="hello@shunyeka.com",
     description="A python package that contains all the integrations for autobotAI",
@@ -56,12 +56,19 @@ setup(
             "jira>=3.10.5",
             "snowflake-connector-python>=3.16.0",
             "opensearch-py>=3.0.0",
-            "pydantic-ai>=1.22.0",
+            # Use the slim distribution with only the provider extras we
+            # actually consume (BedrockConverseModel, OpenAIModel/
+            # OpenAIResponsesModel — ollama runs through the OpenAI client,
+            # claude runs through Bedrock — plus MCPServerStreamableHTTP).
+            # The meta-package "pydantic-ai" bundles every extra including
+            # [mistral], which pulls in the `mistralai` PyPI distribution
+            # that PyPI has quarantined; we have no code using it.
+            "pydantic-ai-slim[bedrock,openai,mcp]>=1.22.0",
             "llama-index==0.14.18",
             "llama-index-llms-openai==0.7.3",
-            "llama-index-llms-bedrock",
+            "llama-index-llms-bedrock>=0.5.0",
             "llama-index-embeddings-openai==0.6.0",
-            "llama-index-embeddings-bedrock",
+            "llama-index-embeddings-bedrock>=0.8.0",
             "ark-sdk-python",
             "zscaler-sdk-python>=1.9.19",
         ],
@@ -73,13 +80,17 @@ setup(
             "integrations/*/compliance.json",
             "integrations/*/open_api.json",
             "integrations/*/mcp_servers.json",
+            # Slack-bot install wizard renders this to the FE; without
+            # listing it explicitly, find_packages() drops the YAML from
+            # the installed wheel even with include_package_data=True.
+            "integrations/*/manifest_template.yaml",
         ]
     },
     classifiers=[
         "License :: Other/Proprietary License",
         "Operating System :: OS Independent",
-        "Programming Language :: Python :: 3.10",
+        "Programming Language :: Python :: 3.12",
     ],
-    python_requires=">=3.10",
+    python_requires=">=3.12",
     include_package_data=True,
 )

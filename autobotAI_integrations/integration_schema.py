@@ -17,6 +17,7 @@ class IntegrationStates(str, Enum):
     ACTIVE = "ACTIVE"  # Accessible
     INACTIVE = "INACTIVE"  # In-Accessible
     AGENT_UPDATE_REQUIRED = "AGENT_UPDATE_REQUIRED"
+    PENDING = "PENDING"
 
     def __str__(self):
         return self.value
