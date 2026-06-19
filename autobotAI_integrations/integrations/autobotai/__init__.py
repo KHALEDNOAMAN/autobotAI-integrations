@@ -18,21 +18,6 @@ class AutobotAIIntegration(BaseSchema):
         "autobotAI is an advanced automation platform that enhances cloud efficiency and security through AI-based decision-making. Its visual interface simplifies workflow creation and deployment."
     )
 
-    @field_validator("base_url", mode="before")
-    @classmethod
-    def validate_base_url(cls, base_url) -> Optional[str]:
-        autobot_pattern = r"^https://[\w-]+\.autobot\.live/?$"
-
-        if base_url and base_url != "None":
-            base_url = base_url.strip()
-            if re.match(autobot_pattern, base_url):
-                return base_url.rstrip("/")
-            raise ValueError(
-                f"Invalid AutobotAI Instance URL: {base_url}. "
-            )
-
-        raise ValueError("AutobotAI Instance URL is required")
-    
 class AutobotAIService(BaseService):
     def __init__(self, ctx: dict, integration: Union[AutobotAIIntegration, dict]):
         if not isinstance(integration, AutobotAIIntegration):
