@@ -15,7 +15,7 @@ from __future__ import annotations
 from enum import Enum
 from typing import Any, Dict, List, Optional
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, model_validator
 
 from autobotAI_integrations.payload_schema import Payload, PayloadCommonContext
 
@@ -325,6 +325,15 @@ class DeepAgentPayload(Payload):
             "lease, which only parks-and-resumes). None → a finite default cap."
         ),
     )
+
+    @model_validator(mode="after")
+    def _require_goal_when_goal_driven(self) -> "DeepAgentPayload":
+        # A goal_driven run is meaningless without a goal — mirror the same
+        # invariant enforced on core's OptimusConfigBaseSchema so the contract
+        # can't be violated from either side.
+        if self.run_mode == RunMode.GOAL_DRIVEN and not (self.goal and self.goal.strip()):
+            raise ValueError("run_mode=goal_driven requires a non-empty goal")
+        return self
 
     # --- Memory spaces -----------------------------------------------------
     memory_spaces: List[MemorySpaceConfig] = Field(
