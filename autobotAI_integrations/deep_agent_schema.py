@@ -306,13 +306,10 @@ class DeepAgentPayload(Payload):
     )
     goal: Optional[str] = Field(
         None,
-        description="The objective the goal_driven run pursues (ignored when interactive).",
-    )
-    exit_criteria: Optional[str] = Field(
-        None,
         description=(
-            "Explicit, checkable condition for calling complete_goal — what "
-            "'done' looks like for this goal (ignored when interactive)."
+            "The objective the goal_driven run pursues — must state both what to "
+            "achieve AND its done-condition (when to call complete_goal). Ignored "
+            "when interactive."
         ),
     )
     hard_deadline_hours: Optional[int] = Field(
