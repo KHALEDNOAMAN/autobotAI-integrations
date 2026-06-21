@@ -197,6 +197,39 @@ class FileConfig(BaseModel):
 # ---------------------------------------------------------------------------
 
 
+class RunMode(str, Enum):
+    """How a deep-agent run decides when it is finished.
+
+    - ``interactive`` (default): the run never self-terminates on its own. It
+      ends only when the user ends the session or the compute deadline hits.
+      This is the classic Optimus behaviour — unchanged.
+    - ``goal_driven``: the run pursues a fixed ``goal`` and exits the moment the
+      agent calls ``complete_goal`` (or a ``hard_deadline`` backstop fires). The
+      compute lease (``session_timeout_hours``) only parks-and-resumes such a
+      run; it never finalizes it.
+    """
+
+    INTERACTIVE = "interactive"
+    GOAL_DRIVEN = "goal_driven"
+
+
+class GoalResolution(str, Enum):
+    """Structured outcome the agent reports via ``complete_goal``.
+
+    Richer than completed/failed so the risk register can distinguish how a
+    goal ended (fixed vs. accepted-as-risk vs. blocked vs. no action needed).
+    """
+
+    RESOLVED_FIXED = "resolved_fixed"
+    ACCEPTED_RISK = "accepted_risk"
+    WONT_FIX = "wont_fix"
+    NO_ACTION = "no_action"
+    BLOCKED_AUTO = "blocked_auto"
+    BLOCKED_APPROVED = "blocked_approved"
+    FAILED = "failed"
+    TIMED_OUT = "timed_out"
+
+
 class DeepAgentPayload(Payload):
     """
     Extends the standard autobotAI ``Payload`` with deep-agent-specific fields.
@@ -259,6 +292,38 @@ class DeepAgentPayload(Payload):
     shell_access_enabled: bool = Field(
         False,
         description="Allow agent to execute shell commands",
+    )
+
+    # --- Goal-driven termination -------------------------------------------
+    # Orthogonal to `autonomous` / `allow_user_interaction`: those gate HOW the
+    # agent acts; these decide WHEN the run ends.
+    run_mode: RunMode = Field(
+        RunMode.INTERACTIVE,
+        description=(
+            "interactive (default, classic Optimus) or goal_driven (exits when "
+            "the agent calls complete_goal; lease expiry parks-and-resumes)."
+        ),
+    )
+    goal: Optional[str] = Field(
+        None,
+        description="The objective the goal_driven run pursues (ignored when interactive).",
+    )
+    exit_criteria: Optional[str] = Field(
+        None,
+        description=(
+            "Explicit, checkable condition for calling complete_goal — what "
+            "'done' looks like for this goal (ignored when interactive)."
+        ),
+    )
+    hard_deadline_hours: Optional[int] = Field(
+        None,
+        ge=1,
+        description=(
+            "Absolute backstop, in hours from run start, for a goal_driven run. "
+            "If the agent never calls complete_goal by then, core finalizes the "
+            "run as timed_out. Distinct from session_timeout_hours (the compute "
+            "lease, which only parks-and-resumes). None → a finite default cap."
+        ),
     )
 
     # --- Memory spaces -----------------------------------------------------
@@ -384,4 +449,12 @@ class DeepAgentResponse(BaseModel):
             "Present only when status=AWAITING_INPUT. Contains the raw HITLRequest "
             "from the agent interrupt: {action_requests: [...], review_configs: [...]}"
         ),
+    )
+    goal_complete: bool = Field(
+        False,
+        description="True when a goal_driven run called complete_goal this turn.",
+    )
+    resolution: Optional[GoalResolution] = Field(
+        None,
+        description="The structured outcome from complete_goal (goal_driven runs only).",
     )
