@@ -25,6 +25,11 @@ class AutobotAIService(BaseService):
         super().__init__(ctx, integration)
 
     def _test_integration(self):
+        # The default "self" integration points at the same autobotAI instance;
+        # its base_url/api_key are sentinels resolved at request time by core
+        # (shared.services.autobotai_self). Nothing to validate here.
+        if self.integration.base_url == "self" or self.integration.api_key == "self":
+            return {"success": True}
         try:
             user_endpoint =  f"{self.integration.base_url}/integrations"
             response = requests.get(
