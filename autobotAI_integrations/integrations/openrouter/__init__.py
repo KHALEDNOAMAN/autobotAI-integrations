@@ -21,6 +21,17 @@ from autobotAI_integrations.utils.logging_config import logger
 
 OPENROUTER_BASE_URL = "https://openrouter.ai/api/v1"
 
+# Embedding models exposed for Memory Spaces. OpenRouter requires
+# provider-namespaced ids. The first entry is the default (see
+# load_llama_index_embedding_model and MemorySpaceModel defaults in core).
+OPENROUTER_EMBEDDING_MODELS = [
+    "openai/text-embedding-3-small",
+    "qwen/qwen3-embedding-8b",
+    "qwen/qwen3-embedding-4b",
+    "google/gemini-embedding-2",
+    "nvidia/llama-nemotron-embed-vl-1b-v2:free",
+]
+
 
 class OpenRouterIntegration(BaseSchema):
     api_key: Optional[str] = Field(default=None, exclude=True)
@@ -94,6 +105,7 @@ class OpenRouterService(AIBaseService):
             return {
                 "integration_id": self.integration.accountId,
                 "models": available_models,
+                "embedding_models": OPENROUTER_EMBEDDING_MODELS,
             }
         except Exception:
             return {"error": "Details can not be fetched"}
@@ -247,6 +259,34 @@ class OpenRouterService(AIBaseService):
             **kwargs,
         )
         return llm
+
+    def load_llama_index_embedding_model(
+        self, model_name: Optional[str] = None, **kwargs
+    ):
+        """
+        Returns a Llama Index embedding model pointed at OpenRouter's
+        OpenAI-compatible ``/embeddings`` endpoint.
+
+        OpenRouter requires provider-namespaced model ids (e.g.
+        ``openai/text-embedding-3-small``). Per the LlamaIndex maintainer's
+        recommendation for OpenAI-compatible endpoints, we pass the id via
+        ``model_name`` (not ``model``): ``model`` validates against a fixed
+        enum and would raise on a prefixed id, while ``model_name`` sets the
+        engine actually sent on the wire and ``model`` falls back to a valid
+        default that only satisfies that internal validation.
+        See https://github.com/run-llama/llama_index/discussions/11809
+        """
+        if not model_name:
+            model_name = OPENROUTER_EMBEDDING_MODELS[0]
+        from llama_index.embeddings.openai import OpenAIEmbedding
+
+        embed_model = OpenAIEmbedding(
+            api_key=self.integration.api_key,
+            api_base=OPENROUTER_BASE_URL,
+            model_name=model_name,
+            **kwargs,
+        )
+        return embed_model
 
     def prompt_executor(
         self,

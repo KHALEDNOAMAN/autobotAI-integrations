@@ -4,6 +4,7 @@ from autobotAI_integrations.handlers.task_handler import handle_task
 from autobotAI_integrations.integrations import integration_service_factory
 from autobotAI_integrations.integrations.openrouter import (
     OPENROUTER_BASE_URL,
+    OPENROUTER_EMBEDDING_MODELS,
     OpenRouterIntegration,
     OpenRouterService,
 )
@@ -56,6 +57,10 @@ class TestClassOpenRouter:
         assert len(details["models"]) > 0
         # Multi-provider routing — names should be namespaced.
         assert any("/" in m for m in details["models"])
+        # Memory Spaces offer these as selectable embedding models.
+        assert details["embedding_models"] == OPENROUTER_EMBEDDING_MODELS
+        assert "openai/text-embedding-3-small" in details["embedding_models"]
+        assert all("/" in m for m in details["embedding_models"])
 
     def test_generate_llm_credentials(self, sample_integration_dict):
         # Deep-agent payload builder calls this to populate LLMConfig; OpenRouter
@@ -64,6 +69,22 @@ class TestClassOpenRouter:
         service = integration_service_factory.get_service(None, integration)
         creds = service.generate_llm_credentials()
         assert creds == {"api_key": "sk-or-test", "base_url": OPENROUTER_BASE_URL}
+
+    def test_load_llama_index_embedding_model(self, sample_integration_dict):
+        # Memory Spaces resolve their embedding model through this method; an
+        # OpenRouter-backed space silently failed before it was implemented.
+        integration = sample_integration_dict("openrouter", {"api_key": "sk-or-test"})
+        service = integration_service_factory.get_service(None, integration)
+
+        embed_model = service.load_llama_index_embedding_model()
+        # OpenRouter needs provider-namespaced ids; the engine sent on the wire
+        # must keep the prefix even though OpenAIEmbedding validates `model`.
+        assert embed_model.model_name == "openai/text-embedding-3-small"
+        assert embed_model.api_base == OPENROUTER_BASE_URL
+        assert embed_model.api_key == "sk-or-test"
+
+        custom = service.load_llama_index_embedding_model("qwen/qwen3-embedding-8b")
+        assert custom.model_name == "qwen/qwen3-embedding-8b"
 
     def test_ai_prompt_python_template(self):
         template = OpenRouterService.ai_prompt_python_template()

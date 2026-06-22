@@ -196,10 +196,11 @@ def executor(context):
         try:
             parser.parse_file(os.path.join(base_path, "open_api.json"))
             open_api_actions = parser.get_actions(cls.get_integration_type())
+            return open_api_actions
         except Exception as e:
             logger.exception(f"Error occurred while parsing open api file: {e}")
-        finally:
-            return open_api_actions
+            return []
+
 
     @classmethod
     def get_all_mcp_server_actions(cls) -> List[MCPServerAction]:
