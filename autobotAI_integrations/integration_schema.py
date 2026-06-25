@@ -30,8 +30,8 @@ class IntegrationSchema(BaseModel):
     cspName: str  # AWS, AZURE, GCP, GITLAB etc.
     alias: str  # Name given by User
     connection_type: ConnectionTypes = ConnectionTypes.DIRECT.value  # Direct means we get the credentials, Agent means we don't have the creds, our agent is installed in the customer's environment.
-    groups: list = []  # Tags/groups
-    agent_ids: list = []  # If agent based, then agent ids are populated
+    groups: list[Any] = []  # Tags/groups
+    agent_ids: list[Any] = []  # If agent based, then agent ids are populated
     accessToken: str = ""  # Part of creds
     createdAt: Optional[str] = None
     updatedAt: Optional[str] = None

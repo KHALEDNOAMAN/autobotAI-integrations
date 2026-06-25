@@ -44,7 +44,7 @@ class SteampipeCreds(BaseCreds):
     plugin_name: str
     conf_path: Optional[str] = str
     config: Optional[str] = None
-    tables: list = []
+    tables: list[Any] = []
 
 class RestAPIRequestBodyType(str, Enum):
     JSON = 'json'
