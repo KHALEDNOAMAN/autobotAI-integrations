@@ -1,0 +1,79 @@
+[project]
+name = "autobotai-integrations"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.14"
+dependencies = [
+    "annotated-types>=0.7.0",
+    "autobotai-library-addons",
+    "azure-identity>=1.23.1",
+    "azure-mgmt-resource>=24.0.0",
+    "boto3",
+    "botocore",
+    "cachetools>=5.5.2",
+    "certifi>=2025.7.14",
+    "cffi>=1.17.1",
+    "charset-normalizer>=3.4.2",
+    "cryptography>=44.0.3",
+    "deprecated>=1.2.18",
+    "gitpython>=3.1.45",
+    "google-auth>=2.40.3",
+    "google-cloud-storage>=3.2.0",
+    "idna>=3.10",
+    "jira>=3.10.5",
+    "jmespath>=1.0.1",
+    "oauthlib>=3.3.1",
+    "ollama>=0.5.1",
+    "openai>=1.98.0",
+    "opensearch-py>=3.0.0",
+    "pyasn1>=0.6.1",
+    "pyasn1-modules>=0.4.2",
+    "pycparser>=2.22",
+    "pydantic>=2.11.7",
+    "pydantic-ai>=1.56.0",
+    "pydantic-ai-slim>=1.38.0",
+    "pydantic-core>=2.33.2",
+    "pydash>=8.0.5",
+    "pygitguardian>=1.24.0",
+    "pygithub>=2.7.0",
+    "pyjwt>=2.10.1",
+    "pymsteams>=0.2.5",
+    "pynacl>=1.5.0",
+    "python-dateutil>=2.9.0.post0",
+    "python-dotenv>=1.1.1",
+    "python-gitlab>=6.2.0",
+    "pyyaml>=6.0.2",
+    "requests>=2.32.4",
+    "requests-oauthlib>=2.0.0",
+    "rsa>=4.9.1",
+    "s3transfer>=0.13.1",
+    "setuptools>=80.9.0",
+    "six>=1.17.0",
+    "slack-sdk>=3.36.0",
+    "snowflake-connector-python>=3.17.4",
+    "typing-extensions>=4.14.1",
+    "urllib3>=2.5.0",
+    "uv>=0.11.21",
+    "vt-py>=0.21.0",
+    "websocket-client>=1.8.0",
+    "wrapt>=1.17.2",
+    "zscaler-sdk-python>=1.9.19",
+    "pydantic-ai-slim[bedrock,openai,mcp]>1.38.0",
+    "llama-index>=0.14.18",
+    "llama-index-llms-openai>=0.7.3",
+    "llama-index-llms-bedrock>=0.5.0",
+    "llama-index-embeddings-openai>=0.6.0",
+    "llama-index-embeddings-bedrock>=0.8.0",
+]
+
+[tool.uv.sources]
+autobotai-library-addons = { git = "https://github.com/shunyeka-spl/autobotai-library-addons.git" }
+
+[tool.uv]
+override-dependencies = [
+    "aioboto3>=15.5.0",
+    "aiobotocore[boto3]>=2.25.1",
+    "boto3>=1.42.63",
+    "botocore>=1.42.63"
+]
