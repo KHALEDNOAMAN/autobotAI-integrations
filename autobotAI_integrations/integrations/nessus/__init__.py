@@ -63,6 +63,11 @@ class NessusClient:
 
 
 class NessusService(BaseService):
+    def __init__(self, ctx: dict, integration: Union[dict, BaseSchema]):
+        if isinstance(integration, dict):
+            integration = NessusIntegration(**integration)
+        super().__init__(ctx, integration)
+
     @staticmethod
     def get_forms():
         return {
@@ -173,3 +178,23 @@ class NessusService(BaseService):
             return False
         except Exception as e:
             raise Exception(f"Failed to connect to Nessus: {str(e)}")
+
+    def _test_integration(self) -> dict:
+        try:
+            client = NessusClient(
+                url=getattr(self.integration, "url", "https://localhost:8834"),
+                access_key=getattr(self.integration, "access_key", ""),
+                secret_key=getattr(self.integration, "secret_key", ""),
+                verify_ssl=getattr(self.integration, "verify_ssl", False),
+            )
+            response = client.server_properties()
+            if response.status_code == 200:
+                return {"success": True}
+            else:
+                return {
+                    "success": False,
+                    "error": f"Request failed with status code: {response.status_code}, details: {response.text}",
+                }
+        except Exception as e:
+            return {"success": False, "error": f"Failed to connect to Nessus: {str(e)}"}
+
