@@ -17,7 +17,7 @@ jobs:
     - name: Set up Python
       uses: actions/setup-python@v4
       with:
-        python-version: '3.12'
+        python-version: '3.14'
         
     - name: Install Steampipe
       run: |
@@ -42,3 +42,14 @@ jobs:
       run: |
         # Run only specific test files - modify this list as needed
         pytest --disable-warnings tests/test_handlers -v
+
+    - name: Scan dependencies for vulnerabilities
+      uses: aquasecurity/trivy-action@v0.36.0
+      with:
+        scan-type: fs
+        scan-ref: .
+        scanners: vuln
+#        trivy-config: trivy.yaml
+        ignore-unfixed: true
+        severity: CRITICAL,HIGH,MEDIUM,LOW
+        exit-code: 1
