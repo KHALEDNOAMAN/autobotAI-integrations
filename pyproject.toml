@@ -111,7 +111,7 @@ include-package-data = true
 
 [tool.setuptools.packages.find]
 where = ["."]
-include = ["autobotai_integrations*"]
+include = ["autobotAI_integrations*"]
 
 [tool.uv]
 override-dependencies = [
