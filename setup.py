@@ -63,7 +63,7 @@ setup(
             # The meta-package "pydantic-ai" bundles every extra including
             # [mistral], which pulls in the `mistralai` PyPI distribution
             # that PyPI has quarantined; we have no code using it.
-            "pydantic-ai-slim[bedrock,openai,mcp]>=1.22.0",
+            "pydantic-ai-slim[bedrock,openai,mcp]>=1.56.0",
             "llama-index==0.14.18",
             "llama-index-llms-openai==0.7.3",
             "llama-index-llms-bedrock>=0.5.0",
