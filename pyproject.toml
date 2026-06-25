@@ -109,6 +109,12 @@ autobotAI_integrations = ["*.json", "*.yml", "**/*.json", "**/*.yml"]
 [tool.setuptools]
 include-package-data = true
 
+[dependency-groups]
+dev = [
+    "pytest",
+    "python-dotenv",
+]
+
 [tool.setuptools.packages.find]
 where = ["."]
 include = ["autobotAI_integrations*"]
