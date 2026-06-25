@@ -10,7 +10,7 @@ setup(
     install_requires=[
         # Base requirements
         "boto3>=1.43.31",
-        "botocore>=1.40.62",
+        "botocore>=1.40.61",
         "pydantic>=2.13.4",
         "PyYAML>=6.0.3",
         "pydash>=8.0.6",
