@@ -9,8 +9,8 @@ setup(
     packages=find_packages(),
     install_requires=[
         # Base requirements
-        "boto3>=1.43.31",
-        "botocore>=1.40.61",
+        "boto3>=1.40.61",
+        "botocore>=1.40.46,<1.40.62",
         "pydantic>=2.13.4",
         "PyYAML>=6.0.3",
         "pydash>=8.0.6",
@@ -37,8 +37,8 @@ setup(
         ],
         "full": [
             # Used only in backend (core) via API
-            "boto3>=1.43.31",
-            "botocore>=1.43.31",
+            "boto3>=1.40.61",
+            "botocore>=1.40.46,<1.40.62",
             "pydantic>=2.13.4",
             "PyYAML>=6.0.3",
             "pydash>=8.0.6",
