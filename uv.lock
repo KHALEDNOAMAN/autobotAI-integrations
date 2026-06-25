@@ -461,7 +461,7 @@ full = [
 ]
 
 [package.dev-dependencies]
-dev = [
+test = [
     { name = "pytest" },
     { name = "python-dotenv" },
 ]
@@ -556,7 +556,7 @@ requires-dist = [
 provides-extras = ["executable", "full"]
 
 [package.metadata.requires-dev]
-dev = [
+test = [
     { name = "pytest" },
     { name = "python-dotenv" },
 ]
