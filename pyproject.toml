@@ -110,7 +110,7 @@ autobotAI_integrations = ["*.json", "*.yml", "**/*.json", "**/*.yml"]
 include-package-data = true
 
 [dependency-groups]
-dev = [
+test = [
     "pytest",
     "python-dotenv",
 ]
