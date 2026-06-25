@@ -103,6 +103,13 @@ full = [
 [tool.uv.sources]
 autobotai-library-addons = { git = "https://github.com/shunyeka-spl/autobotai-library-addons.git" }
 
+[tool.setuptools.package-data]
+"autobotai-integrations" = ["*.json", "*.yml", "**/*.json", "**/*.yml"]
+
+[tool.setuptools]
+include-package-data = true
+
+
 [tool.uv]
 override-dependencies = [
     "aioboto3>=15.5.0",
