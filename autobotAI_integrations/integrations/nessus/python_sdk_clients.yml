@@ -1,0 +1,21 @@
+- description: Nessus API SDK Clients
+  methods:
+    - client_method: server_properties
+      description: Get the Nessus server properties. Used for connection validation.
+      name: Server Properties
+      parameters: []
+
+    - client_method: list_scans
+      description: List all scans in Nessus.
+      name: List Scans
+      parameters: []
+
+    - client_method: get_scan_details
+      description: Get details of a specific scan.
+      name: Get Scan Details
+      parameters:
+        - description: The ID of the scan.
+          name: scan_id
+          required: true
+          type: int
+  name: Nessus Client
