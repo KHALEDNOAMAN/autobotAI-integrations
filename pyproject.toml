@@ -104,11 +104,14 @@ full = [
 autobotai-library-addons = { git = "https://github.com/shunyeka-spl/autobotai-library-addons.git" }
 
 [tool.setuptools.package-data]
-"autobotai-integrations" = ["*.json", "*.yml", "**/*.json", "**/*.yml"]
+autobotAI_integrations = ["*.json", "*.yml", "**/*.json", "**/*.yml"]
 
 [tool.setuptools]
 include-package-data = true
 
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["autobotai_integrations*"]
 
 [tool.uv]
 override-dependencies = [
