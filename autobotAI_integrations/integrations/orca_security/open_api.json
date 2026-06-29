@@ -2,7 +2,7 @@
   "openapi": "3.0.3",
   "info": {
     "title": "Orca Security API",
-    "description": "Orca Security agentless CNAPP REST API. Covers Alerts, Assets, Vulnerabilities, Compliance, and Asset Scanning across multi-cloud environments (AWS, Azure, GCP, Oracle Cloud, Alibaba Cloud).\n\n**Authentication:** `Authorization: Token <api_token>`\n\nGenerate your API token from the Orca dashboard: Settings → Users & Permissions → API → Add API Token. Assign at least the Viewer role for read-only access.\n\n**Base URL is region-specific:**\n- US: `https://app.orcasecurity.io`\n- EU: `https://app.eu.orcasecurity.io`\n- AU: `https://app.au.orcasecurity.io`\n- IN: `https://app.in.orcasecurity.io`\n- IL: `https://app.il.orcasecurity.io`",
+    "description": "Orca Security agentless CNAPP REST API. Covers Alerts, Assets, Vulnerabilities, Compliance, and Asset Scanning across multi-cloud environments (AWS, Azure, GCP, Oracle Cloud, Alibaba Cloud).\n\n**Authentication:** `Authorization: Bearer <api_token>`\n\nGenerate your API token from the Orca dashboard: Settings → Integrations → API Tokens → Add API Token. Assign at least the Viewer role for read-only access.\n\n**Base URL is region-specific:**\n- US: `https://api.orcasecurity.io`\n- EU: `https://app.eu.orcasecurity.io`\n- AU: `https://app.au.orcasecurity.io`\n- IN: `https://app.in.orcasecurity.io`\n- IL: `https://app.il.orcasecurity.io`",
     "version": "1.0.0",
     "contact": {
       "name": "Orca Security Docs",
@@ -15,7 +15,7 @@
       "description": "Orca Security tenant URL (region-specific)",
       "variables": {
         "base_url": {
-          "default": "https://app.orcasecurity.io",
+          "default": "https://api.orcasecurity.io",
           "description": "Your Orca Security tenant base URL"
         }
       }
@@ -27,10 +27,9 @@
   "components": {
     "securitySchemes": {
       "TokenAuth": {
-        "type": "apiKey",
-        "in": "header",
-        "name": "Authorization",
-        "description": "API token in the format: `Token <your_api_token>`. Generated from Settings → Users & Permissions → API."
+        "type": "http",
+        "scheme": "bearer",
+        "description": "API token in the format: `Bearer <your_api_token>`. Generated from Settings → Integrations → API Tokens."
       }
     },
     "parameters": {
