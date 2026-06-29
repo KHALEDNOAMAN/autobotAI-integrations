@@ -12,6 +12,7 @@ import os
 from autobotAI_integrations import BaseService, list_of_unique_elements, PayloadTask, Param
 from autobotAI_integrations.models import *
 from autobotAI_integrations.utils.boto3_helper import Boto3Helper
+from autobotAI_integrations.utils.aws_mcp_auth import build_aws_mcp_creds
 from autobotAI_integrations.utils.logging_config import logger
 from autobotAI_integrations.utils.refreshable_creds import (
     build_refreshable_aws_session,
@@ -320,8 +321,25 @@ class AWSService(BaseService):
 
     @staticmethod
     def supported_connection_interfaces():
-        return [ConnectionInterfaces.REST_API, ConnectionInterfaces.CLI, ConnectionInterfaces.PYTHON_SDK,
-                ConnectionInterfaces.STEAMPIPE]
+        return [
+            ConnectionInterfaces.REST_API,
+            ConnectionInterfaces.CLI,
+            ConnectionInterfaces.PYTHON_SDK,
+            ConnectionInterfaces.STEAMPIPE,
+            ConnectionInterfaces.MCP_SERVER,
+        ]
+
+    def generate_mcp_creds(self) -> MCPCreds:
+        creds = self._temp_credentials()
+        default_region = "us-east-1"
+        if self.integration.activeRegions:
+            default_region = self.integration.activeRegions[0]
+        return build_aws_mcp_creds(
+            access_key_id=creds["AWS_ACCESS_KEY_ID"],
+            secret_access_key=creds["AWS_SECRET_ACCESS_KEY"],
+            session_token=creds.get("AWS_SESSION_TOKEN"),
+            default_aws_region=default_region,
+        )
 
     def generate_cli_creds(self) -> CLICreds:
         raise NotImplementedError()

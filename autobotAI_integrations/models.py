@@ -95,6 +95,13 @@ class MCPCreds(BaseCreds):
     creds_type: str = ConnectionInterfaces.MCP_SERVER.value
     envs: dict = {}
     headers: dict = {}
+    # Optional IAM fields for AWS MCP Server (SigV4). Omitted for GitHub/Coralogix MCP.
+    aws_access_key_id: Optional[str] = Field(default=None, exclude=True)
+    aws_secret_access_key: Optional[str] = Field(default=None, exclude=True)
+    aws_session_token: Optional[str] = Field(default=None, exclude=True)
+    aws_sigv4_region: Optional[str] = None
+    aws_sigv4_service: Optional[str] = None
+    aws_default_region: Optional[str] = None
 
 # Setting default to None
 class BaseSchema(IntegrationSchema):

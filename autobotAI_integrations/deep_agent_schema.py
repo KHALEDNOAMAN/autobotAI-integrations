@@ -67,6 +67,25 @@ class MCPRemoteServer(BaseModel):
     headers: Dict[str, str] = Field(
         default_factory=dict, description="Additional HTTP headers"
     )
+    # Optional IAM auth for AWS MCP Server (SigV4)
+    aws_access_key_id: Optional[str] = Field(
+        None, description="Temporary AWS access key for AWS MCP Server"
+    )
+    aws_secret_access_key: Optional[str] = Field(
+        None, description="Temporary AWS secret key for AWS MCP Server"
+    )
+    aws_session_token: Optional[str] = Field(
+        None, description="Temporary AWS session token for AWS MCP Server"
+    )
+    aws_sigv4_region: Optional[str] = Field(
+        None, description="Region used to SigV4-sign AWS MCP HTTP requests"
+    )
+    aws_sigv4_service: Optional[str] = Field(
+        None, description="SigV4 service name (defaults to aws-mcp)"
+    )
+    aws_default_region: Optional[str] = Field(
+        None, description="Default AWS resource region for MCP tool calls"
+    )
 
 
 # ---------------------------------------------------------------------------
