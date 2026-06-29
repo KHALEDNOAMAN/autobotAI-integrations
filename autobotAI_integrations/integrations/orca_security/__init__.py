@@ -7,7 +7,7 @@ from autobotAI_integrations import BaseSchema, BaseService, ConnectionInterfaces
 from autobotAI_integrations.models import IntegrationCategory, RestAPICreds
 
 ORCA_REGION_URLS = {
-    "us": "https://app.orcasecurity.io",
+    "us": "https://api.orcasecurity.io",
     "eu": "https://app.eu.orcasecurity.io",
     "au": "https://app.au.orcasecurity.io",
     "in": "https://app.in.orcasecurity.io",
@@ -18,7 +18,7 @@ ORCA_REGION_URLS = {
 class OrcaSecurityIntegration(BaseSchema):
     api_token: str = Field(..., exclude=True)
     base_url: Optional[str] = Field(
-        default="https://app.orcasecurity.io",
+        default="https://api.orcasecurity.io",
         description="Orca Security tenant URL — region-specific.",
     )
 
@@ -37,7 +37,7 @@ class OrcaSecurityIntegration(BaseSchema):
         if not v or not v.strip():
             raise ValueError(
                 "base_url is required. Enter your Orca Security tenant URL "
-                "(e.g. https://app.orcasecurity.io for US)."
+                "(e.g. https://api.orcasecurity.io for US)."
             )
         return v.strip().rstrip("/")
 
@@ -54,7 +54,7 @@ class OrcaSecurityService(BaseService):
             response = requests.get(
                 f"{self.integration.base_url}/api/query/alerts",
                 headers={
-                    "Authorization": f"Token {self.integration.api_token}",
+                    "Authorization": f"Bearer {self.integration.api_token}",
                     "Content-Type": "application/json",
                 },
                 params={"limit": 1},
@@ -67,7 +67,7 @@ class OrcaSecurityService(BaseService):
                     "success": False,
                     "error": (
                         "Invalid API token or insufficient permissions. "
-                        "Ensure the token is generated from Settings → Users & Permissions → API "
+                        "Ensure the token is generated from Settings → Integrations → API Tokens "
                         "and has at least the Viewer role."
                     ),
                 }
@@ -101,7 +101,7 @@ class OrcaSecurityService(BaseService):
                     "placeholder": "Enter your Orca Security API Token",
                     "description": (
                         "Generate your API token from the Orca dashboard: "
-                        "Settings → Users & Permissions → API → Add API Token. "
+                        "Settings → Integrations → API Tokens → Add API Token. "
                         "Assign at least the Viewer role."
                     ),
                     "required": True,
@@ -114,7 +114,7 @@ class OrcaSecurityService(BaseService):
                         "Select the region that matches your Orca Security tenant."
                     ),
                     "options": [
-                        {"label": "US (app.orcasecurity.io)", "value": "https://app.orcasecurity.io"},
+                        {"label": "US (api.orcasecurity.io)", "value": "https://api.orcasecurity.io"},
                         {"label": "Europe (app.eu.orcasecurity.io)", "value": "https://app.eu.orcasecurity.io"},
                         {"label": "Australia (app.au.orcasecurity.io)", "value": "https://app.au.orcasecurity.io"},
                         {"label": "India (app.in.orcasecurity.io)", "value": "https://app.in.orcasecurity.io"},
@@ -147,7 +147,7 @@ class OrcaSecurityService(BaseService):
         return RestAPICreds(
             base_url=self.integration.base_url,
             headers={
-                "Authorization": f"Token {self.integration.api_token}",
+                "Authorization": f"Bearer {self.integration.api_token}",
                 "Content-Type": "application/json",
             },
         )
