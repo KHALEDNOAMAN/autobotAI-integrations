@@ -165,6 +165,9 @@ def build_aws_mcp_sigv4_httpx_auth(
     class _AWSMCPSigV4Auth(httpx.Auth):
         def auth_flow(self, request):
             body = request.content if request.content is not None else b""
+            for name in ("authorization", "x-amz-date", "x-amz-security-token"):
+                if name in request.headers:
+                    del request.headers[name]
             signed_headers = sign_aws_mcp_http_request(
                 method=request.method,
                 url=str(request.url),
