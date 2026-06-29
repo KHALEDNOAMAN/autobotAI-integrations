@@ -40,7 +40,7 @@ jobs:
         # during `uv sync` with git-sourced deps on Ubuntu 24.04 (the
         # ``ubuntu-latest`` runner). See
         # https://github.com/astral-sh/uv/issues for fixes in 0.6.x/0.7.x.
-        version: "0.7.13"
+        version: "0.11.25"
         # Cache uv's download + wheel cache across CI runs — makes
         # cold-cache installs of llama_index/boto3/~70 integration SDKs
         # dramatically faster and also avoids re-extracting wheels that
