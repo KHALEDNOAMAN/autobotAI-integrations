@@ -10,7 +10,7 @@ fields are used instead.
 from __future__ import annotations
 
 import re
-from typing import Dict, Optional
+from typing import Dict, Optional, Tuple
 from urllib.parse import urlparse
 
 from botocore.auth import SigV4Auth
@@ -19,13 +19,22 @@ from botocore.credentials import Credentials
 
 from autobotAI_integrations.models import MCPCreds
 
-# SigV4 service name for the managed AWS MCP Server HTTP API.
 AWS_MCP_SIGV4_SERVICE = "aws-mcp"
 
 AWS_MCP_ENDPOINTS = {
     "us-east-1": "https://aws-mcp.us-east-1.api.aws/mcp",
     "eu-central-1": "https://aws-mcp.eu-central-1.api.aws/mcp",
 }
+
+
+def resolve_aws_mcp_url(region: str) -> str:
+    url = AWS_MCP_ENDPOINTS.get(region)
+    if not url:
+        supported = ", ".join(sorted(AWS_MCP_ENDPOINTS))
+        raise ValueError(
+            f"Unsupported AWS MCP endpoint region {region!r}; use one of: {supported}"
+        )
+    return url
 
 
 def is_aws_mcp_url(url: str) -> bool:
@@ -40,11 +49,7 @@ def is_aws_mcp_url(url: str) -> bool:
 
 
 def aws_mcp_endpoint_region(url: str) -> Optional[str]:
-    """
-    Extract the MCP endpoint region from a managed AWS MCP URL.
-
-    Example: https://aws-mcp.us-east-1.api.aws/mcp -> us-east-1
-    """
+    """Extract signing region from a managed AWS MCP URL."""
     if not is_aws_mcp_url(url):
         return None
     host = urlparse(url).hostname or ""
@@ -61,9 +66,7 @@ def build_aws_mcp_creds(
     default_aws_region: Optional[str] = None,
     extra_headers: Optional[Dict[str, str]] = None,
 ) -> MCPCreds:
-    """
-    Build MCPCreds for AWS MCP Server using IAM fields (not secrets in headers).
-    """
+    """Build MCPCreds for AWS MCP Server using IAM fields (not secrets in headers)."""
     headers = dict(extra_headers or {})
     if default_aws_region:
         headers.setdefault("x-aws-mcp-default-region", default_aws_region)
@@ -129,3 +132,56 @@ def mcp_remote_server_aws_fields(
         "aws_sigv4_service": creds.aws_sigv4_service or AWS_MCP_SIGV4_SERVICE,
         "aws_default_region": creds.aws_default_region,
     }
+
+
+def build_aws_mcp_sigv4_httpx_auth(
+    *,
+    mcp_url: str,
+    access_key_id: str,
+    secret_access_key: str,
+    session_token: Optional[str] = None,
+    default_aws_region: Optional[str] = None,
+) -> Tuple[Dict[str, str], object]:
+    """
+    Return ``(headers, httpx.Auth)`` for pydantic-ai MCPToolset (local testing only).
+
+    Use ``headers`` + ``auth`` — not ``http_client`` — with fastmcp HTTP transports.
+    """
+    import httpx
+
+    region = aws_mcp_endpoint_region(mcp_url)
+    if not region:
+        raise ValueError(f"Cannot determine SigV4 region for AWS MCP URL: {mcp_url}")
+
+    creds = build_aws_mcp_creds(
+        access_key_id=access_key_id,
+        secret_access_key=secret_access_key,
+        session_token=session_token,
+        sigv4_region=region,
+        default_aws_region=default_aws_region,
+    )
+    sigv4_service = creds.aws_sigv4_service or AWS_MCP_SIGV4_SERVICE
+
+    class _AWSMCPSigV4Auth(httpx.Auth):
+        def auth_flow(self, request):
+            body = request.content if request.content is not None else b""
+            signed_headers = sign_aws_mcp_http_request(
+                method=request.method,
+                url=str(request.url),
+                headers={
+                    k.decode(): v.decode()
+                    for k, v in request.headers.raw
+                    if k.decode().lower()
+                    not in ("authorization", "x-amz-date", "x-amz-security-token")
+                },
+                body=body,
+                access_key_id=access_key_id,
+                secret_access_key=secret_access_key,
+                session_token=session_token,
+                sigv4_region=region,
+                sigv4_service=sigv4_service,
+            )
+            request.headers.update(signed_headers)
+            yield request
+
+    return dict(creds.headers), _AWSMCPSigV4Auth()
