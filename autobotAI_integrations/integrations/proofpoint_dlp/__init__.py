@@ -53,7 +53,7 @@ class ProofpointDLPService(BaseService):
                     "Authorization": f"API-Token {self.integration.api_token}",
                     "Content-Type": "application/json",
                 },
-                params={"limit": 1},
+                params={"limit": 2},
                 timeout=15,
             )
             if response.status_code == 200:
