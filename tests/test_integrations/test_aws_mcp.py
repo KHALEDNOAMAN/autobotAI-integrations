@@ -63,6 +63,7 @@ class TestAWSMCPOnAWSIntegration:
         if get_keys.get("AWS_SESSION_TOKEN"):
             assert creds.aws_session_token == get_keys["AWS_SESSION_TOKEN"]
         assert creds.aws_default_region == get_keys.get("AWS_REGION", "us-east-1")
+        assert creds.aws_sigv4_region is None
         assert "Authorization" not in creds.headers
 
     def test_mcp_remote_server_aws_fields(self, get_keys, sample_integration_dict):
@@ -81,6 +82,17 @@ class TestAWSMCPOnAWSIntegration:
         fields = mcp_remote_server_aws_fields(creds)
         assert fields["aws_access_key_id"] == get_keys["AWS_ACCESS_KEY_ID"]
         assert fields["aws_secret_access_key"] == get_keys["AWS_SECRET_ACCESS_KEY"]
+        assert fields.get("aws_sigv4_region") is None
+
+        frankfurt_url = resolve_aws_mcp_url("eu-central-1")
+        frankfurt_fields = mcp_remote_server_aws_fields(creds, mcp_url=frankfurt_url)
+        assert frankfurt_fields["aws_sigv4_region"] == "eu-central-1"
+
+    def test_is_aws_mcp_url_requires_https(self):
+        https_url = AWS_MCP_ENDPOINTS["us-east-1"]
+        http_url = https_url.replace("https://", "http://", 1)
+        assert is_aws_mcp_url(https_url)
+        assert not is_aws_mcp_url(http_url)
 
     def test_endpoint_region_parsing(self):
         url = AWS_MCP_ENDPOINTS["us-east-1"]

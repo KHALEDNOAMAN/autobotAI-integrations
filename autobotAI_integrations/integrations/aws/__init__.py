@@ -338,7 +338,6 @@ class AWSService(BaseService):
             access_key_id=creds["AWS_ACCESS_KEY_ID"],
             secret_access_key=creds["AWS_SECRET_ACCESS_KEY"],
             session_token=creds.get("AWS_SESSION_TOKEN"),
-            sigv4_region="us-east-1",
             default_aws_region=default_region,
         )
 

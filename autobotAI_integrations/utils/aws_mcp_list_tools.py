@@ -1,9 +1,8 @@
 """
 Connect to the managed AWS MCP Server and list runtime tools (``tools/list``).
 
-Used by the dev CLI ``tests/test_integrations/_list_aws_mcp_tools.py`` and
-available for future platform tooling. Requires the ``mcp`` and ``httpx``
-packages (``pip install mcp httpx``).
+Used by the dev CLI ``tests/test_integrations/_list_aws_mcp_tools.py``.
+Requires ``mcp`` and ``httpx`` (``pip install mcp httpx``).
 """
 
 from __future__ import annotations
@@ -21,6 +20,7 @@ from autobotAI_integrations.utils.aws_mcp_auth import (
     sign_aws_mcp_http_request,
 )
 
+
 def tool_to_dict(tool: Any) -> Dict[str, Any]:
     """Normalise an MCP ``Tool`` object to a JSON-serialisable dict."""
     input_schema = getattr(tool, "inputSchema", None)
@@ -32,6 +32,7 @@ def tool_to_dict(tool: Any) -> Dict[str, Any]:
         "input_schema": input_schema,
     }
 
+
 def resolve_aws_mcp_url(region: str) -> str:
     """Return the managed AWS MCP URL for *region* (e.g. ``us-east-1``)."""
     url = AWS_MCP_ENDPOINTS.get(region)
@@ -41,6 +42,7 @@ def resolve_aws_mcp_url(region: str) -> str:
             f"Unsupported AWS MCP endpoint region {region!r}; use one of: {supported}"
         )
     return url
+
 
 def _build_sigv4_httpx_client_factory(
     *,
@@ -87,13 +89,13 @@ def _build_sigv4_httpx_client_factory(
 
     return _factory
 
+
 async def _open_aws_mcp_session(
     *,
     url: str,
     access_key_id: str,
     secret_access_key: str,
     session_token: Optional[str] = None,
-    sigv4_region: Optional[str] = None,
     default_aws_region: Optional[str] = None,
     extra_headers: Optional[Dict[str, str]] = None,
     connect_timeout: float = 15.0,
@@ -110,7 +112,7 @@ async def _open_aws_mcp_session(
             "Missing MCP SDK. Install with: pip install mcp httpx"
         ) from exc
 
-    region = sigv4_region or aws_mcp_endpoint_region(url)
+    region = aws_mcp_endpoint_region(url)
     if not region:
         raise ValueError(f"Cannot determine SigV4 region for AWS MCP URL: {url}")
 
@@ -143,11 +145,11 @@ async def _open_aws_mcp_session(
                 ),
                 timeout=connect_timeout,
             )
-        except TypeError:
-            transport = await asyncio.wait_for(
-                stack.enter_async_context(streamablehttp_client(url=url)),
-                timeout=connect_timeout,
-            )
+        except TypeError as exc:
+            raise RuntimeError(
+                "AWS MCP requires mcp with httpx_client_factory (SigV4 HTTP transport). "
+                f"Original error: {exc}"
+            ) from exc
 
         session = await stack.enter_async_context(
             ClientSession(transport[0], transport[1])
@@ -158,30 +160,24 @@ async def _open_aws_mcp_session(
         await stack.aclose()
         raise
 
+
 async def list_aws_mcp_tools(
     *,
     url: str,
     access_key_id: str,
     secret_access_key: str,
     session_token: Optional[str] = None,
-    sigv4_region: Optional[str] = None,
     default_aws_region: Optional[str] = None,
     extra_headers: Optional[Dict[str, str]] = None,
     connect_timeout: float = 15.0,
     init_timeout: float = 10.0,
 ) -> List[Dict[str, Any]]:
-    """
-    Connect to *url*, call ``list_tools()``, and return tool metadata dicts.
-
-    The caller does not need to manage the MCP session lifecycle; this function
-    opens the connection, lists tools, and closes the session before returning.
-    """
+    """Connect to *url*, call ``list_tools()``, and return tool metadata dicts."""
     stack, session = await _open_aws_mcp_session(
         url=url,
         access_key_id=access_key_id,
         secret_access_key=secret_access_key,
         session_token=session_token,
-        sigv4_region=sigv4_region,
         default_aws_region=default_aws_region,
         extra_headers=extra_headers,
         connect_timeout=connect_timeout,
