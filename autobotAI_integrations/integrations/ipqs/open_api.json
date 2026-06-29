@@ -212,6 +212,351 @@
           }
         }
       }
+    },
+    "/account": {
+      "get": {
+        "operationId": "account_info",
+        "summary": "Get Account Details",
+        "description": "Retrieve your account's credit balance and usage statistics.",
+        "responses": {
+          "200": {
+            "description": "Successful retrieval of account details"
+          }
+        }
+      }
+    },
+    "/requests/{type}/list": {
+      "get": {
+        "operationId": "request_list",
+        "summary": "Retrieve Request List",
+        "description": "Retrieve historical logs of previous requests.",
+        "parameters": [
+          {
+            "name": "type",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": ["proxy", "email", "devicetracker", "mobiletracker"]
+            },
+            "description": "The type of requests to retrieve."
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 1
+            },
+            "description": "The page number to retrieve."
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 25
+            },
+            "description": "The limit of results per page."
+          },
+          {
+            "name": "start_date",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Filter requests from this date (YYYY-MM-DD)."
+          },
+          {
+            "name": "stop_date",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Filter requests until this date (YYYY-MM-DD)."
+          },
+          {
+            "name": "min_fraud_score",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Filter requests with minimum fraud score."
+          },
+          {
+            "name": "max_fraud_score",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Filter requests with maximum fraud score."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful retrieval of requests"
+          }
+        }
+      }
+    },
+    "/postback": {
+      "post": {
+        "operationId": "retrieve_request",
+        "summary": "Retrieve Request by ID",
+        "description": "Retrieve or update previously completed request data.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["request_id"],
+                "properties": {
+                  "request_id": {
+                    "type": "string",
+                    "description": "The unique request ID from a previous lookup."
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful retrieval"
+          }
+        }
+      }
+    },
+    "/report": {
+      "post": {
+        "operationId": "report_fraud",
+        "summary": "Report Fraud",
+        "description": "Submit fraudulent data to train ML risk-scoring models.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "ip": {
+                    "type": "string",
+                    "description": "IPv4 or IPv6 address to report."
+                  },
+                  "email": {
+                    "type": "string",
+                    "description": "Email address to report."
+                  },
+                  "phone": {
+                    "type": "string",
+                    "description": "Phone number to report."
+                  },
+                  "country": {
+                    "type": "string",
+                    "description": "Country code or name for the reported phone number."
+                  },
+                  "request_id": {
+                    "type": "string",
+                    "description": "The unique request ID to report."
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful fraud report submission"
+          }
+        }
+      }
+    },
+    "/blocklist/list/{api_key}": {
+      "get": {
+        "operationId": "blocklist_list",
+        "summary": "List Blocklist Entries",
+        "description": "List custom blocklist entries.",
+
+        "responses": {
+          "200": {
+            "description": "Successful retrieval of blocklist"
+          }
+        }
+      }
+    },
+    "/blocklist/create/{api_key}": {
+      "post": {
+        "operationId": "blocklist_create",
+        "summary": "Create Blocklist Entry",
+        "description": "Add a value to the custom blocklist.",
+
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["type", "value", "value_type"],
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "enum": ["proxy", "url", "email", "phone", "mobiletracker", "devicetracker"],
+                    "description": "The type of blocklist to modify."
+                  },
+                  "value": {
+                    "type": "string",
+                    "description": "The value to add (e.g. IP, email, domain, phone)."
+                  },
+                  "value_type": {
+                    "type": "string",
+                    "enum": ["ip", "cidr", "isp", "email", "domain", "phone", "deviceid"],
+                    "description": "The value type identifier."
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful creation of blocklist entry"
+          }
+        }
+      }
+    },
+    "/blocklist/delete/{api_key}": {
+      "post": {
+        "operationId": "blocklist_delete",
+        "summary": "Delete Blocklist Entry",
+        "description": "Remove a value from the custom blocklist.",
+
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["type", "value", "value_type"],
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "description": "The type of blocklist to modify."
+                  },
+                  "value": {
+                    "type": "string",
+                    "description": "The value to delete."
+                  },
+                  "value_type": {
+                    "type": "string",
+                    "description": "The value type."
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful deletion of blocklist entry"
+          }
+        }
+      }
+    },
+    "/allowlist/list/{api_key}": {
+      "get": {
+        "operationId": "allowlist_list",
+        "summary": "List Allowlist Entries",
+        "description": "List custom allowlist entries.",
+
+        "responses": {
+          "200": {
+            "description": "Successful retrieval of allowlist"
+          }
+        }
+      }
+    },
+    "/allowlist/create/{api_key}": {
+      "post": {
+        "operationId": "allowlist_create",
+        "summary": "Create Allowlist Entry",
+        "description": "Add a value to the custom allowlist.",
+
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["type", "value", "value_type"],
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "description": "The type of allowlist to modify."
+                  },
+                  "value": {
+                    "type": "string",
+                    "description": "The value to add."
+                  },
+                  "value_type": {
+                    "type": "string",
+                    "description": "The value type."
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful creation of allowlist entry"
+          }
+        }
+      }
+    },
+    "/allowlist/delete/{api_key}": {
+      "post": {
+        "operationId": "allowlist_delete",
+        "summary": "Delete Allowlist Entry",
+        "description": "Remove a value from the custom allowlist.",
+
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["type", "value", "value_type"],
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "description": "The type of allowlist to modify."
+                  },
+                  "value": {
+                    "type": "string",
+                    "description": "The value to delete."
+                  },
+                  "value_type": {
+                    "type": "string",
+                    "description": "The value type."
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful deletion of allowlist entry"
+          }
+        }
+      }
     }
   }
 }
