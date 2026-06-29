@@ -37,7 +37,7 @@ class OrcaSecurityIntegration(BaseSchema):
         if not v or not v.strip():
             raise ValueError(
                 "base_url is required. Enter your Orca Security tenant URL "
-                "(e.g. https://app.orcasecurity.io for US)."
+                "(e.g. https://api.orcasecurity.io for US)."
             )
         return v.strip().rstrip("/")
 

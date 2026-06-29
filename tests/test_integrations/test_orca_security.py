@@ -144,7 +144,7 @@ class TestOrcaSecurityOffline:
         assert url_field["required"] is True
         option_values = {o["value"] for o in url_field["options"]}
         expected_regions = {
-            "https://app.orcasecurity.io",
+            "https://api.orcasecurity.io",
             "https://app.eu.orcasecurity.io",
             "https://app.au.orcasecurity.io",
             "https://app.in.orcasecurity.io",
