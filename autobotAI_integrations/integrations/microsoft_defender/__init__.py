@@ -62,6 +62,8 @@ class MicrosoftDefenderService(BaseService):
                     "label": "Tenant ID",
                     "placeholder": "Enter your Microsoft tenant ID",
                     "required": True,
+                    "help_url": "https://portal.azure.com/#view/Microsoft_AAD_RegisteredApps/ApplicationsListBlade",
+                    "help_url_text": "Get Tenant ID ↗",
                 },
                 {
                     "name": "client_id",
@@ -69,6 +71,8 @@ class MicrosoftDefenderService(BaseService):
                     "label": "Client ID",
                     "placeholder": "Enter your Microsoft application client ID",
                     "required": True,
+                    "help_url": "https://portal.azure.com/#view/Microsoft_AAD_RegisteredApps/ApplicationsListBlade",
+                    "help_url_text": "Get Client ID ↗",
                 },
                 {
                     "name": "client_secret",

@@ -59,6 +59,8 @@ class NewrelicService(BaseService):
                     "label": "API Key",
                     "placeholder": "Enter the Newrelic API Key",
                     "required": True,
+                    "help_url": "https://one.newrelic.com/api-keys",
+                    "help_url_text": "Get API Key ↗",
                 },
                 {
                     "name": "region",

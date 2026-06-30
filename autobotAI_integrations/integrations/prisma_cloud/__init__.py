@@ -79,6 +79,8 @@ class PrismaCloudService(BaseService):
                     "label": "Access Key ID",
                     "placeholder": "Enter the Prisma Cloud Access Key ID",
                     "required": True,
+                    "help_url": "https://docs.prismacloud.io/en/enterprise-edition/content-collections/administration/create-access-keys",
+                    "help_url_text": "Create Access Key ↗",
                 },
                 {
                     "name": "secret_key",

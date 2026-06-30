@@ -66,6 +66,8 @@ class CrowdSecService(BaseService):
                     "label": "API Key",
                     "placeholder": "Your CTI API KEY",
                     "required": True,
+                    "help_url": "https://app.crowdsec.net/settings/personal-api-keys",
+                    "help_url_text": "Get API Key ↗",
                 }
             ],
         }

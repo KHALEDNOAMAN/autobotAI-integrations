@@ -68,6 +68,8 @@ class ZendutyService(BaseService):
                     "label": "API Token",
                     "placeholder": "Enter the Zenduty API Token",
                     "required": True,
+                    "help_url": "https://www.zenduty.com/account/teams/",
+                    "help_url_text": "Get API Token ↗",
                 }
             ],
         }

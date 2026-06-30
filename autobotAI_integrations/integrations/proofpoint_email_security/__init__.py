@@ -56,6 +56,8 @@ class ProofpointEmailSecurityService(BaseService):
                     "label": "Service Principal",
                     "placeholder": "Enter your Service Principal ID",
                     "required": True,
+                    "help_url": "https://help.proofpoint.com/Threat_Insight_Dashboard/API_Documentation/Overview",
+                    "help_url_text": "Proofpoint API Docs ↗",
                 },
                 {
                     "name": "secret",
@@ -63,6 +65,8 @@ class ProofpointEmailSecurityService(BaseService):
                     "label": "Secret",
                     "placeholder": "Enter your Service Principal Secret",
                     "required": True,
+                    "help_url": "https://help.proofpoint.com/Threat_Insight_Dashboard/API_Documentation/Overview",
+                    "help_url_text": "Proofpoint API Docs ↗",
                 }
             ],
         }

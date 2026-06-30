@@ -113,6 +113,8 @@ class SlackBotService(BaseService):
                             "label": "Bot User OAuth Token",
                             "placeholder": "xoxb-...",
                             "required": True,
+                            "help_url": "https://api.slack.com/apps",
+                            "help_url_text": "Get Bot Token ↗",
                         },
                         {
                             "name": "signing_secret",
@@ -121,6 +123,8 @@ class SlackBotService(BaseService):
                             "placeholder": "Slack app signing secret",
                             "description": "Used to verify event + interactivity requests.",
                             "required": True,
+                            "help_url": "https://api.slack.com/apps",
+                            "help_url_text": "Get Signing Secret ↗",
                         },
                         {
                             "name": "webhook_url",

@@ -137,6 +137,8 @@ class OpenAIService(AIBaseService):
                     "label": "OpenAI api_key",
                     "placeholder": "Enter the OpenAI API Key",
                     "required": True,
+                    "help_url": "https://platform.openai.com/api-keys",
+                    "help_url_text": "Get API Key ↗",
                 }
             ],
         }
@@ -170,7 +172,6 @@ class OpenAIService(AIBaseService):
                 options=agent_kwargs,
                 credentials=creds,
             )
-
 
         return [
             {
@@ -258,7 +259,7 @@ class OpenAIService(AIBaseService):
 
         llm = OpenAI(api_key=self.integration.api_key, model=model, **kwargs)
         return llm
-    
+
     def generate_llm_credentials(self):
         return {
             "api_key": self.integration.api_key

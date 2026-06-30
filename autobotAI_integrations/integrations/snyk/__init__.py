@@ -95,6 +95,8 @@ class SnykService(BaseService):
                     "label": "API Key",
                     "placeholder": "Enter the Snyk API Key",
                     "required": True,
+                    "help_url": "https://app.snyk.io/account/",
+                    "help_url_text": "Get API Key ↗",
                 },
             ],
         }

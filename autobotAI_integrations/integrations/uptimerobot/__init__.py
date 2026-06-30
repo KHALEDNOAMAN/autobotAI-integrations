@@ -62,6 +62,8 @@ class UptimeRobotService(BaseService):
                     "label": "API Key",
                     "placeholder": "Enter the UptimeRobot API Key",
                     "required": True,
+                    "help_url": "https://dashboard.uptimerobot.com/integrations",
+                    "help_url_text": "Get API Key ↗",
                 }
             ],
         }

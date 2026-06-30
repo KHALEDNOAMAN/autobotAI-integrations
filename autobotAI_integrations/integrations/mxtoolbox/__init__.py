@@ -83,6 +83,8 @@ class MXToolboxService(BaseService):
                     "label": "API Key",
                     "placeholder": "Enter the MXToolbox API Key",
                     "required": True,
+                    "help_url": "https://mxtoolbox.com/user/subscription/",
+                    "help_url_text": "Get API Key ↗",
                 }
             ],
         }

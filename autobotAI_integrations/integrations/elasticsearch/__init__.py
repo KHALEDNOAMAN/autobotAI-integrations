@@ -97,6 +97,8 @@ class ElasticsearchService(BaseService):
                     "label": "API Key",
                     "placeholder": "Your API KEY",
                     "required": True,
+                    "help_url": "https://cloud.elastic.co/",
+                    "help_url_text": "Elastic Cloud Console ↗",
                 },
             ],
         }

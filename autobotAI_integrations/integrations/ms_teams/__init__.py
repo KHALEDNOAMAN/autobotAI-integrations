@@ -59,6 +59,8 @@ class MsTeamsService(BaseService):
                     "label": "Webhook URL",
                     "placeholder": "Enter your Webhook URL",
                     "required": True,
+                    "help_url": "https://learn.microsoft.com/en-us/microsoftteams/platform/webhooks-and-connectors/how-to/add-incoming-webhook",
+                    "help_url_text": "Create Webhook ↗",
                 }
             ],
         }

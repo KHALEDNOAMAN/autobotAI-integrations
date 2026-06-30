@@ -119,6 +119,8 @@ class CrowdstrikeIdentityProtectionService(BaseService):
                         "(e.g. Identity Protection Entities, Identity Protection GraphQL)"
                     ),
                     "required": True,
+                    "help_url": "https://falcon.crowdstrike.com/support/api-clients-and-keys",
+                    "help_url_text": "Get Client ID ↗",
                 },
                 {
                     "name": "client_secret",

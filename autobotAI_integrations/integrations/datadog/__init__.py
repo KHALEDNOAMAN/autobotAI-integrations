@@ -72,6 +72,8 @@ class DATADOGService(BaseService):
                     "label": "Datadog API Key",
                     "placeholder": "Enter API Key",
                     "required": True,
+                    "help_url": "https://app.datadoghq.com/organization-settings/api-keys",
+                    "help_url_text": "Get API Key ↗",
                 },
                 {
                     "name": "app_key",
@@ -80,6 +82,8 @@ class DATADOGService(BaseService):
                     "placeholder": "Enter Application Key",
                     "description": "Application key is required for some endpoints. You can get it from your Datadog account settings.",
                     "required": True,
+                    "help_url": "https://app.datadoghq.com/organization-settings/application-keys",
+                    "help_url_text": "Get App Key ↗",
                 },
                 {
                     "name": "api_url",

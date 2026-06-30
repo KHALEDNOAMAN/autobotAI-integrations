@@ -81,6 +81,8 @@ class SplunkService(BaseService):
                     "label": "TCP Management HOST URL",
                     "placeholder": "https://example.com:8089",
                     "required": True,
+                    "help_url": "https://docs.splunk.com/Documentation/Splunk/latest/RESTREF/RESTprolog",
+                    "help_url_text": "Splunk REST API Docs ↗",
                 },
                 {
                     "name": "username",

@@ -91,6 +91,8 @@ class CloudflareService(BaseService):
                             "placeholder": "Token API Key",
                             "description": "Read scope is required (write is not)",
                             "required": True,
+                            "help_url": "https://dash.cloudflare.com/profile/api-tokens",
+                            "help_url_text": "Create Token ↗",
                         }
                     ],
                 },
@@ -112,6 +114,8 @@ class CloudflareService(BaseService):
                             "label": "Api Key",
                             "placeholder": "Enter your Global API  Key",
                             "required": True,
+                            "help_url": "https://dash.cloudflare.com/profile/api-tokens",
+                            "help_url_text": "Get Global API Key ↗",
                         },
                     ],
                 },

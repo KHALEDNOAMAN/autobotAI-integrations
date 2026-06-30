@@ -86,6 +86,8 @@ class CoralogixService(BaseService):
                     "label": "API Key",
                     "placeholder": "Enter the Coralogix API Key",
                     "required": True,
+                    "help_url": "https://dashboard.coralogix.com/#/add/api-key",
+                    "help_url_text": "Get API Key ↗",
                 },
             ],
         }

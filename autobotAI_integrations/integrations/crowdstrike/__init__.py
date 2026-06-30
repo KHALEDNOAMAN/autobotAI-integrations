@@ -59,6 +59,8 @@ class CrowdstrikeService(BaseService):
                     "label": "Client ID",
                     "placeholder": "Enter the Client ID",
                     "required": True,
+                    "help_url": "https://falcon.crowdstrike.com/support/api-clients-and-keys",
+                    "help_url_text": "Get Client ID ↗",
                 },
                 {
                     "name": "client_secret",
@@ -66,6 +68,8 @@ class CrowdstrikeService(BaseService):
                     "label": "Client Secret",
                     "placeholder": "Enter the Client Secret",
                     "required": True,
+                    "help_url": "https://falcon.crowdstrike.com/support/api-clients-and-keys",
+                    "help_url_text": "Get Client Secret ↗",
                 },
                 {
                     "label": "Client Cloud",

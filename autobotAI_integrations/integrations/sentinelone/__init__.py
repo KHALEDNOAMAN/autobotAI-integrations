@@ -73,6 +73,8 @@ class SentinelOneService(BaseService):
                     "label": "API Key",
                     "placeholder": "Your API TOKEN",
                     "required": True,
+                    "help_url": "https://usea1.sentinelone.net/docs/en/managing-user-api-tokens.html",
+                    "help_url_text": "Get API Token ↗",
                 },
             ],
         }

@@ -73,6 +73,8 @@ class GitlabService(BaseService):
                     "label": "Gitlab Token",
                     "placeholder": "Enter the Gitlab Token",
                     "required": True,
+                    "help_url": "https://gitlab.com/-/profile/personal_access_tokens",
+                    "help_url_text": "Generate Token ↗",
                 },
             ],
         }

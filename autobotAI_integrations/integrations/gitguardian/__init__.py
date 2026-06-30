@@ -42,6 +42,8 @@ class GitGuardianService(BaseService):
                     "label": "GitGuardian Token",
                     "placeholder": "Enter the GitGuardian token",
                     "required": True,
+                    "help_url": "https://dashboard.gitguardian.com/api/personal-access-tokens",
+                    "help_url_text": "Get Token ↗",
                 }
             ],
         }

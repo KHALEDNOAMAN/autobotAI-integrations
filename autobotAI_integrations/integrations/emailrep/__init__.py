@@ -71,6 +71,8 @@ class EmailRepService(BaseService):
                     "label": "API Key",
                     "placeholder": "Enter the EmailRep API Key",
                     "required": True,
+                    "help_url": "https://emailrep.io/key",
+                    "help_url_text": "Get API Key ↗",
                 }
             ],
         }

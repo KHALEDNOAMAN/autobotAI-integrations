@@ -69,6 +69,8 @@ class GrafanaService(BaseService):
                     "type": "text/password",
                     "placeholder": "Service account token or username:password",
                     "required": True,
+                    "help_url": "https://grafana.com/docs/grafana/latest/administration/service-accounts/",
+                    "help_url_text": "Create Service Account ↗",
                 },
             ],
         }

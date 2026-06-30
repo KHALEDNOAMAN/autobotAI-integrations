@@ -152,6 +152,8 @@ class OpenRouterService(AIBaseService):
                     "label": "OpenRouter API Key",
                     "placeholder": "Enter the OpenRouter API Key",
                     "required": True,
+                    "help_url": "https://openrouter.ai/settings/keys",
+                    "help_url_text": "Get API Key ↗",
                 },
                 {
                     "name": "skip_test",

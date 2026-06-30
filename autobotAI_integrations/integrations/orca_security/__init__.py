@@ -105,6 +105,8 @@ class OrcaSecurityService(BaseService):
                         "Assign at least the Viewer role."
                     ),
                     "required": True,
+                    "help_url": "https://app.orcasecurity.io/settings/users-permissions/api-tokens",
+                    "help_url_text": "Get API Token ↗",
                 },
                 {
                     "name": "base_url",

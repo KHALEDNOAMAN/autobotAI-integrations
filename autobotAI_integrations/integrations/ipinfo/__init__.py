@@ -57,6 +57,8 @@ class IPinfoService(BaseService):
                     "name": "token",
                     "description": "No token is needed for basic info requests. For higher limits and more data a token is required.",
                     "required": False,
+                    "help_url": "https://ipinfo.io/account/token",
+                    "help_url_text": "Get API Key ↗",
                 }
             ],
         }

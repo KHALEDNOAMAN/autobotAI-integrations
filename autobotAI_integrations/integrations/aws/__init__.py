@@ -140,14 +140,18 @@ class AWSService(BaseService):
                             "type": "text",
                             "label": "Access Key",
                             "placeholder": "Enter your AWS access key",
-                            "required": True
+                            "required": True,
+                            "help_url": "https://console.aws.amazon.com/iam/home#/security_credentials",
+                            "help_url_text": "Get Access Key ↗",
                         },
                         {
                             "name": "secret_key",
                             "type": "text/password",
                             "label": "Secret Key",
                             "placeholder": "Enter your AWS secret key",
-                            "required": True
+                            "required": True,
+                            "help_url": "https://console.aws.amazon.com/iam/home#/security_credentials",
+                            "help_url_text": "Get Secret Key ↗",
                         },
                         {
                             "name": "session_token",

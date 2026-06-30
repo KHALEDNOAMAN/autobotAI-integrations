@@ -101,6 +101,8 @@ class ProofpointITMService(BaseService):
                     "label": "Client ID",
                     "placeholder": "Enter your Proofpoint ITM API Client ID",
                     "required": True,
+                    "help_url": "https://www.proofpoint.com/us/products/information-protection/endpoint-dlp",
+                    "help_url_text": "Proofpoint ITM Docs ↗",
                 },
                 {
                     "name": "client_secret",

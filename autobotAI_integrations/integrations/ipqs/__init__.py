@@ -65,6 +65,8 @@ class IPQSService(BaseService):
                     "label": "API Key",
                     "placeholder": "Enter your IPQS API Key",
                     "required": True,
+                    "help_url": "https://www.ipqualityscore.com/user/settings",
+                    "help_url_text": "Get API Key ↗",
                 }
             ],
         }

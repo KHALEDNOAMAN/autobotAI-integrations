@@ -67,6 +67,8 @@ class RecordedFutureService(BaseService):
                     "label": "API Token",
                     "placeholder": "Enter the Recorded Future API Token",
                     "required": True,
+                    "help_url": "https://app.recordedfuture.com/portal/settings/api-access-keys",
+                    "help_url_text": "Get API Token ↗",
                 },
                 {
                     "name": "skip_test",

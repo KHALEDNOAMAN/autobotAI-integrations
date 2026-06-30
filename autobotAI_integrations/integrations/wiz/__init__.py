@@ -57,6 +57,8 @@ class WizService(BaseService):
                     "label": "Client ID",
                     "placeholder": "Enter the Wiz Client ID",
                     "required": True,
+                    "help_url": "https://app.wiz.io/settings/service-accounts",
+                    "help_url_text": "Get Client ID ↗",
                 },
                 {
                     "name": "client_secret",
@@ -64,6 +66,8 @@ class WizService(BaseService):
                     "label": "Client Secret",
                     "placeholder": "Enter the Wiz Client Secret",
                     "required": True,
+                    "help_url": "https://app.wiz.io/settings/service-accounts",
+                    "help_url_text": "Get Client Secret ↗",
                 },
                 {
                     "name": "url",

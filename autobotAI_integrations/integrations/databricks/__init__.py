@@ -120,6 +120,8 @@ class DatabricksService(BaseService):
                     "label": "Client Id",
                     "placeholder": "Enter the Client Id",
                     "required": True,
+                    "help_url": "https://docs.databricks.com/en/dev-tools/auth/oauth-m2m.html",
+                    "help_url_text": "Create Service Principal ↗",
                 },
                 {
                     "name": "client_secret",
@@ -127,6 +129,8 @@ class DatabricksService(BaseService):
                     "label": "Client Secret",
                     "placeholder": "Enter the Client Secret",
                     "required": True,
+                    "help_url": "https://docs.databricks.com/en/dev-tools/auth/oauth-m2m.html",
+                    "help_url_text": "Create Client Secret ↗",
                 },
             ],
         }

@@ -82,6 +82,8 @@ class OktaService(BaseService):
                     "label": "Okta API Token",
                     "placeholder": "Enter API Token",
                     "required": True,
+                    "help_url": "https://help.okta.com/en-us/content/topics/security/api.htm",
+                    "help_url_text": "Get API Token ↗",
                 }
             ],
         }
