@@ -167,6 +167,18 @@ class Rapid7Service(BaseService):
 
     def _test_integration(self) -> dict:
         try:
+            has_cloud = bool(self.integration.api_key)
+            has_console = bool(
+                self.integration.console_url
+                and self.integration.username
+                and self.integration.password
+            )
+            if not has_cloud and not has_console:
+                return {
+                    "success": False,
+                    "error": "No credentials configured. Provide an Insight Platform API key (v4) or Security Console URL + username + password (v3).",
+                }
+
             if self.integration.api_key:
                 region = self.integration.region or "us"
                 validate_url = f"https://{region}.api.insight.rapid7.com/validate"
@@ -196,10 +208,10 @@ class Rapid7Service(BaseService):
                     headers={"Accept": "application/json"},
                     timeout=10,
                 )
-                if response.status_code in [401, 403]:
+                if response.status_code != 200:
                     return {
                         "success": False,
-                        "error": f"Console API v3 authentication failed with status code: {response.status_code}",
+                        "error": f"Console API v3 check failed with status code: {response.status_code}",
                     }
 
             return {"success": True}
@@ -220,10 +232,10 @@ class Rapid7Service(BaseService):
                     "type": "text/password",
                     "label": "API Key",
                     "placeholder": "Enter your Rapid7 Insight Platform API Key",
-                    "required": True,
+                    "required": False,
                     "description": (
                         "Generate an API key from the Rapid7 Insight Platform under "
-                        "Administration > API Key Management."
+                        "Administration > API Key Management (required for Cloud API v4)."
                     ),
                 },
                 {
@@ -249,7 +261,7 @@ class Rapid7Service(BaseService):
                     "placeholder": "https://your-console.example.com:3780",
                     "required": False,
                     "description": (
-                        "Required only if using local Security Console REST API v3 actions (e.g., active scan triggering)."
+                        "Required only if using local Security Console REST API v3 via Python SDK (rapid7_console client)."
                     ),
                 },
                 {
@@ -298,19 +310,25 @@ class Rapid7Service(BaseService):
             client_definitions[0].import_library_names[0], package=None
         )
 
+        clients = {}
+        api_key = payload_task.creds.envs.get("RAPID7_API_KEY")
+        if api_key:
+            clients["rapid7"] = rapid7_module.Rapid7Client(
+                api_key=api_key,
+                region=payload_task.creds.envs.get("RAPID7_REGION", "us"),
+            )
+
+        console_url = payload_task.creds.envs.get("RAPID7_CONSOLE_URL")
+        if console_url:
+            clients["rapid7_console"] = rapid7_module.Rapid7ConsoleV3Client(
+                console_url=console_url,
+                username=payload_task.creds.envs.get("RAPID7_CONSOLE_USERNAME"),
+                password=payload_task.creds.envs.get("RAPID7_CONSOLE_PASSWORD"),
+            )
+
         return [
             {
-                "clients": {
-                    "rapid7": rapid7_module.Rapid7Client(
-                        api_key=payload_task.creds.envs.get("RAPID7_API_KEY", ""),
-                        region=payload_task.creds.envs.get("RAPID7_REGION", "us"),
-                    ),
-                    "rapid7_console": rapid7_module.Rapid7ConsoleV3Client(
-                        console_url=payload_task.creds.envs.get("RAPID7_CONSOLE_URL"),
-                        username=payload_task.creds.envs.get("RAPID7_CONSOLE_USERNAME"),
-                        password=payload_task.creds.envs.get("RAPID7_CONSOLE_PASSWORD"),
-                    ),
-                },
+                "clients": clients,
                 "params": self.prepare_params(payload_task.params),
                 "context": payload_task.context,
             }
@@ -321,7 +339,7 @@ class Rapid7Service(BaseService):
             envs={
                 "RAPID7_API_KEY": str(self.integration.api_key or ""),
                 "RAPID7_REGION": str(self.integration.region or "us"),
-                "RAPID7_CONSOLE_URL": str(self.integration.console_url or ""),
+                "RAPID7_CONSOLE_URL": str((self.integration.console_url or "").rstrip("/")),
                 "RAPID7_CONSOLE_USERNAME": str(self.integration.username or ""),
                 "RAPID7_CONSOLE_PASSWORD": str(self.integration.password or ""),
             }

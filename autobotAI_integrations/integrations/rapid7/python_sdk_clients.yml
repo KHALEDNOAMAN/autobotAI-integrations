@@ -2,3 +2,9 @@
   import_library_names:
     - autobotAI_integrations.integrations.rapid7
   pip_package_names: []
+
+- name: rapid7_console
+  import_library_names:
+    - autobotAI_integrations.integrations.rapid7
+  pip_package_names: []
+
