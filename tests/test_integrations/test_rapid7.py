@@ -52,4 +52,19 @@ class TestClassRapid7:
         assert client.console_url == "https://console.example.com:3780"
         assert client._auth() == ("admin", "password")
 
+    def test_rest_api_creds_no_api_key(self, sample_integration_dict):
+        tokens = {
+            "region": "us",
+            "console_url": "https://console.example.com:3780/",
+            "username": "admin",
+            "password": "password",
+        }
+        integration = sample_integration_dict("rapid7", tokens)
+        service = integration_service_factory.get_service(None, integration)
+        rest_creds = service.generate_rest_api_creds()
+        assert rest_creds.headers == {}
+
+
+
+
 

@@ -349,5 +349,8 @@ class Rapid7Service(BaseService):
         region = self.integration.region or "us"
         return RestAPICreds(
             base_url=f"https://{region}.api.insight.rapid7.com",
-            headers={"X-Api-Key": self.integration.api_key},
+            headers={"X-Api-Key": self.integration.api_key} if self.integration.api_key else {},
         )
+
+
+

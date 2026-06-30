@@ -7,16 +7,19 @@
   },
   "servers": [
     {
-      "url": "https://{base_url}",
-      "description": "Insight Platform Cloud API regional host",
-      "variables": {
-        "base_url": {
-          "default": "us.api.insight.rapid7.com",
-          "description": "Regional host (e.g., us.api.insight.rapid7.com, eu.api.insight.rapid7.com)"
-        }
-      }
+      "url": "https://us.api.insight.rapid7.com",
+      "description": "US Region (default)"
+    },
+    {
+      "url": "https://eu.api.insight.rapid7.com",
+      "description": "EU Region"
+    },
+    {
+      "url": "https://ap.api.insight.rapid7.com",
+      "description": "Asia Pacific Region"
     }
   ],
+
 
   "paths": {
     "/validate": {
