@@ -55,7 +55,7 @@ class AbuseIPDBService(BaseService):
                     "label": "API Key",
                     "placeholder": "Enter the AbuseIPDB API Key",
                     "required": True,
-                    "help_url": "https://www.abuseipdb.com/account/api-keys",
+                    "help_url": "https://www.abuseipdb.com/account/api/keys",
                     "help_url_text": "Get API Key ↗",
                 }
             ],
@@ -86,7 +86,7 @@ class AbuseIPDBService(BaseService):
             conf_path=conf_path,
             config=config,
         )
-    
+
     def generate_rest_api_creds(self) -> RestAPICreds:
         return RestAPICreds(
             base_url="https://api.abuseipdb.com/api/v2",
