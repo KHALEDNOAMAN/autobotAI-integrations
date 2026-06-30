@@ -7,16 +7,8 @@
   },
   "servers": [
     {
-      "url": "https://us.api.insight.rapid7.com",
-      "description": "US Region (default)"
-    },
-    {
-      "url": "https://eu.api.insight.rapid7.com",
-      "description": "EU Region"
-    },
-    {
-      "url": "https://ap.api.insight.rapid7.com",
-      "description": "Asia Pacific Region"
+      "url": "{base_url}",
+      "description": "Dynamic Regional Base URL (e.g., https://us.api.insight.rapid7.com)"
     }
   ],
   "paths": {
@@ -147,6 +139,36 @@
         "summary": "List Sites",
         "description": "List all sites (scan target groups) configured in the platform.",
         "operationId": "getSites",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "schema": { "type": "integer", "default": 0 },
+            "description": "Page number (0-indexed)"
+          },
+          {
+            "name": "size",
+            "in": "query",
+            "required": false,
+            "schema": { "type": "integer", "default": 25 },
+            "description": "Number of results per page"
+          }
+        ]
+      }
+    },
+    "/vm/admin/health": {
+      "get": {
+        "summary": "Get Health Status",
+        "description": "Check the health and operational status of the Insight Platform cloud services.",
+        "operationId": "getHealth"
+      }
+    },
+    "/vm/v4/integration/assets": {
+      "get": {
+        "summary": "List Integration Assets",
+        "description": "Retrieve assets optimized for third-party integrations and data extraction pipelines.",
+        "operationId": "getIntegrationAssets",
         "parameters": [
           {
             "name": "page",
