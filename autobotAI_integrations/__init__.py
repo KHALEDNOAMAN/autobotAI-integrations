@@ -871,6 +871,16 @@ class AIBaseService(BaseService):
     def get_pydantic_model(self, model_name: str):
         raise NotImplementedError()
 
+    @staticmethod
+    def build_model_from_credentials(model_name: str, credentials: dict):
+        """Build a pydantic-ai model from a generate_llm_credentials()-shaped dict.
+
+        Unlike get_pydantic_model(), this needs no live integration/service
+        instance — callers like llm_utils.quick_llm_call that only have an
+        LLMConfig (not a DB-backed Integration) use this instead.
+        """
+        raise NotImplementedError()
+
     def load_llama_index_embedding_model(
         self, model_name: Optional[str] = None, **kwargs
     ):

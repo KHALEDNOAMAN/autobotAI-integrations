@@ -250,6 +250,19 @@ class OpenRouterService(AIBaseService):
         )
         return model
 
+    @staticmethod
+    def build_model_from_credentials(model_name: str, credentials: dict):
+        from pydantic_ai.models.openai import OpenAIChatModel
+        from pydantic_ai.providers.openai import OpenAIProvider
+
+        return OpenAIChatModel(
+            model_name=model_name,
+            provider=OpenAIProvider(
+                api_key=credentials.get("api_key"),
+                base_url=credentials.get("base_url") or OPENROUTER_BASE_URL,
+            ),
+        )
+
     def load_llama_index_llm(self, model, **kwargs):
         from llama_index.llms.openai_like import OpenAILike
 

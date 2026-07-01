@@ -233,6 +233,16 @@ class OpenAIService(AIBaseService):
         )
         return model
 
+    @staticmethod
+    def build_model_from_credentials(model_name: str, credentials: dict):
+        from pydantic_ai.models.openai import OpenAIResponsesModel
+        from pydantic_ai.providers.openai import OpenAIProvider
+
+        return OpenAIResponsesModel(
+            model_name=model_name,
+            provider=OpenAIProvider(api_key=credentials.get("api_key")),
+        )
+
     def load_llama_index_embedding_model(self, model_name: Optional[str] = None, **kwargs):
         """
         Returns Llama Index Embedding model object and model dimensions as tuple

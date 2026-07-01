@@ -348,6 +348,21 @@ class AWSBedrockService(AIBaseService):
         )
         return model
 
+    @staticmethod
+    def build_model_from_credentials(model_name: str, credentials: dict):
+        from pydantic_ai.models.bedrock import BedrockConverseModel
+        from pydantic_ai.providers.bedrock import BedrockProvider
+
+        return BedrockConverseModel(
+            model_name=model_name,
+            provider=BedrockProvider(
+                aws_access_key_id=credentials.get("access_key"),
+                aws_secret_access_key=credentials.get("secret_key"),
+                aws_session_token=credentials.get("session_token"),
+                region_name=credentials.get("region") or "us-east-1",
+            ),
+        )
+
     def load_llama_index_embedding_model(
         self, model_name: Optional[str] = None, **kwargs
     ):
