@@ -1,0 +1,430 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Microsoft 365 DLP API",
+    "description": "Microsoft Purview Data Loss Prevention APIs via Microsoft Graph. Covers DLP security alerts, DLP alert event enrichment, Purview audit log search, sensitivity labels, and sensitive information types used by DLP policies.",
+    "version": "1.0.0",
+    "contact": {
+      "name": "Microsoft Graph API Docs",
+      "url": "https://learn.microsoft.com/en-us/graph/api/overview"
+    }
+  },
+  "servers": [
+    {
+      "url": "https://graph.microsoft.com",
+      "description": "Microsoft Graph API"
+    }
+  ],
+  "paths": {
+    "/v1.0/security/alerts_v2": {
+      "get": {
+        "tags": ["DLP Alerts"],
+        "operationId": "list_dlp_alerts",
+        "summary": "List DLP security alerts",
+        "description": "Retrieve security alerts including Microsoft Purview DLP policy matches. Use OData $filter to scope results, for example serviceSource eq 'dataLossPrevention'.",
+        "parameters": [
+          {
+            "name": "$top",
+            "in": "query",
+            "required": false,
+            "schema": { "type": "integer", "default": 50, "maximum": 1000 }
+          },
+          {
+            "name": "$skip",
+            "in": "query",
+            "required": false,
+            "schema": { "type": "integer", "default": 0 }
+          },
+          {
+            "name": "$filter",
+            "in": "query",
+            "required": false,
+            "schema": { "type": "string" },
+            "description": "OData filter, e.g. severity eq 'high' or serviceSource eq 'dataLossPrevention'."
+          },
+          {
+            "name": "$orderby",
+            "in": "query",
+            "required": false,
+            "schema": { "type": "string" },
+            "description": "OData orderby, e.g. createdDateTime desc."
+          }
+        ],
+        "responses": {
+          "200": { "description": "List of alerts." }
+        }
+      }
+    },
+    "/v1.0/security/alerts_v2/{alertId}": {
+      "get": {
+        "tags": ["DLP Alerts"],
+        "operationId": "get_dlp_alert",
+        "summary": "Get DLP alert by ID",
+        "parameters": [
+          {
+            "name": "alertId",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": { "description": "Alert details." }
+        }
+      },
+      "patch": {
+        "tags": ["DLP Alerts"],
+        "operationId": "update_dlp_alert",
+        "summary": "Update DLP alert status or assignment",
+        "parameters": [
+          {
+            "name": "alertId",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "status": {
+                    "type": "string",
+                    "enum": ["new", "inProgress", "resolved"]
+                  },
+                  "assignedTo": { "type": "string" },
+                  "classification": { "type": "string" },
+                  "determination": { "type": "string" },
+                  "comment": { "type": "string" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Updated alert." }
+        }
+      }
+    },
+    "/beta/security/dlpAlertEvent": {
+      "get": {
+        "tags": ["DLP Alert Events"],
+        "operationId": "list_dlp_alert_events",
+        "summary": "List DLP alert rule-match events",
+        "description": "Retrieve DLP rule match event details correlated with Defender/Purview alerts. Beta API.",
+        "parameters": [
+          {
+            "name": "$filter",
+            "in": "query",
+            "required": false,
+            "schema": { "type": "string" },
+            "description": "Filter by alertCorrelationId or other supported fields."
+          },
+          {
+            "name": "$top",
+            "in": "query",
+            "required": false,
+            "schema": { "type": "integer", "default": 50 }
+          },
+          {
+            "name": "$skip",
+            "in": "query",
+            "required": false,
+            "schema": { "type": "integer", "default": 0 }
+          }
+        ],
+        "responses": {
+          "200": { "description": "DLP alert events." }
+        }
+      }
+    },
+    "/v1.0/security/auditLog/queries": {
+      "get": {
+        "tags": ["Purview Audit"],
+        "operationId": "list_audit_log_queries",
+        "summary": "List Purview audit log queries",
+        "parameters": [
+          {
+            "name": "$top",
+            "in": "query",
+            "required": false,
+            "schema": { "type": "integer", "default": 25 }
+          },
+          {
+            "name": "$skip",
+            "in": "query",
+            "required": false,
+            "schema": { "type": "integer", "default": 0 }
+          }
+        ],
+        "responses": {
+          "200": { "description": "Audit log query jobs." }
+        }
+      },
+      "post": {
+        "tags": ["Purview Audit"],
+        "operationId": "create_audit_log_query",
+        "summary": "Create Purview audit log search query",
+        "description": "Start an asynchronous audit search for DLP and compliance activity across M365 workloads.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "displayName": { "type": "string" },
+                  "filterStartDateTime": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "filterEndDateTime": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "recordTypeFilters": {
+                    "type": "array",
+                    "items": { "type": "string" },
+                    "description": "e.g. ExchangeItem, SharePointFileOperation, Teams."
+                  },
+                  "keywordFilter": { "type": "string" },
+                  "serviceFilter": { "type": "string" },
+                  "operationFilters": {
+                    "type": "array",
+                    "items": { "type": "string" }
+                  },
+                  "userPrincipalNameFilters": {
+                    "type": "array",
+                    "items": { "type": "string" }
+                  },
+                  "ipAddressFilters": {
+                    "type": "array",
+                    "items": { "type": "string" }
+                  },
+                  "objectIdFilters": {
+                    "type": "array",
+                    "items": { "type": "string" }
+                  }
+                },
+                "required": ["filterStartDateTime", "filterEndDateTime"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": { "description": "Audit query created." }
+        }
+      }
+    },
+    "/v1.0/security/auditLog/queries/{auditLogQueryId}": {
+      "get": {
+        "tags": ["Purview Audit"],
+        "operationId": "get_audit_log_query",
+        "summary": "Get audit log query status",
+        "parameters": [
+          {
+            "name": "auditLogQueryId",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": { "description": "Audit query status." }
+        }
+      }
+    },
+    "/v1.0/security/auditLog/queries/{auditLogQueryId}/records": {
+      "get": {
+        "tags": ["Purview Audit"],
+        "operationId": "list_audit_log_query_records",
+        "summary": "List audit records for a query",
+        "parameters": [
+          {
+            "name": "auditLogQueryId",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "$top",
+            "in": "query",
+            "required": false,
+            "schema": { "type": "integer", "default": 100 }
+          },
+          {
+            "name": "$skip",
+            "in": "query",
+            "required": false,
+            "schema": { "type": "integer", "default": 0 }
+          }
+        ],
+        "responses": {
+          "200": { "description": "Audit records including DLP events." }
+        }
+      }
+    },
+    "/v1.0/security/labels/sensitivityLabels": {
+      "get": {
+        "tags": ["Information Protection"],
+        "operationId": "list_sensitivity_labels",
+        "summary": "List sensitivity labels",
+        "description": "Retrieve sensitivity labels used by information protection and DLP policies.",
+        "parameters": [
+          {
+            "name": "$top",
+            "in": "query",
+            "required": false,
+            "schema": { "type": "integer", "default": 100 }
+          }
+        ],
+        "responses": {
+          "200": { "description": "Sensitivity labels." }
+        }
+      }
+    },
+    "/beta/dataClassification/sensitiveInfoTypes": {
+      "get": {
+        "tags": ["Sensitive Info Types"],
+        "operationId": "list_sensitive_info_types",
+        "summary": "List sensitive information types",
+        "description": "Retrieve sensitive info types referenced by DLP policy rules. Beta API.",
+        "parameters": [
+          {
+            "name": "$top",
+            "in": "query",
+            "required": false,
+            "schema": { "type": "integer", "default": 100 }
+          },
+          {
+            "name": "$filter",
+            "in": "query",
+            "required": false,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": { "description": "Sensitive information types." }
+        }
+      }
+    },
+    "/beta/security/runHuntingQuery": {
+      "post": {
+        "tags": ["Advanced Hunting"],
+        "operationId": "run_dlp_hunting_query",
+        "summary": "Run advanced hunting query for DLP investigation",
+        "description": "Execute a KQL query against Microsoft Defender advanced hunting tables to investigate DLP-related activity.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "Query": {
+                    "type": "string",
+                    "description": "KQL query string."
+                  },
+                  "Timespan": {
+                    "type": "string",
+                    "description": "ISO 8601 duration, e.g. P7D."
+                  }
+                },
+                "required": ["Query"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Hunting query results." }
+        }
+      }
+    },
+    "/v1.0/security/incidents": {
+      "get": {
+        "tags": ["DLP Incidents"],
+        "operationId": "list_security_incidents",
+        "summary": "List security incidents related to DLP alerts",
+        "parameters": [
+          {
+            "name": "$top",
+            "in": "query",
+            "required": false,
+            "schema": { "type": "integer", "default": 50 }
+          },
+          {
+            "name": "$filter",
+            "in": "query",
+            "required": false,
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "$orderby",
+            "in": "query",
+            "required": false,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": { "description": "Security incidents." }
+        }
+      }
+    },
+    "/v1.0/security/incidents/{incidentId}": {
+      "get": {
+        "tags": ["DLP Incidents"],
+        "operationId": "get_security_incident",
+        "summary": "Get security incident by ID",
+        "parameters": [
+          {
+            "name": "incidentId",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": { "description": "Incident details." }
+        }
+      },
+      "patch": {
+        "tags": ["DLP Incidents"],
+        "operationId": "update_security_incident",
+        "summary": "Update security incident",
+        "parameters": [
+          {
+            "name": "incidentId",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "status": {
+                    "type": "string",
+                    "enum": ["active", "resolved", "redirected", "unknownFutureValue"]
+                  },
+                  "assignedTo": { "type": "string" },
+                  "classification": { "type": "string" },
+                  "determination": { "type": "string" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Updated incident." }
+        }
+      }
+    }
+  }
+}
