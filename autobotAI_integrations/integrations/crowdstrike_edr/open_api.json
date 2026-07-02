@@ -1,0 +1,1170 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "CrowdStrike Falcon EDR API",
+    "version": "1.1.0",
+    "description": "Expanded EDR-focused CrowdStrike Falcon API surface for Detects, Hosts, Incidents, Alerts, and Real-Time Response."
+  },
+  "servers": [
+    {
+      "url": "https://api.us-2.crowdstrike.com"
+    }
+  ],
+  "paths": {
+    "/detects/queries/detects/v1": {
+      "get": {
+        "operationId": "query_detects",
+        "summary": "Query detections by filter",
+        "description": "Search for detection IDs that match a given FQL query.",
+        "parameters": [
+          {
+            "name": "filter",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 100,
+              "minimum": 1,
+              "maximum": 9999
+            }
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 0,
+              "minimum": 0
+            }
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "q",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Query successful"
+          }
+        }
+      }
+    },
+    "/detects/entities/summaries/GET/v1": {
+      "post": {
+        "operationId": "get_detect_summaries",
+        "summary": "Get detection summaries by IDs",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "ids": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "required": [
+                  "ids"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Fetch successful"
+          }
+        }
+      }
+    },
+    "/detects/entities/detects/v2": {
+      "patch": {
+        "operationId": "update_detects_by_ids",
+        "summary": "Update detection status or assignee",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "ids": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "status": {
+                    "type": "string"
+                  },
+                  "assigned_to_uuid": {
+                    "type": "string"
+                  },
+                  "show_in_ui": {
+                    "type": "boolean"
+                  }
+                },
+                "required": [
+                  "ids"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Update successful"
+          }
+        }
+      }
+    },
+    "/detects/aggregates/detects/GET/v1": {
+      "post": {
+        "operationId": "aggregate_detects",
+        "summary": "Aggregate detections",
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": true
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Aggregate successful"
+          }
+        }
+      }
+    },
+    "/devices/queries/devices/v1": {
+      "get": {
+        "operationId": "query_devices_by_filter",
+        "summary": "Query host device IDs",
+        "parameters": [
+          {
+            "name": "filter",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 100
+            }
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 0
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Query successful"
+          }
+        }
+      }
+    },
+    "/devices/combined/devices/v1": {
+      "get": {
+        "operationId": "query_devices_by_filter_combined",
+        "summary": "Query host details (combined)",
+        "parameters": [
+          {
+            "name": "filter",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 100
+            }
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 0
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Query successful"
+          }
+        }
+      }
+    },
+    "/devices/entities/devices/v2": {
+      "get": {
+        "operationId": "get_device_details_v2",
+        "summary": "Get host details by IDs",
+        "parameters": [
+          {
+            "name": "ids",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "style": "form",
+            "explode": false
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Fetch successful"
+          }
+        }
+      }
+    },
+    "/devices/entities/online-state/v1": {
+      "get": {
+        "operationId": "get_online_state",
+        "summary": "Get online state by host IDs",
+        "parameters": [
+          {
+            "name": "ids",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "style": "form",
+            "explode": false
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Fetch successful"
+          }
+        }
+      }
+    },
+    "/devices/entities/devices-actions/v2": {
+      "post": {
+        "operationId": "perform_device_action",
+        "summary": "Perform host action (contain/uncontain/hide)",
+        "parameters": [
+          {
+            "name": "action_name",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "ids": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "required": [
+                  "ids"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Action submitted"
+          }
+        }
+      }
+    },
+    "/devices/entities/tags/v1": {
+      "patch": {
+        "operationId": "update_device_tags",
+        "summary": "Update Falcon grouping tags on hosts",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "action": {
+                    "type": "string",
+                    "enum": [
+                      "append",
+                      "remove"
+                    ]
+                  },
+                  "ids": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "tags": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "required": [
+                  "action",
+                  "ids",
+                  "tags"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Update successful"
+          }
+        }
+      }
+    },
+    "/devices/queries/devices-scroll/v1": {
+      "get": {
+        "operationId": "query_devices_by_filter_scroll",
+        "summary": "Query host IDs with scrolling",
+        "parameters": [
+          {
+            "name": "filter",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 500
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Query successful"
+          }
+        }
+      }
+    },
+    "/incidents/queries/incidents/v1": {
+      "get": {
+        "operationId": "query_incident_ids_by_filter",
+        "summary": "Query incident IDs by filter",
+        "parameters": [
+          {
+            "name": "filter",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 100
+            }
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 0
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Query successful"
+          }
+        }
+      }
+    },
+    "/incidents/entities/incidents/GET/v1": {
+      "post": {
+        "operationId": "get_incident_details",
+        "summary": "Get incident details by IDs",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "ids": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "required": [
+                  "ids"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Fetch successful"
+          }
+        }
+      }
+    },
+    "/incidents/entities/behaviors/GET/v1": {
+      "post": {
+        "operationId": "get_behavior_details",
+        "summary": "Get incident behavior details by IDs",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "ids": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "required": [
+                  "ids"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Fetch successful"
+          }
+        }
+      }
+    },
+    "/incidents/entities/incidents/v2": {
+      "patch": {
+        "operationId": "update_incidents",
+        "summary": "Update incidents by IDs",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "ids": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "status": {
+                    "type": "integer"
+                  },
+                  "assigned_to_uuid": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "ids"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Update successful"
+          }
+        }
+      }
+    },
+    "/incidents/queries/behaviors/v1": {
+      "get": {
+        "operationId": "query_behavior_ids",
+        "summary": "Query behavior IDs by filter",
+        "parameters": [
+          {
+            "name": "filter",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 100
+            }
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 0
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Query successful"
+          }
+        }
+      }
+    },
+    "/incidents/combined/crowdscores/v1": {
+      "get": {
+        "operationId": "query_crowdscore",
+        "summary": "Get CrowdScore summary",
+        "responses": {
+          "200": {
+            "description": "Fetch successful"
+          }
+        }
+      }
+    },
+    "/alerts/queries/alerts/v2": {
+      "get": {
+        "operationId": "query_alerts_v2",
+        "summary": "Query alert IDs by filter",
+        "parameters": [
+          {
+            "name": "filter",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 1000
+            }
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 0
+            }
+          },
+          {
+            "name": "q",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Query successful"
+          }
+        }
+      }
+    },
+    "/alerts/entities/alerts/v2": {
+      "post": {
+        "operationId": "get_alerts_v2",
+        "summary": "Get alert details by IDs",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "ids": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "required": [
+                  "ids"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Fetch successful"
+          }
+        }
+      },
+      "patch": {
+        "operationId": "update_alerts_v3",
+        "summary": "Update alert state by IDs",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "ids": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "show_in_ui": {
+                    "type": "boolean"
+                  },
+                  "assigned_to_uuid": {
+                    "type": "string"
+                  },
+                  "status": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "ids"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Update successful"
+          }
+        }
+      }
+    },
+    "/alerts/aggregates/alerts/v1": {
+      "post": {
+        "operationId": "aggregate_alerts",
+        "summary": "Aggregate alert data",
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": true
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Aggregate successful"
+          }
+        }
+      }
+    },
+    "/real-time-response/entities/sessions/v1": {
+      "post": {
+        "operationId": "init_rtr_session",
+        "summary": "Initialize RTR session",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "device_id": {
+                    "type": "string"
+                  },
+                  "queue_offline": {
+                    "type": "boolean",
+                    "default": false
+                  }
+                },
+                "required": [
+                  "device_id"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Session created"
+          }
+        }
+      },
+      "delete": {
+        "operationId": "delete_rtr_session",
+        "summary": "Delete RTR session by ID",
+        "parameters": [
+          {
+            "name": "session_id",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Session deleted"
+          }
+        }
+      }
+    },
+    "/real-time-response/entities/active-responder-command/v1": {
+      "post": {
+        "operationId": "execute_active_responder_command",
+        "summary": "Execute RTR command in active responder session",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "base_command": {
+                    "type": "string"
+                  },
+                  "command_string": {
+                    "type": "string"
+                  },
+                  "session_id": {
+                    "type": "string"
+                  },
+                  "persist": {
+                    "type": "boolean",
+                    "default": false
+                  }
+                },
+                "required": [
+                  "base_command",
+                  "session_id"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Command submitted"
+          }
+        }
+      }
+    },
+    "/real-time-response/entities/command/v1": {
+      "post": {
+        "operationId": "execute_rtr_admin_command",
+        "summary": "Execute RTR admin command",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "base_command": {
+                    "type": "string"
+                  },
+                  "command_string": {
+                    "type": "string"
+                  },
+                  "session_id": {
+                    "type": "string"
+                  },
+                  "persist": {
+                    "type": "boolean",
+                    "default": false
+                  }
+                },
+                "required": [
+                  "base_command",
+                  "session_id"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Command submitted"
+          }
+        }
+      }
+    },
+    "/real-time-response/entities/list-scripts/v1": {
+      "get": {
+        "operationId": "list_rtr_scripts",
+        "summary": "List RTR scripts",
+        "parameters": [
+          {
+            "name": "filter",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 0
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 100
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Fetch successful"
+          }
+        }
+      }
+    },
+    "/real-time-response/entities/scripts/v1": {
+      "post": {
+        "operationId": "create_rtr_script",
+        "summary": "Create RTR script",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "description": {
+                    "type": "string"
+                  },
+                  "permission_type": {
+                    "type": "string",
+                    "enum": [
+                      "private",
+                      "public"
+                    ]
+                  },
+                  "content": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "name",
+                  "content"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Script created"
+          }
+        }
+      }
+    },
+    "/real-time-response/entities/scripts/v2": {
+      "delete": {
+        "operationId": "delete_rtr_script",
+        "summary": "Delete RTR script by ID",
+        "parameters": [
+          {
+            "name": "ids",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "style": "form",
+            "explode": false
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Script deleted"
+          }
+        }
+      }
+    },
+    "/real-time-response/entities/file/v1": {
+      "get": {
+        "operationId": "get_rtr_extracted_file_contents",
+        "summary": "Download file extracted via RTR",
+        "parameters": [
+          {
+            "name": "sha256",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "session_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Download successful"
+          }
+        }
+      }
+    },
+    "/real-time-response/combined/batch-init-session/v1": {
+      "post": {
+        "operationId": "batch_init_rtr_session",
+        "summary": "Initialize batch RTR sessions",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "host_ids": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "queue_offline": {
+                    "type": "boolean",
+                    "default": false
+                  }
+                },
+                "required": [
+                  "host_ids"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Batch session initialized"
+          }
+        }
+      }
+    },
+    "/real-time-response/combined/batch-active-responder-command/v1": {
+      "post": {
+        "operationId": "batch_execute_active_responder_command",
+        "summary": "Execute batch active responder command",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "base_command": {
+                    "type": "string"
+                  },
+                  "command_string": {
+                    "type": "string"
+                  },
+                  "batch_id": {
+                    "type": "string"
+                  },
+                  "optional_hosts": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "required": [
+                  "base_command",
+                  "batch_id"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Command submitted"
+          }
+        }
+      }
+    },
+    "/real-time-response/combined/batch-command/v1": {
+      "post": {
+        "operationId": "batch_execute_rtr_admin_command",
+        "summary": "Execute batch RTR admin command",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "base_command": {
+                    "type": "string"
+                  },
+                  "command_string": {
+                    "type": "string"
+                  },
+                  "batch_id": {
+                    "type": "string"
+                  },
+                  "optional_hosts": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "required": [
+                  "base_command",
+                  "batch_id"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Command submitted"
+          }
+        }
+      }
+    }
+  }
+}
