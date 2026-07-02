@@ -10,7 +10,6 @@ class ProofpointDLPIntegration(BaseSchema):
     api_token: Optional[str] = Field(default=None, exclude=True)
     subdomain: Optional[str] = Field(default=None)
     region: Optional[str] = Field(default="us")
-    skip_test: Optional[bool] = Field(default=False)
 
     name: str = "Proofpoint DLP"
     category: Optional[str] = IntegrationCategory.SECURITY_TOOLS.value
@@ -45,8 +44,6 @@ class ProofpointDLPService(BaseService):
 
     def _test_integration(self) -> dict:
         try:
-            if self.integration.skip_test:
-                return {"success": True}
             response = requests.get(
                 f"{self.integration.base_url}/api/v1/events",
                 headers={
@@ -110,18 +107,6 @@ class ProofpointDLPService(BaseService):
                         "The token owner must have 'Integrations' and 'Security Events' roles."
                     ),
                     "required": True,
-                },
-                {
-                    "name": "skip_test",
-                    "type": "select",
-                    "label": "Skip Integration Test",
-                    "description": "Skip the connectivity test (useful when the API is not yet accessible).",
-                    "required": True,
-                    "options": [
-                        {"label": "No", "value": False},
-                        {"label": "Yes", "value": True},
-                    ],
-                    "default": False,
                 },
             ],
         }
