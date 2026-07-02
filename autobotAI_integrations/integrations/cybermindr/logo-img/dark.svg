@@ -2,7 +2,7 @@
 <svg version="1.0" xmlns="http://www.w3.org/2000/svg"
  width="200" height="200" viewBox="0 0 200 200"
  preserveAspectRatio="xMidYMid meet" role="img" aria-label="CyberMindr">
-<g transform="translate(0,200) scale(0.1,-0.1)" fill="#e6e8e8" stroke="none">
+<g transform="translate(0,200) scale(0.1,-0.1)" fill="#FFFFFF" stroke="none">
 <path d="M0 1000 l0 -1000 1000 0 1000 0 0 1000 0 1000 -1000 0 -1000 0 0
 -1000z m1348 697 c25 -26 310 -552 305 -564 -4 -10 -94 -13 -403 -13 l-398 0
 -12 -30 c-12 -28 -9 -36 50 -140 57 -99 66 -110 92 -110 23 0 33 -9 58 -52 17
