@@ -1,0 +1,19 @@
+- module: falconpy
+  clients:
+    - name: Detects
+      import_library_names:
+        - falconpy
+    - name: Hosts
+      import_library_names:
+        - falconpy
+    - name: Incidents
+      import_library_names:
+        - falconpy
+    - name: Alerts
+      import_library_names:
+        - falconpy
+    - name: RealTimeResponse
+      import_library_names:
+        - falconpy
+  pip_dependencies:
+    - crowdstrike-falconpy
