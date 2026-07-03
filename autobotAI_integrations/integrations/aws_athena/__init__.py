@@ -1,9 +1,9 @@
 import traceback
-from typing import Type, Union
+from typing import Any, Type, Union
 
 import boto3, uuid
 from botocore.exceptions import ClientError
-from pydantic import Field
+from pydantic import Field, model_validator
 
 from autobotAI_integrations import (
     BaseService,
@@ -12,11 +12,12 @@ from autobotAI_integrations import (
     Param,
 )
 from autobotAI_integrations.models import *
+from autobotAI_integrations.utils.aws_region import resolve_aws_sub_integration_region
 from autobotAI_integrations.utils.boto3_helper import Boto3Helper
 
 
 class AwsAthenaIntegration(BaseSchema):
-    region: str
+    region: Optional[str] = None
     access_key: Optional[str] = Field(default=None, exclude=True)
     secret_key: Optional[str] = Field(default=None, exclude=True)
     session_token: Optional[str] = Field(default=None, exclude=True)
@@ -30,6 +31,13 @@ class AwsAthenaIntegration(BaseSchema):
         "AWS Athena is a serverless interactive query service that makes it easy to analyze data directly in Amazon S3 using standard SQL."
     )
 
+    @model_validator(mode="before")
+    @classmethod
+    def ensure_region(cls, values: Any) -> Any:
+        if isinstance(values, dict) and not values.get("region"):
+            values["region"] = resolve_aws_sub_integration_region()
+        return values
+
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 
@@ -40,6 +48,7 @@ class AwsAthenaIntegration(BaseSchema):
         self.session_token = dependency.get("session_token")
         self.externalId = dependency.get("externalId")
         self.account_id = dependency.get("account_id")
+        self.dependent_integration_id = dependency.get("accountId")
 
 
 class AwsAthenaService(BaseService):
@@ -117,8 +126,8 @@ class AwsAthenaService(BaseService):
                     "name": "region",
                     "type": "select",
                     "label": "Region",
-                    "placeholder": "Select Region",
-                    "required": True,
+                    "placeholder": "Select Region (defaults to parent AWS region or us-east-1)",
+                    "required": False,
                 },
             ],
         }

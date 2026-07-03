@@ -5,7 +5,7 @@ from typing import Any, Dict, List, Optional, Type, Union
 import boto3
 import json
 from botocore.exceptions import ClientError
-from pydantic import Field
+from pydantic import Field, model_validator
 from pathlib import Path
 
 from autobotAI_integrations import (
@@ -22,12 +22,13 @@ from autobotAI_integrations.models import (
     SDKClient,
     SDKCreds,
 )
+from autobotAI_integrations.utils.aws_region import resolve_aws_sub_integration_region
 from autobotAI_integrations.utils.boto3_helper import Boto3Helper
 from autobotAI_integrations.utils.logging_config import logger
 
 
 class AWSBedrockIntegration(BaseSchema):
-    region: str
+    region: Optional[str] = None
     access_key: Optional[str] = Field(default=None, exclude=True)
     secret_key: Optional[str] = Field(default=None, exclude=True)
     session_token: Optional[str] = Field(default=None, exclude=True)
@@ -41,8 +42,16 @@ class AWSBedrockIntegration(BaseSchema):
         "AWS Bedrock is a service that lets you use powerful AI models from various companies for your applications, all through one place."
     )
 
+    @model_validator(mode="before")
+    @classmethod
+    def ensure_region(cls, values: Any) -> Any:
+        if isinstance(values, dict) and not values.get("region"):
+            values["region"] = resolve_aws_sub_integration_region()
+        return values
+
     def __init__(self, **kwargs):
-        kwargs["activeRegions"] = [kwargs["region"]]
+        if kwargs.get("region"):
+            kwargs["activeRegions"] = [kwargs["region"]]
         super().__init__(**kwargs)
 
     def use_dependency(self, dependency: dict):
@@ -52,6 +61,7 @@ class AWSBedrockIntegration(BaseSchema):
         self.session_token = dependency.get("session_token")
         self.externalId = dependency.get("externalId")
         self.account_id = dependency.get("account_id")
+        self.dependent_integration_id = dependency.get("accountId")
 
 
 class AWSBedrockService(AIBaseService):
@@ -154,8 +164,8 @@ class AWSBedrockService(AIBaseService):
                     "name": "region",
                     "type": "select",
                     "label": "Region",
-                    "placeholder": "Select Region",
-                    "required": True,
+                    "placeholder": "Select Region (defaults to parent AWS region or us-east-1)",
+                    "required": False,
                 },
             ],
         }
