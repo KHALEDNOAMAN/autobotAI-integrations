@@ -6,8 +6,24 @@ class TestClassNessus:
     def test_actions_generation(self):
         service = integration_service_factory.get_service_cls("nessus")
         actions = service.get_all_rest_api_actions()
-        # Nessus uses self-contained SDK client instead of declarative actions
         assert isinstance(actions, list)
+        assert len(actions) == 4
+        action_names = [a.name for a in actions]
+        assert "List Scans" in action_names
+        assert "Launch Scan" in action_names
+
+    def test_generate_rest_api_creds(self, sample_integration_dict):
+        tokens = {
+            "url": "https://localhost:8834",
+            "access_key": "dummy_access",
+            "secret_key": "dummy_secret",
+            "verify_ssl": False,
+        }
+        integration = sample_integration_dict("nessus", tokens)
+        service = integration_service_factory.get_service(None, integration)
+        creds = service.generate_rest_api_creds()
+        assert creds.base_url == "https://localhost:8834"
+        assert "accessKey=dummy_access" in creds.headers["X-ApiKeys"]
 
     def test_get_details(self):
         service = integration_service_factory.get_service_cls("nessus")

@@ -152,18 +152,44 @@ class NessusService(BaseService):
             "preview": True,
         }
 
+    def generate_python_sdk_creds(self) -> SDKCreds:
+        return SDKCreds(
+            creds={
+                "url": getattr(self.integration, "url", "https://localhost:8834"),
+                "access_key": getattr(self.integration, "access_key", ""),
+                "secret_key": getattr(self.integration, "secret_key", ""),
+                "verify_ssl": getattr(self.integration, "verify_ssl", False),
+            }
+        )
+
+    def generate_rest_api_creds(self) -> RestAPICreds:
+        url = getattr(self.integration, "url", "https://localhost:8834").rstrip("/")
+        access_key = getattr(self.integration, "access_key", "")
+        secret_key = getattr(self.integration, "secret_key", "")
+        verify_ssl = getattr(self.integration, "verify_ssl", False)
+        return RestAPICreds(
+            base_url=url,
+            headers={
+                "X-ApiKeys": f"accessKey={access_key}; secretKey={secret_key}",
+                "Accept": "application/json",
+                "Content-Type": "application/json",
+            },
+            verify_ssl=verify_ssl,
+        )
+
     @staticmethod
     def get_python_sdk_client(
         connection_details: Union[RestAPICreds, SDKCreds],
         task: PayloadTask,
     ) -> SDKClient:
-        connection_details = connection_details.dict()
+        details_dict = connection_details.dict()
+        creds = details_dict.get("creds") or details_dict
 
         client = NessusClient(
-            url=connection_details.get("url"),
-            access_key=connection_details.get("access_key"),
-            secret_key=connection_details.get("secret_key"),
-            verify_ssl=connection_details.get("verify_ssl", False),
+            url=creds.get("url", "https://localhost:8834"),
+            access_key=creds.get("access_key", ""),
+            secret_key=creds.get("secret_key", ""),
+            verify_ssl=creds.get("verify_ssl", False),
         )
 
         return SDKClient(client=client)
