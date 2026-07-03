@@ -23,7 +23,7 @@ class MicrosoftDefenderIntegration(BaseSchema):
     client_secret: Optional[str] = Field(
         default=None, description="Microsoft Client Secret", exclude=True
     )
-    name: Optional[str] = "Microsoft Defender for Office 365"
+    name: Optional[str] = "Microsoft 365 Defender"
     category: Optional[str] = IntegrationCategory.SECURITY_TOOLS.value
     description: Optional[str] = (
         "Microsoft Defender for Office 365 is a cloud-based security service that protects "
