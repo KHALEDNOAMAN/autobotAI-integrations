@@ -1,5 +1,6 @@
 - is_regional: true
   name: accessanalyzer
+  doc_url: https://docs.aws.amazon.com/boto3/latest/guide/
 - is_regional: false
   name: account
 - is_regional: true

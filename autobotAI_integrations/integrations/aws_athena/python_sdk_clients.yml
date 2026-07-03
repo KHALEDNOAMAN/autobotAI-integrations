@@ -1,2 +1,3 @@
 - is_regional: true
   name: athena
+  doc_url: https://docs.aws.amazon.com/boto3/latest/reference/services/athena.html

@@ -1,6 +1,7 @@
 - class_name: ComputeManagementClient
   module: azure.mgmt.compute
   name: ComputeManagementClient
+  doc_url: https://azure.github.io/azure-sdk-for-python/index.html
   pip_package_names:
     - azure-mgmt-compute
 - class_name: ResourceManagementClient
