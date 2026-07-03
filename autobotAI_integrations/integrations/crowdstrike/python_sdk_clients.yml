@@ -1,0 +1,47 @@
+- name: detects
+  class_name: Detects
+  module: falconpy
+  import_library_names:
+    - falconpy
+  pip_package_names:
+    - crowdstrike-falconpy
+
+- name: hosts
+  class_name: Hosts
+  module: falconpy
+  import_library_names:
+    - falconpy
+  pip_package_names:
+    - crowdstrike-falconpy
+
+- name: incidents
+  class_name: Incidents
+  module: falconpy
+  import_library_names:
+    - falconpy
+  pip_package_names:
+    - crowdstrike-falconpy
+
+- name: alerts
+  class_name: Alerts
+  module: falconpy
+  import_library_names:
+    - falconpy
+  pip_package_names:
+    - crowdstrike-falconpy
+
+- name: real_time_response
+  class_name: RealTimeResponse
+  module: falconpy
+  import_library_names:
+    - falconpy
+  pip_package_names:
+    - crowdstrike-falconpy
+
+- name: identity_protection
+  class_name: IdentityProtection
+  module: falconpy
+  import_library_names:
+    - falconpy
+  pip_package_names:
+    - crowdstrike-falconpy
