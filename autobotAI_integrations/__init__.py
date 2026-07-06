@@ -12,6 +12,7 @@ from autobotAI_integrations.models import *  # noqa: F401,F403
 from autobotAI_integrations.open_api_schema import MCPServerAction, OpenAPIAction
 from autobotAI_integrations.payload_schema import Payload, Param, PayloadTask
 from autobotAI_integrations.utils import list_of_unique_elements
+from autobotAI_integrations.utils.logging_config import logger
 
 __all__ = [
     "AIBaseService",
@@ -25,6 +26,7 @@ __all__ = [
     "Payload",
     "PayloadTask",
     "list_of_unique_elements",
+    "logger",
 ]
 
 _LAZY_ATTRS = frozenset({"BaseService", "AIBaseService"})
