@@ -84,6 +84,7 @@ setup(
             # listing it explicitly, find_packages() drops the YAML from
             # the installed wheel even with include_package_data=True.
             "integrations/*/manifest_template.yaml",
+            "integrations/*/logo-img/*",
         ]
     },
     classifiers=[
