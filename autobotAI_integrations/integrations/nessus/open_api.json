@@ -1,0 +1,112 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Nessus Vulnerability Scanner API",
+    "description": "REST API endpoints for interacting with Tenable Nessus Vulnerability Scanner.",
+    "version": "v1"
+  },
+  "servers": [
+    {
+      "url": "{base_url}"
+    }
+  ],
+  "paths": {
+    "/server/properties": {
+      "get": {
+        "summary": "Server Properties",
+        "description": "Get the Nessus server properties. Used for connection validation."
+      }
+    },
+    "/editor/scan/templates": {
+      "get": {
+        "summary": "List Scan Templates",
+        "description": "List all available scan templates (e.g., Basic Network Scan, Host Discovery) and their UUIDs."
+      }
+    },
+    "/scans": {
+      "get": {
+        "summary": "List Scans",
+        "description": "List all configured vulnerability scans in Nessus."
+      },
+      "post": {
+        "summary": "Create Scan",
+        "description": "Create a new vulnerability scan for target IP addresses or subnets.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "uuid",
+                  "settings"
+                ],
+                "properties": {
+                  "uuid": {
+                    "type": "string",
+                    "description": "The UUID of the scan template to use (from List Scan Templates)."
+                  },
+                  "settings": {
+                    "type": "object",
+                    "required": [
+                      "name",
+                      "text_targets"
+                    ],
+                    "properties": {
+                      "name": {
+                        "type": "string",
+                        "description": "The name of the scan."
+                      },
+                      "description": {
+                        "type": "string",
+                        "description": "Optional description of the scan."
+                      },
+                      "text_targets": {
+                        "type": "string",
+                        "description": "The target IP address(es), hostname(s), or subnet(s) to scan (comma-separated, e.g., '192.168.1.1, 10.0.0.1')."
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/scans/{scan_id}": {
+      "get": {
+        "summary": "Get Scan Details",
+        "description": "Get detailed vulnerability results and status of a specific scan.",
+        "parameters": [
+          {
+            "name": "scan_id",
+            "in": "path",
+            "required": true,
+            "description": "The numeric ID of the scan.",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ]
+      }
+    },
+    "/scans/{scan_id}/launch": {
+      "post": {
+        "summary": "Launch Scan",
+        "description": "Trigger an existing vulnerability scan to run immediately.",
+        "parameters": [
+          {
+            "name": "scan_id",
+            "in": "path",
+            "required": true,
+            "description": "The numeric ID of the scan to launch.",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ]
+      }
+    }
+  }
+}

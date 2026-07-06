@@ -16,6 +16,7 @@ Below is a comprehensive overview of the support for both No-Code and Code Actio
 | Integration | Supports No-Code Action | Supports Code Action | How to Integrate |
 |:---:|:---:|:---:|:---:|
 | <img src="../autobotAI_integrations/integrations/abuseipdb/logo-img/light.svg" alt="AbuseIPDB" width="40" height="40"><br>**AbuseIPDB** | ✅ | ❌ | [link](./abuseipdb/Integrate.md)|
+| <img src="../autobotAI_integrations/integrations/nessus/logo-img/light.svg" alt="Nessus" width="40" height="40"><br>**Nessus** | ❌ | ✅ | [link](./nessus/Integrate.md)|
 | <img src="../autobotAI_integrations/integrations/google_api/logo-img/light.svg" alt="Google APIs" width="40" height="40"><br>**Google APIs** | ❌ | ✅ | [link](./google_api/Integrate.md)|
 | <img src="../autobotAI_integrations/integrations/slack/logo-img/light.svg" alt="Slack" width="40" height="40"><br>**Slack** | ✅ | ✅ | [link](./slack/Integrate.md)|
 | <img src="../autobotAI_integrations/integrations/snowflake/logo-img/light.svg" alt="Snowflake" width="40" height="40"><br>**Snowflake** | ❌ | ✅ | [link](./snowflake/Integrate.md)|
