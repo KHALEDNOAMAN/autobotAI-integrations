@@ -4,7 +4,7 @@ from typing import Optional, List, Any, Dict, ClassVar , Tuple
 from pydantic import BaseModel, ConfigDict, Field
 import pathlib, os
 
-from autobotAI_integrations import IntegrationSchema
+from autobotAI_integrations.integration_schema import IntegrationSchema
 
 
 class ConnectionInterfaces(str, Enum):

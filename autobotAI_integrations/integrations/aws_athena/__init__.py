@@ -1,7 +1,7 @@
 import traceback
 from typing import Any, Type, Union
 
-import boto3, uuid
+import uuid
 from botocore.exceptions import ClientError
 from pydantic import Field, model_validator
 
@@ -14,6 +14,12 @@ from autobotAI_integrations import (
 from autobotAI_integrations.models import *
 from autobotAI_integrations.utils.aws_region import resolve_aws_sub_integration_region
 from autobotAI_integrations.utils.boto3_helper import Boto3Helper
+
+
+def _boto3():
+    import boto3
+
+    return boto3
 
 
 class AwsAthenaIntegration(BaseSchema):
@@ -69,7 +75,7 @@ class AwsAthenaService(BaseService):
                 aws_client_name, region_name=self.integration.region
             )
         else:
-            return boto3.client(
+            return _boto3().client(
                 aws_client_name,
                 aws_access_key_id=str(self.integration.access_key),
                 aws_secret_access_key=str(self.integration.secret_key),
@@ -161,7 +167,7 @@ class AwsAthenaService(BaseService):
             {
                 "metadata": {"region": self.integration.region},
                 "clients": {
-                    "athena": boto3.client(
+                    "athena": _boto3().client(
                         "athena", region_name=self.integration.region, **creds
                     )
                 },

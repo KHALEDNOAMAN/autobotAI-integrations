@@ -2,7 +2,6 @@ import os
 import traceback
 from typing import Any, Dict, List, Optional, Type, Union
 
-import boto3
 import json
 from botocore.exceptions import ClientError
 from pydantic import Field, model_validator
@@ -25,6 +24,12 @@ from autobotAI_integrations.models import (
 from autobotAI_integrations.utils.aws_region import resolve_aws_sub_integration_region
 from autobotAI_integrations.utils.boto3_helper import Boto3Helper
 from autobotAI_integrations.utils.logging_config import logger
+
+
+def _boto3():
+    import boto3
+
+    return boto3
 
 
 class AWSBedrockIntegration(BaseSchema):
@@ -82,7 +87,7 @@ class AWSBedrockService(AIBaseService):
                 aws_client_name, region_name=self.integration.region
             )
         else:
-            return boto3.client(
+            return _boto3().client(
                 aws_client_name,
                 aws_access_key_id=str(self.integration.access_key),
                 aws_secret_access_key=str(self.integration.secret_key),
@@ -238,16 +243,16 @@ class AWSBedrockService(AIBaseService):
             {
                 "metadata": {"region": self.integration.region},
                 "clients": {
-                    "bedrock": boto3.client(
+                    "bedrock": _boto3().client(
                         "bedrock", region_name=self.integration.region
                     ),
-                    "bedrock-runtime": boto3.client(
+                    "bedrock-runtime": _boto3().client(
                         "bedrock-runtime", region_name=self.integration.region
                     ),
-                    "bedrock-agent": boto3.client(
+                    "bedrock-agent": _boto3().client(
                         "bedrock-agent", region_name=self.integration.region
                     ),
-                    "bedrock-agent-runtime": boto3.client(
+                    "bedrock-agent-runtime": _boto3().client(
                         "bedrock-agent-runtime", region_name=self.integration.region
                     ),
                     "Agent": model_agent,

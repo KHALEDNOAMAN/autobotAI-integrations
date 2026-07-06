@@ -1,7 +1,6 @@
 import traceback
 from typing import Type, Union
 
-import boto3
 from botocore.exceptions import ClientError
 from pydantic import Field
 
@@ -13,6 +12,12 @@ from autobotAI_integrations import (
 )
 from autobotAI_integrations.models import *
 from autobotAI_integrations.utils.boto3_helper import Boto3Helper
+
+
+def _boto3():
+    import boto3
+
+    return boto3
 
 
 class AwsSecurityLakeIntegration(BaseSchema):
@@ -57,7 +62,7 @@ class AwsSecurityLakeService(BaseService):
                 aws_client_name, region_name=self.integration.region
             )
         else:
-            return boto3.client(
+            return _boto3().client(
                 aws_client_name,
                 aws_access_key_id=str(self.integration.access_key),
                 aws_secret_access_key=str(self.integration.secret_key),
@@ -150,7 +155,7 @@ class AwsSecurityLakeService(BaseService):
             {
                 "metadata": {"region": self.integration.region},
                 "clients": {
-                    "securitylake": boto3.client(
+                    "securitylake": _boto3().client(
                         "securitylake", region_name=self.integration.region, **creds
                     )
                 },
