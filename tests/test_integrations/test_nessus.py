@@ -7,10 +7,12 @@ class TestClassNessus:
         service = integration_service_factory.get_service_cls("nessus")
         actions = service.get_all_rest_api_actions()
         assert isinstance(actions, list)
-        assert len(actions) == 4
+        assert len(actions) == 6
         action_names = [a.name for a in actions]
         assert "List Scans" in action_names
         assert "Launch Scan" in action_names
+        assert "Create Scan" in action_names
+        assert "List Scan Templates" in action_names
 
     def test_generate_rest_api_creds(self, sample_integration_dict):
         tokens = {

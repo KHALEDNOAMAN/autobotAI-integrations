@@ -17,10 +17,61 @@
         "description": "Get the Nessus server properties. Used for connection validation."
       }
     },
+    "/editor/scan/templates": {
+      "get": {
+        "summary": "List Scan Templates",
+        "description": "List all available scan templates (e.g., Basic Network Scan, Host Discovery) and their UUIDs."
+      }
+    },
     "/scans": {
       "get": {
         "summary": "List Scans",
         "description": "List all configured vulnerability scans in Nessus."
+      },
+      "post": {
+        "summary": "Create Scan",
+        "description": "Create a new vulnerability scan for target IP addresses or subnets.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "uuid",
+                  "settings"
+                ],
+                "properties": {
+                  "uuid": {
+                    "type": "string",
+                    "description": "The UUID of the scan template to use (from List Scan Templates)."
+                  },
+                  "settings": {
+                    "type": "object",
+                    "required": [
+                      "name",
+                      "text_targets"
+                    ],
+                    "properties": {
+                      "name": {
+                        "type": "string",
+                        "description": "The name of the scan."
+                      },
+                      "description": {
+                        "type": "string",
+                        "description": "Optional description of the scan."
+                      },
+                      "text_targets": {
+                        "type": "string",
+                        "description": "The target IP address(es), hostname(s), or subnet(s) to scan (comma-separated, e.g., '192.168.1.1, 10.0.0.1')."
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
       }
     },
     "/scans/{scan_id}": {
