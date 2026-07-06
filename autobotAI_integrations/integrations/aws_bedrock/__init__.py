@@ -307,30 +307,10 @@ class AWSBedrockService(AIBaseService):
                 creds["AWS_SESSION_TOKEN"] = str(self.integration.session_token)
             return creds
 
-    def _get_bedrock_model_request(
-        self, model: str, prompt: str, max_tokens=2048, temperature=0.1, *args, **kwargs
-    ):
-        if model.startswith("amazon.titan-text"):
-            native_request = {
-                "inputText": prompt,
-                "textGenerationConfig": {
-                    "maxTokenCount": int(max_tokens),
-                    "temperature": float(temperature),
-                },
-            }
-        else:
-            native_request = {
-                "prompt": prompt,
-                "max_gen_len": int(max_tokens),
-                "temperature": float(temperature),
-            }
-        request = json.dumps(native_request)
-        return request
-
     def get_pydantic_agent(
         self, model: str, tools, system_prompt: str, options: dict = {}, credentials: Optional[dict] = None
     ):
-        from pydantic_ai.agent import Agent
+        from pydantic_ai import Agent
 
         if not credentials:
             credentials = self._temp_credentials()
@@ -425,43 +405,3 @@ class AWSBedrockService(AIBaseService):
             "session_token": credentials["AWS_SESSION_TOKEN"],
             "region": self.integration.region
         }
-
-    def prompt_executor(
-        self,
-        model=None,
-        prompt=None,
-        params=None,
-        options: dict = {},
-        messages: List[Dict[str, Any]] = [],
-    ):
-        if not model or not prompt:
-            raise Exception("Model and prompt are required")
-        request = self._get_bedrock_model_request(model, prompt, **options)
-        client = self._get_aws_client("bedrock-runtime")
-        try:
-            kwargs = {"modelId": model, "body": request}
-            if params not in {
-                "get_code",
-                "approval",
-                "chat",
-                "params",
-                "title",
-                "message",
-            }:
-                kwargs["accept"] = "application/json"
-            response = client.invoke_model(**kwargs)
-
-            # Invoke the model with the request.
-            # response = client.invoke_model(modelId=model, body=request,accept="application/json")
-
-        except (ClientError, Exception) as e:
-            logger.error(f"Can't invoke '{model}'. Reason: {e}")
-            return json.dumps({"error": f"Can't invoke '{model}'. Reason: {str(e)}"})
-
-        # Decode the response body.
-        model_response = json.loads(response["body"].read())
-        if params != "":
-            logger.info("model response is %s", model_response["generation"])
-            return model_response["generation"]
-        else:
-            return json.loads(model_response["generation"])

@@ -854,14 +854,69 @@ class AIBaseService(BaseService):
     def ai_prompt_python_template():
         raise NotImplementedError()
 
+    @staticmethod
+    def _format_agent_output(output) -> str:
+        if isinstance(output, str):
+            return output
+        return json.dumps(output)
+
     def prompt_executor(
         self,
         model=None,
         prompt=None,
+        params=None,
         options: dict = {},
         messages: List[Dict[str, Any]] = [],
     ):
-        raise NotImplementedError()
+        """Run a single-shot prompt via the provider pydantic-ai Agent.
+
+        Core builds the full prompt; this layer only swaps model and credentials,
+        matching the AI evaluator Agent client pattern.
+        """
+        from pydantic_ai.settings import ModelSettings
+
+        if not model:
+            raise Exception("Model is Required")
+        if not prompt:
+            raise Exception("Model and prompt are required")
+
+        logger.info("Executing prompt via pydantic-ai Agent for model %s", model)
+
+        max_tokens = int(options.get("max_tokens", 2048))
+        temperature = float(options.get("temperature", 0.1))
+
+        agent = self.get_pydantic_agent(
+            model=model,
+            tools=[],
+            system_prompt="",
+            options={
+                "model_settings": ModelSettings(
+                    max_tokens=max_tokens,
+                    temperature=temperature,
+                ),
+            },
+        )
+
+        last_error = None
+        for attempt in range(5):
+            try:
+                result = agent.run_sync(prompt)
+                if result.output is not None and result.output != "":
+                    text = self._format_agent_output(result.output)
+                    logger.info("model response is %s", text)
+                    return text
+            except Exception as e:
+                last_error = e
+                logger.error(
+                    "Can't invoke '%s' (attempt %s/5). Reason: %s",
+                    model,
+                    attempt + 1,
+                    e,
+                )
+
+        error_msg = f"Can't invoke '{model}'. Reason: {last_error}"
+        logger.error(error_msg)
+        return json.dumps({"error": error_msg})
 
     def get_pydantic_agent(
         self, model: str, tools, system_prompt: str, options: dict = {}
