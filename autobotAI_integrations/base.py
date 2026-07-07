@@ -871,15 +871,32 @@ class AIBaseService(BaseService):
     ):
         """Run a single-shot prompt via the provider pydantic-ai Agent (async)."""
         from pydantic_ai.settings import ModelSettings
+        from autobotAI_integrations.utils.llm_prompt_format import (
+            format_prompt_for_model,
+            is_meta_llama_model,
+        )
 
         if not model:
             raise Exception("Model is Required")
         if not prompt:
             raise Exception("Model and prompt are required")
 
+        prompt = format_prompt_for_model(prompt, model)
+
         logger.info("Executing prompt via pydantic-ai Agent for model %s", model)
 
-        max_tokens = int(options.get("max_tokens", 2048))
+        _param_default_max_tokens = {
+            "get_code": 8192,
+            "action": 8192,
+            "approval": 4096,
+            "chat": 2048,
+        }
+        if is_meta_llama_model(model) and params in ("get_code", "action", "approval"):
+            max_tokens = int(options.get("max_tokens", 2048))
+        elif "max_tokens" not in options and params in _param_default_max_tokens:
+            max_tokens = _param_default_max_tokens[params]
+        else:
+            max_tokens = int(options.get("max_tokens", 2048))
         temperature = float(options.get("temperature", 0.1))
 
         agent = self.get_pydantic_agent(
