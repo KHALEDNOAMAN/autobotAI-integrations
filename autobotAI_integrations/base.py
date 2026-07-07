@@ -7,6 +7,7 @@ import sys
 import inspect
 import platform
 import json
+import asyncio
 from copy import deepcopy
 import traceback
 from enum import Enum
@@ -860,7 +861,7 @@ class AIBaseService(BaseService):
             return output
         return json.dumps(output)
 
-    def prompt_executor(
+    async def prompt_executor_async(
         self,
         model=None,
         prompt=None,
@@ -868,11 +869,7 @@ class AIBaseService(BaseService):
         options: dict = {},
         messages: List[Dict[str, Any]] = [],
     ):
-        """Run a single-shot prompt via the provider pydantic-ai Agent.
-
-        Core builds the full prompt; this layer only swaps model and credentials,
-        matching the AI evaluator Agent client pattern.
-        """
+        """Run a single-shot prompt via the provider pydantic-ai Agent (async)."""
         from pydantic_ai.settings import ModelSettings
 
         if not model:
@@ -900,7 +897,7 @@ class AIBaseService(BaseService):
         last_error = None
         for attempt in range(5):
             try:
-                result = agent.run_sync(prompt)
+                result = await agent.run(prompt)
                 if result.output is not None and result.output != "":
                     text = self._format_agent_output(result.output)
                     logger.info("model response is %s", text)
@@ -917,6 +914,25 @@ class AIBaseService(BaseService):
         error_msg = f"Can't invoke '{model}'. Reason: {last_error}"
         logger.error(error_msg)
         return json.dumps({"error": error_msg})
+
+    def prompt_executor(
+        self,
+        model=None,
+        prompt=None,
+        params=None,
+        options: dict = {},
+        messages: List[Dict[str, Any]] = [],
+    ):
+        """Sync wrapper for prompt_executor_async (use from non-async code only)."""
+        return asyncio.run(
+            self.prompt_executor_async(
+                model=model,
+                prompt=prompt,
+                params=params,
+                options=options,
+                messages=messages,
+            )
+        )
 
     def get_pydantic_agent(
         self, model: str, tools, system_prompt: str, options: dict = {}
