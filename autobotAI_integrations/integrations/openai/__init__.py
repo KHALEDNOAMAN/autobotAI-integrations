@@ -68,6 +68,7 @@ class OpenAIService(AIBaseService):
             #     "o3",
             # ]
             available_models = [
+                "gpt-5.5",
                 "gpt-5",
                 "gpt-5-mini",
                 "gpt-5-nano",
