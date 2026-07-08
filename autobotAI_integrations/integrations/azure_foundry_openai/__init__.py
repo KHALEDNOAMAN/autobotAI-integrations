@@ -88,6 +88,7 @@ class AzureOpenAIService(AIBaseService):
         try:
             available_models = list({
                 self.integration.test_model,
+                "gpt-5.5",
                 "gpt-5",
                 "gpt-5-mini",
                 "gpt-5-nano",
