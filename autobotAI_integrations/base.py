@@ -871,7 +871,8 @@ class AIBaseService(BaseService):
     ):
         """Run a single-shot prompt via the provider pydantic-ai Agent (async)."""
         from pydantic_ai.settings import ModelSettings
-        from autobotAI_integrations.utils.llm_prompt_format import (
+        from autobotAI_integrations.utils.model_helpers import (
+            bedrock_model_rejects_temperature,
             format_prompt_for_model,
             is_meta_llama_model,
         )
@@ -898,16 +899,16 @@ class AIBaseService(BaseService):
         else:
             max_tokens = int(options.get("max_tokens", 2048))
         temperature = float(options.get("temperature", 0.1))
+        model_settings_kwargs = {"max_tokens": max_tokens}
+        if not bedrock_model_rejects_temperature(model):
+            model_settings_kwargs["temperature"] = temperature
 
         agent = self.get_pydantic_agent(
             model=model,
             tools=[],
             system_prompt="",
             options={
-                "model_settings": ModelSettings(
-                    max_tokens=max_tokens,
-                    temperature=temperature,
-                ),
+                "model_settings": ModelSettings(**model_settings_kwargs),
             },
         )
 

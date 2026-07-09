@@ -1,4 +1,4 @@
-"""Model-specific prompt formatting for Bedrock / LLM calls."""
+"""Model-specific helper functions and compatibility checks for LLM calls."""
 
 _LLAMA_PROMPT_MARKERS = (
     "<|begin_of_text|>",
@@ -17,6 +17,18 @@ def is_meta_llama_model(model: str) -> bool:
             normalized = normalized[len(prefix) :]
             break
     return normalized.startswith("meta.llama")
+
+
+def bedrock_model_rejects_temperature(model: str) -> bool:
+    """Claude Sonnet 5 rejects temperature in Bedrock Converse requests."""
+    if not model:
+        return False
+    normalized = model.lower()
+    for prefix in ("global.", "us.", "eu.", "apac."):
+        if normalized.startswith(prefix):
+            normalized = normalized[len(prefix) :]
+            break
+    return "claude-sonnet-5" in normalized
 
 
 def format_prompt_for_model(prompt: str, model: str) -> str:
