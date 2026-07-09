@@ -123,9 +123,10 @@ class AWSBedrockService(AIBaseService):
     def get_integration_specific_details(self) -> dict:
         try:
             available_models = [
+                "global.anthropic.claude-sonnet-5",
+                "global.anthropic.claude-fable-5",
                 "global.anthropic.claude-sonnet-4-6",
                 "global.anthropic.claude-opus-4-6-v1",
-                "global.anthropic.claude-sonnet-4-5-20250929-v1:0",
                 "global.anthropic.claude-haiku-4-5-20251001-v1:0",
                 "global.amazon.nova-2-lite-v1:0",
                 "meta.llama3-70b-instruct-v1:0"
