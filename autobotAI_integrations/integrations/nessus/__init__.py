@@ -1,4 +1,7 @@
 import importlib
+import os
+import inspect
+import yaml
 from typing import Type, Union, List, Optional
 from pydantic import Field
 import requests
@@ -61,6 +64,113 @@ class NessusClient:
         endpoint = f"{self.url}/scans/{scan_id}"
         return requests.get(endpoint, headers=self._headers(), verify=self.verify_ssl, timeout=30)
 
+    def server_status(self) -> requests.Response:
+        """Returns the Nessus server status and health details."""
+        endpoint = f"{self.url}/server/status"
+        return requests.get(endpoint, headers=self._headers(), verify=self.verify_ssl, timeout=10)
+
+    def list_scan_templates(self) -> requests.Response:
+        """List all available scan templates (e.g., Basic Network Scan, Host Discovery) and their UUIDs."""
+        endpoint = f"{self.url}/editor/scan/templates"
+        return requests.get(endpoint, headers=self._headers(), verify=self.verify_ssl, timeout=30)
+
+    def list_policies(self) -> requests.Response:
+        """Returns the list of configured vulnerability scan policies."""
+        endpoint = f"{self.url}/policies"
+        return requests.get(endpoint, headers=self._headers(), verify=self.verify_ssl, timeout=30)
+
+    def create_scan(
+        self,
+        uuid: str,
+        name: str,
+        text_targets: str,
+        description: str = "",
+        folder_id: Optional[int] = None,
+        policy_id: Optional[int] = None,
+    ) -> requests.Response:
+        """Create a new vulnerability scan for target IP addresses or subnets."""
+        endpoint = f"{self.url}/scans"
+        payload = {
+            "uuid": uuid,
+            "settings": {
+                "name": name,
+                "text_targets": text_targets,
+                "description": description,
+            },
+        }
+        if folder_id is not None:
+            payload["settings"]["folder_id"] = folder_id
+        if policy_id is not None:
+            payload["settings"]["policy_id"] = policy_id
+        return requests.post(
+            endpoint, headers=self._headers(), json=payload, verify=self.verify_ssl, timeout=30
+        )
+
+    def delete_scans(self, ids: List[int]) -> requests.Response:
+        """Delete scans in bulk by their IDs."""
+        endpoint = f"{self.url}/scans"
+        payload = {"ids": ids}
+        return requests.delete(
+            endpoint, headers=self._headers(), json=payload, verify=self.verify_ssl, timeout=30
+        )
+
+    def launch_scan(self, scan_id: int) -> requests.Response:
+        """Trigger an existing vulnerability scan to run immediately."""
+        endpoint = f"{self.url}/scans/{scan_id}/launch"
+        return requests.post(endpoint, headers=self._headers(), verify=self.verify_ssl, timeout=30)
+
+    def pause_scan(self, scan_id: int) -> requests.Response:
+        """Temporarily pause a running vulnerability scan."""
+        endpoint = f"{self.url}/scans/{scan_id}/pause"
+        return requests.post(endpoint, headers=self._headers(), verify=self.verify_ssl, timeout=30)
+
+    def resume_scan(self, scan_id: int) -> requests.Response:
+        """Resume a previously paused vulnerability scan."""
+        endpoint = f"{self.url}/scans/{scan_id}/resume"
+        return requests.post(endpoint, headers=self._headers(), verify=self.verify_ssl, timeout=30)
+
+    def stop_scan(self, scan_id: int) -> requests.Response:
+        """Stop a running vulnerability scan."""
+        endpoint = f"{self.url}/scans/{scan_id}/stop"
+        return requests.post(endpoint, headers=self._headers(), verify=self.verify_ssl, timeout=30)
+
+    def kill_scan(self, scan_id: int) -> requests.Response:
+        """Forcefully terminate a running vulnerability scan faster than stop."""
+        endpoint = f"{self.url}/scans/{scan_id}/kill"
+        return requests.post(endpoint, headers=self._headers(), verify=self.verify_ssl, timeout=30)
+
+    def export_scan(
+        self, scan_id: int, format: str = "nessus", chapters: Optional[str] = None
+    ) -> requests.Response:
+        """Request export of vulnerability scan results into a specified file format (e.g., nessus, csv, pdf, html)."""
+        endpoint = f"{self.url}/scans/{scan_id}/export"
+        payload = {"format": format}
+        if chapters is not None:
+            payload["chapters"] = chapters
+        return requests.post(
+            endpoint, headers=self._headers(), json=payload, verify=self.verify_ssl, timeout=30
+        )
+
+    def get_export_status(self, scan_id: int, file_id: int) -> requests.Response:
+        """Check the generation status of a requested scan export file."""
+        endpoint = f"{self.url}/scans/{scan_id}/export/{file_id}/status"
+        return requests.get(endpoint, headers=self._headers(), verify=self.verify_ssl, timeout=30)
+
+    def download_export(self, scan_id: int, file_id: int) -> requests.Response:
+        """Download a generated vulnerability scan export file once its status is ready."""
+        endpoint = f"{self.url}/scans/{scan_id}/export/{file_id}/download"
+        return requests.get(endpoint, headers=self._headers(), verify=self.verify_ssl, timeout=60)
+
+    def list_scanners(self) -> requests.Response:
+        """Returns the list of local and linked remote/cloud scanners."""
+        endpoint = f"{self.url}/scanners"
+        return requests.get(endpoint, headers=self._headers(), verify=self.verify_ssl, timeout=30)
+
+    def list_folders(self) -> requests.Response:
+        """Returns the list of scan folders (e.g., My Scans, Trash)."""
+        endpoint = f"{self.url}/folders"
+        return requests.get(endpoint, headers=self._headers(), verify=self.verify_ssl, timeout=30)
+
 
 class NessusService(BaseService):
     def __init__(self, ctx: dict, integration: Union[dict, BaseSchema]):
@@ -107,33 +217,32 @@ class NessusService(BaseService):
             ],
         }
 
-    @staticmethod
-    def get_all_python_sdk_clients():
+    @classmethod
+    def get_all_python_sdk_clients(cls, integration_type=None):
         try:
-            return NessusService.yaml_to_python_sdk_clients(
-                importlib.resources.files("autobotAI_integrations.integrations.nessus")
-                .joinpath("python_sdk_clients.yml")
-                .read_text()
-            )
+            base_path = os.path.dirname(inspect.getfile(cls))
+            with open(os.path.join(base_path, "python_sdk_clients.yml"), "r", encoding="utf-8") as f:
+                return yaml.safe_load(f)
         except Exception:
             return []
 
     @staticmethod
     def supported_connection_interfaces() -> List[ConnectionInterfaces]:
-        return [ConnectionInterfaces.REST_API]
+        return [ConnectionInterfaces.REST_API, ConnectionInterfaces.PYTHON_SDK]
 
     @staticmethod
     def connection_interface_mapping() -> dict:
-        return {ConnectionInterfaces.REST_API: NessusIntegration}
+        return {
+            ConnectionInterfaces.REST_API: NessusIntegration,
+            ConnectionInterfaces.PYTHON_SDK: NessusIntegration,
+        }
 
-    @staticmethod
-    def get_code_sample() -> str:
+    @classmethod
+    def get_code_sample(cls) -> str:
         try:
-            return (
-                importlib.resources.files("autobotAI_integrations.integrations.nessus")
-                .joinpath("code_sample.py")
-                .read_text()
-            )
+            base_path = os.path.dirname(inspect.getfile(cls))
+            with open(os.path.join(base_path, "code_sample.py"), "r", encoding="utf-8") as f:
+                return f.read()
         except Exception:
             return ""
 

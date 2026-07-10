@@ -7,12 +7,32 @@ class TestClassNessus:
         service = integration_service_factory.get_service_cls("nessus")
         actions = service.get_all_rest_api_actions()
         assert isinstance(actions, list)
-        assert len(actions) == 6
+        assert len(actions) == 18
         action_names = [a.name for a in actions]
         assert "List Scans" in action_names
         assert "Launch Scan" in action_names
         assert "Create Scan" in action_names
         assert "List Scan Templates" in action_names
+        assert "Server Properties" in action_names
+        assert "Server Status" in action_names
+        assert "List Policies" in action_names
+        assert "Delete Scans" in action_names
+        assert "Export Scan Results" in action_names
+
+    def test_python_sdk_clients(self):
+        service = integration_service_factory.get_service_cls("nessus")
+        clients = service.get_all_python_sdk_clients()
+        assert isinstance(clients, list)
+        assert len(clients) > 0
+        methods = clients[0]["methods"]
+        assert len(methods) == 18
+        method_names = [m["client_method"] for m in methods]
+        assert "server_properties" in method_names
+        assert "list_scans" in method_names
+        assert "create_scan" in method_names
+        assert "launch_scan" in method_names
+        assert "export_scan" in method_names
+
 
     def test_generate_rest_api_creds(self, sample_integration_dict):
         tokens = {
