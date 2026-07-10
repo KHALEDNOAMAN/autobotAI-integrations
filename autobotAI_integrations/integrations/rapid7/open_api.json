@@ -7,16 +7,8 @@
   },
   "servers": [
     {
-      "url": "https://us.api.insight.rapid7.com",
-      "description": "US Region (default)"
-    },
-    {
-      "url": "https://eu.api.insight.rapid7.com",
-      "description": "EU Region"
-    },
-    {
-      "url": "https://ap.api.insight.rapid7.com",
-      "description": "Asia Pacific Region"
+      "url": "{base_url}",
+      "description": "Rapid7 Insight Platform API (Dynamic Region based on integration configuration)"
     }
   ],
 
