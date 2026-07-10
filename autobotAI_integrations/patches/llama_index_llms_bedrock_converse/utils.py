@@ -20,12 +20,22 @@ from llama_index.core.base.llms.types import (
     AudioBlock,
     DocumentBlock,
 )
+from autobotAI_integrations.utils.model_helpers import bedrock_model_rejects_temperature
 
 
 logger = logging.getLogger(__name__)
 
 HUMAN_PREFIX = "\n\nHuman:"
 ASSISTANT_PREFIX = "\n\nAssistant:"
+
+
+def _bedrock_inference_config(
+    model: str, max_tokens: int, temperature: float
+) -> Dict[str, Any]:
+    config: Dict[str, Any] = {"maxTokens": max_tokens}
+    if not bedrock_model_rejects_temperature(model):
+        config["temperature"] = temperature
+    return config
 
 
 BEDROCK_MODELS = {
@@ -559,10 +569,7 @@ def converse_with_retry(
     converse_kwargs = {
         "modelId": model,
         "messages": processed_messages,
-        "inferenceConfig": {
-            "maxTokens": max_tokens,
-            "temperature": temperature,
-        },
+        "inferenceConfig": _bedrock_inference_config(model, max_tokens, temperature),
     }
     
     # Truncate system prompt if needed
@@ -656,10 +663,7 @@ def converse_with_retry_async(
     converse_kwargs = {
         "modelId": model,
         "messages": processed_messages,
-        "inferenceConfig": {
-            "maxTokens": max_tokens,
-            "temperature": temperature,
-        },
+        "inferenceConfig": _bedrock_inference_config(model, max_tokens, temperature),
     }
     
     # Truncate system prompt if needed

@@ -890,14 +890,16 @@ class AIBaseService(BaseService):
             "get_code": 8192,
             "action": 8192,
             "approval": 4096,
-            "chat": 2048,
+            "chat": 8192,
         }
-        if is_meta_llama_model(model) and params in ("get_code", "action", "approval"):
-            max_tokens = int(options.get("max_tokens", 2048))
+        if is_meta_llama_model(model):
+            max_tokens = int(options.get("max_tokens", 2028))
         elif "max_tokens" not in options and params in _param_default_max_tokens:
             max_tokens = _param_default_max_tokens[params]
+        elif "max_tokens" not in options:
+            max_tokens = 8192
         else:
-            max_tokens = int(options.get("max_tokens", 2048))
+            max_tokens = int(options["max_tokens"])
         temperature = float(options.get("temperature", 0.1))
         model_settings_kwargs = {"max_tokens": max_tokens}
         if not bedrock_model_rejects_temperature(model):
