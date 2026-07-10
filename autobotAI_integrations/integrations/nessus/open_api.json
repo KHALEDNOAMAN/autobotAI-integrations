@@ -3,7 +3,7 @@
   "info": {
     "title": "Nessus Vulnerability Scanner API",
     "description": "REST API endpoints for interacting with Tenable Nessus Vulnerability Scanner.",
-    "version": "v1"
+    "version": "v10.12.1"
   },
   "servers": [
     {
@@ -14,98 +14,2254 @@
     "/server/properties": {
       "get": {
         "summary": "Server Properties",
+        "responses": {
+          "200": {
+            "description": "Returns the server properties."
+          }
+        },
         "description": "Get the Nessus server properties. Used for connection validation."
+      }
+    },
+    "/server/status": {
+      "get": {
+        "summary": "Server Status",
+        "responses": {
+          "200": {
+            "description": "Returns the server status (loading, ready, corrupt-db, feed-expired, eval-expired, locked, register, register-locked, download-failed, feed-error)."
+          },
+          "503": {
+            "description": "Returns the server status. Indicates a session destroy is required."
+          }
+        },
+        "description": "Returns the Nessus server status and health details."
       }
     },
     "/editor/scan/templates": {
       "get": {
         "summary": "List Scan Templates",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Returns the template list."
+          },
+          "403": {
+            "description": "Returned if the user does not have permission to view the list."
+          }
+        },
         "description": "List all available scan templates (e.g., Basic Network Scan, Host Discovery) and their UUIDs."
+      }
+    },
+    "/policies": {
+      "get": {
+        "summary": "List Policies",
+        "responses": {
+          "200": {
+            "description": "Returns the policy list."
+          },
+          "403": {
+            "description": "Returned if the user does not have permission to view the policy list."
+          }
+        },
+        "description": "Returns the list of configured vulnerability scan policies."
       }
     },
     "/scans": {
       "get": {
         "summary": "List Scans",
-        "description": "List all configured vulnerability scans in Nessus."
-      },
-      "post": {
-        "summary": "Create Scan",
-        "description": "Create a new vulnerability scan for target IP addresses or subnets.",
         "requestBody": {
           "required": true,
           "content": {
             "application/json": {
               "schema": {
                 "type": "object",
-                "required": [
-                  "uuid",
-                  "settings"
-                ],
                 "properties": {
-                  "uuid": {
-                    "type": "string",
-                    "description": "The UUID of the scan template to use (from List Scan Templates)."
+                  "folder_id": {
+                    "type": "integer",
+                    "description": "The id of the folder whose scans should be listed."
                   },
-                  "settings": {
-                    "type": "object",
-                    "required": [
-                      "name",
-                      "text_targets"
-                    ],
-                    "properties": {
-                      "name": {
-                        "type": "string",
-                        "description": "The name of the scan."
-                      },
-                      "description": {
-                        "type": "string",
-                        "description": "Optional description of the scan."
-                      },
-                      "text_targets": {
-                        "type": "string",
-                        "description": "The target IP address(es), hostname(s), or subnet(s) to scan (comma-separated, e.g., '192.168.1.1, 10.0.0.1')."
-                      }
-                    }
+                  "last_modification_date": {
+                    "type": "integer",
+                    "description": "Limit the results to those that have only changed since this time."
                   }
-                }
+                },
+                "required": []
               }
             }
           }
-        }
+        },
+        "responses": {
+          "200": {
+            "description": "Returns the scan list."
+          }
+        },
+        "description": "List all configured vulnerability scans in Nessus."
+      },
+      "post": {
+        "summary": "Create Scan",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "uuid": {
+                    "type": "string",
+                    "description": "The uuid for the editor template to use."
+                  },
+                  "settings": {
+                    "type": "string",
+                    "description": ""
+                  }
+                },
+                "required": [
+                  "uuid"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Returned if the scan was saved successfully."
+          },
+          "500": {
+            "description": "Returned if an error occurred while saving the scan."
+          }
+        },
+        "description": "Create a new vulnerability scan for target IP addresses or subnets."
+      },
+      "delete": {
+        "summary": "Delete Scans",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "ids": {
+                    "type": "array",
+                    "description": "Array of scan IDs to delete."
+                  }
+                },
+                "required": [
+                  "ids"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Returned if the scans have been successfully deleted."
+          },
+          "400": {
+            "description": "Returned if a field is invalid."
+          },
+          "403": {
+            "description": "Returned if the user does not have permission to delete the scans."
+          },
+          "404": {
+            "description": "Returned if one or more scans does not exist."
+          },
+          "500": {
+            "description": "Returned if the server failed to delete the scans."
+          }
+        },
+        "description": "Delete scans in bulk. NOTE: Scans in running, paused or stopping states cannot be deleted."
       }
     },
     "/scans/{scan_id}": {
       "get": {
         "summary": "Get Scan Details",
-        "description": "Get detailed vulnerability results and status of a specific scan.",
         "parameters": [
           {
             "name": "scan_id",
             "in": "path",
             "required": true,
-            "description": "The numeric ID of the scan.",
             "schema": {
               "type": "integer"
-            }
+            },
+            "description": "The id of the scan to retrieve."
+          },
+          {
+            "name": "history_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "The history_id of the historical data that should be returned."
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "The maximum number of hosts that should be returned."
           }
-        ]
+        ],
+        "responses": {
+          "200": {
+            "description": "Returns the scan details."
+          }
+        },
+        "description": "Get detailed vulnerability results and status of a specific scan."
       }
     },
     "/scans/{scan_id}/launch": {
       "post": {
         "summary": "Launch Scan",
-        "description": "Trigger an existing vulnerability scan to run immediately.",
         "parameters": [
           {
             "name": "scan_id",
             "in": "path",
             "required": true,
-            "description": "The numeric ID of the scan to launch.",
             "schema": {
               "type": "integer"
+            },
+            "description": "The id of the scan to launch."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "alt_targets": {
+                    "type": "array",
+                    "description": "If specified, these targets will be scanned instead of the default. Value can be an array where each index is a target, or an array with a single index of comma separated targets."
+                  }
+                },
+                "required": []
+              }
             }
           }
-        ]
+        },
+        "responses": {
+          "200": {
+            "description": "Returned if the scan was successfully launched."
+          },
+          "403": {
+            "description": "Returned if the scan is disabled."
+          },
+          "404": {
+            "description": "Returned if the scan does not exist."
+          }
+        },
+        "description": "Trigger an existing vulnerability scan to run immediately."
+      }
+    },
+    "/scans/{scan_id}/pause": {
+      "post": {
+        "summary": "Pause Scan",
+        "parameters": [
+          {
+            "name": "scan_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "The id of the scan to pause."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Returned if the scan was successfully queued to pause."
+          },
+          "404": {
+            "description": "Returned if the scan does not exist."
+          },
+          "409": {
+            "description": "Returned if the scan is not active."
+          }
+        },
+        "description": "Temporarily pause a running vulnerability scan."
+      }
+    },
+    "/scans/{scan_id}/resume": {
+      "post": {
+        "summary": "Resume Scan",
+        "parameters": [
+          {
+            "name": "scan_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "The id of the scan to resume."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Returned if the scan was successfully queued to resume."
+          },
+          "404": {
+            "description": "Returned if the scan does not exist."
+          },
+          "409": {
+            "description": "Returned if the scan is not active."
+          }
+        },
+        "description": "Resume a previously paused vulnerability scan."
+      }
+    },
+    "/scans/{scan_id}/stop": {
+      "post": {
+        "summary": "Stop Scan",
+        "parameters": [
+          {
+            "name": "scan_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "The id of the scan to stop."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Returned if the scan was successfully queued to stop."
+          },
+          "404": {
+            "description": "Returned if the scan does not exist."
+          },
+          "409": {
+            "description": "Returned if the scan is not active."
+          }
+        },
+        "description": "Stop a running vulnerability scan."
+      }
+    },
+    "/scans/{scan_id}/kill": {
+      "post": {
+        "summary": "Kill Scan",
+        "parameters": [
+          {
+            "name": "scan_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "The id of the scan to kill."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Returned if the scan was successfully queued to be killed."
+          },
+          "403": {
+            "description": "Returned if an attempt was made to kill a remote scan."
+          },
+          "404": {
+            "description": "Returned if the scan does not exist."
+          },
+          "409": {
+            "description": "Returned if the scan is not active."
+          }
+        },
+        "description": "Forcefully terminate a running vulnerability scan on the local scanner faster than stop."
+      }
+    },
+    "/scans/{scan_id}/export": {
+      "post": {
+        "summary": "Export Scan Results",
+        "parameters": [
+          {
+            "name": "scan_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "The id of the scan to export."
+          },
+          {
+            "name": "history_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "The history_id of the historical data that should be exported."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "format": {
+                    "type": "string",
+                    "description": "The file format to use (Nessus, HTML, PDF, CSV, or DB)."
+                  },
+                  "password": {
+                    "type": "string",
+                    "description": "The password used to encrypt database exports (*Required when exporting as DB)."
+                  },
+                  "chapters": {
+                    "type": "string",
+                    "description": "[DEPRECATED] The chapters to include in the export (expecting a semi-colon delimited string comprised of some combination of the following options: vuln_hosts_summary, vuln_by_host, compliance_exec, remediations, vuln_by_plugin, compliance)"
+                  },
+                  "filters": {
+                    "type": "object",
+                    "description": "An object containing filters to apply to the exported scan report."
+                  },
+                  "filter.search_type": {
+                    "type": "string",
+                    "description": "The type of search to be used."
+                  },
+                  "reportContents.formattingOptions.page_breaks": {
+                    "type": "boolean",
+                    "description": "[DEPRECATED] if true, separates vulnerabilities grouped by (Host, Plugins) with page breaks."
+                  },
+                  "reportContents.hostSections.scan_information": {
+                    "type": "boolean",
+                    "description": "[DEPRECATED] if true, Scan Information is included in report."
+                  },
+                  "reportContents.hostSections.host_information": {
+                    "type": "boolean",
+                    "description": "[DEPRECATED] if true, Host Information is included in report."
+                  },
+                  "reportContents.vulnerabilitySections.synopsis": {
+                    "type": "boolean",
+                    "description": "[DEPRECATED] if true, Synopsis is included in report. * If Available."
+                  },
+                  "reportContents.vulnerabilitySections.description": {
+                    "type": "boolean",
+                    "description": "[DEPRECATED] if true, Description is included in report."
+                  },
+                  "reportContents.vulnerabilitySections.see_also": {
+                    "type": "boolean",
+                    "description": "[DEPRECATED] if true, See Also is included in report."
+                  },
+                  "reportContents.vulnerabilitySections.solution": {
+                    "type": "boolean",
+                    "description": "[DEPRECATED] if true, Solution is included in report."
+                  },
+                  "reportContents.vulnerabilitySections.risk_factor": {
+                    "type": "boolean",
+                    "description": "[DEPRECATED] if true, Risk Factor is included in report."
+                  },
+                  "reportContents.vulnerabilitySections.cvss4_base_score": {
+                    "type": "boolean",
+                    "description": "[DEPRECATED] if true, CVSS v4.0 Base Score is included in report."
+                  },
+                  "reportContents.vulnerabilitySections.cvss4_bt_score": {
+                    "type": "boolean",
+                    "description": "[DEPRECATED] if true, CVSS v4.0 Base+Threat Score is included in report."
+                  },
+                  "reportContents.vulnerabilitySections.cvss3_base_score": {
+                    "type": "boolean",
+                    "description": "[DEPRECATED] if true, CVSS v3.0 Base Score is included in report."
+                  },
+                  "reportContents.vulnerabilitySections.cvss3_temporal_score": {
+                    "type": "boolean",
+                    "description": "[DEPRECATED] if true, CVSS v3.0 Temporal Score is included in report."
+                  },
+                  "reportContents.vulnerabilitySections.cvss_base_score": {
+                    "type": "boolean",
+                    "description": "[DEPRECATED] if true, CVSS Base Score is included in report."
+                  },
+                  "reportContents.vulnerabilitySections.cvss_temporal_score": {
+                    "type": "boolean",
+                    "description": "[DEPRECATED] if true, CVSS Temporal Score is included in report."
+                  },
+                  "reportContents.vulnerabilitySections.stig_severity": {
+                    "type": "boolean",
+                    "description": "[DEPRECATED] if true, STIG Severity is included in report."
+                  },
+                  "reportContents.vulnerabilitySections.references": {
+                    "type": "boolean",
+                    "description": "[DEPRECATED] if true, References are included in report."
+                  },
+                  "reportContents.vulnerabilitySections.exploitable_with": {
+                    "type": "boolean",
+                    "description": "[DEPRECATED] if true, Exploitable With is included in report."
+                  },
+                  "reportContents.vulnerabilitySections.plugin_information": {
+                    "type": "boolean",
+                    "description": "[DEPRECATED] if true, Plugin Information is included in report."
+                  },
+                  "reportContents.vulnerabilitySections.plugin_output": {
+                    "type": "boolean",
+                    "description": "[DEPRECATED] if true, Plugin Output is included in report."
+                  },
+                  "reportContents.csvColumns.id": {
+                    "type": "boolean",
+                    "description": "If true, ID is included in the CSV report."
+                  },
+                  "reportContents.csvColumns.cve": {
+                    "type": "boolean",
+                    "description": "If true, CVE is included in the CSV report."
+                  },
+                  "reportContents.csvColumns.cvss": {
+                    "type": "boolean",
+                    "description": "If true, CVSS is included in the CSV report."
+                  },
+                  "reportContents.csvColumns.risk": {
+                    "type": "boolean",
+                    "description": "If true, Risk is included in the CSV report."
+                  },
+                  "reportContents.csvColumns.hostname": {
+                    "type": "boolean",
+                    "description": "If true, Hostname is included in the CSV report."
+                  },
+                  "reportContents.csvColumns.protocol": {
+                    "type": "boolean",
+                    "description": "If true, Protocol is included in the CSV report."
+                  },
+                  "reportContents.csvColumns.port": {
+                    "type": "boolean",
+                    "description": "If true, Port is included in the CSV report."
+                  },
+                  "reportContents.csvColumns.plugin_name": {
+                    "type": "boolean",
+                    "description": "If true, Plugin Name is included in the CSV report."
+                  },
+                  "reportContents.csvColumns.synopsis": {
+                    "type": "boolean",
+                    "description": "If true, Synopsis is included in the CSV report."
+                  },
+                  "reportContents.csvColumns.description": {
+                    "type": "boolean",
+                    "description": "If true, Description is included in the CSV report."
+                  },
+                  "reportContents.csvColumns.solution": {
+                    "type": "boolean",
+                    "description": "If true, solution is included in the CSV report."
+                  },
+                  "reportContents.csvColumns.see_also": {
+                    "type": "boolean",
+                    "description": "If true, See Also is included in the CSV report."
+                  },
+                  "reportContents.csvColumns.plugin_output": {
+                    "type": "boolean",
+                    "description": "If true, Plugin Output is included in the CSV report."
+                  },
+                  "reportContents.csvColumns.stig_severity": {
+                    "type": "boolean",
+                    "description": "If true, STIG Severity is included in the CSV report."
+                  },
+                  "reportContents.csvColumns.cvss3_base_score": {
+                    "type": "boolean",
+                    "description": "If true, CVSS3 Base Score is included in the CSV report."
+                  },
+                  "reportContents.csvColumns.cvss_temporal_score": {
+                    "type": "boolean",
+                    "description": "If true, CVSS Temporal Score is included in the CSV report."
+                  },
+                  "reportContents.csvColumns.cvss3_temporal_score": {
+                    "type": "boolean",
+                    "description": "If true, CVSS3 Temporal Score is included in the CSV report."
+                  },
+                  "reportContents.csvColumns.vpr_score": {
+                    "type": "boolean",
+                    "description": "If true, VPR Score is included in the CSV report."
+                  },
+                  "reportContents.csvColumns.risk_factor": {
+                    "type": "boolean",
+                    "description": "If true, Risk Factor is included in the CSV report."
+                  },
+                  "reportContents.csvColumns.references": {
+                    "type": "boolean",
+                    "description": "If true, References is included in the CSV report."
+                  },
+                  "reportContents.csvColumns.plugin_information": {
+                    "type": "boolean",
+                    "description": "If true, Plugin Information is included in the CSV report."
+                  },
+                  "reportContents.csvColumns.exploitable_with": {
+                    "type": "boolean",
+                    "description": "If true, Exploitable With is included in the CSV report."
+                  },
+                  "template_id": {
+                    "type": "integer",
+                    "description": "The id of the report template to be used."
+                  }
+                },
+                "required": [
+                  "format",
+                  "template_id"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Returned if the export was queued successfully."
+          },
+          "400": {
+            "description": "Returned if a required parameter is missing."
+          },
+          "404": {
+            "description": "Returned if the scan does not exist."
+          },
+          "409": {
+            "description": "Returned if the scan is still active or in the middle of creating the report already."
+          }
+        },
+        "description": "Request export of vulnerability scan results into a specified file format (e.g., nessus, csv, pdf, html)."
+      }
+    },
+    "/scans/{scan_id}/export/{file_id}/status": {
+      "get": {
+        "summary": "Get Export Status",
+        "parameters": [
+          {
+            "name": "scan_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "The id of the scan to export."
+          },
+          {
+            "name": "file_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "The id of the file to poll (Included in response from /scans/{scan_id}/export)."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Returns the status of the file. A status of \"ready\" indicates the file can be downloaded."
+          },
+          "404": {
+            "description": "Returned if the file does not exist."
+          }
+        },
+        "description": "Check the generation status of an requested scan export file."
+      }
+    },
+    "/scans/{scan_id}/export/{file_id}/download": {
+      "get": {
+        "summary": "Download Export",
+        "parameters": [
+          {
+            "name": "scan_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "The id of the scan to export."
+          },
+          {
+            "name": "file_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "The id of the file to download (Included in response from /scans/{scan_id}/export)."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Returns the content of the file as an attachment."
+          },
+          "404": {
+            "description": "Returned if the file does not exist."
+          }
+        },
+        "description": "Download a generated vulnerability scan export file once its status is ready."
+      }
+    },
+    "/scanners": {
+      "get": {
+        "summary": "List Scanners",
+        "responses": {
+          "200": {
+            "description": "Returns the scanner list."
+          },
+          "403": {
+            "description": "Returned if the user does not have permission to view the list."
+          }
+        },
+        "description": "Returns the list of local and linked remote/cloud scanners."
+      }
+    },
+    "/folders": {
+      "get": {
+        "summary": "List Folders",
+        "responses": {
+          "200": {
+            "description": "Returns the folder list."
+          },
+          "403": {
+            "description": "Returned if the user does not have permission to view the list."
+          }
+        },
+        "description": "Returns the list of scan folders (e.g., My Scans, Trash)."
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "agent-groups_group": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "description": "The unique id of the agent group."
+          },
+          "name": {
+            "type": "string",
+            "description": "The name of the agent group."
+          },
+          "owner_id": {
+            "type": "string",
+            "description": "The unique id of the owner of the agent group."
+          },
+          "owner": {
+            "type": "string",
+            "description": "The username for the owner of the agent group."
+          },
+          "shared": {
+            "type": "integer",
+            "description": "The shared status of the agent group."
+          },
+          "user_permissions": {
+            "type": "integer",
+            "description": "The sharing permissions for the agent group."
+          },
+          "creation_date": {
+            "type": "integer",
+            "description": "The creation date of the agent group in unixtime."
+          },
+          "last_modification_date": {
+            "type": "integer",
+            "description": "The last modification date for the agent group in unixtime."
+          }
+        }
+      },
+      "agents_agent": {
+        "type": "object",
+        "properties": {
+          "core_version": {
+            "type": "string",
+            "description": "The agent software version."
+          },
+          "distro": {
+            "type": "string",
+            "description": "The agent software distribution."
+          },
+          "groups": {
+            "type": "array",
+            "description": "The groups of which the agent is a member.",
+            "items": {
+              "type": "string"
+            }
+          },
+          "id": {
+            "type": "integer",
+            "description": "The unique id of the agent."
+          },
+          "ip": {
+            "type": "string",
+            "description": "The IP address of the agent."
+          },
+          "last_connect": {
+            "type": "integer",
+            "description": "The date the agent last connected to Nessus Manager, in unixtime."
+          },
+          "last_scanned": {
+            "type": "integer",
+            "description": "The last scanned date for the agent, in unixtime."
+          },
+          "linked_on": {
+            "type": "integer",
+            "description": "The date the agent was linked, in unixtime."
+          },
+          "name": {
+            "type": "string",
+            "description": "The name of the agent."
+          },
+          "mac_addrs": {
+            "type": "string",
+            "description": "The MAC addresses of the agent's network interface(s)."
+          },
+          "platform": {
+            "type": "string",
+            "description": "The platform of the agent."
+          },
+          "plugin_feed_id": {
+            "type": "string",
+            "description": "The date ID of the agent's plugin set, in YYYYMMDDhhmm format."
+          },
+          "safe_mode": {
+            "type": "string",
+            "description": "This flag indicates the last reported 'safe mode' status from the agent to Nessus Manager (1 or 0)."
+          },
+          "safe_mode_agent_count": {
+            "type": "string",
+            "description": "The total count of agents that Nessus Manager is currently tracking as operating in 'safe mode'."
+          },
+          "safe_mode_transition_time": {
+            "type": "string",
+            "description": "The 'epoch time' (seconds that have elapsed since January 1, 1970, at 00:00:00, UTC) at which Nessus Manager changed its tracking of the 'safe mode' status for the agent."
+          },
+          "status": {
+            "type": "string",
+            "description": "Nessus Manager's notion of the agent's state.  Possible values are 'unlinked', 'offline', 'online', and 'initializing'."
+          },
+          "total_agents": {
+            "type": "string",
+            "description": "The total count of agents that Nessus Manager is currently tracking."
+          },
+          "unlinked_on": {
+            "type": "integer",
+            "description": "The date the agent was unlinked, in unixtime."
+          },
+          "uuid": {
+            "type": "string",
+            "description": "The uuid of the agent."
+          }
+        }
+      },
+      "editor_template": {
+        "type": "object",
+        "properties": {
+          "uuid": {
+            "type": "string",
+            "description": "The uuid for the template."
+          },
+          "name": {
+            "type": "string",
+            "description": "The short name of the template."
+          },
+          "title": {
+            "type": "string",
+            "description": "The long name of the template."
+          },
+          "description": {
+            "type": "string",
+            "description": "The description of the template."
+          },
+          "cloud_only": {
+            "type": "boolean",
+            "description": "If true, template is only available on the cloud."
+          },
+          "subscription_only": {
+            "type": "boolean",
+            "description": "If true, the template is only available for subscribers."
+          },
+          "is_agent": {
+            "type": "boolean",
+            "description": "If true, the template is for agent scans."
+          },
+          "more_info": {
+            "type": "string",
+            "description": "An external URL to link the template to."
+          }
+        }
+      },
+      "editor_input": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "The unique id name for the group."
+          },
+          "type": {
+            "type": "string",
+            "description": "The type of input (entry, checkbox, file, radio)."
+          },
+          "label": {
+            "type": "string",
+            "description": "The label for the input."
+          },
+          "default": {
+            "type": "string",
+            "description": "The default value for the input."
+          },
+          "options": {
+            "type": "array",
+            "description": "The options for radio input.",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "editor_group": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "The unique shortname for the group."
+          },
+          "title": {
+            "type": "string",
+            "description": "The display name for the group."
+          },
+          "inputs": {
+            "type": "array",
+            "description": "The default inputs for the group.",
+            "items": {
+              "type": "string"
+            }
+          },
+          "sections": {
+            "type": "array",
+            "description": "Subsections of inputs not categorized as default.",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "editor_section": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "The unique shortname for the section."
+          },
+          "title": {
+            "type": "string",
+            "description": "The display name for the section."
+          },
+          "inputs": {
+            "type": "array",
+            "description": "The inputs for the section.",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "editor_mode": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "The unique shortname for the mode."
+          },
+          "name": {
+            "type": "string",
+            "description": "The display name for the mode."
+          },
+          "desc": {
+            "type": "string",
+            "description": "The description for the mode (HTML)."
+          }
+        }
+      },
+      "editor_family": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "description": "The unique id for the family."
+          },
+          "count": {
+            "type": "integer",
+            "description": "The number of plugins in the family."
+          },
+          "status": {
+            "type": "string",
+            "description": "The status of the family (enabled, disabled, or mixed)."
+          }
+        }
+      },
+      "editor_filter": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "The short name of the filter."
+          },
+          "readable_name": {
+            "type": "string",
+            "description": "The long name of the filter."
+          },
+          "operators": {
+            "type": "array",
+            "description": "The comparison options for the filter.",
+            "items": {
+              "type": "string"
+            }
+          },
+          "control": {
+            "type": "object",
+            "description": "The input type, placeholder, and regex values for the filter.",
+            "properties": {
+              "type": {
+                "type": "string"
+              },
+              "readable_regest": {
+                "type": "string"
+              },
+              "regex": {
+                "type": "string"
+              },
+              "options": {
+                "type": "array"
+              }
+            }
+          }
+        }
+      },
+      "folders_folder": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "description": "The unique id of the folder."
+          },
+          "name": {
+            "type": "string",
+            "description": "The name of the folder."
+          },
+          "type": {
+            "type": "string",
+            "description": "The type of the folder (main, trash, custom)."
+          },
+          "default_tag": {
+            "type": "integer",
+            "description": "Whether or not the folder is the default (1 or 0)."
+          },
+          "custom": {
+            "type": "integer",
+            "description": "The custom status of the folder (1 or 0)."
+          },
+          "unread_count": {
+            "type": "integer",
+            "description": "The number of unread scans in the folder."
+          }
+        }
+      },
+      "groups_group": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "description": "The unique id of the group."
+          },
+          "name": {
+            "type": "string",
+            "description": "The name of the group."
+          },
+          "permissions": {
+            "type": "integer",
+            "description": "The permissions for the group."
+          },
+          "user_count": {
+            "type": "integer",
+            "description": "The number of users in the group."
+          }
+        }
+      },
+      "permissions_permission": {
+        "type": "object",
+        "properties": {
+          "owner": {
+            "type": "integer",
+            "description": "The unique id of the owner of the object."
+          },
+          "type": {
+            "type": "string",
+            "description": "The type of permission (default, user, group)."
+          },
+          "permissions": {
+            "type": "integer",
+            "description": "The permission value (0, 16, 32, 64) to grant access as described <a href=\"#/authorization\">here</a>."
+          },
+          "id": {
+            "type": "integer",
+            "description": "The unique id of the user if type is user."
+          },
+          "name": {
+            "type": "string",
+            "description": "The name of the user or group."
+          }
+        }
+      },
+      "plugin-rules_rule": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "description": "The unique id of the plugin rule."
+          },
+          "plugin_id": {
+            "type": "integer",
+            "description": "The unique id of the plugin to which the rule applies."
+          },
+          "date": {
+            "type": "string",
+            "description": "The expiration date for the rule in unixtime."
+          },
+          "host": {
+            "type": "string",
+            "description": "The host to which the rule applies."
+          },
+          "type": {
+            "type": "string",
+            "description": "The new severity of the plugin attached to the rule."
+          },
+          "owner": {
+            "type": "string",
+            "description": "The name of the owner of the rule."
+          },
+          "owner_id": {
+            "type": "integer",
+            "description": "The unique id of the owner of the rule."
+          }
+        }
+      },
+      "plugins_attribute": {
+        "type": "object",
+        "properties": {
+          "attribute_name": {
+            "type": "string",
+            "description": "The name of the attribute."
+          },
+          "attribute_value": {
+            "type": "string",
+            "description": "The value of the attribute."
+          }
+        }
+      },
+      "plugins_family": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "description": "The unique id of the family."
+          },
+          "name": {
+            "type": "string",
+            "description": "The name of the family."
+          },
+          "count": {
+            "type": "integer",
+            "description": "The number of plugins in the family."
+          }
+        }
+      },
+      "plugins_plugin": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "description": "The id of the plugin."
+          },
+          "name": {
+            "type": "string",
+            "description": "The name of the plugin."
+          }
+        }
+      },
+      "policies_policy": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "description": "The unique id of the policy."
+          },
+          "template_uuid": {
+            "type": "string",
+            "description": "The uuid for the template the policy uses."
+          },
+          "name": {
+            "type": "string",
+            "description": "The name of the policy."
+          },
+          "description": {
+            "type": "string",
+            "description": "The description of the policy."
+          },
+          "owner_id": {
+            "type": "string",
+            "description": "The unique id of the owner of the policy."
+          },
+          "owner": {
+            "type": "string",
+            "description": "The username for the owner of the policy."
+          },
+          "shared": {
+            "type": "integer",
+            "description": "The shared status of the policy."
+          },
+          "user_permissions": {
+            "type": "integer",
+            "description": "The sharing permissions for the policy."
+          },
+          "creation_date": {
+            "type": "integer",
+            "description": "The creation date of the policy in unixtime."
+          },
+          "last_modification_date": {
+            "type": "integer",
+            "description": "The last modification date for the policy in unixtime."
+          },
+          "visibility": {
+            "type": "integer",
+            "description": "The visibility of the target (private or shared)."
+          },
+          "no_target": {
+            "type": "boolean",
+            "description": "If true, the policy does not use targets."
+          },
+          "has_credentials": {
+            "type": "integer",
+            "description": "If 1, the policy has credentials."
+          },
+          "is_scap": {
+            "type": "integer",
+            "description": "If 1, the policy uses a SCAP template."
+          }
+        }
+      },
+      "profiles_config": {
+        "type": "object",
+        "properties": {
+          "version": {
+            "type": "string",
+            "description": "The metaversion (X, X.Y, X.Y.Z) that an agent will request from the controller."
+          },
+          "release_date": {
+            "type": "string",
+            "description": "The date and time the version was released to the public."
+          },
+          "eol": {
+            "type": "string",
+            "description": "The end-of-life date and time at which this version will no longer be available."
+          }
+        }
+      },
+      "profiles_profile": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "The agent profile name."
+          },
+          "description": {
+            "type": "string",
+            "description": "A description of the agent profile."
+          },
+          "profile_uuid": {
+            "type": "string",
+            "description": "The unique ID of the agent profile."
+          },
+          "config": {
+            "type": "string",
+            "description": "Agent profile configuration metadata."
+          },
+          "config_id": {
+            "type": "string",
+            "description": "Agent profile configuration ID assigned by Nessus."
+          },
+          "last_modification_date": {
+            "type": "integer",
+            "description": "The last time this configuration was modified, in unixtime (seconds since the epoch)"
+          },
+          "creation_date": {
+            "type": "integer",
+            "description": "The time this configuration was created, in unixtime (seconds since the epoch)"
+          }
+        }
+      },
+      "scanners_aws-target": {
+        "type": "object",
+        "properties": {
+          "scanner_id": {
+            "type": "integer",
+            "description": "The id of the scanner."
+          },
+          "instance_id": {
+            "type": "string",
+            "description": "Unique instance identifier from Amazon."
+          },
+          "private_ip": {
+            "type": "string",
+            "description": "Private IP address of the AWS instance."
+          },
+          "public_ip": {
+            "type": "string",
+            "description": "Public IP address of the AWS instance."
+          },
+          "state": {
+            "type": "string",
+            "description": "The state of the instance. Can be one of the following values: 'running', 'stopped', or 'terminated'."
+          },
+          "zone": {
+            "type": "string",
+            "description": "The availability zone for the instance. Example: 'us-east-1a', 'us-east-1b', etc..."
+          },
+          "type": {
+            "type": "string",
+            "description": "The size of the instance. Example: 't2.small', 't2.medium', etc..."
+          },
+          "name": {
+            "type": "string",
+            "description": "The user-defined name of the instance."
+          }
+        }
+      },
+      "scanners_scan": {
+        "type": "object",
+        "properties": {
+          "scanner_uuid": {
+            "type": "string",
+            "description": "The uuid of the scanner the scan belongs to."
+          },
+          "name": {
+            "type": "string",
+            "description": "The name of the scan."
+          },
+          "status": {
+            "type": "string",
+            "description": "Scan status. One of pending, processing, stopping, pausing, paused, resuming, or running."
+          },
+          "id": {
+            "type": "string",
+            "description": "The scan uuid."
+          },
+          "scan_id": {
+            "type": "integer",
+            "description": "The id of the scan."
+          },
+          "user": {
+            "type": "string",
+            "description": "The username of the owner of the scan."
+          },
+          "last_modification_date": {
+            "type": "integer",
+            "description": "The last time the scan was modified."
+          },
+          "start_time": {
+            "type": "integer",
+            "description": "When the scan was started."
+          },
+          "remote": {
+            "type": "boolean",
+            "description": "true if the scan is running remotely; false otherwise."
+          }
+        }
+      },
+      "scanners_scanner": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "description": "The unique id of the scanner."
+          },
+          "uuid": {
+            "type": "string",
+            "description": "The uuid of the scanner."
+          },
+          "name": {
+            "type": "string",
+            "description": "The user-defined name of the scanner."
+          },
+          "type": {
+            "type": "string",
+            "description": "The type of scanner (local or remote)."
+          },
+          "status": {
+            "type": "string",
+            "description": "The status of the scanner (on or off)."
+          },
+          "scan_count": {
+            "type": "integer",
+            "description": "The current number of running scans on the scanner."
+          },
+          "engine_version": {
+            "type": "string",
+            "description": "The version of the scanner."
+          },
+          "platform": {
+            "type": "string",
+            "description": "The platform of the scanner."
+          },
+          "loaded_plugin_set": {
+            "type": "string",
+            "description": "The current plugin set on the scanner."
+          },
+          "registration_code": {
+            "type": "string",
+            "description": "The registration code of the scanner."
+          },
+          "owner": {
+            "type": "string",
+            "description": "The owner of the scanner."
+          },
+          "key": {
+            "type": "string",
+            "description": "A alpha-numeric sequence of characters used when linking a scanner to Nessus."
+          },
+          "license": {
+            "type": "object",
+            "description": "The license information for the scanner.",
+            "properties": {
+              "type": {
+                "type": "string"
+              },
+              "ips": {
+                "type": "integer"
+              },
+              "agents": {
+                "type": "integer"
+              },
+              "scanners": {
+                "type": "integer"
+              }
+            }
+          }
+        }
+      },
+      "scans_scan": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "description": "The unique id of the scan."
+          },
+          "uuid": {
+            "type": "string",
+            "description": "The uuid for the scan."
+          },
+          "name": {
+            "type": "string",
+            "description": "The name of the scan."
+          },
+          "type": {
+            "type": "string",
+            "description": "The type of scan (local, remote, or agent)."
+          },
+          "owner": {
+            "type": "string",
+            "description": "The owner of the scan."
+          },
+          "folder_id": {
+            "type": "integer",
+            "description": "The unique id of the folder housing the scan (only returned when folder_id is not in the list request)."
+          },
+          "read": {
+            "type": "boolean",
+            "description": "If true, the scan has been read."
+          },
+          "status": {
+            "type": "string",
+            "description": "The status of the scan (completed, aborted, imported, killing, pending, running, resuming, canceling, cancelled, pausing, paused, stopping, stopped)."
+          },
+          "shared": {
+            "type": "boolean",
+            "description": "If true, the scan is shared."
+          },
+          "user_permissions": {
+            "type": "integer",
+            "description": "The sharing permissions for the scan."
+          },
+          "creation_date": {
+            "type": "integer",
+            "description": "The creation date for the scan in unixtime."
+          },
+          "last_modification_date": {
+            "type": "integer",
+            "description": "The last modification date for the scan in unixtime."
+          },
+          "control": {
+            "type": "boolean",
+            "description": "If true, the scan has a schedule and can be launched."
+          },
+          "enabled": {
+            "type": "boolean",
+            "description": "If true, the schedule for the scan is enabled."
+          },
+          "starttime": {
+            "type": "string",
+            "description": "The scheduled start time for the scan."
+          },
+          "timezone": {
+            "type": "string",
+            "description": "The timezone for the scan."
+          },
+          "rrules": {
+            "type": "string",
+            "description": "The rules for repeating the scan."
+          }
+        }
+      },
+      "scans_host": {
+        "type": "object",
+        "properties": {
+          "host_id": {
+            "type": "integer",
+            "description": "The unique id of the host."
+          },
+          "host_index": {
+            "type": "string",
+            "description": "The index for the host."
+          },
+          "hostname": {
+            "type": "string",
+            "description": "The name of the host."
+          },
+          "progress": {
+            "type": "string",
+            "description": "The scan progress of the host."
+          },
+          "severity": {
+            "type": "integer",
+            "description": "The overall severity rating of the host."
+          },
+          "critical": {
+            "type": "integer",
+            "description": "The percentage of critical findings on the host."
+          },
+          "high": {
+            "type": "integer",
+            "description": "The percentage of high findings on the host."
+          },
+          "medium": {
+            "type": "integer",
+            "description": "The percentage of medium findings on the host."
+          },
+          "low": {
+            "type": "integer",
+            "description": "The percentage of low findings on the host."
+          },
+          "info": {
+            "type": "integer",
+            "description": "The percentage of info findings on the host."
+          },
+          "totalchecksconsidered": {
+            "type": "integer",
+            "description": "The total number of checks considered on the host."
+          },
+          "numchecksconsidered": {
+            "type": "integer",
+            "description": "The number of checks processed on the host."
+          },
+          "scanprogresstotal": {
+            "type": "integer",
+            "description": "The total scan progress for the host (percentage)."
+          },
+          "scanprogresscurrent": {
+            "type": "integer",
+            "description": "The current scan progress for the host (percentage)."
+          },
+          "score": {
+            "type": "integer",
+            "description": "The overall score for the host."
+          }
+        }
+      },
+      "scans_note": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "description": "The title of the note."
+          },
+          "message": {
+            "type": "string",
+            "description": "The specific message of the note."
+          },
+          "severity": {
+            "type": "integer",
+            "description": "The severity of the note."
+          }
+        }
+      },
+      "scans_remediation": {
+        "type": "object",
+        "properties": {
+          "value": {
+            "type": "string",
+            "description": "The unique id of the remediation."
+          },
+          "remediation": {
+            "type": "string",
+            "description": "Specific information related to the vulnerability and steps to remedy."
+          },
+          "hosts": {
+            "type": "integer",
+            "description": "The number of hosts affected."
+          },
+          "vulns": {
+            "type": "integer",
+            "description": "The number of vulnerabilities associated with the remedy."
+          }
+        }
+      },
+      "scans_history": {
+        "type": "object",
+        "properties": {
+          "history_id": {
+            "type": "integer",
+            "description": "The unique id of the historical data."
+          },
+          "uuid": {
+            "type": "string",
+            "description": "The uuid of the historical data."
+          },
+          "owner_id": {
+            "type": "integer",
+            "description": "The unique id of the owner of the scan."
+          },
+          "status": {
+            "type": "string",
+            "description": "The status of the historical data."
+          },
+          "creation_date": {
+            "type": "integer",
+            "description": "The creation date for the historical data in unixtime."
+          },
+          "last_modification_date": {
+            "type": "integer",
+            "description": "The last modification date for the historical data in unixtime."
+          }
+        }
+      },
+      "scans_vulnerability": {
+        "type": "object",
+        "properties": {
+          "plugin_id": {
+            "type": "integer",
+            "description": "The unique id of the vulnerability plugin."
+          },
+          "plugin_name": {
+            "type": "string",
+            "description": "The name of the vulnerability plugin."
+          },
+          "plugin_family": {
+            "type": "string",
+            "description": "The parent family of the vulnerability plugin."
+          },
+          "count": {
+            "type": "integer",
+            "description": "The number of vulnerabilities found."
+          },
+          "vuln_index": {
+            "type": "integer",
+            "description": "The index of the vulnerability plugin."
+          },
+          "severity_index": {
+            "type": "integer",
+            "description": "The severity index order of the plugin."
+          }
+        }
+      },
+      "scans_host_vulnerability": {
+        "type": "object",
+        "properties": {
+          "host_id": {
+            "type": "integer",
+            "description": "The unique id of the host."
+          },
+          "hostname": {
+            "type": "string",
+            "description": "The name of the host."
+          },
+          "plugin_id": {
+            "type": "integer",
+            "description": "The unique id of the vulnerability plugin."
+          },
+          "plugin_name": {
+            "type": "string",
+            "description": "The name of the vulnerability plugin."
+          },
+          "plugin_family": {
+            "type": "string",
+            "description": "The parent family of the vulnerability plugin."
+          },
+          "count": {
+            "type": "integer",
+            "description": "The number of vulnerabilities found."
+          },
+          "vuln_index": {
+            "type": "integer",
+            "description": "The index of the vulnerability plugin."
+          },
+          "severity_index": {
+            "type": "integer",
+            "description": "The severity index order of the plugin."
+          },
+          "severity": {
+            "type": "integer",
+            "description": "The severity of plugin."
+          }
+        }
+      },
+      "scans_host_compliance": {
+        "type": "object",
+        "properties": {
+          "host_id": {
+            "type": "integer",
+            "description": "The unique id of the host."
+          },
+          "hostname": {
+            "type": "string",
+            "description": "The name of the host."
+          },
+          "plugin_id": {
+            "type": "integer",
+            "description": "The unique id of the vulnerability plugin."
+          },
+          "plugin_name": {
+            "type": "string",
+            "description": "The name of the vulnerability plugin."
+          },
+          "plugin_family": {
+            "type": "string",
+            "description": "The parent family of the vulnerability plugin."
+          },
+          "count": {
+            "type": "integer",
+            "description": "The number of vulnerabilities found."
+          },
+          "severity_index": {
+            "type": "integer",
+            "description": "The severity index order of the plugin."
+          },
+          "severity": {
+            "type": "integer",
+            "description": "The severity of plugin."
+          }
+        }
+      },
+      "scans_plugin_output": {
+        "type": "object",
+        "properties": {
+          "plugin_output": {
+            "type": "string",
+            "description": "The text of the plugin output."
+          },
+          "hosts": {
+            "type": "string",
+            "description": "Other hosts with the same output."
+          },
+          "severity": {
+            "type": "integer",
+            "description": "The severity the output."
+          },
+          "ports": {
+            "type": "object",
+            "description": "An object containing ports and hostnames"
+          }
+        }
+      },
+      "scans_filter": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "The short name of the filter."
+          },
+          "readable_name": {
+            "type": "string",
+            "description": "The long name of the filter."
+          },
+          "operators": {
+            "type": "array",
+            "description": "The comparison options for the filter.",
+            "items": {
+              "type": "string"
+            }
+          },
+          "control": {
+            "type": "object",
+            "description": "The input type, placeholder, and regex values for the filter.",
+            "properties": {
+              "type": {
+                "type": "string"
+              },
+              "readable_regest": {
+                "type": "string"
+              },
+              "regex": {
+                "type": "string"
+              },
+              "options": {
+                "type": "array"
+              }
+            }
+          }
+        }
+      },
+      "scans_timezone": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "The readable name of the timezone."
+          },
+          "value": {
+            "type": "string",
+            "description": "The system value for the timezone."
+          }
+        }
+      },
+      "scans_scan_compliance_counts": {
+        "type": "object",
+        "properties": {
+          "total": {
+            "type": "integer",
+            "description": "Total number of compliance issues found in the scan."
+          },
+          "pass": {
+            "type": "integer",
+            "description": "Number of compliance issues found in the scan with a passing status."
+          },
+          "warn": {
+            "type": "integer",
+            "description": "Number of compliance issues found in the scan with a warn status."
+          },
+          "fail": {
+            "type": "integer",
+            "description": "Number of compliance issues found in the scan with a fail status."
+          }
+        }
+      },
+      "scans_scan_compliance_counts_history": {
+        "type": "object",
+        "properties": {
+          "total": {
+            "type": "integer",
+            "description": "Total number of compliance issues found in the scan."
+          },
+          "pass": {
+            "type": "integer",
+            "description": "Number of compliance issues found in the scan with a passing status."
+          },
+          "warn": {
+            "type": "integer",
+            "description": "Number of compliance issues found in the scan with a warn status."
+          },
+          "fail": {
+            "type": "integer",
+            "description": "Number of compliance issues found in the scan with a fail status."
+          },
+          "report_date": {
+            "type": "integer",
+            "description": "The data and time in milliseconds from the epoc that represents when the scan finished."
+          }
+        }
+      },
+      "scans_scan_vulnerability_counts": {
+        "type": "object",
+        "properties": {
+          "total": {
+            "type": "integer",
+            "description": "Total number of vulnerability issues found in the scan."
+          },
+          "info": {
+            "type": "integer",
+            "description": "Number of vulnerability issues found in the scan with a info severity."
+          },
+          "low": {
+            "type": "integer",
+            "description": "Number of vulnerability issues found in the scan with a low severity."
+          },
+          "med": {
+            "type": "integer",
+            "description": "Number of vulnerability issues found in the scan with a med severity."
+          },
+          "high": {
+            "type": "integer",
+            "description": "Number of vulnerability issues found in the scan with a high severity."
+          },
+          "critical": {
+            "type": "integer",
+            "description": "Number of vulnerability issues found in the scan with a critical severity."
+          }
+        }
+      },
+      "scans_scan_vulnerability_counts_history": {
+        "type": "object",
+        "properties": {
+          "total": {
+            "type": "integer",
+            "description": "Total number of vulnerability issues found in the scan."
+          },
+          "info": {
+            "type": "integer",
+            "description": "Number of vulnerability issues found in the scan with a info severity."
+          },
+          "low": {
+            "type": "integer",
+            "description": "Number of vulnerability issues found in the scan with a low severity."
+          },
+          "med": {
+            "type": "integer",
+            "description": "Number of vulnerability issues found in the scan with a med severity."
+          },
+          "high": {
+            "type": "integer",
+            "description": "Number of vulnerability issues found in the scan with a high severity."
+          },
+          "critical": {
+            "type": "integer",
+            "description": "Number of vulnerability issues found in the scan with a critical severity."
+          },
+          "report_date": {
+            "type": "integer",
+            "description": "The data and time in milliseconds from the epoc that represents when the scan finished."
+          }
+        }
+      },
+      "session_session": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "The unique id of the user."
+          },
+          "username": {
+            "type": "string",
+            "description": "The username for the user."
+          },
+          "email": {
+            "type": "string",
+            "description": "The email address for the user."
+          },
+          "name": {
+            "type": "string",
+            "description": "The full name for the user."
+          },
+          "type": {
+            "type": "string",
+            "description": "The type of user."
+          },
+          "permissions": {
+            "type": "integer",
+            "description": "The user role."
+          },
+          "lastlogin": {
+            "type": "integer",
+            "description": "The last login for the user in unixtime."
+          },
+          "container_id": {
+            "type": "integer",
+            "description": "The container id for the user."
+          },
+          "groups": {
+            "type": "array",
+            "description": "The list of groups that the user belongs to.",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "settings_category": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "The name of the category as displayed in the UI."
+          },
+          "order": {
+            "type": "integer",
+            "description": "The order that this category appears in the UI."
+          },
+          "settings": {
+            "type": "array",
+            "description": "A list of advanced settings that belong to this category.",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "settings_health_alert": {
+        "type": "object",
+        "properties": {
+          "alert": {
+            "type": "string",
+            "description": "A short-form description of the scanner alert."
+          },
+          "description": {
+            "type": "string",
+            "description": "The long-form description of the scanner alert, which may contain further details."
+          },
+          "severity": {
+            "type": "integer",
+            "description": "The severity of the alert, whose values are the following:<ul style='margin-top: 8px'><li><b>1</b> - info</li><li><b>3</b> - warning</li><li><b>5</b> - critical</li></ul>"
+          },
+          "type": {
+            "type": "string",
+            "description": "A category of alert types (for example, \"node-load\", \"system-specs\", etc.)."
+          }
+        }
+      },
+      "settings_health_performance_statistic": {
+        "type": "object",
+        "properties": {
+          "avg_dns_lookup_time": {
+            "type": "integer",
+            "description": "The average amount of time (in milliseconds) it takes to perform a DNS lookup on detected hosts."
+          },
+          "avg_rdns_lookup_time": {
+            "type": "integer",
+            "description": "The average amount of time (in milliseconds) it takes to perform a reverse DNS lookup on detected hosts."
+          },
+          "cpu_load_avg": {
+            "type": "integer",
+            "description": "On Unix this is the \"load average\" provided by the operating system. On Windows this is the current CPU usage (see also \"nessus_cpu\")."
+          },
+          "kbytes_received": {
+            "type": "integer",
+            "description": "The amount of data (in kilobytes) received by Nessus."
+          },
+          "kbytes_sent": {
+            "type": "integer",
+            "description": "The amount of data (in kilobytes) sent by Nessus."
+          },
+          "nessus_cpu": {
+            "type": "integer",
+            "description": "A normalized (0-100) value for the percentage of total system CPU available across all cores that is being used by Nessus."
+          },
+          "nessus_data_disk_free": {
+            "type": "integer",
+            "description": "The amount of free disk space (in megabytes) for the configuration directory. By default this corresponds to the following directory:<ul style='margin-top: 8px'><li><b>Unix</b> - /opt/nessus/etc/nessus</li><li><b>Windows</b> - C:\\ProgramData\\Tenable\\Nessus\\conf</li><li><b>macOS</b> - /Library/Nessus/run/etc/nessus</ul>"
+          },
+          "nessus_data_disk_total": {
+            "type": "integer",
+            "description": "The total disk size (in megabytes) for the configuration directory. By default this corresponds to the following directory:<ul style='margin-top: 8px'><li><b>Unix</b> - /opt/nessus/etc/nessus</li><li><b>Windows</b> - C:\\ProgramData\\Tenable\\Nessus\\conf</li><li><b>macOS</b> - /Library/Nessus/run/etc/nessus</ul>"
+          },
+          "nessus_log_disk_free": {
+            "type": "integer",
+            "description": "The amount of free disk space (in megabytes) for the \"log\" directory. By default this corresponds to the following directory:<ul style='margin-top: 8px'><li><b>Unix</b> - /opt/nessus/var/nessus/logs</li><li><b>Windows</b> - C:\\ProgramData\\Tenable\\Nessus\\nessus\\logs</li><li><b>macOS</b> - /Library/Nessus/run/var/nessus/logs</li></ul>"
+          },
+          "nessus_log_disk_total": {
+            "type": "integer",
+            "description": "The total disk size (in megabytes) for the \"log\" directory. By default this corresponds to the following directory:<ul style='margin-top: 8px'><li><b>Unix</b> - /opt/nessus/var/nessus/logs</li><li><b>Windows</b> - C:\\ProgramData\\Tenable\\Nessus\\nessus\\logs</li><li><b>macOS</b> - /Library/Nessus/run/var/nessus/logs</li></ul>"
+          },
+          "nessus_mem": {
+            "type": "integer",
+            "description": "The total amount of real memory (in megabytes) currently in use by Nessus."
+          },
+          "nessus_vmem": {
+            "type": "integer",
+            "description": "The total amount of virtual memory (in megabytes) currently in use by Nessus."
+          },
+          "nessus_heap": {
+            "type": "integer",
+            "description": "The total amount of memory (in megabytes) allocated on the heap by Nessus."
+          },
+          "num_dns_lookups": {
+            "type": "integer",
+            "description": "The number of DNS lookups performed by Nessus."
+          },
+          "num_hosts": {
+            "type": "integer",
+            "description": "The current number of hosts that are actively being scanned."
+          },
+          "num_rdns_lookups": {
+            "type": "integer",
+            "description": "The number of reverse DNS lookups performed by Nessus."
+          },
+          "num_scans": {
+            "type": "integer",
+            "description": "The number of actively running scans."
+          },
+          "num_tcp_sessions": {
+            "type": "integer",
+            "description": "The number of open TCP connections at the time of this sampling."
+          },
+          "sys_cores": {
+            "type": "integer",
+            "description": "The total number of CPU cores available on the device, as reported by the operating system."
+          },
+          "sys_ram": {
+            "type": "integer",
+            "description": "The total amount of RAM available on the device, as reported by the operating system."
+          },
+          "temp_disk_free": {
+            "type": "integer",
+            "description": "The amount of free disk space (in megabytes) for the system \"temp\" directory (%TEMP% or $TMPDIR or /tmp)."
+          },
+          "temp_disk_total": {
+            "type": "integer",
+            "description": "The total disk size (in megabytes) for the system \"temp\" directory (%TEMP% or $TMPDIR or /tmp)."
+          },
+          "timestamp": {
+            "type": "integer",
+            "description": "The time (in Unix time) when this scanner statistic sampling was generated."
+          }
+        }
+      },
+      "settings_setting": {
+        "type": "object",
+        "properties": {
+          "allow_custom": {
+            "type": "boolean",
+            "description": "Indicates that the advanced setting can accept a custom value, in addition to the list of allowable values."
+          },
+          "allowable_values": {
+            "type": "array",
+            "description": "A list of acceptable values.",
+            "items": {
+              "type": "string"
+            }
+          },
+          "backend_reload": {
+            "type": "boolean",
+            "description": "Indicates that changing this advanced setting will require a restart of the Nessus web server for it to take effect."
+          },
+          "default": {
+            "type": "string",
+            "description": "The default value of the advanced setting, if applicable."
+          },
+          "deprecated": {
+            "type": "boolean",
+            "description": "Indicates if the advanced setting has been deprecated and should no longer be used."
+          },
+          "description": {
+            "type": "string",
+            "description": "A description of the advanced setting."
+          },
+          "hide_if_not_set": {
+            "type": "boolean",
+            "description": "Indicates that the advanced setting should be hidden from the UI, if there is no defined value."
+          },
+          "id": {
+            "type": "string",
+            "description": "The unique identification value of this advanced setting."
+          },
+          "invalid_values": {
+            "type": "array",
+            "description": "An array of literal values that are invalid for this advanced setting.",
+            "items": {
+              "type": "string"
+            }
+          },
+          "max": {
+            "type": "integer",
+            "description": "The maximum allowable value of an \"integer\" type advanced setting."
+          },
+          "min": {
+            "type": "integer",
+            "description": "The minimum allowable value of an \"integer\" type advanced setting."
+          },
+          "name": {
+            "type": "string",
+            "description": "The name of the advanced setting, as it appears in the UI."
+          },
+          "regex": {
+            "type": "string",
+            "description": "A regular expression that is used to validate a change to the advanced setting's value."
+          },
+          "service_restart": {
+            "type": "boolean",
+            "description": "Indicates that changing this advanced setting will require a restart of the Nessus service for it to take effect."
+          },
+          "setting": {
+            "type": "string",
+            "description": "The name of the advanced setting as identified by the backend."
+          },
+          "type": {
+            "type": "string",
+            "description": "Defines the control type of the advanced setting in the UI.  The absence of this value means it will use a text box. The supported types are as follows:<ul style='margin-top: 8px'><li><b>boolean</b> - a drop-down box where the user can choose either \"yes\" or \"no\"</li><li><b>integer</b> - a text box that only accepts numeric values</li><b>select</b> - a drop-down box that lists allowable values</li><li><b>string</b> - a text box</li></ul>"
+          },
+          "value": {
+            "type": "string",
+            "description": "The value of an advanced setting. Sometimes it can be omitted in place of its \"default\" value."
+          }
+        }
+      },
+      "terrascan_terrascan": {
+        "type": "object",
+        "properties": {
+          "installed": {
+            "type": "boolean",
+            "description": "Whether Terrascan is installed or not."
+          },
+          "path": {
+            "type": "string",
+            "description": "The location on disk where Terrascan is installed."
+          },
+          "status": {
+            "type": "string",
+            "description": "Status of Terrascan."
+          },
+          "terrascan": {
+            "type": "boolean",
+            "description": "Boolean. Set to true if Terrascan should be installed, otherwise set to false."
+          },
+          "version": {
+            "type": "string",
+            "description": "Terrascan version installed."
+          }
+        }
+      },
+      "tokens_token": {
+        "type": "object",
+        "properties": {
+          "token": {
+            "type": "string",
+            "description": "The unique token string."
+          }
+        }
+      },
+      "users_user": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "description": "The unique id of the user."
+          },
+          "username": {
+            "type": "string",
+            "description": "The username for the user."
+          },
+          "name": {
+            "type": "string",
+            "description": "The real name of the user."
+          },
+          "email": {
+            "type": "string",
+            "description": "The email address for the user."
+          },
+          "permissions": {
+            "type": "integer",
+            "description": "The role of the user as described <a href=\"#/authorization\">here</a>."
+          },
+          "lastlogin": {
+            "type": "integer",
+            "description": "The last login for the user in unixtime."
+          },
+          "type": {
+            "type": "string",
+            "description": "The type of user (local or ldap)."
+          },
+          "login_fail_count": {
+            "type": "integer",
+            "description": "The number of failed login attempts for the user since the last successful login."
+          },
+          "login_fail_total": {
+            "type": "integer",
+            "description": "The total number of failed login attempts for the user."
+          },
+          "last_login_attempt": {
+            "type": "integer",
+            "description": "The timestamp of the last failed login attempt for the user."
+          }
+        }
       }
     }
   }

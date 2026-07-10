@@ -5,10 +5,63 @@
       name: Server Properties
       parameters: []
 
+    - client_method: server_status
+      description: Returns the Nessus server status and health details.
+      name: Server Status
+      parameters: []
+
+    - client_method: list_scan_templates
+      description: List all available scan templates (e.g., Basic Network Scan, Host Discovery) and their UUIDs.
+      name: List Scan Templates
+      parameters: []
+
+    - client_method: list_policies
+      description: Returns the list of configured vulnerability scan policies.
+      name: List Policies
+      parameters: []
+
     - client_method: list_scans
       description: List all scans in Nessus.
       name: List Scans
       parameters: []
+
+    - client_method: create_scan
+      description: Create a new vulnerability scan for target IP addresses or subnets.
+      name: Create Scan
+      parameters:
+        - description: The UUID of the scan template to use.
+          name: uuid
+          required: true
+          type: str
+        - description: The name of the scan.
+          name: name
+          required: true
+          type: str
+        - description: The target IP addresses, hostnames, or subnets to scan (comma-separated).
+          name: text_targets
+          required: true
+          type: str
+        - description: Optional description of the scan.
+          name: description
+          required: false
+          type: str
+        - description: Optional folder ID to place the scan in.
+          name: folder_id
+          required: false
+          type: int
+        - description: Optional policy ID to apply to the scan.
+          name: policy_id
+          required: false
+          type: int
+
+    - client_method: delete_scans
+      description: Delete scans in bulk by their IDs.
+      name: Delete Scans
+      parameters:
+        - description: Array of scan IDs to delete.
+          name: ids
+          required: true
+          type: list
 
     - client_method: get_scan_details
       description: Get details of a specific scan.
@@ -18,4 +71,102 @@
           name: scan_id
           required: true
           type: int
+
+    - client_method: launch_scan
+      description: Trigger an existing vulnerability scan to run immediately.
+      name: Launch Scan
+      parameters:
+        - description: The ID of the scan to launch.
+          name: scan_id
+          required: true
+          type: int
+
+    - client_method: pause_scan
+      description: Temporarily pause a running vulnerability scan.
+      name: Pause Scan
+      parameters:
+        - description: The ID of the scan to pause.
+          name: scan_id
+          required: true
+          type: int
+
+    - client_method: resume_scan
+      description: Resume a previously paused vulnerability scan.
+      name: Resume Scan
+      parameters:
+        - description: The ID of the scan to resume.
+          name: scan_id
+          required: true
+          type: int
+
+    - client_method: stop_scan
+      description: Stop a running vulnerability scan.
+      name: Stop Scan
+      parameters:
+        - description: The ID of the scan to stop.
+          name: scan_id
+          required: true
+          type: int
+
+    - client_method: kill_scan
+      description: Forcefully terminate a running vulnerability scan faster than stop.
+      name: Kill Scan
+      parameters:
+        - description: The ID of the scan to kill.
+          name: scan_id
+          required: true
+          type: int
+
+    - client_method: export_scan
+      description: Request export of vulnerability scan results into a specified file format.
+      name: Export Scan Results
+      parameters:
+        - description: The ID of the scan to export.
+          name: scan_id
+          required: true
+          type: int
+        - description: Export format (e.g., nessus, csv, pdf, html).
+          name: format
+          required: false
+          type: str
+        - description: Chapters to include in the export report.
+          name: chapters
+          required: false
+          type: str
+
+    - client_method: get_export_status
+      description: Check the generation status of a requested scan export file.
+      name: Get Export Status
+      parameters:
+        - description: The ID of the scan.
+          name: scan_id
+          required: true
+          type: int
+        - description: The ID of the export file.
+          name: file_id
+          required: true
+          type: int
+
+    - client_method: download_export
+      description: Download a generated vulnerability scan export file once its status is ready.
+      name: Download Export
+      parameters:
+        - description: The ID of the scan.
+          name: scan_id
+          required: true
+          type: int
+        - description: The ID of the export file to download.
+          name: file_id
+          required: true
+          type: int
+
+    - client_method: list_scanners
+      description: Returns the list of local and linked remote/cloud scanners.
+      name: List Scanners
+      parameters: []
+
+    - client_method: list_folders
+      description: Returns the list of scan folders (e.g., My Scans, Trash).
+      name: List Folders
+      parameters: []
   name: Nessus Client
