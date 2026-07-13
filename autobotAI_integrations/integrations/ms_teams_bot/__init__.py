@@ -39,10 +39,12 @@ class MsTeamsBotIntegration(BaseSchema):
     category: Optional[str] = IntegrationCategory.NOTIFICATIONS_AND_COMMUNICATIONS.value
     description: Optional[str] = (
         "Bi-directional Microsoft Teams bot: talk to Optimus from Teams and "
-        "let Optimus post back. For proactive HITL / notify-by-email, grant "
-        "the bot Entra app Microsoft Graph application permission "
-        "User.Read.All or User.ReadBasic.All with admin consent, and have a "
-        "Teams admin org-install the app for users."
+        "let Optimus post back. Default surface is a per-user private Team "
+        "channel (reply chains). Grant Graph application permissions "
+        "User.Read.All (or User.ReadBasic.All), Team.Create, "
+        "Channel.ReadBasic.All, AppCatalog.Read.All, and "
+        "TeamsAppInstallation.ReadWriteSelfForTeam.All with admin consent; "
+        "publish the app to the org catalog. Personal DM is fallback only."
     )
 
 
@@ -124,10 +126,12 @@ class MsTeamsBotService(BaseService):
                             "required": True,
                             "description": (
                                 "Entra Application (client) ID. On this app, add "
-                                "Microsoft Graph application permission "
-                                "User.Read.All or User.ReadBasic.All and Grant "
-                                "admin consent — required for email → Entra "
-                                "object-id lookup used by proactive Teams HITL."
+                                "Microsoft Graph application permissions "
+                                "User.Read.All (or User.ReadBasic.All), Team.Create, "
+                                "Channel.ReadBasic.All, AppCatalog.Read.All, and "
+                                "TeamsAppInstallation.ReadWriteSelfForTeam.All, "
+                                "then Grant admin consent. Required for email → Entra "
+                                "lookup and per-user private Optimus Team channels."
                             ),
                             "help_url": (
                                 "https://learn.microsoft.com/en-us/graph/"
