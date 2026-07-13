@@ -39,7 +39,10 @@ class MsTeamsBotIntegration(BaseSchema):
     category: Optional[str] = IntegrationCategory.NOTIFICATIONS_AND_COMMUNICATIONS.value
     description: Optional[str] = (
         "Bi-directional Microsoft Teams bot: talk to Optimus from Teams and "
-        "let Optimus post back."
+        "let Optimus post back. For proactive HITL / notify-by-email, grant "
+        "the bot Entra app Microsoft Graph application permission "
+        "User.Read.All or User.ReadBasic.All with admin consent, and have a "
+        "Teams admin org-install the app for users."
     )
 
 
@@ -119,11 +122,18 @@ class MsTeamsBotService(BaseService):
                             "label": "Microsoft App ID",
                             "placeholder": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
                             "required": True,
-                            "help_url": (
-                                "https://learn.microsoft.com/en-us/azure/bot-service/"
-                                "provision-azure-bot"
+                            "description": (
+                                "Entra Application (client) ID. On this app, add "
+                                "Microsoft Graph application permission "
+                                "User.Read.All or User.ReadBasic.All and Grant "
+                                "admin consent — required for email → Entra "
+                                "object-id lookup used by proactive Teams HITL."
                             ),
-                            "help_url_text": "Azure Bot docs ↗",
+                            "help_url": (
+                                "https://learn.microsoft.com/en-us/graph/"
+                                "permissions-reference#user-permissions"
+                            ),
+                            "help_url_text": "Graph user permissions ↗",
                         },
                         {
                             "name": "app_password",
@@ -137,7 +147,10 @@ class MsTeamsBotService(BaseService):
                             "label": "Entra Tenant ID",
                             "description": (
                                 "Azure AD tenant where the single-tenant bot "
-                                "app is registered (not Optimus root_user_id)."
+                                "app is registered (not Optimus root_user_id). "
+                                "Also use Teams admin center → Manage apps to "
+                                "publish the Optimus ZIP and Edit installs → "
+                                "Everyone (personal scope) for org-wide DMs."
                             ),
                             "required": True,
                         },
