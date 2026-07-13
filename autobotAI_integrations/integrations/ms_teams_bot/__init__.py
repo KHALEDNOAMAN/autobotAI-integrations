@@ -44,7 +44,8 @@ class MsTeamsBotIntegration(BaseSchema):
         "User.Read.All (or User.ReadBasic.All), Team.ReadBasic.All, "
         "Group.Create, Team.Create, "
         "Channel.ReadBasic.All, AppCatalog.Read.All, and "
-        "TeamsAppInstallation.ReadWriteSelfForTeam.All with admin consent; "
+        "TeamsAppInstallation.ReadWriteSelfForTeam.All (or "
+        "TeamsAppInstallation.ReadWriteForTeam.All) with admin consent; "
         "publish the app to the org catalog. Personal DM is fallback only."
     )
 
@@ -131,7 +132,8 @@ class MsTeamsBotService(BaseService):
                                 "User.Read.All (or User.ReadBasic.All), "
                                 "Team.ReadBasic.All, Group.Create, "
                                 "Team.Create, Channel.ReadBasic.All, AppCatalog.Read.All, and "
-                                "TeamsAppInstallation.ReadWriteSelfForTeam.All, "
+                                "TeamsAppInstallation.ReadWriteSelfForTeam.All (or "
+                                "TeamsAppInstallation.ReadWriteForTeam.All), "
                                 "then Grant admin consent. Required for email → Entra "
                                 "lookup and per-user private Optimus Team channels."
                             ),
