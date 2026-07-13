@@ -1,4 +1,4 @@
-# Slack App manifest for the autobotAI bi-directional Optimus bot.
+# Slack App manifest for the autobotAI bi-directional Optimus agent.
 #
 # IMPORTANT — Request URL placeholder:
 #   Slack rejects manifests whose Request URL is not a valid HTTPS URL,
@@ -16,6 +16,11 @@
 #          - Interactivity & Shortcuts → Request URL  (no verification)
 #        and click "Save Changes" on each.
 #     5. Reinstall the app (Slack requires this after scope/URL changes).
+#
+# Messaging experience: agent_view (Slack's Agent messaging experience —
+# conversations live in the Messages tab with in-thread replies). This replaces
+# the older assistant_view Chat/History tabs. Switching assistant_view →
+# agent_view is irreversible for an existing Slack app.
 display_information:
   name: Optimus (autobotAI)
   description: autobotAI's guardian security agent — chat with it and approve actions in Slack.
@@ -29,18 +34,17 @@ features:
   bot_user:
     display_name: Optimus
     always_online: true
-  # Reserve the App Home tab; the renderer for it isn't wired yet but
-  # declaring it now means we don't need a manifest update later.
+  # Messages tab is the Agent messaging surface (agent_view). Keep Home tab
+  # off until we ship an App Home renderer.
   app_home:
     home_tab_enabled: false
     messages_tab_enabled: true
     messages_tab_read_only_enabled: false
-  # Register Optimus as a Slack AI assistant/agent so it appears in Slack's
-  # dedicated "Agents & AI Apps" section (split-pane assistant container)
-  # instead of as a plain bot DM under "Apps". Requires the assistant:write
-  # scope + the assistant_thread_* bot events declared below.
-  assistant_view:
-    assistant_description: >
+  # Agent messaging experience — Optimus appears under Agents & AI Apps and
+  # chats in the standard Messages tab (threads above the composer). Requires
+  # assistant:write + the bot events declared below.
+  agent_view:
+    agent_description: >
       Optimus is an autonomous security-operations agent. Ask about findings,
       and approve or decline its proposed remediations right here.
     suggested_prompts:
@@ -69,8 +73,8 @@ oauth_config:
       #     resolve_identity port to map Slack user -> Optimus user via email) ---
       - users:read
       - users:read.email
-      # --- AI assistant/agent container (Agents & AI Apps section) ---
-      - assistant:write         # render in the assistant pane; set status/title/prompts
+      # --- Agents & AI Apps (agent_view / setStatus / suggested prompts) ---
+      - assistant:write
       # --- nice-to-haves the agent will use for UX polish ---
       - reactions:write         # 👀 ack on receipt of a message
       - team:read               # team name for slack_thread_mapping audit
@@ -83,12 +87,14 @@ settings:
     request_url: https://example.com/replace-after-optimus-integration-save
     bot_events:
       - app_mention             # @Optimus in any channel/DM
-      - message.im              # message in a 1:1 DM
+      - message.im              # message in a 1:1 DM (Agent Messages tab)
       - message.mpim            # message in a group DM
-      # AI assistant container lifecycle — fired when a user opens the
-      # Optimus assistant pane. The dispatcher safely ignores these today
-      # (Slack renders the static suggested_prompts itself); subscribing is
-      # required for the app to register as an assistant.
+      # Agent messaging experience lifecycle — DM open + active context.
+      # Dispatcher soft-acks these; message.im drives Optimus turns.
+      - app_home_opened
+      - app_context_changed
+      # Kept for compatibility with assistant-thread status APIs / older
+      # clients; not used as the DM-open signal under agent_view.
       - assistant_thread_started
       - assistant_thread_context_changed
       # message.channels / message.groups intentionally OMITTED — the bot
