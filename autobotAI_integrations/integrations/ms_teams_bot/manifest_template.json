@@ -3,7 +3,6 @@
   "manifestVersion": "1.16",
   "version": "1.0.0",
   "id": "{{BOT_ID}}",
-  "packageName": "com.autobotai.optimus.teams",
   "developer": {
     "name": "autobotAI",
     "websiteUrl": "https://autobot.live",
@@ -16,7 +15,7 @@
   },
   "description": {
     "short": "Chat with Optimus from Microsoft Teams",
-    "full": "Bi-directional Optimus agent in Microsoft Teams. Replace the messaging endpoint placeholder with the webhook URL Optimus returns after you start the ms_teams_bot wizard (or save the integration)."
+    "full": "Bi-directional Optimus agent in Microsoft Teams. Talk to Optimus in a personal chat or channel; Optimus replies in the same conversation."
   },
   "icons": {
     "outline": "outline.png",
@@ -32,13 +31,9 @@
     }
   ],
   "permissions": ["identity", "messageTeamMembers"],
-  "validDomains": [
-    "api.autobot.live",
-    "api-test.autobot.live"
-  ],
+  "validDomains": {{VALID_DOMAINS_JSON}},
   "webApplicationInfo": {
     "id": "{{BOT_ID}}",
     "resource": "api://botid-{{BOT_ID}}"
-  },
-  "_comment_messaging_endpoint": "Set Azure Bot messaging endpoint to: https://example.com/replace-after-optimus-integration-save"
+  }
 }
