@@ -113,13 +113,18 @@ class AzureDevOpsService(BaseService):
             resp = requests.post(token_url, data=data, timeout=15)
             if resp.status_code == 200:
                 token_data = resp.json()
-                return f"Bearer {token_data.get('access_token')}"
+                access_token = token_data.get("access_token")
+                if not access_token:
+                    raise ValueError("OAuth token response did not contain an access_token field.")
+                return f"Bearer {access_token}"
             else:
                 raise ValueError(
                     f"Failed to obtain OAuth token from Entra ID ({resp.status_code}): {resp.text}"
                 )
 
-        return ""
+        raise ValueError(
+            "Either Personal Access Token (PAT) OR complete Service Principal credentials (Client ID, Client Secret, Tenant ID) must be provided."
+        )
 
     def _test_integration(self) -> dict:
         """
@@ -130,11 +135,6 @@ class AzureDevOpsService(BaseService):
 
         try:
             auth_header = self._get_auth_header()
-            if not auth_header:
-                return {
-                    "success": False,
-                    "error": "Either Personal Access Token (PAT) OR Service Principal credentials (Client ID, Client Secret, Tenant ID) must be provided.",
-                }
 
             response = requests.get(
                 endpoint,

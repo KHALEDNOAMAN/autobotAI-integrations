@@ -46,7 +46,7 @@ def executor(context):
 
             # Retrieve git repositories inside each project
             try:
-                repos = git_client.get_repositories(project_id=project.id)
+                repos = git_client.get_repositories(project=project.id)
                 if repos:
                     for repo in repos:
                         project_data["repositories"].append(
