@@ -747,6 +747,68 @@
             "description": "Successfully retrieved work item details"
           }
         }
+      },
+      "patch": {
+        "summary": "Update Work Item",
+        "description": "Update state, assignment, description, or custom fields of an existing work item via JSON Patch operations.",
+        "operationId": "update_work_item",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "The numeric ID of the work item to update"
+          },
+          {
+            "name": "api-version",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": "7.1"
+            },
+            "description": "Version of the API to use"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "required": ["op", "path", "value"],
+                  "properties": {
+                    "op": {
+                      "type": "string",
+                      "enum": ["add", "replace", "remove"],
+                      "default": "add"
+                    },
+                    "path": {
+                      "type": "string",
+                      "example": "/fields/System.State",
+                      "description": "Field path (e.g. /fields/System.State or /fields/System.AssignedTo)"
+                    },
+                    "value": {
+                      "type": "string",
+                      "example": "Active",
+                      "description": "New value to set on the field"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successfully updated work item"
+          }
+        }
       }
     },
     "/_apis/wit/wiql": {
@@ -871,70 +933,6 @@
         "responses": {
           "201": {
             "description": "Successfully created work item"
-          }
-        }
-      }
-    },
-    "/_apis/wit/workitems/{id}": {
-      "patch": {
-        "summary": "Update Work Item",
-        "description": "Update state, assignment, description, or custom fields of an existing work item via JSON Patch operations.",
-        "operationId": "update_work_item",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer"
-            },
-            "description": "The numeric ID of the work item to update"
-          },
-          {
-            "name": "api-version",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "7.1"
-            },
-            "description": "Version of the API to use"
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "array",
-                "items": {
-                  "type": "object",
-                  "required": ["op", "path", "value"],
-                  "properties": {
-                    "op": {
-                      "type": "string",
-                      "enum": ["add", "replace", "remove"],
-                      "default": "add"
-                    },
-                    "path": {
-                      "type": "string",
-                      "example": "/fields/System.State",
-                      "description": "Field path (e.g. /fields/System.State or /fields/System.AssignedTo)"
-                    },
-                    "value": {
-                      "type": "string",
-                      "example": "Active",
-                      "description": "New value to set on the field"
-                    }
-                  }
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Successfully updated work item"
           }
         }
       }
