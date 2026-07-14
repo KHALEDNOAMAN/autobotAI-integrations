@@ -240,13 +240,15 @@ class AzureDevOpsService(BaseService):
         azure_devops_conn = importlib.import_module("azure.devops.connection", package=None)
         ConnectionClass = getattr(azure_devops_conn, "Connection")
 
+        envs = getattr(payload_task.creds, "envs", None) or {}
         org_url = (
-            payload_task.creds.envs.get("AZURE_DEVOPS_ORG_URL")
-            or payload_task.creds.envs.get("AZURE_DEVOPS_BASE_URL")
+            envs.get("AZURE_DEVOPS_ORG_URL")
+            or envs.get("AZURE_DEVOPS_BASE_URL")
+            or getattr(payload_task.creds, "base_url", None)
             or self._get_organization_url()
         )
         pat = (
-            payload_task.creds.envs.get("AZURE_DEVOPS_PAT")
+            envs.get("AZURE_DEVOPS_PAT")
             or self.integration.personal_access_token
             or ""
         )
