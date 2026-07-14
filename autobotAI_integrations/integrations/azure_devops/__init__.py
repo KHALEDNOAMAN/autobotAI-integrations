@@ -59,8 +59,8 @@ class AzureDevOpsIntegration(BaseSchema):
         kwargs.setdefault("alias", kwargs.get("organization") or "Azure DevOps")
         super().__init__(**kwargs)
 
+    @field_validator("base_url", mode="before")
     @classmethod
-    @field_validator("base_url")
     def validate_base_url(cls, v):
         if v is None or v.strip() == "":
             return "https://dev.azure.com"
@@ -237,9 +237,7 @@ class AzureDevOpsService(BaseService):
     def build_python_exec_combinations_hook(
         self, payload_task: PayloadTask, client_definitions: List[SDKClient]
     ) -> list:
-        azure_devops_conn = importlib.import_module(
-            client_definitions[0].import_library_names[0], package=None
-        )
+        azure_devops_conn = importlib.import_module("azure.devops.connection", package=None)
         ConnectionClass = getattr(azure_devops_conn, "Connection")
 
         org_url = (
