@@ -1,0 +1,6 @@
+- name: azure_devops
+  import_library_names:
+    - azure.devops
+  pip_package_names:
+    - azure-devops
+    - msrest
