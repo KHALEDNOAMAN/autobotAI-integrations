@@ -14,6 +14,7 @@ from enum import Enum
 from os import path
 from pathlib import Path
 from typing import Optional, Dict, Any, List, Callable, Union, Tuple
+from urllib.parse import quote
 
 import requests
 import yaml
@@ -764,10 +765,14 @@ def executor(context):
             params = get_restapi_validated_params(payload_task.params)
 
             logger.info("Creating request url..")
+            encoded_path_params = {
+                k: quote(str(v), safe="") if isinstance(v, (str, int, float)) else v
+                for k, v in params.get("path_parameters", {}).items()
+            }
             request_url = payload_task.executable.format(
                 base_url=payload_task.creds.base_url.strip("/"),
                 # Filling path params,
-                **params.get("path_parameters", {}),
+                **encoded_path_params,
             )
             logger.info(f"Request URL: {request_url}")
 

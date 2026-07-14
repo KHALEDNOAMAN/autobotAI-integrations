@@ -1,0 +1,54 @@
+<svg aria-hidden="true" data-slug-id="azure-devops" viewBox="0 0 256 256" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <clipPath id="globe_clip">
+      <circle cx="176" cy="176" r="56"/>
+    </clipPath>
+  </defs>
+
+  <!-- 3x3 Grid of Blue Squares (with smooth color gradation) -->
+  <!-- Row 1 -->
+  <rect x="36" y="36" width="48" height="48" rx="7" fill="#50A0FF"/>
+  <rect x="92" y="36" width="48" height="48" rx="7" fill="#4696F6"/>
+  <rect x="148" y="36" width="48" height="48" rx="7" fill="#3C8CF0"/>
+  <!-- Row 2 -->
+  <rect x="36" y="92" width="48" height="48" rx="7" fill="#388AF4"/>
+  <rect x="92" y="92" width="48" height="48" rx="7" fill="#287CEB"/>
+  <rect x="148" y="92" width="48" height="48" rx="7" fill="#1C72E4"/>
+  <!-- Row 3 -->
+  <rect x="36" y="148" width="48" height="48" rx="7" fill="#146BE0"/>
+  <rect x="92" y="148" width="48" height="48" rx="7" fill="#0E60D6"/>
+  <rect x="148" y="148" width="48" height="48" rx="7" fill="#0854CA"/>
+
+  <!-- Globe Ocean Base (Direct overlap without white border ring, exactly as shown) -->
+  <circle cx="176" cy="176" r="56" fill="#23BAF2"/>
+
+  <!-- Globe Americas Landmass (North & South America) -->
+  <g clip-path="url(#globe_clip)">
+    <!-- North & Central America -->
+    <path d="M136 148 
+             c4 -8, 12 -16, 22 -18 
+             c12 -3, 24 -2, 34 6 
+             c6 5, 14 6, 18 2 
+             c5 -4, 12 2, 14 10 
+             c2 8, -6 18, -14 20 
+             c-6 2, -10 10, -14 15 
+             c-3 4, -8 8, -12 6 
+             c-6 -3, -12 4, -14 10 
+             c-4 10, -18 8, -24 -2 
+             c-6 -10, -14 -16, -18 -26 
+             c-2 -8, 4 -16, 8 -23 z" fill="#94DC23"/>
+    
+    <!-- South America -->
+    <path d="M168 186 
+             c8 -4, 18 -2, 26 4 
+             c10 8, 20 14, 22 24 
+             c2 12, -8 24, -18 30 
+             c-8 5, -16 -4, -18 -12 
+             c-2 -10, -10 -16, -16 -24 
+             c-5 -6, -3 -16, 4 -22 z" fill="#94DC23"/>
+             
+    <!-- Caribbean / Islands -->
+    <circle cx="188" cy="174" r="3.5" fill="#94DC23"/>
+    <circle cx="196" cy="180" r="2.5" fill="#94DC23"/>
+  </g>
+</svg>

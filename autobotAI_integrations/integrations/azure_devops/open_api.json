@@ -1,0 +1,941 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Azure DevOps REST API",
+    "description": "Comprehensive OpenAPI specification for Azure DevOps REST API (v7.1) covering Projects, Repositories, Pull Requests, Pipelines, Builds, and Work Items.",
+    "version": "7.1"
+  },
+  "servers": [
+    {
+      "url": "{base_url}",
+      "description": "Azure DevOps organization URL (e.g., https://dev.azure.com/{organization})"
+    }
+  ],
+  "paths": {
+    "/_apis/projects": {
+      "get": {
+        "summary": "List Projects",
+        "description": "Get all projects in the Azure DevOps organization that the authenticated user has access to.",
+        "operationId": "list_projects",
+        "parameters": [
+          {
+            "name": "api-version",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": "7.1"
+            },
+            "description": "Version of the API to use (default 7.1)"
+          },
+          {
+            "name": "$top",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 100
+            },
+            "description": "Maximum number of projects to return"
+          },
+          {
+            "name": "$skip",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 0
+            },
+            "description": "Number of projects to skip"
+          },
+          {
+            "name": "stateFilter",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": ["all", "createPending", "deleted", "deleting", "new", "wellFormed"],
+              "default": "wellFormed"
+            },
+            "description": "Filter on project state"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved list of projects"
+          }
+        }
+      }
+    },
+    "/_apis/projects/{projectId}": {
+      "get": {
+        "summary": "Get Project",
+        "description": "Get detailed properties and metadata for a specific project by ID or project name.",
+        "operationId": "get_project",
+        "parameters": [
+          {
+            "name": "projectId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The project ID or project name"
+          },
+          {
+            "name": "api-version",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": "7.1"
+            },
+            "description": "Version of the API to use"
+          },
+          {
+            "name": "includeCapabilities",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "default": false
+            },
+            "description": "Include project capabilities in response"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved project details"
+          }
+        }
+      }
+    },
+    "/{project}/_apis/git/repositories": {
+      "get": {
+        "summary": "List Git Repositories",
+        "description": "Retrieve all Git repositories within a specific project or organization.",
+        "operationId": "list_repositories",
+        "parameters": [
+          {
+            "name": "project",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Project ID or project name"
+          },
+          {
+            "name": "api-version",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": "7.1"
+            },
+            "description": "Version of the API to use"
+          },
+          {
+            "name": "includeLinks",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "default": false
+            },
+            "description": "Include reference links in response"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved list of Git repositories"
+          }
+        }
+      }
+    },
+    "/{project}/_apis/git/repositories/{repositoryId}": {
+      "get": {
+        "summary": "Get Git Repository",
+        "description": "Retrieve detailed information about a specific Git repository.",
+        "operationId": "get_repository",
+        "parameters": [
+          {
+            "name": "project",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Project ID or project name"
+          },
+          {
+            "name": "repositoryId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Repository ID or repository name"
+          },
+          {
+            "name": "api-version",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": "7.1"
+            },
+            "description": "Version of the API to use"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved Git repository metadata"
+          }
+        }
+      }
+    },
+    "/{project}/_apis/git/repositories/{repositoryId}/refs": {
+      "get": {
+        "summary": "List Git Branches",
+        "description": "Retrieve branch references (refs/heads/) for a Git repository.",
+        "operationId": "list_branches",
+        "parameters": [
+          {
+            "name": "project",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Project ID or project name"
+          },
+          {
+            "name": "repositoryId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Repository ID or repository name"
+          },
+          {
+            "name": "filter",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": "heads/"
+            },
+            "description": "Filter by ref prefix (e.g. heads/ for branches, tags/ for tags)"
+          },
+          {
+            "name": "api-version",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": "7.1"
+            },
+            "description": "Version of the API to use"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved repository branch references"
+          }
+        }
+      }
+    },
+    "/{project}/_apis/git/repositories/{repositoryId}/commits": {
+      "get": {
+        "summary": "List Git Commits",
+        "description": "Retrieve commit history for a specified Git repository or branch.",
+        "operationId": "list_commits",
+        "parameters": [
+          {
+            "name": "project",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Project ID or project name"
+          },
+          {
+            "name": "repositoryId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Repository ID or repository name"
+          },
+          {
+            "name": "searchCriteria.itemVersion.version",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Branch name to query commits from (e.g. main)"
+          },
+          {
+            "name": "$top",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 50
+            },
+            "description": "Maximum number of commits to return"
+          },
+          {
+            "name": "api-version",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": "7.1"
+            },
+            "description": "Version of the API to use"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved commit history"
+          }
+        }
+      }
+    },
+    "/{project}/_apis/git/repositories/{repositoryId}/pullrequests": {
+      "get": {
+        "summary": "List Pull Requests",
+        "description": "Retrieve pull requests for a repository filtered by status (active, completed, abandoned).",
+        "operationId": "list_pull_requests",
+        "parameters": [
+          {
+            "name": "project",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Project ID or project name"
+          },
+          {
+            "name": "repositoryId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Repository ID or repository name"
+          },
+          {
+            "name": "searchCriteria.status",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": ["active", "completed", "abandoned", "all"],
+              "default": "active"
+            },
+            "description": "Filter pull requests by status"
+          },
+          {
+            "name": "$top",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 50
+            },
+            "description": "Maximum number of pull requests to return"
+          },
+          {
+            "name": "api-version",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": "7.1"
+            },
+            "description": "Version of the API to use"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved pull requests"
+          }
+        }
+      },
+      "post": {
+        "summary": "Create Pull Request",
+        "description": "Create a new pull request in a Git repository.",
+        "operationId": "create_pull_request",
+        "parameters": [
+          {
+            "name": "project",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Project ID or project name"
+          },
+          {
+            "name": "repositoryId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Repository ID or repository name"
+          },
+          {
+            "name": "api-version",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": "7.1"
+            },
+            "description": "Version of the API to use"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["sourceRefName", "targetRefName", "title"],
+                "properties": {
+                  "sourceRefName": {
+                    "type": "string",
+                    "example": "refs/heads/feature-branch",
+                    "description": "Source branch ref (e.g. refs/heads/feature-branch)"
+                  },
+                  "targetRefName": {
+                    "type": "string",
+                    "example": "refs/heads/main",
+                    "description": "Target branch ref (e.g. refs/heads/main)"
+                  },
+                  "title": {
+                    "type": "string",
+                    "example": "New feature pull request",
+                    "description": "Pull request title"
+                  },
+                  "description": {
+                    "type": "string",
+                    "example": "Detailed description of changes in this PR",
+                    "description": "Pull request description body"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successfully created pull request"
+          }
+        }
+      }
+    },
+    "/{project}/_apis/git/repositories/{repositoryId}/pullrequests/{pullRequestId}": {
+      "get": {
+        "summary": "Get Pull Request",
+        "description": "Retrieve detailed information, reviewers, and properties of a specific pull request by ID.",
+        "operationId": "get_pull_request",
+        "parameters": [
+          {
+            "name": "project",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Project ID or project name"
+          },
+          {
+            "name": "repositoryId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Repository ID or repository name"
+          },
+          {
+            "name": "pullRequestId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "The ID of the pull request"
+          },
+          {
+            "name": "api-version",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": "7.1"
+            },
+            "description": "Version of the API to use"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved pull request details"
+          }
+        }
+      }
+    },
+    "/{project}/_apis/pipelines": {
+      "get": {
+        "summary": "List Pipelines",
+        "description": "Retrieve a list of all pipelines defined inside a project.",
+        "operationId": "list_pipelines",
+        "parameters": [
+          {
+            "name": "project",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Project ID or project name"
+          },
+          {
+            "name": "api-version",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": "7.1-preview.1"
+            },
+            "description": "Version of the API to use"
+          },
+          {
+            "name": "$top",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 100
+            },
+            "description": "Maximum number of pipelines to return"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved list of pipelines"
+          }
+        }
+      }
+    },
+    "/{project}/_apis/pipelines/{pipelineId}/runs": {
+      "post": {
+        "summary": "Run Pipeline",
+        "description": "Trigger a new execution run for an existing pipeline ID.",
+        "operationId": "run_pipeline",
+        "parameters": [
+          {
+            "name": "project",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Project ID or project name"
+          },
+          {
+            "name": "pipelineId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "The numeric ID of the pipeline to trigger"
+          },
+          {
+            "name": "api-version",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": "7.1-preview.1"
+            },
+            "description": "Version of the API to use"
+          }
+        ],
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "resources": {
+                    "type": "object",
+                    "description": "Resources such as branch or repository specifications to trigger the run on"
+                  },
+                  "templateParameters": {
+                    "type": "object",
+                    "description": "Custom variables/parameters to pass into the pipeline run"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successfully triggered pipeline run"
+          }
+        }
+      }
+    },
+    "/{project}/_apis/build/builds": {
+      "get": {
+        "summary": "List Builds",
+        "description": "List historical and active build executions across a project.",
+        "operationId": "list_builds",
+        "parameters": [
+          {
+            "name": "project",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Project ID or project name"
+          },
+          {
+            "name": "definitions",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Comma-delimited list of build definition IDs to filter by"
+          },
+          {
+            "name": "statusFilter",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": ["all", "cancelling", "completed", "inProgress", "none", "notStarted", "postponed"],
+              "default": "all"
+            },
+            "description": "Filter by build execution status"
+          },
+          {
+            "name": "$top",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 50
+            },
+            "description": "Maximum number of builds to return"
+          },
+          {
+            "name": "api-version",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": "7.1"
+            },
+            "description": "Version of the API to use"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved list of builds"
+          }
+        }
+      }
+    },
+    "/{project}/_apis/build/builds/{buildId}": {
+      "get": {
+        "summary": "Get Build",
+        "description": "Retrieve status, timeline, duration, and metadata of a specific build ID.",
+        "operationId": "get_build",
+        "parameters": [
+          {
+            "name": "project",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Project ID or project name"
+          },
+          {
+            "name": "buildId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "The ID of the build"
+          },
+          {
+            "name": "api-version",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": "7.1"
+            },
+            "description": "Version of the API to use"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved build details"
+          }
+        }
+      }
+    },
+    "/_apis/wit/workitems/{id}": {
+      "get": {
+        "summary": "Get Work Item",
+        "description": "Retrieve fields, tags, state, and relationships of a specific work item by ID.",
+        "operationId": "get_work_item",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "The numeric ID of the work item"
+          },
+          {
+            "name": "$expand",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": ["all", "fields", "links", "none", "relations"],
+              "default": "all"
+            },
+            "description": "Expand options for fields and relations"
+          },
+          {
+            "name": "api-version",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": "7.1"
+            },
+            "description": "Version of the API to use"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved work item details"
+          }
+        }
+      },
+      "patch": {
+        "summary": "Update Work Item",
+        "description": "Update state, assignment, description, or custom fields of an existing work item via JSON Patch operations.",
+        "operationId": "update_work_item",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "The numeric ID of the work item to update"
+          },
+          {
+            "name": "api-version",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": "7.1"
+            },
+            "description": "Version of the API to use"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "required": ["op", "path", "value"],
+                  "properties": {
+                    "op": {
+                      "type": "string",
+                      "enum": ["add", "replace", "remove"],
+                      "default": "add"
+                    },
+                    "path": {
+                      "type": "string",
+                      "example": "/fields/System.State",
+                      "description": "Field path (e.g. /fields/System.State or /fields/System.AssignedTo)"
+                    },
+                    "value": {
+                      "type": "string",
+                      "example": "Active",
+                      "description": "New value to set on the field"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successfully updated work item"
+          }
+        }
+      }
+    },
+    "/_apis/wit/wiql": {
+      "post": {
+        "summary": "Query Work Items WIQL",
+        "description": "Execute a Work Item Query Language (WIQL) SQL-style query to find matching work item IDs.",
+        "operationId": "query_work_items_wiql",
+        "parameters": [
+          {
+            "name": "$top",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 100
+            },
+            "description": "Maximum number of work item results to return"
+          },
+          {
+            "name": "api-version",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": "7.1"
+            },
+            "description": "Version of the API to use"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["query"],
+                "properties": {
+                  "query": {
+                    "type": "string",
+                    "example": "SELECT [System.Id], [System.Title], [System.State] FROM WorkItems WHERE [System.TeamProject] = 'MyProject' AND [System.WorkItemType] = 'Bug' ORDER BY [System.ChangedDate] DESC",
+                    "description": "The WIQL query string to execute"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successfully executed WIQL query and returned matching IDs"
+          }
+        }
+      }
+    },
+    "/{project}/_apis/wit/workitems/${type}": {
+      "post": {
+        "summary": "Create Work Item",
+        "description": "Create a new Bug, Task, User Story, or Epic in a project using JSON Patch operations.",
+        "operationId": "create_work_item",
+        "parameters": [
+          {
+            "name": "project",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Project ID or project name"
+          },
+          {
+            "name": "type",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": ["Bug", "Task", "User Story", "Epic", "Feature", "Issue"]
+            },
+            "description": "The type of work item to create (e.g. Bug, Task)"
+          },
+          {
+            "name": "api-version",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": "7.1"
+            },
+            "description": "Version of the API to use"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "required": ["op", "path", "value"],
+                  "properties": {
+                    "op": {
+                      "type": "string",
+                      "enum": ["add", "replace", "remove"],
+                      "default": "add"
+                    },
+                    "path": {
+                      "type": "string",
+                      "example": "/fields/System.Title",
+                      "description": "Field path (e.g. /fields/System.Title or /fields/System.Description)"
+                    },
+                    "value": {
+                      "type": "string",
+                      "example": "Issue title text here",
+                      "description": "Value to set on the field"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successfully created work item"
+          }
+        }
+      }
+    }
+  }
+}
