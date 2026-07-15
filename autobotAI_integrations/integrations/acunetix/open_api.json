@@ -1,0 +1,321 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Acunetix REST API",
+    "description": "REST API endpoints for managing scan targets, launching scans, and retrieving security vulnerability findings in Acunetix.",
+    "version": "v1"
+  },
+  "servers": [
+    {
+      "url": "{base_url}"
+    }
+  ],
+  "paths": {
+    "/targets": {
+      "get": {
+        "summary": "List Targets",
+        "description": "List all configured scan targets in Acunetix.",
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 100
+            },
+            "description": "Number of targets to return."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      },
+      "post": {
+        "summary": "Add Target",
+        "description": "Add a new website or API endpoint as a scan target.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["address", "description"],
+                "properties": {
+                  "address": {
+                    "type": "string",
+                    "description": "The URL or IP address of the target (e.g. 'https://scanme.nmap.org')."
+                  },
+                  "description": {
+                    "type": "string",
+                    "description": "A description/alias for the target."
+                  },
+                  "criticality": {
+                    "type": "integer",
+                    "default": 10,
+                    "description": "The business criticality score of the target."
+                  },
+                  "type": {
+                    "type": "string",
+                    "default": "default",
+                    "description": "The type of target."
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Target Created"
+          }
+        }
+      }
+    },
+    "/targets/{target_id}": {
+      "delete": {
+        "summary": "Delete Target",
+        "description": "Remove a scan target and all associated scan data.",
+        "parameters": [
+          {
+            "name": "target_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The UUID of the target to delete."
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Target Deleted"
+          }
+        }
+      }
+    },
+    "/scans": {
+      "get": {
+        "summary": "List Scans",
+        "description": "List all configured vulnerability scans and their statuses.",
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      },
+      "post": {
+        "summary": "Start Scan",
+        "description": "Launch a security scan on a target.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["target_id", "profile_id"],
+                "properties": {
+                  "target_id": {
+                    "type": "string",
+                    "description": "The UUID of the target to scan."
+                  },
+                  "profile_id": {
+                    "type": "string",
+                    "description": "The scan profile UUID (e.g. Full Scan)."
+                  },
+                  "schedule": {
+                    "type": "object",
+                    "properties": {
+                      "disable": {
+                        "type": "boolean",
+                        "default": false
+                      },
+                      "start_date": {
+                        "type": "string",
+                        "nullable": true,
+                        "default": null
+                      },
+                      "time_sensitive": {
+                        "type": "boolean",
+                        "default": false
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Scan Started"
+          }
+        }
+      }
+    },
+    "/scans/{scan_id}": {
+      "get": {
+        "summary": "Get Scan Details",
+        "description": "Get detailed properties of a specific scan, including status and session data.",
+        "parameters": [
+          {
+            "name": "scan_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The UUID of the scan."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/scans/{scan_id}/results": {
+      "get": {
+        "summary": "Get Scan Results",
+        "description": "Get result sessions associated with a specific scan run.",
+        "parameters": [
+          {
+            "name": "scan_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The UUID of the scan."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/scans/{scan_id}/results/{result_id}/vulnerabilities": {
+      "get": {
+        "summary": "Get Scan Result Vulnerabilities",
+        "description": "List vulnerabilities detected in a specific scan result session.",
+        "parameters": [
+          {
+            "name": "scan_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The UUID of the scan."
+          },
+          {
+            "name": "result_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The UUID of the scan result session."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/vulnerabilities": {
+      "get": {
+        "summary": "List All Vulnerabilities",
+        "description": "Get a global list of vulnerabilities found across all scan targets.",
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/reports": {
+      "get": {
+        "summary": "List Reports",
+        "description": "Get list of generated security reports.",
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      },
+      "post": {
+        "summary": "Generate Report",
+        "description": "Request generation of a vulnerability report.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["template_id", "source"],
+                "properties": {
+                  "template_id": {
+                    "type": "string",
+                    "description": "The UUID of the report template."
+                  },
+                  "source": {
+                    "type": "object",
+                    "required": ["list_type", "id_list"],
+                    "properties": {
+                      "list_type": {
+                        "type": "string",
+                        "default": "scans"
+                      },
+                      "id_list": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        },
+                        "description": "List of scan UUIDs to include in report."
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Report Generation Initiated"
+          }
+        }
+      }
+    },
+    "/reports/{report_id}": {
+      "delete": {
+        "summary": "Delete Report",
+        "description": "Delete a generated vulnerability report.",
+        "parameters": [
+          {
+            "name": "report_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The UUID of the report to delete."
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Report Deleted"
+          }
+        }
+      }
+    }
+  }
+}
