@@ -7,7 +7,7 @@
   },
   "servers": [
     {
-      "url": "https://api.autobot.live"
+      "url": "{base_url}"
     }
   ],
   "paths": {
