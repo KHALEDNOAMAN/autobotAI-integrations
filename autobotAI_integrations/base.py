@@ -209,6 +209,8 @@ def executor(context):
         if ConnectionInterfaces.MCP_SERVER not in cls.supported_connection_interfaces():
             return []
         base_path = os.path.dirname(inspect.getfile(cls))
+        if not os.path.exists(os.path.join(base_path, "mcp_servers.json")):
+            return []
         with open(path.join(base_path, "mcp_servers.json")) as f:
             server_config = json.load(f)
             mcp_server_action = load_actions_from_mcp_server_config(server_config)
