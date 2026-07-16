@@ -211,6 +211,16 @@ class IntegrationServiceFactory:
             if include_details:
                 srvic_cls = self.get_service_cls(integration_type)
                 temp.update(srvic_cls.get_details())
+                
+                if hasattr(srvic_cls, "get_rest_api_doc_url"):
+                    rest_api_doc_url = srvic_cls.get_rest_api_doc_url()
+                    if rest_api_doc_url:
+                        temp["rest_api_doc_url"] = rest_api_doc_url
+                        
+                if hasattr(srvic_cls, "get_python_sdk_doc_urls"):
+                    python_sdk_doc_urls = srvic_cls.get_python_sdk_doc_urls()
+                    if python_sdk_doc_urls:
+                        temp["python_sdk_doc_urls"] = python_sdk_doc_urls
 
             if q and q.get("supported_interfaces"):
                 required_interfaces = set(q["supported_interfaces"])
