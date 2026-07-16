@@ -1,0 +1,109 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "AutobotAI REST API",
+    "version": "1.0.0",
+    "description": "Native API actions for querying and managing bots and workflows in AutobotAI."
+  },
+  "servers": [
+    {
+      "url": "https://api.autobot.live"
+    }
+  ],
+  "paths": {
+    "/bots": {
+      "get": {
+        "summary": "Fetch Scheduled Optimus Bots",
+        "description": "Retrieves a list of bots filtered by status and whether they were created by Optimus.",
+        "operationId": "getScheduledOptimusBots",
+        "parameters": [
+          {
+            "name": "created_by_optimus",
+            "in": "query",
+            "description": "Filter for bots created automatically by Optimus AI agents.",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "default": true
+            }
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "description": "Filter by bot status (e.g. enabled or disabled).",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": "enabled"
+            }
+          },
+          {
+            "name": "page_number",
+            "in": "query",
+            "description": "Page number for pagination.",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 1
+            }
+          },
+          {
+            "name": "number_of_items",
+            "in": "query",
+            "description": "Number of bots to return per page.",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 50
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response containing matching bots."
+          }
+        }
+      }
+    },
+    "/bots/{bot_id}": {
+      "put": {
+        "summary": "Update / Disable Bot",
+        "description": "Updates a bot's configuration or flips its status to disabled.",
+        "operationId": "updateBotStatus",
+        "parameters": [
+          {
+            "name": "bot_id",
+            "in": "path",
+            "description": "The unique ID of the bot to update.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "status": {
+                    "type": "string",
+                    "description": "New status for the bot (e.g. disabled)",
+                    "default": "disabled"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successfully updated bot configuration."
+          }
+        }
+      }
+    }
+  }
+}
