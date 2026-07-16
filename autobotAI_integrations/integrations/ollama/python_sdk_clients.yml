@@ -1,4 +1,5 @@
 - name: ollama
+  doc_url: http://github.com/ollama/ollama-python
   import_library_names:
     - ollama
   pip_package_names:

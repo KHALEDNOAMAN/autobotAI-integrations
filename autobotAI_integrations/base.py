@@ -220,9 +220,43 @@ def executor(context):
         raise NotImplementedError()
 
     @classmethod
+    def get_rest_api_doc_url(cls):
+        base_path = os.path.dirname(inspect.getfile(cls))
+        open_api_path = os.path.join(base_path, "open_api.json")
+        if not os.path.exists(open_api_path):
+            return None
+        try:
+            with open(open_api_path, "r") as f:
+                data = json.load(f)
+                doc_url = data.get("externalDocs", {}).get("url")
+                if not doc_url:
+                    servers = data.get("servers", [])
+                    if servers and isinstance(servers, list):
+                        doc_url = servers[0].get("url")
+                return doc_url
+        except Exception as e:
+            logger.exception(f"Failed to read rest api doc url for {cls.__name__}: {e}")
+            return None
+
+    @classmethod
+    def get_python_sdk_doc_urls(cls):
+        try:
+            clients = cls.get_all_python_sdk_clients()
+            urls = []
+            for c in clients:
+                doc_url = c.get("doc_url")
+                if doc_url:
+                    pkg_names = c.get("pip_package_names") or c.get("import_library_names") or [c.get("name", "Python SDK")]
+                    urls.append({"name": pkg_names[0], "url": doc_url})
+            return urls
+        except Exception as e:
+            logger.exception(f"Failed to read python sdk doc urls for {cls.__name__}: {e}")
+            return []
+
+    @classmethod
     def get_details(cls):
         try:
-            return {
+            details = {
                 "python_code_sample": cls.get_code_sample(),
                 "fetcher_supported": ["code", "no_code"],
                 "listener_supported": False,
@@ -232,6 +266,13 @@ def executor(context):
                 "supported_executor": "ecs",
                 "compliance_supported": False,
             }
+            rest_api_doc_url = cls.get_rest_api_doc_url()
+            if rest_api_doc_url:
+                details["rest_api_doc_url"] = rest_api_doc_url
+            python_sdk_doc_urls = cls.get_python_sdk_doc_urls()
+            if python_sdk_doc_urls:
+                details["python_sdk_doc_urls"] = python_sdk_doc_urls
+            return details
         except Exception as e:
             logger.exception(
                 f"Error occurred while fetching details for {cls.__name__}: {e}"

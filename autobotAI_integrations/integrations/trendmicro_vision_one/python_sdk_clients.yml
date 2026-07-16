@@ -1,4 +1,5 @@
 - name: trendmicro_vision_one
+  doc_url: https://pypi.org/project/pytmv1/
   import_library_names:
     - pytmv1
   pip_package_names:

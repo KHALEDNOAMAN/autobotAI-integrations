@@ -1,4 +1,5 @@
 - name: splunk
+  doc_url: https://docs.splunk.com/Documentation/PythonSDK
   import_library_names:
     - splunklib.client
   pip_package_names:

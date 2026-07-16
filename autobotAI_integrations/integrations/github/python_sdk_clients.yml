@@ -3,3 +3,4 @@
     - github
   pip_package_names:
     - PyGithub
+  doc_url: "https://pygithub.readthedocs.io/en/stable/"

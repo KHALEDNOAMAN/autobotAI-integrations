@@ -1,4 +1,5 @@
 - class_name: ArkIdentityAPI
+  doc_url: https://github.com/cyberark/ark-sdk-python
   module: ark_sdk_python.services.identity
   name: ArkIdentityAPI
   pip_package_names:

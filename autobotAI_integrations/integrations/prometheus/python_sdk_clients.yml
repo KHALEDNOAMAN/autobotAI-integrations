@@ -1,4 +1,5 @@
 - name: prometheus_api_client
+  doc_url: https://pypi.org/project/prometheus-api-client/
   import_library_names:
     - prometheus_api_client
   pip_package_names:

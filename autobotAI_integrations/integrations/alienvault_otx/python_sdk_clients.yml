@@ -3,6 +3,7 @@
     - OTXv2
   pip_package_names:
     - OTXv2
+  doc_url: https://github.com/AlienVault-OTX/OTX-Python-SDK
 - name: IndicatorTypes
   import_library_names:
     - OTXv2

@@ -7,7 +7,7 @@
   },
   "servers": [
     {
-      "url": "https://api.mxtoolbox.com/api/v1"
+      "url": "https://api.mxtoolbox.com/api/api-reference"
     }
   ],
   "paths": {

@@ -1,11 +1,14 @@
 - name: kubernetes
+  doc_url: https://github.com/kubernetes-client/python
   import_library_names:
     - kubernetes.client
   pip_package_names:
     - kubernetes
 - name: os
+  doc_url: https://docs.python.org/3/library/os.html
   import_library_names:
     - os
 - name: subprocess
+  doc_url: https://docs.python.org/3/library/subprocess.html
   import_library_names:
     - subprocess

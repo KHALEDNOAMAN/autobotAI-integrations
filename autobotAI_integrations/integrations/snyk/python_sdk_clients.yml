@@ -1,4 +1,5 @@
 - name: snyk
+  doc_url: https://github.com/snyk-labs/pysnyk
   import_library_names:
     - snyk
   pip_package_names:

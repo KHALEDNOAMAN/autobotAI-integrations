@@ -1,5 +1,6 @@
 - is_regional: true
   name: bedrock
+  doc_url: https://docs.aws.amazon.com/boto3/latest/reference/services/bedrock.html
 - is_regional: true
   name: bedrock-runtime
 - is_regional: true

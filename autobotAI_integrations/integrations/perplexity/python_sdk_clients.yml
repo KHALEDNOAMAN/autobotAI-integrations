@@ -1,4 +1,5 @@
 - name: perplexity
+  doc_url: https://docs.perplexity.ai/docs/sdk/overview
   import_library_names:
     - perplexity
   pip_package_names:
