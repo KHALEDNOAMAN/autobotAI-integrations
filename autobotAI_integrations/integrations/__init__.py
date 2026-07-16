@@ -64,6 +64,11 @@ class IntegrationServiceFactory:
         for obj in vars(mod).values():
             if not inspect.isclass(obj) or obj in (BaseService, AIBaseService):
                 continue
+            # Ignore imported classes from other modules. Otherwise modules that
+            # re-export parent services (e.g. google_api importing GCPService)
+            # may register the wrong schema/metadata.
+            if getattr(obj, "__module__", None) != mod.__name__:
+                continue
             try:
                 if issubclass(obj, AIBaseService):
                     if ai_cls is None:
