@@ -1,4 +1,5 @@
 - name: opensearch
+  doc_url: https://github.com/opensearch-project/opensearch-py/blob/main/USER_GUIDE.md
   import_library_names:
     - opensearchpy
   pip_package_names:

@@ -1,4 +1,5 @@
 - name: git
+  doc_url: https://gitpython.readthedocs.io/en/stable/
   import_library_names:
     - git
   pip_package_names:

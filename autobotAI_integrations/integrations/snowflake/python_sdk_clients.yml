@@ -1,3 +1,4 @@
 - name: snowflake
+  doc_url: https://docs.snowflake.com/en/developer-guide/python-connector/python-connector
   import_library_names:
     - snowflake.connector

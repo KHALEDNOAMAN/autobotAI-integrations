@@ -1,4 +1,5 @@
 - name: virustotal
+  doc_url: https://virustotal.github.io/vt-py/
   import_library_names:
     - vt
   pip_package_names:
