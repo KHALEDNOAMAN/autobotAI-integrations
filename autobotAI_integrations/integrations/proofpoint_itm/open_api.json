@@ -7,7 +7,7 @@
   },
   "servers": [
     {
-      "url": "https://tenant.itmsaas.proofpoint.com",
+      "url": "{base_url}",
       "description": "User configured ITM Base URL"
     }
   ],

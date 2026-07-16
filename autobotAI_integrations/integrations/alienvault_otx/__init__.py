@@ -91,6 +91,8 @@ class AlienvaultOTXService(BaseService):
                     "label": "API Key",
                     "placeholder": "Your API KEY",
                     "required": True,
+                    "help_url": "https://otx.alienvault.com/api",
+                    "help_url_text": "Get API Key ↗",
                 }
             ],
         }

@@ -1,0 +1,39 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/teams/v1.16/MicrosoftTeams.schema.json",
+  "manifestVersion": "1.16",
+  "version": "1.0.0",
+  "id": "{{BOT_ID}}",
+  "developer": {
+    "name": "autobotAI",
+    "websiteUrl": "https://autobot.live",
+    "privacyUrl": "https://autobot.live/privacy",
+    "termsOfUseUrl": "https://autobot.live/terms"
+  },
+  "name": {
+    "short": "Optimus",
+    "full": "Optimus by autobotAI"
+  },
+  "description": {
+    "short": "Chat with Optimus from Microsoft Teams",
+    "full": "Bi-directional Optimus agent in Microsoft Teams. Talk to Optimus in a personal chat or channel; Optimus replies in the same conversation."
+  },
+  "icons": {
+    "outline": "outline.png",
+    "color": "color.png"
+  },
+  "accentColor": "#4F57BE",
+  "bots": [
+    {
+      "botId": "{{BOT_ID}}",
+      "scopes": ["personal", "team", "groupchat"],
+      "supportsFiles": false,
+      "isNotificationOnly": false
+    }
+  ],
+  "permissions": ["identity", "messageTeamMembers"],
+  "validDomains": {{VALID_DOMAINS_JSON}},
+  "webApplicationInfo": {
+    "id": "{{BOT_ID}}",
+    "resource": "api://botid-{{BOT_ID}}"
+  }
+}

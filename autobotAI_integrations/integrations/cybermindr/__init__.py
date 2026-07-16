@@ -95,6 +95,8 @@ class CyberMindrService(BaseService):
                 },
                 {
                     "name": "api_key",
+                    "help_url": "https://app.cybermindr.com/settings/api",
+                    "help_url_text": "Get API Key ↗",
                     "type": "text/password",
                     "label": "API Key",
                     "placeholder": "Enter your CyberMindr API Key",

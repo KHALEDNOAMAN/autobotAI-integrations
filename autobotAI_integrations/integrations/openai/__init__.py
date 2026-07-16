@@ -68,6 +68,7 @@ class OpenAIService(AIBaseService):
             #     "o3",
             # ]
             available_models = [
+                "gpt-5.5",
                 "gpt-5",
                 "gpt-5-mini",
                 "gpt-5-nano",
@@ -137,6 +138,8 @@ class OpenAIService(AIBaseService):
                     "label": "OpenAI api_key",
                     "placeholder": "Enter the OpenAI API Key",
                     "required": True,
+                    "help_url": "https://platform.openai.com/api-keys",
+                    "help_url_text": "Get API Key ↗",
                 }
             ],
         }
@@ -170,7 +173,6 @@ class OpenAIService(AIBaseService):
                 options=agent_kwargs,
                 credentials=creds,
             )
-
 
         return [
             {
@@ -232,6 +234,16 @@ class OpenAIService(AIBaseService):
         )
         return model
 
+    @staticmethod
+    def build_model_from_credentials(model_name: str, credentials: dict):
+        from pydantic_ai.models.openai import OpenAIResponsesModel
+        from pydantic_ai.providers.openai import OpenAIProvider
+
+        return OpenAIResponsesModel(
+            model_name=model_name,
+            provider=OpenAIProvider(api_key=credentials.get("api_key")),
+        )
+
     def load_llama_index_embedding_model(self, model_name: Optional[str] = None, **kwargs):
         """
         Returns Llama Index Embedding model object and model dimensions as tuple
@@ -258,47 +270,8 @@ class OpenAIService(AIBaseService):
 
         llm = OpenAI(api_key=self.integration.api_key, model=model, **kwargs)
         return llm
-    
+
     def generate_llm_credentials(self):
         return {
             "api_key": self.integration.api_key
         }
-
-    def prompt_executor(
-        self,
-        model=None,
-        prompt="",
-        params=None,
-        options: dict = {},
-        messages: List[Dict[str, Any]] = [],
-    ):
-        from openai import OpenAI
-
-        logger.info(f"Executing prompt: {prompt}")
-        client = OpenAI(api_key=self.integration.api_key)
-        if model:
-            message = {
-                "role": "user",
-                "content": prompt,
-            }
-            if "temperature" in options:
-                message["temperature"] = options["temperature"]
-            if "max_tokens" in options:
-                message["max_tokens"] = options["max_tokens"]
-            counter = 0
-            messages.append(message)
-            while counter < 5:
-                counter += 1
-                try:
-                    kwargs = {"messages": messages, "model": model}
-                    if params not in {"get_code", "approval", "chat", "params", "title", "message"}:
-                        kwargs["response_format"] = {"type": "json_object"}
-                    result = client.chat.completions.create(**kwargs)
-                    logger.info("result is %s", result)
-                    if result.choices[0].message.content:
-                        return result.choices[0].message.content
-                except Exception as e:
-                    logger.error(str(e))
-            return "AI-Execution Failed to Generate Result"
-        else:
-            raise Exception("Model is Required")

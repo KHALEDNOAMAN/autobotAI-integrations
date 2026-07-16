@@ -72,6 +72,9 @@ class OpenRouterService(AIBaseService):
     def get_integration_specific_details(self) -> dict:
         try:
             available_models = [
+                "openai/gpt-5.5",
+                "anthropic/claude-sonnet-5",
+                "anthropic/claude-fable-5",
                 "openai/gpt-5",
                 "openai/gpt-5-mini",
                 "openai/gpt-4o",
@@ -152,6 +155,8 @@ class OpenRouterService(AIBaseService):
                     "label": "OpenRouter API Key",
                     "placeholder": "Enter the OpenRouter API Key",
                     "required": True,
+                    "help_url": "https://openrouter.ai/settings/keys",
+                    "help_url_text": "Get API Key ↗",
                 },
                 {
                     "name": "skip_test",
@@ -248,6 +253,19 @@ class OpenRouterService(AIBaseService):
         )
         return model
 
+    @staticmethod
+    def build_model_from_credentials(model_name: str, credentials: dict):
+        from pydantic_ai.models.openai import OpenAIChatModel
+        from pydantic_ai.providers.openai import OpenAIProvider
+
+        return OpenAIChatModel(
+            model_name=model_name,
+            provider=OpenAIProvider(
+                api_key=credentials.get("api_key"),
+                base_url=credentials.get("base_url") or OPENROUTER_BASE_URL,
+            ),
+        )
+
     def load_llama_index_llm(self, model, **kwargs):
         from llama_index.llms.openai_like import OpenAILike
 
@@ -288,44 +306,3 @@ class OpenRouterService(AIBaseService):
         )
         return embed_model
 
-    def prompt_executor(
-        self,
-        model=None,
-        prompt="",
-        params=None,
-        options: dict = {},
-        messages: List[Dict[str, Any]] = [],
-    ):
-        from openai import OpenAI
-
-        logger.info(f"Executing prompt: {prompt}")
-        client = OpenAI(
-            api_key=self.integration.api_key,
-            base_url=OPENROUTER_BASE_URL,
-        )
-        if not model:
-            raise Exception("Model is Required")
-
-        message = {
-            "role": "user",
-            "content": prompt,
-        }
-        if "temperature" in options:
-            message["temperature"] = options["temperature"]
-        if "max_tokens" in options:
-            message["max_tokens"] = options["max_tokens"]
-        counter = 0
-        messages.append(message)
-        while counter < 5:
-            counter += 1
-            try:
-                kwargs = {"messages": messages, "model": model}
-                if params not in {"get_code", "approval", "chat", "params", "title", "message"}:
-                    kwargs["response_format"] = {"type": "json_object"}
-                result = client.chat.completions.create(**kwargs)
-                logger.info("result is %s", result)
-                if result.choices[0].message.content:
-                    return result.choices[0].message.content
-            except Exception as e:
-                logger.error(str(e))
-        return "AI-Execution Failed to Generate Result"

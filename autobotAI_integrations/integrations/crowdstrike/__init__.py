@@ -1,13 +1,50 @@
-from typing import Optional, Type, Union
+import importlib
+from typing import List, Optional, Type, Union
+
+import requests
+from pydantic import Field
+
 from autobotAI_integrations import (
     BaseSchema,
     BaseService,
     ConnectionInterfaces,
+    PayloadTask,
+    RestAPICreds,
+    SDKClient,
+    SDKCreds,
 )
-import requests
-from pydantic import Field
-
 from autobotAI_integrations.models import IntegrationCategory, SteampipeCreds
+
+CLOUD_BASE_URLS = {
+    "us-1": "https://api.crowdstrike.com",
+    "us-2": "https://api.us-2.crowdstrike.com",
+    "eu-1": "https://api.eu-1.crowdstrike.com",
+    "us-gov-1": "https://api.laggar.gcw.crowdstrike.com",
+}
+
+
+def _get_base_url(client_cloud: str) -> str:
+    """Return the Falcon API base URL for the given cloud region."""
+    return CLOUD_BASE_URLS.get(client_cloud, CLOUD_BASE_URLS["us-2"])
+
+
+def _get_token(client_id: str, client_secret: str, client_cloud: str) -> str:
+    """Obtain a short-lived OAuth2 bearer token from the Falcon platform."""
+    base_url = _get_base_url(client_cloud)
+    response = requests.post(
+        f"{base_url}/oauth2/token",
+        data={"client_id": client_id, "client_secret": client_secret},
+        headers={"Content-Type": "application/x-www-form-urlencoded"},
+    )
+    if not response.ok:
+        raise requests.exceptions.HTTPError(
+            f"OAuth2 token request failed ({response.status_code}): {response.text}",
+            response=response,
+        )
+    access_token = response.json().get("access_token")
+    if not access_token:
+        raise ValueError("Token response did not contain an access_token")
+    return access_token
 
 
 class CrowdstrikeIntegrations(BaseSchema):
@@ -34,18 +71,21 @@ class CrowdstrikeService(BaseService):
 
     def _test_integration(self) -> dict:
         try:
-            # TODO: replace with actual API
+            # A successfully generated token confirms valid credentials.
+            # The token works for all CrowdStrike API endpoints the API key's scopes allow —
+            # no additional endpoint probing is needed.
+            _get_token(
+                client_id=self.integration.client_id,
+                client_secret=self.integration.client_secret,
+                client_cloud=self.integration.client_cloud,
+            )
             return {"success": True}
-            # response = requests.get("https://api.example.com")
-            # if response.status_code == 200:
-            #     return {"success": True}
-            # else:
-            #     return {
-            #     "success": False,
-            #     "error": f"API request failed. Status code: {response.status_code}",
-            # }
-        except requests.exceptions.ConnectionError as e:
+        except requests.exceptions.ConnectionError:
             return {"success": False, "error": "Connection is unreachable"}
+        except requests.exceptions.HTTPError as e:
+            return {"success": False, "error": f"Authentication failed: {e}"}
+        except Exception as e:
+            return {"success": False, "error": str(e)}
 
     @staticmethod
     def get_forms():
@@ -59,6 +99,8 @@ class CrowdstrikeService(BaseService):
                     "label": "Client ID",
                     "placeholder": "Enter the Client ID",
                     "required": True,
+                    "help_url": "https://falcon.crowdstrike.com/support/api-clients-and-keys",
+                    "help_url_text": "Get Client ID ↗",
                 },
                 {
                     "name": "client_secret",
@@ -66,6 +108,8 @@ class CrowdstrikeService(BaseService):
                     "label": "Client Secret",
                     "placeholder": "Enter the Client Secret",
                     "required": True,
+                    "help_url": "https://falcon.crowdstrike.com/support/api-clients-and-keys",
+                    "help_url_text": "Get Client Secret ↗",
                 },
                 {
                     "label": "Client Cloud",
@@ -101,6 +145,7 @@ class CrowdstrikeService(BaseService):
         return [
             ConnectionInterfaces.STEAMPIPE,
             ConnectionInterfaces.REST_API,
+            ConnectionInterfaces.PYTHON_SDK,
             ConnectionInterfaces.CLI,
         ]
 
@@ -122,3 +167,56 @@ class CrowdstrikeService(BaseService):
             conf_path=conf_path,
             config=config,
         )
+
+    def generate_rest_api_creds(self) -> RestAPICreds:
+        token = _get_token(
+            client_id=self.integration.client_id,
+            client_secret=self.integration.client_secret,
+            client_cloud=self.integration.client_cloud,
+        )
+        return RestAPICreds(
+            base_url=_get_base_url(self.integration.client_cloud),
+            headers={
+                "Authorization": f"Bearer {token}",
+                "Content-Type": "application/json",
+            },
+        )
+
+    def generate_python_sdk_creds(self) -> SDKCreds:
+        return SDKCreds(
+            envs={
+                "FALCON_CLIENT_ID": self.integration.client_id,
+                "FALCON_CLIENT_SECRET": self.integration.client_secret,
+                "FALCON_CLOUD": self.integration.client_cloud,
+            }
+        )
+
+    def build_python_exec_combinations_hook(
+        self, payload_task: PayloadTask, client_definitions: List[SDKClient]
+    ) -> list:
+        falconpy = importlib.import_module("falconpy", package=None)
+        client_id = payload_task.creds.envs.get("FALCON_CLIENT_ID")
+        client_secret = payload_task.creds.envs.get("FALCON_CLIENT_SECRET")
+        client_cloud = payload_task.creds.envs.get("FALCON_CLOUD")
+
+        def _make_client(class_name: str):
+            return getattr(falconpy, class_name)(
+                client_id=client_id,
+                client_secret=client_secret,
+                base_url=client_cloud,
+            )
+
+        return [
+            {
+                "clients": {
+                    "detects": _make_client("Detects"),
+                    "hosts": _make_client("Hosts"),
+                    "incidents": _make_client("Incidents"),
+                    "alerts": _make_client("Alerts"),
+                    "real_time_response": _make_client("RealTimeResponse"),
+                    "identity_protection": _make_client("IdentityProtection"),
+                },
+                "params": self.prepare_params(payload_task.params),
+                "context": payload_task.context,
+            }
+        ]

@@ -104,6 +104,8 @@ class GoogleAPIsService(GCPService, BaseService):
                     "name": "credentials",
                     "type": "json",
                     "label": "Credentials JSON",
+                    "help_url": "https://console.cloud.google.com/apis/credentials",
+                    "help_url_text": "Create Credentials ↗",
                     "placeholder": "Enter the Credentials In JSON Format",
                     "description": "Upload the service account Credentials JSON file obtained from Google Cloud Console.",
                     "required": True,

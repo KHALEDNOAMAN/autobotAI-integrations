@@ -57,6 +57,8 @@ class ShodanService(BaseService):
                     "label": "API Key",
                     "placeholder": "Enter the Shodan API Key",
                     "required": True,
+                    "help_url": "https://account.shodan.io/",
+                    "help_url_text": "Get API Key ↗",
                 }
             ],
         }

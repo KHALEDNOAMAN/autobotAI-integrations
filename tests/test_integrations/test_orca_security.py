@@ -144,7 +144,7 @@ class TestOrcaSecurityOffline:
         assert url_field["required"] is True
         option_values = {o["value"] for o in url_field["options"]}
         expected_regions = {
-            "https://app.orcasecurity.io",
+            "https://api.orcasecurity.io",
             "https://app.eu.orcasecurity.io",
             "https://app.au.orcasecurity.io",
             "https://app.in.orcasecurity.io",
@@ -186,9 +186,9 @@ class TestOrcaSecurityOffline:
         service = integration_service_factory.get_service(None, d)
         creds = service.generate_rest_api_creds()
         assert creds.base_url == "https://app.eu.orcasecurity.io"
-        # Orca uses "Token <value>", NOT "Bearer <value>"
-        assert creds.headers.get("Authorization") == "Token my-orca-token", (
-            "Orca Security requires 'Token <value>' header, not Bearer"
+        # Orca uses "Bearer <value>"
+        assert creds.headers.get("Authorization") == "Bearer my-orca-token", (
+            "Orca Security requires 'Bearer <value>' header"
         )
         assert creds.headers.get("Content-Type") == "application/json"
 
@@ -201,8 +201,8 @@ class TestOrcaSecurityOffline:
         service = integration_service_factory.get_service(None, d)
         creds = service.generate_rest_api_creds()
         auth = creds.headers.get("Authorization", "")
-        assert auth.startswith("Token "), (
-            f"Expected 'Token abc123' but got '{auth}'"
+        assert auth.startswith("Bearer "), (
+            f"Expected 'Bearer abc123' but got '{auth}'"
         )
 
     # ------------------------------------------------------------------
@@ -230,17 +230,16 @@ class TestOrcaSecurityOffline:
             "Server URL must be '{base_url}' to support multi-region tenants"
         )
 
-    def test_open_api_security_scheme_is_token(self):
-        """Security scheme must use apiKey (Token) not Bearer."""
+    def test_open_api_security_scheme_is_bearer(self):
+        """Security scheme must use http Bearer — Orca's actual auth scheme."""
         import autobotAI_integrations.integrations.orca_security as pkg
         spec_path = Path(pkg.__file__).parent / "open_api.json"
         spec = json.loads(spec_path.read_text())
         schemes = spec["components"]["securitySchemes"]
         assert "TokenAuth" in schemes
         token_scheme = schemes["TokenAuth"]
-        assert token_scheme["type"] == "apiKey"
-        assert token_scheme["in"] == "header"
-        assert token_scheme["name"] == "Authorization"
+        assert token_scheme["type"] == "http"
+        assert token_scheme["scheme"] == "bearer"
 
     def test_open_api_covers_all_expected_tags(self):
         """open_api.json must have all expected top-level tags."""

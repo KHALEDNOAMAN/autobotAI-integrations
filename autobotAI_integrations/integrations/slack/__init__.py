@@ -101,6 +101,8 @@ class SlackService(BaseService):
                             "label": "Webhook URL",
                             "placeholder": "Enter your Webhook URL",
                             "required": True,
+                            "help_url": "https://api.slack.com/apps",
+                            "help_url_text": "Create Webhook ↗",
                         }
                     ],
                 },
@@ -123,6 +125,8 @@ class SlackService(BaseService):
                             "placeholder": "Enter the Slack Token",
                             "description": "Scopes needed: channels:read, groups:read, im:read, mpin:read",
                             "required": True,
+                            "help_url": "https://api.slack.com/apps",
+                            "help_url_text": "Get Bot Token ↗",
                         },
                     ],
                 },

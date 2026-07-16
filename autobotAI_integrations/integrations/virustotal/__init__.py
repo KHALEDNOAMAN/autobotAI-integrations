@@ -68,6 +68,8 @@ class VirusTotalService(BaseService):
                     "label": "API Key",
                     "placeholder": "Enter the VirusTotal API Key",
                     "required": True,
+                    "help_url": "https://www.virustotal.com/gui/my-apikey",
+                    "help_url_text": "Get API Key ↗",
                 }
             ],
         }

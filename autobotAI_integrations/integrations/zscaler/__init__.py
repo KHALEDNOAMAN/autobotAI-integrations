@@ -192,6 +192,8 @@ class ZscalerService(BaseService):
                     "placeholder": "Enter your Zscaler API Client ID",
                     "description": "API Client ID from ZIdentity (Administration > API Clients)",
                     "required": True,
+                    "help_url": "https://help.zscaler.com/zidentity/adding-api-clients",
+                    "help_url_text": "Get Client ID ↗",
                 },
                 {
                     "name": "client_secret",

@@ -83,6 +83,8 @@ class MISPService(BaseService):
                     "label": "API Key",
                     "placeholder": "Your API KEY",
                     "required": True,
+                    "help_url": "https://www.misp-project.org/openapi/",
+                    "help_url_text": "MISP API Docs ↗",
                 },
                 {
                     "name": "verify_cert",

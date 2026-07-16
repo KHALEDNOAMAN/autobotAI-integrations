@@ -3,7 +3,6 @@ from enum import Enum
 from typing import List, Optional, Type, Union
 from urllib.parse import urlparse, urlunparse
 
-import boto3
 from pydantic import Field, field_validator, model_validator
 from autobotAI_integrations import BaseService
 from autobotAI_integrations.integration_schema import ConnectionTypes
@@ -18,6 +17,12 @@ from autobotAI_integrations.models import (
 from autobotAI_integrations.payload_schema import PayloadTask
 from autobotAI_integrations.utils.boto3_helper import Boto3Helper
 from autobotAI_integrations.utils.logging_config import logger
+
+
+def _boto3():
+    import boto3
+
+    return boto3
 
 
 class OpensearchAuthTypes(str, Enum):
@@ -128,7 +133,7 @@ class OpensearchService(BaseService):
             )
             return boto3_helper.get_session().get_credentials()
         else:
-            return boto3.Session(
+            return _boto3().Session(
                 aws_access_key_id=self.integration.access_key,
                 aws_secret_access_key=self.integration.secret_key,
                 region_name=self.integration.region,
@@ -208,7 +213,7 @@ class OpensearchService(BaseService):
                 == self.integration.opensearch_type
                 else "aoss"
             )
-            credentials = boto3.Session(
+            credentials = _boto3().Session(
                 aws_access_key_id=payload_task.creds.envs.get("AWS_ACCESS_KEY_ID"),
                 aws_secret_access_key=payload_task.creds.envs.get(
                     "AWS_SECRET_ACCESS_KEY"

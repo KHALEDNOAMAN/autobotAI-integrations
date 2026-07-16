@@ -99,6 +99,8 @@ class SecuronixService(BaseService):
                     "type": "text/password",
                     "label": "API Token",
                     "placeholder": "Enter your Securonix WS API token",
+                    "help_url": "https://documentation.securonix.com/bundle/securonix-snypr-6-4-user-guide/page/managing-api-tokens.html",
+                    "help_url_text": "Get API Token ↗",
                     "description": "Pre-generated WS authentication token from Securonix",
                     "required": True,
                 },

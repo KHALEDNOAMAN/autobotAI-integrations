@@ -1,0 +1,28 @@
+{
+  "aws": {
+    "streamable_http": {
+      "document_link": "https://docs.aws.amazon.com/aws-mcp/latest/userguide/getting-started-aws-mcp-server.html",
+      "headers": {
+        "x-aws-mcp-default-region": {
+          "type": "string",
+          "description": "Default AWS region for MCP operations (overrides integration default when set on the action).",
+          "required": false
+        }
+      },
+      "servers": [
+        {
+          "name": "AWS MCP Server US East",
+          "description": "Official AWS managed MCP Server in US East (N. Virginia). Secure agent access to AWS APIs via IAM.",
+          "url": "https://aws-mcp.us-east-1.api.aws/mcp",
+          "headers": {}
+        },
+        {
+          "name": "AWS MCP Server EU Frankfurt",
+          "description": "Official AWS managed MCP Server in Europe (Frankfurt). Secure agent access to AWS APIs via IAM.",
+          "url": "https://aws-mcp.eu-central-1.api.aws/mcp",
+          "headers": {}
+        }
+      ]
+    }
+  }
+}

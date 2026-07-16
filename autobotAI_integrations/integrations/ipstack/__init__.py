@@ -58,6 +58,8 @@ class IPStackService(BaseService):
                     "label": "API key",
                     "placeholder": "Enter the IPStack API key",
                     "required": True,
+                    "help_url": "https://ipstack.com/dashboard",
+                    "help_url_text": "Get API Key ↗",
                 }
             ],
         }

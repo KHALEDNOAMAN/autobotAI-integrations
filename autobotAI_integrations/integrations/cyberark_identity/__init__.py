@@ -63,7 +63,7 @@ class CyberArkIdentityService(BaseService):
             )
             if response.status_code == 200:
                 return {"success": True}
-            elif response.status_code == 401:
+            elif response.status_code in [401, 502]:
                 return {
                     "success": False,
                     "error": "Authentication failed. Please check your UserName and PassWord.",

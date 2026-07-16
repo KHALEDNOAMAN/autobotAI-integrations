@@ -7,7 +7,7 @@
   },
   "servers": [
     {
-      "url": "https://trap.example.com",
+      "url": "{base_url}",
       "description": "User configured TRAP Base URL"
     }
   ],

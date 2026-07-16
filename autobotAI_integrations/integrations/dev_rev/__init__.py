@@ -74,6 +74,8 @@ class DevRevService(BaseService):
                     "label": "API Key",
                     "placeholder": "Enter the DevRev API Key",
                     "required": True,
+                    "help_url": "https://app.devrev.ai/dev/settings/tokens",
+                    "help_url_text": "Get API Key ↗",
                 }
             ],
         }

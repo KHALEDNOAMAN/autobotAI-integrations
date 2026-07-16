@@ -68,6 +68,8 @@ class SnowflakeService(BaseService):
                     "label": "Account",
                     "required": True,
                     "placeholder": "ex: xy123",
+                    "help_url": "https://docs.snowflake.com/en/user-guide/admin-account-identifier",
+                    "help_url_text": "Find Account ID ↗",
                 },
                 {
                     "name": "username",

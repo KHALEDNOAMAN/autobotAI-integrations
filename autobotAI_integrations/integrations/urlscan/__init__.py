@@ -60,6 +60,8 @@ class URLScanService(BaseService):
                     "label": "API Key",
                     "placeholder": "Enter the URLScan API Key",
                     "required": True,
+                    "help_url": "https://urlscan.io/user/profile/",
+                    "help_url_text": "Get API Key ↗",
                 }
             ],
         }

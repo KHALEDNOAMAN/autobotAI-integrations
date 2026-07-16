@@ -2,10 +2,9 @@ import os
 import traceback
 from typing import Any, Dict, List, Optional, Type, Union
 
-import boto3
 import json
 from botocore.exceptions import ClientError
-from pydantic import Field
+from pydantic import Field, model_validator
 from pathlib import Path
 
 from autobotAI_integrations import (
@@ -22,12 +21,19 @@ from autobotAI_integrations.models import (
     SDKClient,
     SDKCreds,
 )
+from autobotAI_integrations.utils.aws_region import resolve_aws_sub_integration_region
 from autobotAI_integrations.utils.boto3_helper import Boto3Helper
 from autobotAI_integrations.utils.logging_config import logger
 
 
+def _boto3():
+    import boto3
+
+    return boto3
+
+
 class AWSBedrockIntegration(BaseSchema):
-    region: str
+    region: Optional[str] = None
     access_key: Optional[str] = Field(default=None, exclude=True)
     secret_key: Optional[str] = Field(default=None, exclude=True)
     session_token: Optional[str] = Field(default=None, exclude=True)
@@ -41,8 +47,16 @@ class AWSBedrockIntegration(BaseSchema):
         "AWS Bedrock is a service that lets you use powerful AI models from various companies for your applications, all through one place."
     )
 
+    @model_validator(mode="before")
+    @classmethod
+    def ensure_region(cls, values: Any) -> Any:
+        if isinstance(values, dict) and not values.get("region"):
+            values["region"] = resolve_aws_sub_integration_region()
+        return values
+
     def __init__(self, **kwargs):
-        kwargs["activeRegions"] = [kwargs["region"]]
+        if kwargs.get("region"):
+            kwargs["activeRegions"] = [kwargs["region"]]
         super().__init__(**kwargs)
 
     def use_dependency(self, dependency: dict):
@@ -52,6 +66,7 @@ class AWSBedrockIntegration(BaseSchema):
         self.session_token = dependency.get("session_token")
         self.externalId = dependency.get("externalId")
         self.account_id = dependency.get("account_id")
+        self.dependent_integration_id = dependency.get("accountId")
 
 
 class AWSBedrockService(AIBaseService):
@@ -72,7 +87,7 @@ class AWSBedrockService(AIBaseService):
                 aws_client_name, region_name=self.integration.region
             )
         else:
-            return boto3.client(
+            return _boto3().client(
                 aws_client_name,
                 aws_access_key_id=str(self.integration.access_key),
                 aws_secret_access_key=str(self.integration.secret_key),
@@ -108,9 +123,10 @@ class AWSBedrockService(AIBaseService):
     def get_integration_specific_details(self) -> dict:
         try:
             available_models = [
+                "global.anthropic.claude-sonnet-5",
+                "global.anthropic.claude-fable-5",
                 "global.anthropic.claude-sonnet-4-6",
                 "global.anthropic.claude-opus-4-6-v1",
-                "global.anthropic.claude-sonnet-4-5-20250929-v1:0",
                 "global.anthropic.claude-haiku-4-5-20251001-v1:0",
                 "global.amazon.nova-2-lite-v1:0",
             ]
@@ -154,8 +170,8 @@ class AWSBedrockService(AIBaseService):
                     "name": "region",
                     "type": "select",
                     "label": "Region",
-                    "placeholder": "Select Region",
-                    "required": True,
+                    "placeholder": "Select Region (defaults to parent AWS region or us-east-1)",
+                    "required": False,
                 },
             ],
         }
@@ -228,16 +244,16 @@ class AWSBedrockService(AIBaseService):
             {
                 "metadata": {"region": self.integration.region},
                 "clients": {
-                    "bedrock": boto3.client(
+                    "bedrock": _boto3().client(
                         "bedrock", region_name=self.integration.region
                     ),
-                    "bedrock-runtime": boto3.client(
+                    "bedrock-runtime": _boto3().client(
                         "bedrock-runtime", region_name=self.integration.region
                     ),
-                    "bedrock-agent": boto3.client(
+                    "bedrock-agent": _boto3().client(
                         "bedrock-agent", region_name=self.integration.region
                     ),
-                    "bedrock-agent-runtime": boto3.client(
+                    "bedrock-agent-runtime": _boto3().client(
                         "bedrock-agent-runtime", region_name=self.integration.region
                     ),
                     "Agent": model_agent,
@@ -297,30 +313,10 @@ class AWSBedrockService(AIBaseService):
                 creds["AWS_SESSION_TOKEN"] = str(self.integration.session_token)
             return creds
 
-    def _get_bedrock_model_request(
-        self, model: str, prompt: str, max_tokens=2048, temperature=0.1, *args, **kwargs
-    ):
-        if model.startswith("amazon.titan-text"):
-            native_request = {
-                "inputText": prompt,
-                "textGenerationConfig": {
-                    "maxTokenCount": int(max_tokens),
-                    "temperature": float(temperature),
-                },
-            }
-        else:
-            native_request = {
-                "prompt": prompt,
-                "max_gen_len": int(max_tokens),
-                "temperature": float(temperature),
-            }
-        request = json.dumps(native_request)
-        return request
-
     def get_pydantic_agent(
         self, model: str, tools, system_prompt: str, options: dict = {}, credentials: Optional[dict] = None
     ):
-        from pydantic_ai.agent import Agent
+        from pydantic_ai import Agent
 
         if not credentials:
             credentials = self._temp_credentials()
@@ -347,6 +343,21 @@ class AWSBedrockService(AIBaseService):
             ),
         )
         return model
+
+    @staticmethod
+    def build_model_from_credentials(model_name: str, credentials: dict):
+        from pydantic_ai.models.bedrock import BedrockConverseModel
+        from pydantic_ai.providers.bedrock import BedrockProvider
+
+        return BedrockConverseModel(
+            model_name=model_name,
+            provider=BedrockProvider(
+                aws_access_key_id=credentials.get("access_key"),
+                aws_secret_access_key=credentials.get("secret_key"),
+                aws_session_token=credentials.get("session_token"),
+                region_name=credentials.get("region") or "us-east-1",
+            ),
+        )
 
     def load_llama_index_embedding_model(
         self, model_name: Optional[str] = None, **kwargs
@@ -400,43 +411,3 @@ class AWSBedrockService(AIBaseService):
             "session_token": credentials["AWS_SESSION_TOKEN"],
             "region": self.integration.region
         }
-
-    def prompt_executor(
-        self,
-        model=None,
-        prompt=None,
-        params=None,
-        options: dict = {},
-        messages: List[Dict[str, Any]] = [],
-    ):
-        if not model or not prompt:
-            raise Exception("Model and prompt are required")
-        request = self._get_bedrock_model_request(model, prompt, **options)
-        client = self._get_aws_client("bedrock-runtime")
-        try:
-            kwargs = {"modelId": model, "body": request}
-            if params not in {
-                "get_code",
-                "approval",
-                "chat",
-                "params",
-                "title",
-                "message",
-            }:
-                kwargs["accept"] = "application/json"
-            response = client.invoke_model(**kwargs)
-
-            # Invoke the model with the request.
-            # response = client.invoke_model(modelId=model, body=request,accept="application/json")
-
-        except (ClientError, Exception) as e:
-            logger.error(f"Can't invoke '{model}'. Reason: {e}")
-            return json.dumps({"error": f"Can't invoke '{model}'. Reason: {str(e)}"})
-
-        # Decode the response body.
-        model_response = json.loads(response["body"].read())
-        if params != "":
-            logger.info("model response is %s", model_response["generation"])
-            return model_response["generation"]
-        else:
-            return json.loads(model_response["generation"])

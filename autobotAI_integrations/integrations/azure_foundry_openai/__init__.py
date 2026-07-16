@@ -88,6 +88,7 @@ class AzureOpenAIService(AIBaseService):
         try:
             available_models = list({
                 self.integration.test_model,
+                "gpt-5.5",
                 "gpt-5",
                 "gpt-5-mini",
                 "gpt-5-nano",
@@ -316,6 +317,19 @@ class AzureOpenAIService(AIBaseService):
         )
         return model
 
+    @staticmethod
+    def build_model_from_credentials(model_name: str, credentials: dict):
+        from pydantic_ai.models.openai import OpenAIResponsesModel
+        from pydantic_ai.providers.openai import OpenAIProvider
+
+        return OpenAIResponsesModel(
+            model_name=model_name,
+            provider=OpenAIProvider(
+                api_key=credentials.get("api_key"),
+                base_url=credentials.get("base_url"),
+            ),
+        )
+
     def load_llama_index_embedding_model(self, model_name: Optional[str] = None, **kwargs):
         """
         Returns Llama Index Embedding model object and model dimensions as tuple
@@ -357,80 +371,3 @@ class AzureOpenAIService(AIBaseService):
             "api_key": self.integration.api_key,
             "base_url": f"{endpoint}/openai/{api_version}/",
         }
-
-    def prompt_executor(
-        self,
-        model=None,
-        prompt="",
-        params=None,
-        options: dict = {},
-        messages: List[Dict[str, Any]] = [],
-    ):
-        logger.info(f"Executing prompt: {prompt}")
-
-        client = self.get_openai_client()
-
-        if not model:
-            raise Exception("Model is Required")
-
-        message = {
-            "role": "user",
-            "content": prompt,
-        }
-
-        messages.append(message)
-
-        counter = 0
-
-        while counter < 5:
-            counter += 1
-
-            try:
-                kwargs = {
-                    "messages": messages,
-                    "model": model,
-                }
-
-                if "temperature" in options:
-                    kwargs["temperature"] = (
-                        options["temperature"]
-                    )
-
-                if "max_tokens" in options:
-                    kwargs["max_tokens"] = (
-                        options["max_tokens"]
-                    )
-
-                if params not in {
-                    "get_code",
-                    "approval",
-                    "chat",
-                    "params",
-                    "title",
-                    "message",
-                }:
-                    kwargs["response_format"] = {
-                        "type": "json_object"
-                    }
-
-                result = (
-                    client.chat.completions.create(
-                        **kwargs
-                    )
-                )
-
-                logger.info(
-                    "result is %s",
-                    result,
-                )
-
-                if result.choices[0].message.content:
-                    return (
-                        result.choices[0]
-                        .message.content
-                    )
-
-            except Exception as e:
-                logger.error(str(e))
-
-        return "AI-Execution Failed to Generate Result"

@@ -94,6 +94,8 @@ class TrellixDLPService(BaseService):
                     "label": "Client ID",
                     "placeholder": "Enter your Trellix Client ID",
                     "required": True,
+                    "help_url": "https://docs.trellix.com/bundle/trellix-api/page/GUID-overview.html",
+                    "help_url_text": "Trellix API Docs ↗",
                 },
                 {
                     "name": "client_secret",
@@ -101,6 +103,8 @@ class TrellixDLPService(BaseService):
                     "label": "Client Secret",
                     "placeholder": "Enter your Trellix Client Secret",
                     "required": True,
+                    "help_url": "https://docs.trellix.com/bundle/trellix-api/page/GUID-overview.html",
+                    "help_url_text": "Trellix API Docs ↗",
                 },
                 {
                     "name": "api_key",

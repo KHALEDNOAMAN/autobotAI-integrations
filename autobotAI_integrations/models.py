@@ -4,7 +4,7 @@ from typing import Optional, List, Any, Dict, ClassVar , Tuple
 from pydantic import BaseModel, ConfigDict, Field
 import pathlib, os
 
-from autobotAI_integrations import IntegrationSchema
+from autobotAI_integrations.integration_schema import IntegrationSchema
 
 
 class ConnectionInterfaces(str, Enum):
@@ -44,7 +44,7 @@ class SteampipeCreds(BaseCreds):
     plugin_name: str
     conf_path: Optional[str] = str
     config: Optional[str] = None
-    tables: list = []
+    tables: list[Any] = []
 
 class RestAPIRequestBodyType(str, Enum):
     JSON = 'json'
@@ -95,6 +95,13 @@ class MCPCreds(BaseCreds):
     creds_type: str = ConnectionInterfaces.MCP_SERVER.value
     envs: dict = {}
     headers: dict = {}
+    # Optional IAM fields for AWS MCP Server (SigV4). Omitted for GitHub/Coralogix MCP.
+    aws_access_key_id: Optional[str] = Field(default=None, exclude=True)
+    aws_secret_access_key: Optional[str] = Field(default=None, exclude=True)
+    aws_session_token: Optional[str] = Field(default=None, exclude=True)
+    aws_sigv4_region: Optional[str] = None
+    aws_sigv4_service: Optional[str] = None
+    aws_default_region: Optional[str] = None
 
 # Setting default to None
 class BaseSchema(IntegrationSchema):

@@ -140,6 +140,8 @@ class GCPService(BaseService):
                     "label": "Credentials JSON",
                     "placeholder": "Enter the Credentials In JSON Format",
                     "required": True,
+                    "help_url": "https://console.cloud.google.com/iam-admin/serviceaccounts",
+                    "help_url_text": "Create Service Account ↗",
                 }
             ],
         }

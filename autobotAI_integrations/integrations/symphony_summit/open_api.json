@@ -1,0 +1,370 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Symphony SummitAI ITSM API",
+    "description": "Symphony SummitAI REST WCF API. All operations POST to CommonWS_JsonObjCall with a ServiceName in the request body.\n\n**Authentication:** _ProxyDetails is injected automatically from the integration (API key, ProxyID=0, OrgID=1). You do not need to include _ProxyDetails in action payloads unless overriding OrgID.\n\n**Action parameters:** Pass Instance, OrgID, UserID, TicketNo, and other business fields in the request body per action.",
+    "version": "1.0.0",
+    "contact": {
+      "name": "SymphonyAI Summit Documentation",
+      "url": "https://help.symphonysummitai.com/summit-platform/docs/overview-api-configuration"
+    }
+  },
+  "servers": [
+    {
+      "url": "{base_url}",
+      "description": "Summit REST WCF endpoint URL (CommonWS_JsonObjCall)"
+    }
+  ],
+  "paths": {
+    "/?action=SR_GetServiceCatalogDetails": {
+      "post": {
+        "tags": ["Service Catalog"],
+        "summary": "Get service catalog details",
+        "description": "Retrieve service catalog categories or catalog items. Set Instance and OrgID in the request body.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "example": {
+                  "ServiceName": "SR_GetServiceCatalogDetails",
+                  "objCommonParameters": {
+                    "ServiceRequestPropertyContract": {
+                      "CategoryOrCatalog": "CATEGORY",
+                      "UserID": "12345",
+                      "Instance": "IT",
+                      "SearchKeyword": "",
+                      "EntitledService": false,
+                      "OrgID": 1,
+                      "CategoryID": 0,
+                      "CatalogTypeID": 0
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Catalog details" }
+        }
+      }
+    },
+    "/?action=SR_GetSelectedCatalogDetailsList": {
+      "post": {
+        "tags": ["Service Catalog"],
+        "summary": "Get catalog form details",
+        "description": "Fetch the dynamic form schema for a service catalog item. Set Instance and CatalogID in the body.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "example": {
+                  "ServiceName": "SR_GetSelectedCatalogDetailsList",
+                  "objCommonParameters": {
+                    "SR_RequiredParameters": {
+                      "InstanceCode": "IT",
+                      "LogSRForUserMode": false,
+                      "DelegateeUserID": 0,
+                      "DelegationMode": false,
+                      "LogSRForUserID": 0
+                    },
+                    "ServiceRequestPropertyContract": {
+                      "CatalogID": "13",
+                      "OrgID": 1,
+                      "Instance": "IT"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Catalog form schema" }
+        }
+      }
+    },
+    "/?action=SR_LogServiceRequestCatalog": {
+      "post": {
+        "tags": ["Service Requests"],
+        "summary": "Create service request",
+        "description": "Log a new service request from the service catalog. Set Instance, catalog ID, and requester emails in the body.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "example": {
+                  "ServiceName": "SR_LogServiceRequestCatalog",
+                  "objCommonParameters": {
+                    "SR_TicketParame": {
+                      "Instance": "IT",
+                      "ServiceCatalogID": "13",
+                      "RequesterEmailID": "requester@company.com",
+                      "LoggedByEmailID": "logged.by@company.com",
+                      "SRRemarks": "Service request submitted via autobotAI",
+                      "CustomFields": []
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Created service request" }
+        }
+      }
+    },
+    "/?action=IM_GetIncidentDetailsAndChangeHistory": {
+      "post": {
+        "tags": ["Incidents"],
+        "summary": "Get incident details",
+        "description": "Retrieve incident details and change history by ticket number.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "example": {
+                  "ServiceName": "IM_GetIncidentDetailsAndChangeHistory",
+                  "objCommonParameters": {
+                    "TicketNo": 6290
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Incident details" }
+        }
+      }
+    },
+    "/?action=IM_LogOrUpdateIncident": {
+      "post": {
+        "tags": ["Incidents"],
+        "summary": "Log or update incident",
+        "description": "Create or update an incident. Set Instance and ticket fields in the body.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "example": {
+                  "ServiceName": "IM_LogOrUpdateIncident",
+                  "objCommonParameters": {
+                    "IM_TicketParame": {
+                      "Instance": "IT",
+                      "Symptom": "Application unavailable",
+                      "Description": "Users cannot access the portal",
+                      "Priority": "P3",
+                      "Impact": "Medium",
+                      "Urgency": "Medium",
+                      "Classification": "Incident",
+                      "Category": "Application",
+                      "CallerEmailID": "user@company.com",
+                      "MultiValuedCustomFields": []
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Incident created or updated" }
+        }
+      }
+    },
+    "/?action=IM_GetIncidentListDetails": {
+      "post": {
+        "tags": ["Incidents"],
+        "summary": "List incidents",
+        "description": "Retrieve a paginated list of incidents with optional filters for status, workgroup, and date range.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "example": {
+                  "ServiceName": "IM_GetIncidentListDetails",
+                  "objCommonParameters": {
+                    "objIncidentCommonFilter": {
+                      "Executive": 1,
+                      "WorkgroupName": "",
+                      "CurrentPageIndex": 0,
+                      "PageSize": 30,
+                      "OrgID": 1,
+                      "Instance": "IT",
+                      "Status": "Open",
+                      "strUpdatedFromDate": "",
+                      "strUpdatedToDate": "",
+                      "IsWebServiceRequest": true,
+                      "CategoryName": "",
+                      "Categories": ""
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Incident list" }
+        }
+      }
+    },
+    "/?action=SR_GetServiceRequestListDetails": {
+      "post": {
+        "tags": ["Service Requests"],
+        "summary": "List service requests",
+        "description": "Retrieve a paginated list of service requests with optional filters for status, catalog, and date range.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "example": {
+                  "ServiceName": "SR_GetServiceRequestListDetails",
+                  "objCommonParameters": {
+                    "objSR_SearchFilterParam": {
+                      "Executive": 1,
+                      "WorkgroupName": "",
+                      "CurrentPageIndex": 0,
+                      "PageSize": 25,
+                      "OrgID": 1,
+                      "Instance": "IT",
+                      "Status": "ALL",
+                      "strUpdatedFromDate": "",
+                      "strUpdatedToDate": "",
+                      "IsWebServiceRequest": true,
+                      "Catalog": null,
+                      "CatalogName": "",
+                      "IncludeCatalogAttributes": true
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Service request list" }
+        }
+      }
+    },
+    "/?action=SR_UpdateServiceRequest": {
+      "post": {
+        "tags": ["Service Requests"],
+        "summary": "Update service request",
+        "description": "Update an existing service request by ticket ID.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "example": {
+                  "ServiceName": "SR_UpdateServiceRequest",
+                  "objCommonParameters": {
+                    "objSR_ParamDetails": {
+                      "SRTicketID": "SR-2025-001234",
+                      "Instance": "IT",
+                      "Status": "In-Progress",
+                      "Solution": "Issue resolved",
+                      "SRRemarks": "Updated via autobotAI"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Service request updated" }
+        }
+      }
+    },
+    "/?action=CM_GetCR_Master": {
+      "post": {
+        "tags": ["Change Management"],
+        "summary": "Get change request master data",
+        "description": "Retrieve change category, classification, impact, priority, and other CM master lists for an instance.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "example": {
+                  "ServiceName": "CM_GetCR_Master",
+                  "objCommonParameters": {
+                    "objCM_ParamDetails": {
+                      "InstanceName": "IT",
+                      "PageType": "",
+                      "ChangeRequestId": 0
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Change request master data" }
+        }
+      }
+    },
+    "/?action=CM_LogOrUpdateCR": {
+      "post": {
+        "tags": ["Change Management"],
+        "summary": "Log or update change request",
+        "description": "Create or update a change request, including approval actions.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "example": {
+                  "ServiceName": "CM_LogOrUpdateCR",
+                  "objCommonParameters": {
+                    "cmParamsJSON": {
+                      "Support_Function": "IT",
+                      "Status": "Requested",
+                      "Category": "Normal",
+                      "ChangeTypeName": "Normal",
+                      "Classification": "Normal",
+                      "Requestor_Name": "requester@company.com",
+                      "Owner_Workgroup": "IT Operations",
+                      "Assigned_Workgroup": "IT Operations",
+                      "Risk": "Low",
+                      "Impact": "Low",
+                      "Priority_Name": "P3",
+                      "Information": "Change submitted via autobotAI",
+                      "Description": "Routine infrastructure change"
+                    },
+                    "CR_ApprovalDetailsContainer": "[]"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Change request created or updated" }
+        }
+      }
+    }
+  }
+}

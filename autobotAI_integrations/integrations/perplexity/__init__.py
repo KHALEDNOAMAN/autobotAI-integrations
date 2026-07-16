@@ -84,6 +84,8 @@ class PerplexityService(BaseService):
                     "label": "API Key",
                     "placeholder": "Enter the Perplexity API Key",
                     "required": True,
+                    "help_url": "https://www.perplexity.ai/settings/api",
+                    "help_url_text": "Get API Key ↗",
                 }
             ],
         }

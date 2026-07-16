@@ -23,7 +23,7 @@ class MicrosoftDefenderIntegration(BaseSchema):
     client_secret: Optional[str] = Field(
         default=None, description="Microsoft Client Secret", exclude=True
     )
-    name: Optional[str] = "Microsoft Defender for Office 365"
+    name: Optional[str] = "Microsoft 365 Defender"
     category: Optional[str] = IntegrationCategory.SECURITY_TOOLS.value
     description: Optional[str] = (
         "Microsoft Defender for Office 365 is a cloud-based security service that protects "
@@ -62,6 +62,8 @@ class MicrosoftDefenderService(BaseService):
                     "label": "Tenant ID",
                     "placeholder": "Enter your Microsoft tenant ID",
                     "required": True,
+                    "help_url": "https://portal.azure.com/#view/Microsoft_AAD_RegisteredApps/ApplicationsListBlade",
+                    "help_url_text": "Get Tenant ID ↗",
                 },
                 {
                     "name": "client_id",
@@ -69,6 +71,8 @@ class MicrosoftDefenderService(BaseService):
                     "label": "Client ID",
                     "placeholder": "Enter your Microsoft application client ID",
                     "required": True,
+                    "help_url": "https://portal.azure.com/#view/Microsoft_AAD_RegisteredApps/ApplicationsListBlade",
+                    "help_url_text": "Get Client ID ↗",
                 },
                 {
                     "name": "client_secret",

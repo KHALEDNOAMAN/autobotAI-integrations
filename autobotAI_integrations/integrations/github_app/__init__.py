@@ -159,12 +159,16 @@ class GithubAppService(BaseService):
                     "label": "Github Installation Id",
                     "placeholder": "Installation ID of the Application",
                     "required": True,
+                    "help_url": "https://github.com/settings/apps",
+                    "help_url_text": "View Your Apps ↗",
                 },
                 {
                     "name": "private_key",
                     "type": "textarea",
                     "label": "Github Private Key",
                     "placeholder": "Leave Empty if using Official Github App",
+                    "help_url": "https://github.com/settings/apps",
+                    "help_url_text": "Generate Private Key ↗",
                     "required": False,
                 },
                 {

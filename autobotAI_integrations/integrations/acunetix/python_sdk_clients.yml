@@ -1,0 +1,26 @@
+- description: Acunetix Web Application Security SDK Clients
+  methods:
+    - client_method: list_targets
+      description: List configured scan targets in Acunetix.
+      name: List Targets
+      parameters:
+        - description: The maximum number of targets to return.
+          name: limit
+          required: false
+          type: int
+
+    - client_method: list_scans
+      description: List scan history and status in Acunetix.
+      name: List Scans
+      parameters: []
+
+    - client_method: list_all_vulnerabilities
+      description: List all vulnerabilities found across scan targets.
+      name: List All Vulnerabilities
+      parameters: []
+
+    - client_method: list_reports
+      description: List generated vulnerability reports.
+      name: List Reports
+      parameters: []
+  name: Acunetix Client

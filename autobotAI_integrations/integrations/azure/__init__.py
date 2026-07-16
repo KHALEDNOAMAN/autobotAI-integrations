@@ -94,6 +94,8 @@ class AzureService(BaseService):
                     "label": "Tenant ID",
                     "placeholder": "Enter your Azure tenant ID",
                     "required": True,
+                    "help_url": "https://portal.azure.com/#view/Microsoft_AAD_RegisteredApps/ApplicationsListBlade",
+                    "help_url_text": "Get Tenant ID ↗",
                 },
                 {
                     "name": "client_id",
@@ -101,6 +103,8 @@ class AzureService(BaseService):
                     "label": "Client ID",
                     "placeholder": "Enter your Azure application client ID",
                     "required": True,
+                    "help_url": "https://portal.azure.com/#view/Microsoft_AAD_RegisteredApps/ApplicationsListBlade",
+                    "help_url_text": "Get Client ID ↗",
                 },
                 {
                     "name": "subscription_id",
@@ -108,6 +112,8 @@ class AzureService(BaseService):
                     "label": "Subscription ID",
                     "placeholder": "Enter your Azure subscription ID (optional, required for resource management)",
                     "required": False,
+                    "help_url": "https://portal.azure.com/#view/Microsoft_Azure_Billing/SubscriptionsBlade",
+                    "help_url_text": "Get Subscription ID ↗",
                 },
                 {
                     "name": "client_secret",
@@ -115,6 +121,8 @@ class AzureService(BaseService):
                     "label": "Client Secret",
                     "placeholder": "Enter your Azure Application Client Secret",
                     "required": True,
+                    "help_url": "https://portal.azure.com/#view/Microsoft_AAD_RegisteredApps/ApplicationsListBlade",
+                    "help_url_text": "Get Client Secret ↗",
                 },
             ],
         }

@@ -101,6 +101,8 @@ class JiraService(BaseService):
                     "label": "Access Token",
                     "placeholder": "Enter Token",
                     "description": "The access token to use to authenticate with Jira cloud.",
+                    "help_url": "https://id.atlassian.com/manage-profile/security/api-tokens",
+                    "help_url_text": "Create API Token ↗",
                 },
                 {
                     "name": "personal_access_token",
@@ -108,6 +110,8 @@ class JiraService(BaseService):
                     "label": "Personal Access Token",
                     "placeholder": "Enter Personal Access Token",
                     "description": "The personal access token to use to authenticate with self hosted Jira.",
+                    "help_url": "https://confluence.atlassian.com/enterprise/using-personal-access-tokens-1026032365.html",
+                    "help_url_text": "How to create PAT ↗",
                 }
             ],
         }

@@ -77,6 +77,8 @@ class WazuhService(BaseService):
                     "label": "Username",
                     "placeholder": "Username",
                     "required": True,
+                    "help_url": "https://documentation.wazuh.com/current/user-manual/api/getting-started.html",
+                    "help_url_text": "Wazuh API Docs ↗",
                 },
                 {
                     "name": "password",

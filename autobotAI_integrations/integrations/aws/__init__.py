@@ -3,7 +3,6 @@ from typing import Any, Dict, Type, Union
 from enum import Enum
 
 import uuid
-import boto3
 import pydash
 from botocore.exceptions import ClientError
 from pydantic import Field, model_validator
@@ -12,11 +11,18 @@ import os
 from autobotAI_integrations import BaseService, list_of_unique_elements, PayloadTask, Param
 from autobotAI_integrations.models import *
 from autobotAI_integrations.utils.boto3_helper import Boto3Helper
+from autobotAI_integrations.utils.aws_mcp_auth import build_aws_mcp_creds
 from autobotAI_integrations.utils.logging_config import logger
 from autobotAI_integrations.utils.refreshable_creds import (
     build_refreshable_aws_session,
     current_aws_creds_resolver,
 )
+
+
+def _boto3():
+    import boto3
+
+    return boto3
 
 
 class Forms:
@@ -79,7 +85,7 @@ class AWSService(BaseService):
             return boto3_helper.get_client(aws_client_name)
         elif self.integration.session_token not in [None, "None"]:
             # Access key + session token provided: use directly, no STS call
-            return boto3.client(
+            return _boto3().client(
                 aws_client_name,
                 aws_access_key_id=str(self.integration.access_key),
                 aws_secret_access_key=str(self.integration.secret_key),
@@ -139,14 +145,18 @@ class AWSService(BaseService):
                             "type": "text",
                             "label": "Access Key",
                             "placeholder": "Enter your AWS access key",
-                            "required": True
+                            "required": True,
+                            "help_url": "https://console.aws.amazon.com/iam/home#/security_credentials",
+                            "help_url_text": "Get Access Key ↗",
                         },
                         {
                             "name": "secret_key",
                             "type": "text/password",
                             "label": "Secret Key",
                             "placeholder": "Enter your AWS secret key",
-                            "required": True
+                            "required": True,
+                            "help_url": "https://console.aws.amazon.com/iam/home#/security_credentials",
+                            "help_url_text": "Get Secret Key ↗",
                         },
                         {
                             "name": "session_token",
@@ -244,7 +254,7 @@ class AWSService(BaseService):
                         )
                     )
                 return _global_session[0].client(name)
-            return boto3.client(name, **creds)
+            return _boto3().client(name, **creds)
 
         def _regional_client(name: str, region: str):
             if use_refreshable:
@@ -253,7 +263,7 @@ class AWSService(BaseService):
                         resolver, payload_task.task_id, region_name=region
                     )
                 return _regional_sessions[region].client(name, region_name=region)
-            return boto3.client(name, region_name=region, **creds)
+            return _boto3().client(name, region_name=region, **creds)
 
         if global_clients:
             for client in global_clients:
@@ -320,8 +330,25 @@ class AWSService(BaseService):
 
     @staticmethod
     def supported_connection_interfaces():
-        return [ConnectionInterfaces.REST_API, ConnectionInterfaces.CLI, ConnectionInterfaces.PYTHON_SDK,
-                ConnectionInterfaces.STEAMPIPE]
+        return [
+            ConnectionInterfaces.REST_API,
+            ConnectionInterfaces.CLI,
+            ConnectionInterfaces.PYTHON_SDK,
+            ConnectionInterfaces.STEAMPIPE,
+            ConnectionInterfaces.MCP_SERVER,
+        ]
+
+    def generate_mcp_creds(self) -> MCPCreds:
+        creds = self._temp_credentials()
+        default_region = "us-east-1"
+        if self.integration.activeRegions:
+            default_region = self.integration.activeRegions[0]
+        return build_aws_mcp_creds(
+            access_key_id=creds["AWS_ACCESS_KEY_ID"],
+            secret_access_key=creds["AWS_SECRET_ACCESS_KEY"],
+            session_token=creds.get("AWS_SESSION_TOKEN"),
+            default_aws_region=default_region,
+        )
 
     def generate_cli_creds(self) -> CLICreds:
         raise NotImplementedError()

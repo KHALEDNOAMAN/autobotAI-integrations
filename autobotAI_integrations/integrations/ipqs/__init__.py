@@ -65,6 +65,8 @@ class IPQSService(BaseService):
                     "label": "API Key",
                     "placeholder": "Enter your IPQS API Key",
                     "required": True,
+                    "help_url": "https://www.ipqualityscore.com/user/settings",
+                    "help_url_text": "Get API Key ↗",
                 }
             ],
         }
@@ -85,3 +87,10 @@ class IPQSService(BaseService):
                 "IPQS-KEY": str(self.integration.api_key)
             }
         )
+
+    def execute_rest_api_task(self, payload_task) -> tuple:
+        if getattr(payload_task, "executable", None):
+            payload_task.executable = payload_task.executable.replace(
+                "{api_key}", str(self.integration.api_key)
+            )
+        return super().execute_rest_api_task(payload_task)

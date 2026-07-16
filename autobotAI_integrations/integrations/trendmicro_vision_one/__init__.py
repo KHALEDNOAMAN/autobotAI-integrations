@@ -68,6 +68,8 @@ class TrendMicroVisionOneService(BaseService):
                     "label": "API Key",
                     "placeholder": "Enter your TrendMicro Vision One API Key",
                     "required": True,
+                    "help_url": "https://docs.trendmicro.com/en-us/documentation/article/trend-vision-one-api-keys",
+                    "help_url_text": "Get API Key ↗",
                 },
                 {
                     "name": "base_url",

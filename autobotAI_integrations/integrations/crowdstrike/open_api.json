@@ -1,0 +1,960 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "CrowdStrike Falcon API",
+    "version": "2.0.0",
+    "description": "Unified CrowdStrike Falcon API covering Endpoint Detection & Response (Detects, Hosts, Incidents, Alerts, Real-Time Response) and Identity Protection (sensors, GraphQL, policy rules).",
+    "contact": {
+      "name": "CrowdStrike Developer Center",
+      "url": "https://developer.crowdstrike.com/api-reference/"
+    }
+  },
+  "servers": [
+    {
+      "url": "{base_url}",
+      "variables": {
+        "base_url": {
+          "default": "https://api.us-2.crowdstrike.com"
+        }
+      }
+    }
+  ],
+  "components": {
+    "securitySchemes": {
+      "BearerAuth": {
+        "type": "http",
+        "scheme": "bearer"
+      }
+    },
+    "schemas": {
+      "SensorAggregateRequest": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "date_ranges": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "from": { "type": "string" },
+                  "to": { "type": "string" }
+                }
+              }
+            },
+            "exclude": { "type": "string" },
+            "field": { "type": "string" },
+            "filter": { "type": "string" },
+            "from": { "type": "integer" },
+            "include": { "type": "string" },
+            "interval": { "type": "string" },
+            "max_doc_count": { "type": "integer" },
+            "min_doc_count": { "type": "integer" },
+            "missing": { "type": "string" },
+            "name": { "type": "string" },
+            "q": { "type": "string" },
+            "ranges": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "From": { "type": "integer" },
+                  "To": { "type": "integer" }
+                }
+              }
+            },
+            "size": { "type": "integer" },
+            "sort": { "type": "string" },
+            "sub_aggregates": {
+              "type": "array",
+              "items": { "type": "object" }
+            },
+            "time_zone": { "type": "string" },
+            "type": { "type": "string" }
+          }
+        }
+      },
+      "SensorDetailsRequest": {
+        "type": "object",
+        "required": ["ids"],
+        "properties": {
+          "ids": {
+            "oneOf": [
+              { "type": "string" },
+              {
+                "type": "array",
+                "items": { "type": "string" }
+              }
+            ],
+            "description": "Sensor IDs to retrieve (max 5000)"
+          }
+        }
+      },
+      "GraphQLRequest": {
+        "type": "object",
+        "required": ["query"],
+        "properties": {
+          "query": {
+            "type": "string",
+            "description": "GraphQL query string"
+          },
+          "variables": {
+            "type": "object",
+            "description": "Variables for the GraphQL query"
+          }
+        }
+      },
+      "PolicyRuleRequest": {
+        "type": "object",
+        "properties": {
+          "action": { "type": "string" },
+          "activity": { "type": "object" },
+          "destination": { "type": "object" },
+          "enabled": { "type": "boolean" },
+          "name": { "type": "string" },
+          "simulationMode": { "type": "boolean" },
+          "sourceEndpoint": { "type": "object" },
+          "sourceUser": { "type": "object" },
+          "trigger": { "type": "string" }
+        }
+      },
+      "ApiResponse": {
+        "type": "object",
+        "properties": {
+          "resources": { "type": "array", "items": { "type": "object" } },
+          "errors": { "type": "array", "items": { "type": "object" } },
+          "meta": { "type": "object" }
+        }
+      }
+    }
+  },
+  "security": [
+    {
+      "BearerAuth": []
+    }
+  ],
+  "paths": {
+    "/detects/queries/detects/v1": {
+      "get": {
+        "operationId": "query_detects",
+        "summary": "Query detections by filter",
+        "description": "Search for detection IDs that match a given FQL query.",
+        "tags": ["EDR - Detects"],
+        "parameters": [
+          {
+            "name": "filter",
+            "in": "query",
+            "required": false,
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": { "type": "integer", "default": 100, "minimum": 1, "maximum": 9999 }
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "schema": { "type": "integer", "default": 0, "minimum": 0 }
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "required": false,
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "q",
+            "in": "query",
+            "required": false,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": { "200": { "description": "Query successful" } }
+      }
+    },
+    "/detects/entities/summaries/GET/v1": {
+      "post": {
+        "operationId": "get_detect_summaries",
+        "summary": "Get detection summaries by IDs",
+        "tags": ["EDR - Detects"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "ids": { "type": "array", "items": { "type": "string" } }
+                },
+                "required": ["ids"]
+              }
+            }
+          }
+        },
+        "responses": { "200": { "description": "Fetch successful" } }
+      }
+    },
+    "/detects/entities/detects/v2": {
+      "patch": {
+        "operationId": "update_detects_by_ids",
+        "summary": "Update detection status or assignee",
+        "tags": ["EDR - Detects"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "ids": { "type": "array", "items": { "type": "string" } },
+                  "status": { "type": "string" },
+                  "assigned_to_uuid": { "type": "string" },
+                  "show_in_ui": { "type": "boolean" }
+                },
+                "required": ["ids"]
+              }
+            }
+          }
+        },
+        "responses": { "200": { "description": "Update successful" } }
+      }
+    },
+    "/detects/aggregates/detects/GET/v1": {
+      "post": {
+        "operationId": "aggregate_detects",
+        "summary": "Aggregate detections",
+        "tags": ["EDR - Detects"],
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": { "type": "object", "additionalProperties": true }
+            }
+          }
+        },
+        "responses": { "200": { "description": "Aggregate successful" } }
+      }
+    },
+    "/devices/queries/devices/v1": {
+      "get": {
+        "operationId": "query_devices_by_filter",
+        "summary": "Query host device IDs",
+        "tags": ["EDR - Hosts"],
+        "parameters": [
+          { "name": "filter", "in": "query", "required": false, "schema": { "type": "string" } },
+          { "name": "sort", "in": "query", "required": false, "schema": { "type": "string" } },
+          { "name": "limit", "in": "query", "required": false, "schema": { "type": "integer", "default": 100 } },
+          { "name": "offset", "in": "query", "required": false, "schema": { "type": "integer", "default": 0 } }
+        ],
+        "responses": { "200": { "description": "Query successful" } }
+      }
+    },
+    "/devices/combined/devices/v1": {
+      "get": {
+        "operationId": "query_devices_by_filter_combined",
+        "summary": "Query host details (combined)",
+        "tags": ["EDR - Hosts"],
+        "parameters": [
+          { "name": "filter", "in": "query", "required": false, "schema": { "type": "string" } },
+          { "name": "sort", "in": "query", "required": false, "schema": { "type": "string" } },
+          { "name": "limit", "in": "query", "required": false, "schema": { "type": "integer", "default": 100 } },
+          { "name": "offset", "in": "query", "required": false, "schema": { "type": "integer", "default": 0 } }
+        ],
+        "responses": { "200": { "description": "Query successful" } }
+      }
+    },
+    "/devices/entities/devices/v2": {
+      "get": {
+        "operationId": "get_device_details_v2",
+        "summary": "Get host details by IDs",
+        "tags": ["EDR - Hosts"],
+        "parameters": [
+          {
+            "name": "ids",
+            "in": "query",
+            "required": true,
+            "schema": { "type": "array", "items": { "type": "string" } },
+            "style": "form",
+            "explode": false
+          }
+        ],
+        "responses": { "200": { "description": "Fetch successful" } }
+      }
+    },
+    "/devices/entities/online-state/v1": {
+      "get": {
+        "operationId": "get_online_state",
+        "summary": "Get online state by host IDs",
+        "tags": ["EDR - Hosts"],
+        "parameters": [
+          {
+            "name": "ids",
+            "in": "query",
+            "required": true,
+            "schema": { "type": "array", "items": { "type": "string" } },
+            "style": "form",
+            "explode": false
+          }
+        ],
+        "responses": { "200": { "description": "Fetch successful" } }
+      }
+    },
+    "/devices/entities/devices-actions/v2": {
+      "post": {
+        "operationId": "perform_device_action",
+        "summary": "Perform host action (contain/uncontain/hide)",
+        "tags": ["EDR - Hosts"],
+        "parameters": [
+          { "name": "action_name", "in": "query", "required": true, "schema": { "type": "string" } }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "ids": { "type": "array", "items": { "type": "string" } }
+                },
+                "required": ["ids"]
+              }
+            }
+          }
+        },
+        "responses": { "200": { "description": "Action submitted" } }
+      }
+    },
+    "/devices/entities/tags/v1": {
+      "patch": {
+        "operationId": "update_device_tags",
+        "summary": "Update Falcon grouping tags on hosts",
+        "tags": ["EDR - Hosts"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "action": { "type": "string", "enum": ["append", "remove"] },
+                  "ids": { "type": "array", "items": { "type": "string" } },
+                  "tags": { "type": "array", "items": { "type": "string" } }
+                },
+                "required": ["action", "ids", "tags"]
+              }
+            }
+          }
+        },
+        "responses": { "200": { "description": "Update successful" } }
+      }
+    },
+    "/devices/queries/devices-scroll/v1": {
+      "get": {
+        "operationId": "query_devices_by_filter_scroll",
+        "summary": "Query host IDs with scrolling",
+        "tags": ["EDR - Hosts"],
+        "parameters": [
+          { "name": "filter", "in": "query", "required": false, "schema": { "type": "string" } },
+          { "name": "limit", "in": "query", "required": false, "schema": { "type": "integer", "default": 500 } }
+        ],
+        "responses": { "200": { "description": "Query successful" } }
+      }
+    },
+    "/incidents/queries/incidents/v1": {
+      "get": {
+        "operationId": "query_incident_ids_by_filter",
+        "summary": "Query incident IDs by filter",
+        "tags": ["EDR - Incidents"],
+        "parameters": [
+          { "name": "filter", "in": "query", "required": false, "schema": { "type": "string" } },
+          { "name": "sort", "in": "query", "required": false, "schema": { "type": "string" } },
+          { "name": "limit", "in": "query", "required": false, "schema": { "type": "integer", "default": 100 } },
+          { "name": "offset", "in": "query", "required": false, "schema": { "type": "integer", "default": 0 } }
+        ],
+        "responses": { "200": { "description": "Query successful" } }
+      }
+    },
+    "/incidents/entities/incidents/GET/v1": {
+      "post": {
+        "operationId": "get_incident_details",
+        "summary": "Get incident details by IDs",
+        "tags": ["EDR - Incidents"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "ids": { "type": "array", "items": { "type": "string" } }
+                },
+                "required": ["ids"]
+              }
+            }
+          }
+        },
+        "responses": { "200": { "description": "Fetch successful" } }
+      }
+    },
+    "/incidents/entities/behaviors/GET/v1": {
+      "post": {
+        "operationId": "get_behavior_details",
+        "summary": "Get incident behavior details by IDs",
+        "tags": ["EDR - Incidents"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "ids": { "type": "array", "items": { "type": "string" } }
+                },
+                "required": ["ids"]
+              }
+            }
+          }
+        },
+        "responses": { "200": { "description": "Fetch successful" } }
+      }
+    },
+    "/incidents/entities/incidents/v2": {
+      "patch": {
+        "operationId": "update_incidents",
+        "summary": "Update incidents by IDs",
+        "tags": ["EDR - Incidents"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "ids": { "type": "array", "items": { "type": "string" } },
+                  "status": { "type": "integer" },
+                  "assigned_to_uuid": { "type": "string" }
+                },
+                "required": ["ids"]
+              }
+            }
+          }
+        },
+        "responses": { "200": { "description": "Update successful" } }
+      }
+    },
+    "/incidents/queries/behaviors/v1": {
+      "get": {
+        "operationId": "query_behavior_ids",
+        "summary": "Query behavior IDs by filter",
+        "tags": ["EDR - Incidents"],
+        "parameters": [
+          { "name": "filter", "in": "query", "required": false, "schema": { "type": "string" } },
+          { "name": "limit", "in": "query", "required": false, "schema": { "type": "integer", "default": 100 } },
+          { "name": "offset", "in": "query", "required": false, "schema": { "type": "integer", "default": 0 } }
+        ],
+        "responses": { "200": { "description": "Query successful" } }
+      }
+    },
+    "/incidents/combined/crowdscores/v1": {
+      "get": {
+        "operationId": "query_crowdscore",
+        "summary": "Get CrowdScore summary",
+        "tags": ["EDR - Incidents"],
+        "responses": { "200": { "description": "Fetch successful" } }
+      }
+    },
+    "/alerts/queries/alerts/v2": {
+      "get": {
+        "operationId": "query_alerts_v2",
+        "summary": "Query alert IDs by filter",
+        "tags": ["EDR - Alerts"],
+        "parameters": [
+          { "name": "filter", "in": "query", "required": false, "schema": { "type": "string" } },
+          { "name": "sort", "in": "query", "required": false, "schema": { "type": "string" } },
+          { "name": "limit", "in": "query", "required": false, "schema": { "type": "integer", "default": 1000 } },
+          { "name": "offset", "in": "query", "required": false, "schema": { "type": "integer", "default": 0 } },
+          { "name": "q", "in": "query", "required": false, "schema": { "type": "string" } }
+        ],
+        "responses": { "200": { "description": "Query successful" } }
+      }
+    },
+    "/alerts/entities/alerts/v2": {
+      "post": {
+        "operationId": "get_alerts_v2",
+        "summary": "Get alert details by IDs",
+        "tags": ["EDR - Alerts"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "ids": { "type": "array", "items": { "type": "string" } }
+                },
+                "required": ["ids"]
+              }
+            }
+          }
+        },
+        "responses": { "200": { "description": "Fetch successful" } }
+      },
+      "patch": {
+        "operationId": "update_alerts_v3",
+        "summary": "Update alert state by IDs",
+        "tags": ["EDR - Alerts"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "ids": { "type": "array", "items": { "type": "string" } },
+                  "show_in_ui": { "type": "boolean" },
+                  "assigned_to_uuid": { "type": "string" },
+                  "status": { "type": "string" }
+                },
+                "required": ["ids"]
+              }
+            }
+          }
+        },
+        "responses": { "200": { "description": "Update successful" } }
+      }
+    },
+    "/alerts/aggregates/alerts/v1": {
+      "post": {
+        "operationId": "aggregate_alerts",
+        "summary": "Aggregate alert data",
+        "tags": ["EDR - Alerts"],
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": { "type": "object", "additionalProperties": true }
+            }
+          }
+        },
+        "responses": { "200": { "description": "Aggregate successful" } }
+      }
+    },
+    "/real-time-response/entities/sessions/v1": {
+      "post": {
+        "operationId": "init_rtr_session",
+        "summary": "Initialize RTR session",
+        "tags": ["EDR - Real-Time Response"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "device_id": { "type": "string" },
+                  "queue_offline": { "type": "boolean", "default": false }
+                },
+                "required": ["device_id"]
+              }
+            }
+          }
+        },
+        "responses": { "201": { "description": "Session created" } }
+      },
+      "delete": {
+        "operationId": "delete_rtr_session",
+        "summary": "Delete RTR session by ID",
+        "tags": ["EDR - Real-Time Response"],
+        "parameters": [
+          { "name": "session_id", "in": "query", "required": true, "schema": { "type": "string" } }
+        ],
+        "responses": { "200": { "description": "Session deleted" } }
+      }
+    },
+    "/real-time-response/entities/active-responder-command/v1": {
+      "post": {
+        "operationId": "execute_active_responder_command",
+        "summary": "Execute RTR command in active responder session",
+        "tags": ["EDR - Real-Time Response"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "base_command": { "type": "string" },
+                  "command_string": { "type": "string" },
+                  "session_id": { "type": "string" },
+                  "persist": { "type": "boolean", "default": false }
+                },
+                "required": ["base_command", "session_id"]
+              }
+            }
+          }
+        },
+        "responses": { "201": { "description": "Command submitted" } }
+      }
+    },
+    "/real-time-response/entities/command/v1": {
+      "post": {
+        "operationId": "execute_rtr_admin_command",
+        "summary": "Execute RTR admin command",
+        "tags": ["EDR - Real-Time Response"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "base_command": { "type": "string" },
+                  "command_string": { "type": "string" },
+                  "session_id": { "type": "string" },
+                  "persist": { "type": "boolean", "default": false }
+                },
+                "required": ["base_command", "session_id"]
+              }
+            }
+          }
+        },
+        "responses": { "201": { "description": "Command submitted" } }
+      }
+    },
+    "/real-time-response/entities/list-scripts/v1": {
+      "get": {
+        "operationId": "list_rtr_scripts",
+        "summary": "List RTR scripts",
+        "tags": ["EDR - Real-Time Response"],
+        "parameters": [
+          { "name": "filter", "in": "query", "required": false, "schema": { "type": "string" } },
+          { "name": "offset", "in": "query", "required": false, "schema": { "type": "integer", "default": 0 } },
+          { "name": "limit", "in": "query", "required": false, "schema": { "type": "integer", "default": 100 } }
+        ],
+        "responses": { "200": { "description": "Fetch successful" } }
+      }
+    },
+    "/real-time-response/entities/scripts/v1": {
+      "post": {
+        "operationId": "create_rtr_script",
+        "summary": "Create RTR script",
+        "tags": ["EDR - Real-Time Response"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": { "type": "string" },
+                  "description": { "type": "string" },
+                  "permission_type": { "type": "string", "enum": ["private", "public"] },
+                  "content": { "type": "string" }
+                },
+                "required": ["name", "content"]
+              }
+            }
+          }
+        },
+        "responses": { "201": { "description": "Script created" } }
+      }
+    },
+    "/real-time-response/entities/scripts/v2": {
+      "delete": {
+        "operationId": "delete_rtr_script",
+        "summary": "Delete RTR script by ID",
+        "tags": ["EDR - Real-Time Response"],
+        "parameters": [
+          {
+            "name": "ids",
+            "in": "query",
+            "required": true,
+            "schema": { "type": "array", "items": { "type": "string" } },
+            "style": "form",
+            "explode": false
+          }
+        ],
+        "responses": { "200": { "description": "Script deleted" } }
+      }
+    },
+    "/real-time-response/entities/file/v1": {
+      "get": {
+        "operationId": "get_rtr_extracted_file_contents",
+        "summary": "Download file extracted via RTR",
+        "tags": ["EDR - Real-Time Response"],
+        "parameters": [
+          { "name": "sha256", "in": "query", "required": true, "schema": { "type": "string" } },
+          { "name": "session_id", "in": "query", "required": false, "schema": { "type": "string" } }
+        ],
+        "responses": { "200": { "description": "Download successful" } }
+      }
+    },
+    "/real-time-response/combined/batch-init-session/v1": {
+      "post": {
+        "operationId": "batch_init_rtr_session",
+        "summary": "Initialize batch RTR sessions",
+        "tags": ["EDR - Real-Time Response"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "host_ids": { "type": "array", "items": { "type": "string" } },
+                  "queue_offline": { "type": "boolean", "default": false }
+                },
+                "required": ["host_ids"]
+              }
+            }
+          }
+        },
+        "responses": { "201": { "description": "Batch session initialized" } }
+      }
+    },
+    "/real-time-response/combined/batch-active-responder-command/v1": {
+      "post": {
+        "operationId": "batch_execute_active_responder_command",
+        "summary": "Execute batch active responder command",
+        "tags": ["EDR - Real-Time Response"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "base_command": { "type": "string" },
+                  "command_string": { "type": "string" },
+                  "batch_id": { "type": "string" },
+                  "optional_hosts": { "type": "array", "items": { "type": "string" } }
+                },
+                "required": ["base_command", "batch_id"]
+              }
+            }
+          }
+        },
+        "responses": { "201": { "description": "Command submitted" } }
+      }
+    },
+    "/real-time-response/combined/batch-command/v1": {
+      "post": {
+        "operationId": "batch_execute_rtr_admin_command",
+        "summary": "Execute batch RTR admin command",
+        "tags": ["EDR - Real-Time Response"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "base_command": { "type": "string" },
+                  "command_string": { "type": "string" },
+                  "batch_id": { "type": "string" },
+                  "optional_hosts": { "type": "array", "items": { "type": "string" } }
+                },
+                "required": ["base_command", "batch_id"]
+              }
+            }
+          }
+        },
+        "responses": { "201": { "description": "Command submitted" } }
+      }
+    },
+    "/identity-protection/aggregates/devices/GET/v1": {
+      "post": {
+        "operationId": "get_sensor_aggregates",
+        "summary": "Get sensor aggregates",
+        "description": "Get sensor aggregates as specified via JSON in the request body.",
+        "tags": ["Identity Protection"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/SensorAggregateRequest" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiResponse" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/identity-protection/entities/devices/GET/v1": {
+      "post": {
+        "operationId": "get_sensor_details",
+        "summary": "Get sensor details",
+        "description": "Get details on one or more sensors by providing device IDs in a POST body. Supports up to 5000 IDs.",
+        "tags": ["Identity Protection"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/SensorDetailsRequest" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiResponse" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/identity-protection/queries/devices/v1": {
+      "get": {
+        "operationId": "query_sensors",
+        "summary": "Query sensors by filter",
+        "description": "Search for sensors in your environment by hostname, IP, and other criteria.",
+        "tags": ["Identity Protection"],
+        "parameters": [
+          { "name": "filter", "in": "query", "description": "Filter expression (FQL syntax)", "schema": { "type": "string" } },
+          { "name": "limit", "in": "query", "description": "Maximum records to return (1-200)", "schema": { "type": "integer" } },
+          { "name": "offset", "in": "query", "description": "Offset to start retrieving records from", "schema": { "type": "integer" } },
+          { "name": "sort", "in": "query", "description": "Property to sort by (e.g. status.desc or hostname.asc)", "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiResponse" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/identity-protection/combined/graphql/v1": {
+      "post": {
+        "operationId": "graphql",
+        "summary": "Identity Protection GraphQL API",
+        "description": "Retrieve entities, timeline activities, identity-based incidents, and security assessments. Perform actions on entities and identity-based incidents.",
+        "tags": ["Identity Protection"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/GraphQLRequest" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": { "schema": { "type": "object" } }
+            }
+          }
+        }
+      }
+    },
+    "/identity-protection/entities/policy-rules/v1": {
+      "get": {
+        "operationId": "get_policy_rules",
+        "summary": "Get policy rules",
+        "description": "Get policy rules by rule IDs.",
+        "tags": ["Identity Protection"],
+        "parameters": [
+          {
+            "name": "ids",
+            "in": "query",
+            "required": true,
+            "description": "Policy rule IDs (comma-separated or repeated)",
+            "schema": { "type": "array", "items": { "type": "string" } }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": { "schema": { "$ref": "#/components/schemas/ApiResponse" } }
+            }
+          }
+        }
+      },
+      "post": {
+        "operationId": "create_policy_rule",
+        "summary": "Create policy rule",
+        "description": "Create a new identity protection policy rule.",
+        "tags": ["Identity Protection"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/PolicyRuleRequest" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": { "schema": { "$ref": "#/components/schemas/ApiResponse" } }
+            }
+          }
+        }
+      },
+      "delete": {
+        "operationId": "delete_policy_rules",
+        "summary": "Delete policy rules",
+        "description": "Delete policy rules by rule IDs.",
+        "tags": ["Identity Protection"],
+        "parameters": [
+          {
+            "name": "ids",
+            "in": "query",
+            "required": true,
+            "description": "Policy rule IDs to delete",
+            "schema": { "type": "array", "items": { "type": "string" } }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": { "schema": { "$ref": "#/components/schemas/ApiResponse" } }
+            }
+          }
+        }
+      }
+    },
+    "/identity-protection/queries/policy-rules/v1": {
+      "get": {
+        "operationId": "query_policy_rules",
+        "summary": "Query policy rule IDs",
+        "description": "Query policy rule IDs by name, enabled status, or simulation mode.",
+        "tags": ["Identity Protection"],
+        "parameters": [
+          { "name": "enabled", "in": "query", "description": "Filter by enabled status", "schema": { "type": "boolean" } },
+          { "name": "simulation_mode", "in": "query", "description": "Filter by simulation mode", "schema": { "type": "boolean" } },
+          { "name": "name", "in": "query", "description": "Filter by rule name", "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": { "schema": { "$ref": "#/components/schemas/ApiResponse" } }
+            }
+          }
+        }
+      }
+    }
+  }
+}

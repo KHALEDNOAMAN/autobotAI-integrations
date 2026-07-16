@@ -97,6 +97,8 @@ class BitBucketCloudService(BaseService):
                     "placeholder": "OAuth Consumer Key",
                     "description": "Bitbucket Workspace OAuth Key (not username).Get from: Workspace Settings → OAuth consumers → Key",
                     "required": True,
+                    "help_url": "https://bitbucket.org/account/settings/app-passwords/",
+                    "help_url_text": "Get OAuth Key ↗",
                 },
                 {
                     "name": "password",
@@ -105,6 +107,8 @@ class BitBucketCloudService(BaseService):
                     "placeholder": "OAuth Consumer Secret",
                     "description": "Bitbucket Workspace OAuth Secret (32 chars). Get from: Workspace Settings → OAuth consumers → Secret",
                     "required": True,
+                    "help_url": "https://bitbucket.org/account/settings/app-passwords/",
+                    "help_url_text": "Get OAuth Secret ↗",
                 },
             ],
         }

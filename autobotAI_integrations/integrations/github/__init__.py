@@ -107,6 +107,8 @@ class GithubService(BaseService):
                             "label": "Github Token",
                             "placeholder": "Enter the github token",
                             "required": True,
+                            "help_url": "https://github.com/settings/tokens",
+                            "help_url_text": "Generate Token ↗",
                         },
                     ],
                 },
