@@ -14,7 +14,7 @@
     "/bots": {
       "get": {
         "summary": "Fetch Scheduled Optimus Bots",
-        "description": "Retrieves a list of bots filtered by status and whether they were created by Optimus.",
+        "description": "Retrieves a list of scheduled bots created by Optimus filtered by status.",
         "operationId": "getScheduledOptimusBots",
         "parameters": [
           {
@@ -35,6 +35,16 @@
             "schema": {
               "type": "string",
               "default": "enabled"
+            }
+          },
+          {
+            "name": "event",
+            "in": "query",
+            "description": "Filter by trigger type (e.g. scheduled or event_driven).",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": "scheduled"
             }
           },
           {
@@ -101,6 +111,50 @@
         "responses": {
           "200": {
             "description": "Successfully updated bot configuration."
+          }
+        }
+      }
+    },
+    "/bots/disable-scheduled-optimus-bots": {
+      "post": {
+        "summary": "Fetch and Disable Scheduled Optimus Bots",
+        "description": "Fetches all scheduled/Optimus bots that are currently enabled and disables them in one single action.",
+        "operationId": "fetchAndDisableScheduledOptimusBots",
+        "parameters": [
+          {
+            "name": "created_by_optimus",
+            "in": "query",
+            "description": "Filter for bots created automatically by Optimus AI agents.",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "default": true
+            }
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "description": "Target status of the bots to find and disable.",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": "enabled"
+            }
+          },
+          {
+            "name": "event",
+            "in": "query",
+            "description": "Target trigger type (e.g. scheduled).",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": "scheduled"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully fetched and disabled matching scheduled Optimus bots."
           }
         }
       }
