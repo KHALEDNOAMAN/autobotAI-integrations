@@ -64,7 +64,6 @@ dependencies = [
     "ark-sdk-python",
     "msgraph-sdk>=1.52.0",
     "msgraph-beta-sdk",
-    "nltk>=3.10.0",
 ]
 
 [project.optional-dependencies]
