@@ -7,7 +7,7 @@ from autobotAI_integrations import (
 import requests ,re 
 from pydantic import Field, field_validator
 
-from autobotAI_integrations.models import IntegrationCategory, MCPCreds
+from autobotAI_integrations.models import IntegrationCategory, MCPCreds, RestAPICreds
 
 class AutobotAIIntegration(BaseSchema):
     base_url: str = Field(default=None, description="base url")
@@ -102,11 +102,22 @@ class AutobotAIService(BaseService):
 
     @staticmethod
     def supported_connection_interfaces():
-        return [ConnectionInterfaces.MCP_SERVER]
+        return [ConnectionInterfaces.MCP_SERVER, ConnectionInterfaces.REST_API]
     
     def generate_mcp_creds(self) -> MCPCreds:
         return MCPCreds(
             headers={
                 "Authorization": f"ApiKey {self.integration.api_key}",
             },
+        )
+
+    def generate_rest_api_creds(self) -> RestAPICreds:
+        return RestAPICreds(
+            base_url=self.integration.base_url.rstrip("/"),
+            headers={
+                "Authorization": f"ApiKey {self.integration.api_key}",
+                "Accept": "application/json",
+                "Content-Type": "application/json",
+            },
+            verify_ssl=self.integration.base_url.split("://")[0] == "https",
         )

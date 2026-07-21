@@ -1,0 +1,163 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "AutobotAI REST API",
+    "version": "1.0.0",
+    "description": "Native API actions for querying and managing bots and workflows in AutobotAI."
+  },
+  "servers": [
+    {
+      "url": "{base_url}"
+    }
+  ],
+  "paths": {
+    "/bots": {
+      "get": {
+        "summary": "Fetch Scheduled Optimus Bots",
+        "description": "Retrieves a list of scheduled bots created by Optimus filtered by status.",
+        "operationId": "getScheduledOptimusBots",
+        "parameters": [
+          {
+            "name": "created_by_optimus",
+            "in": "query",
+            "description": "Filter for bots created automatically by Optimus AI agents.",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "default": true
+            }
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "description": "Filter by bot status (e.g. enabled or disabled).",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": "enabled"
+            }
+          },
+          {
+            "name": "event",
+            "in": "query",
+            "description": "Filter by trigger type (e.g. scheduled or event_driven).",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": "scheduled"
+            }
+          },
+          {
+            "name": "page_number",
+            "in": "query",
+            "description": "Page number for pagination.",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 1
+            }
+          },
+          {
+            "name": "number_of_items",
+            "in": "query",
+            "description": "Number of bots to return per page.",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 50
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response containing matching bots."
+          }
+        }
+      }
+    },
+    "/bots/{bot_id}": {
+      "put": {
+        "summary": "Update / Disable Bot",
+        "description": "Updates a bot's configuration or flips its status to disabled.",
+        "operationId": "updateBotStatus",
+        "parameters": [
+          {
+            "name": "bot_id",
+            "in": "path",
+            "description": "The unique ID of the bot to update.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "status": {
+                    "type": "string",
+                    "description": "New status for the bot (e.g. disabled)",
+                    "default": "disabled"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successfully updated bot configuration."
+          }
+        }
+      }
+    },
+    "/bots/disable-scheduled-optimus-bots": {
+      "post": {
+        "summary": "Fetch and Disable Scheduled Optimus Bots",
+        "description": "Fetches all scheduled/Optimus bots that are currently enabled and disables them in one single action.",
+        "operationId": "fetchAndDisableScheduledOptimusBots",
+        "parameters": [
+          {
+            "name": "created_by_optimus",
+            "in": "query",
+            "description": "Filter for bots created automatically by Optimus AI agents.",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "default": true
+            }
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "description": "Target status of the bots to find and disable.",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": "enabled"
+            }
+          },
+          {
+            "name": "event",
+            "in": "query",
+            "description": "Target trigger type (e.g. scheduled).",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": "scheduled"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully fetched and disabled matching scheduled Optimus bots."
+          }
+        }
+      }
+    }
+  }
+}
