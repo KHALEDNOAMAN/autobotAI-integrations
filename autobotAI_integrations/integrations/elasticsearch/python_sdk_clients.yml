@@ -1,4 +1,5 @@
 - name: elasticsearch
+  doc_url: https://elasticsearch-py.readthedocs.io/en/stable/es_api.html#
   import_library_names:
     - elasticsearch
   pip_package_names:

@@ -1,4 +1,5 @@
 - name: msgraph
+  doc_url: https://pypi.org/project/msgraph-sdk/
   import_library_names:
     - msgraph
   pip_package_names:

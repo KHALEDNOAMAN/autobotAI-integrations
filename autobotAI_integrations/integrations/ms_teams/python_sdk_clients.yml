@@ -1,4 +1,5 @@
 - name: pymsteams
+  doc_url: https://pypi.org/project/pymsteams/
   import_library_names:
     - pymsteams
   pip_package_names:

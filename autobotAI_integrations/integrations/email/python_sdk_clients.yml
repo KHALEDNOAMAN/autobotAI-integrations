@@ -1,2 +1,4 @@
 - name: "imap_ssl_connection"
+  doc_url: https://docs.python.org/3/library/imaplib.html
 - name: "smtp_client"
+  doc_url: https://docs.python.org/3/library/smtplib.html

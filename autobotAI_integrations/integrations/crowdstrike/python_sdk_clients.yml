@@ -1,4 +1,5 @@
 - name: detects
+  doc_url: https://github.com/crowdstrike/falconpy
   class_name: Detects
   module: falconpy
   import_library_names:

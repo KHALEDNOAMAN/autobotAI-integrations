@@ -1,4 +1,5 @@
 - name: WorkspaceClient
+  doc_url: https://docs.databricks.com/aws/en/dev-tools/sdk-python
   import_library_names:
     - databricks.sdk
   pip_package_names:

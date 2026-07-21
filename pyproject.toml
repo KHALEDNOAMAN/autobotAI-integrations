@@ -124,5 +124,8 @@ override-dependencies = [
     "aioboto3>=15.5.0",
     "aiobotocore[boto3]>=2.25.1",
     "boto3>=1.42.63",
-    "botocore>=1.42.63"
+    "botocore>=1.42.63",
+    "mcp>=1.28.1",
+    "nltk>=3.10.0",
+    "pillow>=12.3.0",
 ]

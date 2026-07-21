@@ -1,4 +1,5 @@
 - name: emailrep
+  doc_url: https://pypi.org/project/emailrep/
   import_library_names:
     - emailrep.EmailRep
   pip_package_names:

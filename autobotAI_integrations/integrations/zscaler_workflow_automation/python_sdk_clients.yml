@@ -1,4 +1,5 @@
 - name: zscaler
+  doc_url: https://pypi.org/project/zscaler-sdk-python/
   import_library_names:
     - zscaler
   pip_package_names:

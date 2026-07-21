@@ -1,4 +1,5 @@
 - name: gitguardian
+  doc_url: https://github.com/GitGuardian/py-gitguardian
   import_library_names:
     - pygitguardian.client
   pip_package_names:
