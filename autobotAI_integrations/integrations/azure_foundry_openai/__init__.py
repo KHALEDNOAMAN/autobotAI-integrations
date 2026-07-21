@@ -238,7 +238,7 @@ class AzureOpenAIService(AIBaseService):
         return [
             {
                 "clients": {
-                    "openai": client,
+                    "azure_openai": client,
                 },
                 "params": self.prepare_params(
                     payload_task.params
