@@ -317,11 +317,38 @@ class AWSBedrockService(AIBaseService):
         self, model: str, tools, system_prompt: str, options: dict = {}, credentials: Optional[dict] = None
     ):
         from pydantic_ai import Agent
+        from autobotAI_integrations.utils.model_helpers import bedrock_model_rejects_temperature
 
         if not credentials:
             credentials = self._temp_credentials()
 
         model_instance = self.get_pydantic_model(model,credentials=credentials)
+
+        generic_settings = options.pop("model_settings", {})
+        provider_settings = {}
+
+        t = generic_settings.get("temperature")
+        if t is not None:
+            if not bedrock_model_rejects_temperature(model):
+                provider_settings["temperature"] = t
+
+        max_t = generic_settings.get("max_tokens")
+        if max_t is not None:
+            provider_settings["max_tokens"] = max_t
+
+        if generic_settings.get("enable_prompt_caching", True):
+            try:
+                from pydantic_ai.models.bedrock import BedrockModelSettings
+                provider_settings.update(BedrockModelSettings(
+                    bedrock_cache_instructions='5m',
+                    bedrock_cache_tool_definitions='5m'
+                ))
+            except ImportError:
+                pass
+
+        if provider_settings:
+            options["model_settings"] = provider_settings
+
         return Agent(
             model_instance, system_prompt=system_prompt, tools=tools, **options
         )
