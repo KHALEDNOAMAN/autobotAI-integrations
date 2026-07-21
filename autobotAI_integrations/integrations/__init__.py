@@ -64,6 +64,11 @@ class IntegrationServiceFactory:
         for obj in vars(mod).values():
             if not inspect.isclass(obj) or obj in (BaseService, AIBaseService):
                 continue
+            # Ignore imported classes from other modules. Otherwise modules that
+            # re-export parent services (e.g. google_api importing GCPService)
+            # may register the wrong schema/metadata.
+            if getattr(obj, "__module__", None) != mod.__name__:
+                continue
             try:
                 if issubclass(obj, AIBaseService):
                     if ai_cls is None:
@@ -211,6 +216,16 @@ class IntegrationServiceFactory:
             if include_details:
                 srvic_cls = self.get_service_cls(integration_type)
                 temp.update(srvic_cls.get_details())
+                
+                if hasattr(srvic_cls, "get_rest_api_doc_url"):
+                    rest_api_doc_url = srvic_cls.get_rest_api_doc_url()
+                    if rest_api_doc_url:
+                        temp["rest_api_doc_url"] = rest_api_doc_url
+                        
+                if hasattr(srvic_cls, "get_python_sdk_doc_urls"):
+                    python_sdk_doc_urls = srvic_cls.get_python_sdk_doc_urls()
+                    if python_sdk_doc_urls:
+                        temp["python_sdk_doc_urls"] = python_sdk_doc_urls
 
             if q and q.get("supported_interfaces"):
                 required_interfaces = set(q["supported_interfaces"])

@@ -1,4 +1,5 @@
 - name: okta
+  doc_url: https://github.com/okta/okta-sdk-python
   import_library_names:
     - okta.client
   pip_package_names:

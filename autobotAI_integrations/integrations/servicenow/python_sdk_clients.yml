@@ -3,3 +3,4 @@
     - pysnc
   pip_package_names:
     - pysnc
+  doc_url: "https://pysnc.readthedocs.io/en/latest/"

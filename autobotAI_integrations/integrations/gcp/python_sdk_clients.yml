@@ -1,4 +1,5 @@
 - class_name: OrgPolicyClient
+  doc_url: https://docs.cloud.google.com/python/docs/reference
   module: google.cloud.orgpolicy_v2
   name: OrgPolicyV2
   pip_package_names:

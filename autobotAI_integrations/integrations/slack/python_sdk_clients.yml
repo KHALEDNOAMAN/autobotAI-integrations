@@ -1,4 +1,5 @@
 - name: WebClient
+  doc_url: https://docs.slack.dev/tools/python-slack-sdk/
   import_library_names:
     - slack_sdk
   pip_package_names:

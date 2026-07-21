@@ -1,4 +1,5 @@
 - name: api_client
+  doc_url: https://github.com/Zenduty/zenduty-python-sdk
   import_library_names:
     - zenduty
   pip_package_names:

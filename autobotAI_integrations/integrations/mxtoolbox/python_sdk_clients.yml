@@ -1,4 +1,5 @@
 - name: mxtoolbox
+  doc_url: https://api.mxtoolbox.com/api/api-reference
   import_library_names:
     - autobotAI_integrations.integrations.mxtoolbox
   pip_package_names: []
