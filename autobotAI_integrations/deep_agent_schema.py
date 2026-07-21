@@ -302,7 +302,10 @@ class DeepAgentPayload(Payload):
     # — no HITL pause, and core stops the ECS task once the work completes.
     allow_user_interaction: bool = Field(
         True,
-        description="True = HITL tools + UI chat messages available; False = headless run, no human pause.",
+        description=(
+            "True = runtime injects request_approval, HITL tools + UI chat; "
+            "False = headless run (no request_approval, no human pauses). "
+        ),
     )
     filesystem_enabled: bool = Field(
         True,
