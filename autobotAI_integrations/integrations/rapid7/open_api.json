@@ -231,17 +231,7 @@
         "summary": "Health Check",
         "description": "Returns an indicator of the health of the API.",
         "operationId": "health",
-        "parameters": [
-          {
-            "name": "region",
-            "in": "path",
-            "description": "The region of the Insight Platform to use. See [Overview](#section/Overview) for more information.",
-            "required": true,
-            "schema": {
-              "$ref": "#/components/schemas/Region"
-            }
-          }
-        ],
+        "parameters": [],
         "responses": {
           "200": {
             "description": "SUCCESS",
