@@ -1,17 +1,18 @@
-from autobotAI_integrations.integrations.nessus import NessusClient
-
-# Initialize the Nessus client
-client = NessusClient(
-    url="https://localhost:8834",
-    access_key="YOUR_ACCESS_KEY",
-    secret_key="YOUR_SECRET_KEY"
-)
-
-# Fetch all scans
-response = client.list_scans()
-if response.status_code == 200:
-    scans = response.json().get("scans", [])
-    for scan in scans:
-        print(f"Scan Name: {scan['name']}, Status: {scan['status']}")
-else:
-    print(f"Error: {response.status_code}")
+def executor(context):
+    # Retrieve the initialized Nessus client from the context
+    nessus_client = context["clients"].get("nessus")
+    
+    if not nessus_client:
+        return {"error": "Nessus client not found in context. Ensure integration is configured."}
+        
+    # Example: Fetch all scans
+    response = nessus_client.list_scans()
+    
+    if response.status_code == 200:
+        scans = response.json().get("scans", [])
+        return {"scans": scans}
+    else:
+        return {
+            "error": f"Failed to list scans. Status code: {response.status_code}", 
+            "details": response.text
+        }
