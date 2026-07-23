@@ -11,13 +11,13 @@ def executor(context):
     try:
         response = nessus_client.list_scans()
     except requests.exceptions.RequestException as e:
-        return {"error": f"Failed to list scans due to network error: {str(e)}"}
+        return {"error": f"Failed to list scans due to network error: {e!s}"}
     
     if response.status_code == 200:
         try:
             data = response.json()
-            if not isinstance(data, dict) or "scans" not in data:
-                return {"error": "Unexpected response schema from API: missing 'scans' list"}
+            if not isinstance(data, dict) or not isinstance(data.get("scans"), list):
+                return {"error": "Unexpected response schema from API: invalid 'scans' list"}
             return {"scans": data.get("scans", [])}
         except ValueError:
             return {"error": "Invalid JSON payload in response"}
