@@ -326,7 +326,7 @@ class AWSBedrockService(AIBaseService):
 
         model_instance = self.get_pydantic_model(model,credentials=credentials)
 
-        provider_settings = options.pop("model_settings", {}).copy()
+        provider_settings = (options.pop("model_settings", {}) or {}).copy()
 
         t = provider_settings.get("temperature")
         if t is not None and bedrock_model_rejects_temperature(model):
