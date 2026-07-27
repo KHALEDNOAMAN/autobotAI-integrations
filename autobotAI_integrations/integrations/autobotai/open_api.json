@@ -3,7 +3,7 @@
   "info": {
     "title": "AutobotAI REST API",
     "version": "1.0.0",
-    "description": "Native API actions for querying and managing bots and workflows in AutobotAI."
+    "description": "Native API actions for querying and managing bots, library items, users, and integrations in AutobotAI."
   },
   "servers": [
     {
@@ -155,6 +155,614 @@
         "responses": {
           "200": {
             "description": "Successfully fetched and disabled matching scheduled Optimus bots."
+          }
+        }
+      }
+    },
+    "/library/actions": {
+      "get": {
+        "summary": "Get all actions",
+        "operationId": "read_all_library_actions_library_actions_get",
+        "parameters": [
+          {
+            "name": "integration_type",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": "aws",
+              "title": "Integration Type"
+            }
+          },
+          {
+            "name": "category",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "title": "Category"
+            }
+          },
+          {
+            "name": "name",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "title": "Name"
+            }
+          },
+          {
+            "name": "search",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "title": "Search"
+            }
+          },
+          {
+            "name": "page_number",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "title": "Page Number"
+            }
+          },
+          {
+            "name": "number_of_items",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "title": "Number Of Items"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response"
+          }
+        }
+      }
+    },
+    "/library/bots": {
+      "get": {
+        "summary": "Read All Library Bots",
+        "operationId": "read_all_library_bots_library_bots_get",
+        "parameters": [
+          {
+            "name": "page_number",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "title": "Page Number"
+            }
+          },
+          {
+            "name": "number_of_items",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "title": "Number Of Items"
+            }
+          },
+          {
+            "name": "category",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "title": "Category"
+            }
+          },
+          {
+            "name": "name",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "title": "Name"
+            }
+          },
+          {
+            "name": "tag_name",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "title": "Tag Name"
+            }
+          },
+          {
+            "name": "search",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "title": "Search"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response"
+          }
+        }
+      }
+    },
+    "/library/actions/{id}": {
+      "get": {
+        "summary": "Read One Library Action",
+        "operationId": "read_one_library_action_library_actions__id__get",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "id of action"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response"
+          }
+        }
+      }
+    },
+    "/library/bots/{id}": {
+      "get": {
+        "summary": "Read One Library Bot",
+        "operationId": "read_one_library_bot_library_bots__id__get",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "id of bot"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response"
+          }
+        }
+      }
+    },
+    "/users": {
+      "get": {
+        "summary": "Read All Users",
+        "operationId": "read_all_users_users_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response"
+          }
+        }
+      },
+      "post": {
+        "summary": "Create User",
+        "operationId": "create_user_users_post",
+        "responses": {
+          "200": {
+            "description": "Successful Response"
+          }
+        }
+      }
+    },
+    "/users/me": {
+      "get": {
+        "summary": "Read Current User",
+        "operationId": "read_current_user_users_me_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response"
+          }
+        }
+      }
+    },
+    "/users/{user_id}": {
+      "get": {
+        "summary": "Read One User",
+        "operationId": "read_one_user_users__user_id__get",
+        "parameters": [
+          {
+            "name": "user_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "User Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response"
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete User",
+        "operationId": "delete_user_users__user_id__delete",
+        "parameters": [
+          {
+            "name": "user_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "User Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response"
+          }
+        }
+      },
+      "put": {
+        "summary": "Update User",
+        "operationId": "update_user_users__user_id__put",
+        "parameters": [
+          {
+            "name": "user_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "User Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response"
+          }
+        }
+      }
+    },
+    "/users/{user_id}/without-password": {
+      "patch": {
+        "summary": "Update User Type",
+        "operationId": "update_user_type_users__user_id__without_password_patch",
+        "parameters": [
+          {
+            "name": "user_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "User Id"
+            }
+          },
+          {
+            "name": "user_type",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "title": "User Type"
+            }
+          },
+          {
+            "name": "read_only",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "title": "Read Only"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response"
+          }
+        }
+      }
+    },
+    "/integrations": {
+      "get": {
+        "summary": "Read All Integrations",
+        "operationId": "read_all_integrations_integrations_get",
+        "parameters": [
+          {
+            "name": "integration_type",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "title": "Integration Type"
+            }
+          },
+          {
+            "name": "category",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "title": "Category"
+            }
+          },
+          {
+            "name": "page_number",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 1,
+              "title": "Page Number"
+            }
+          },
+          {
+            "name": "number_of_items",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 100,
+              "title": "Number Of Items"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response"
+          }
+        }
+      },
+      "post": {
+        "summary": "Create Integration",
+        "operationId": "create_integration_integrations_post",
+        "responses": {
+          "200": {
+            "description": "Successful Response"
+          }
+        }
+      }
+    },
+    "/integrations/groups": {
+      "get": {
+        "summary": "Read All Integration Groups",
+        "operationId": "read_all_integration_groups_integrations_groups_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response"
+          }
+        }
+      }
+    },
+    "/integrations/types": {
+      "get": {
+        "summary": "Read All Integration Types",
+        "operationId": "read_all_integration_types_integrations_types_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response"
+          }
+        }
+      }
+    },
+    "/integrations/oauth/login": {
+      "post": {
+        "summary": "Login",
+        "description": "Redirect user to OAuth login",
+        "operationId": "login_integrations_oauth_login_post",
+        "responses": {
+          "200": {
+            "description": "Successful Response"
+          }
+        }
+      }
+    },
+    "/integrations/oauth/callback": {
+      "get": {
+        "summary": "Callback",
+        "description": "Handle OAuth callback",
+        "operationId": "callback_integrations_oauth_callback_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response"
+          }
+        }
+      }
+    },
+    "/integrations/ai-integration/metadata/{integration_type}": {
+      "get": {
+        "summary": "Read Ai Integration Metadata For Integration Type",
+        "operationId": "read_ai_integration_metadata_for_integration_type_integrations_ai_integration_metadata__integration_type__get",
+        "parameters": [
+          {
+            "name": "integration_type",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Integration Type"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response"
+          }
+        }
+      }
+    },
+    "/integrations/resources/{integration_type}/{integration_id}/{resource_type}": {
+      "get": {
+        "summary": "Read All Resources",
+        "operationId": "read_all_resources_integrations_resources__integration_type___integration_id___resource_type__get",
+        "parameters": [
+          {
+            "name": "integration_type",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Integration Type"
+            }
+          },
+          {
+            "name": "integration_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Integration Id"
+            }
+          },
+          {
+            "name": "resource_type",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Resource Type"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response"
+          }
+        }
+      }
+    },
+    "/integrations/{integration_type}/integration_forms": {
+      "get": {
+        "summary": "Read All Forms For Integration Type",
+        "operationId": "read_all_forms_for_integration_type_integrations__integration_type__integration_forms_get",
+        "parameters": [
+          {
+            "name": "integration_type",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Integration Type"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response"
+          }
+        }
+      }
+    },
+    "/integrations/{integration_id}/status": {
+      "get": {
+        "summary": "Read Integration Status",
+        "operationId": "read_integration_status_integrations__integration_id__status_get",
+        "parameters": [
+          {
+            "name": "integration_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Integration Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response"
+          }
+        }
+      }
+    },
+    "/integrations/{resource_id}": {
+      "get": {
+        "summary": "Read One Integration",
+        "operationId": "read_one_integration_integrations__resource_id__get",
+        "parameters": [
+          {
+            "name": "resource_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Resource Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response"
+          }
+        }
+      },
+      "put": {
+        "summary": "Update Integration",
+        "operationId": "update_integration_integrations__resource_id__put",
+        "parameters": [
+          {
+            "name": "resource_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Resource Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response"
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete Integration",
+        "operationId": "delete_integration_integrations__resource_id__delete",
+        "parameters": [
+          {
+            "name": "resource_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Resource Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response"
+          }
+        }
+      }
+    },
+    "/integrations/{resource_id}/extras": {
+      "get": {
+        "summary": "Read Integration Extra Details",
+        "operationId": "read_integration_extra_details_integrations__resource_id__extras_get",
+        "parameters": [
+          {
+            "name": "resource_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Resource Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response"
           }
         }
       }
