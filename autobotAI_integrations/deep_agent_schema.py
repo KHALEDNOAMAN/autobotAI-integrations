@@ -360,7 +360,7 @@ class DeepAgentPayload(Payload):
         description=(
             "Memory spaces available to the agent. When non-empty, their id/name/"
             "description are injected into the system prompt and a"
-            " query_memory_space tool is added automatically."
+            " query_memory_space_tool tool is added automatically."
         ),
     )
 
