@@ -15,7 +15,7 @@ from autobotAI_integrations import (
     SDKClient,
 )
 
-from autobotAI_integrations.models import IntegrationCategory
+from autobotAI_integrations.models import IntegrationCategory, MCPCreds
 
 
 class GitlabIntegration(BaseSchema):
@@ -89,6 +89,7 @@ class GitlabService(BaseService):
             ConnectionInterfaces.REST_API,
             ConnectionInterfaces.CLI,
             ConnectionInterfaces.PYTHON_SDK,
+            ConnectionInterfaces.MCP_SERVER,
             # ConnectionInterfaces.STEAMPIPE,
         ]
 
@@ -157,3 +158,12 @@ class GitlabService(BaseService):
         return CLICreds(
             installer_check=installer_check, install_command=install_command, envs=envs
         )
+
+    def generate_mcp_creds(self) -> MCPCreds:
+        if str(self.integration.base_url).startswith("https://gitlab.com"):
+            return MCPCreds(
+                headers={
+                    "Authorization": f"Bearer {self.integration.token}",
+                },
+            )
+        raise Exception("Remote MCP is only supported for public gitlab.com")
