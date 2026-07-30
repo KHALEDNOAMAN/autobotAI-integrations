@@ -1,7 +1,7 @@
 {
   "$schema": "https://developer.microsoft.com/json-schemas/teams/v1.16/MicrosoftTeams.schema.json",
   "manifestVersion": "1.16",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "id": "{{BOT_ID}}",
   "developer": {
     "name": "autobotAI",
@@ -15,7 +15,7 @@
   },
   "description": {
     "short": "Chat with Optimus from Microsoft Teams",
-    "full": "Bi-directional Optimus agent in Microsoft Teams. Talk to Optimus in a personal chat or channel; Optimus replies in the same conversation."
+    "full": "Bi-directional Optimus agent in Microsoft Teams. Talk to Optimus in a personal chat or channel; Optimus replies in the same conversation. ChannelMessage.Read.Group and ChatMessage.Read.Chat RSC permissions let Optimus receive replies in Teams-bound notification threads without requiring an @mention on every message. Message content is used only to continue the linked Optimus conversation and is not used to extract bulk customer data."
   },
   "icons": {
     "outline": "outline.png",
@@ -35,5 +35,19 @@
   "webApplicationInfo": {
     "id": "{{BOT_ID}}",
     "resource": "api://botid-{{BOT_ID}}"
+  },
+  "authorization": {
+    "permissions": {
+      "resourceSpecific": [
+        {
+          "type": "Application",
+          "name": "ChannelMessage.Read.Group"
+        },
+        {
+          "type": "Application",
+          "name": "ChatMessage.Read.Chat"
+        }
+      ]
+    }
   }
 }
