@@ -1,5 +1,6 @@
 import importlib
 from typing import List, Optional, Union
+from urllib.parse import urlparse
 
 from pydantic import Field
 
@@ -159,11 +160,19 @@ class GitlabService(BaseService):
             installer_check=installer_check, install_command=install_command, envs=envs
         )
 
+    @staticmethod
+    def _is_public_gitlab_host(base_url: str) -> bool:
+        parsed = urlparse(str(base_url or ""))
+        return parsed.scheme.lower() == "https" and (parsed.hostname or "").lower() == "gitlab.com"
+
     def generate_mcp_creds(self) -> MCPCreds:
-        if str(self.integration.base_url).startswith("https://gitlab.com"):
-            return MCPCreds(
-                headers={
-                    "Authorization": f"Bearer {self.integration.token}",
-                },
-            )
-        raise Exception("Remote MCP is only supported for public gitlab.com")
+        # Autobot GitLab integrations authenticate with a user-provided PAT.
+        # MCP uses the same token; host is restricted to exact gitlab.com.
+        if not self._is_public_gitlab_host(self.integration.base_url):
+            raise Exception("Remote MCP is only supported for public gitlab.com")
+
+        return MCPCreds(
+            headers={
+                "Authorization": f"Bearer {self.integration.token}",
+            },
+        )
