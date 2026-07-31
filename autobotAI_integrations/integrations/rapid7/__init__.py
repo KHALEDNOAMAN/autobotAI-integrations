@@ -17,7 +17,7 @@ RAPID7_REGIONS = ["us", "eu", "ap", "ca", "au", "jp"]
 
 
 class Rapid7Integration(BaseSchema):
-    api_key: Optional[str] = Field(default=None, exclude=True)
+    api_key: str = Field(..., exclude=True, description="The API Key for the Rapid7 Insight Platform")
     region: Optional[str] = Field(default="us")
     console_url: Optional[str] = Field(default=None)
     username: Optional[str] = Field(default=None, exclude=True)

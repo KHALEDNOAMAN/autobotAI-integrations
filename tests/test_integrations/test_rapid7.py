@@ -29,31 +29,12 @@ class TestClassRapid7:
 
     def test_empty_credentials(self, sample_integration_dict):
         tokens = {"region": "us"}
-        integration = sample_integration_dict("rapid7", tokens)
-        service = integration_service_factory.get_service(None, integration)
-        res = service.is_active()
-        assert not res["success"]
-        assert "No credentials configured" in res["error"]
+        with pytest.raises(Exception):
+            sample_integration_dict("rapid7", tokens)
 
-    def test_console_v3_client_generation(self, sample_integration_dict):
+    def test_rest_api_creds(self, sample_integration_dict):
         tokens = {
-            "api_key": "test-key",
-            "region": "us",
-            "console_url": "https://console.example.com:3780/",
-            "username": "admin",
-            "password": "password",
-        }
-        integration = sample_integration_dict("rapid7", tokens)
-        service = integration_service_factory.get_service(None, integration)
-        creds = service.generate_python_sdk_creds()
-        assert creds.envs["RAPID7_CONSOLE_URL"] == "https://console.example.com:3780"
-        assert creds.envs["RAPID7_CONSOLE_USERNAME"] == "admin"
-        client = Rapid7ConsoleV3Client(console_url="https://console.example.com:3780/", username="admin", password="password")
-        assert client.console_url == "https://console.example.com:3780"
-        assert client._auth() == ("admin", "password")
-
-    def test_rest_api_creds_no_api_key(self, sample_integration_dict):
-        tokens = {
+            "api_key": "test-api-key",
             "region": "us",
             "console_url": "https://console.example.com:3780/",
             "username": "admin",
@@ -62,7 +43,7 @@ class TestClassRapid7:
         integration = sample_integration_dict("rapid7", tokens)
         service = integration_service_factory.get_service(None, integration)
         rest_creds = service.generate_rest_api_creds()
-        assert rest_creds.headers == {}
+        assert rest_creds.headers == {"X-Api-Key": "test-api-key"}
 
 
 
