@@ -104,10 +104,7 @@ class Rapid7Client:
         params = {"page": page, "size": size}
         return requests.get(url, headers=self._headers(), params=params, timeout=30)
 
-    def get_admin_health(self) -> requests.Response:
-        """Health Check for the API."""
-        url = f"{self.base_url}/vm/admin/health"
-        return requests.get(url, headers=self._headers(), timeout=10)
+
 
     def search_integration_assets(self, body: dict, page: int = 0, size: int = 50) -> requests.Response:
         """Search Assets via Integration API."""
@@ -237,10 +234,11 @@ class Rapid7ConsoleV3Client:
         url = f"{self.console_url}/api/3/assets/{asset_id}"
         return requests.get(url, headers=self._headers(), auth=self._auth(), timeout=15)
 
-    def get_asset_vulnerabilities(self, asset_id: int) -> requests.Response:
-        """List all vulnerabilities found on a specific asset from the Security Console."""
+    def get_asset_vulnerabilities(self, asset_id: int, page: int = 0, size: int = 500) -> requests.Response:
+        """List all vulnerabilities found on a specific asset from the Security Console (paginated)."""
         url = f"{self.console_url}/api/3/assets/{asset_id}/vulnerabilities"
-        return requests.get(url, headers=self._headers(), auth=self._auth(), timeout=30)
+        params = {"page": page, "size": size}
+        return requests.get(url, headers=self._headers(), auth=self._auth(), params=params, timeout=30)
 
     def get_vulnerabilities(self, page: int = 0, size: int = 500) -> requests.Response:
         """List all known vulnerabilities across the console (paginated)."""
