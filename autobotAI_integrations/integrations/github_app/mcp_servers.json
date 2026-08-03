@@ -11,7 +11,7 @@
             },
             "servers": [
                 {
-                    "name": "Github All",
+                    "name": "Github App All",
                     "description": "All available GitHub MCP tools",
                     "url": "https://api.githubcopilot.com/mcp/",
                     "headers": {
@@ -22,91 +22,91 @@
                     }
                 },
                 {
-                    "name": "Github Actions",
-                    "description": "GitHub Actions workflows and CI/CD operations",
+                    "name": "Github App Actions",
+                    "description": "Github App Actions workflows and CI/CD operations",
                     "url": "https://api.githubcopilot.com/mcp/x/actions",
                     "headers": {}
                 },
                 {
-                    "name": "Github Code Security",
+                    "name": "Github App Code Security",
                     "description": "Code security related tools, such as GitHub Code Scanning",
                     "url": "https://api.githubcopilot.com/mcp/x/code_security",
                     "headers": {}
                 },
                 {
-                    "name": "Github Dependabot",
+                    "name": "Github App Dependabot",
                     "description": "Dependabot tools",
                     "url": "https://api.githubcopilot.com/mcp/x/dependabot",
                     "headers": {}
                 },
                 {
-                    "name": "Github Discussions",
-                    "description": "GitHub Discussions related tools",
+                    "name": "Github App Discussions",
+                    "description": "Github App Discussions related tools",
                     "url": "https://api.githubcopilot.com/mcp/x/discussions",
                     "headers": {}
                 },
                 {
-                    "name": "Github Experiments",
+                    "name": "Github App Experiments",
                     "description": "Experimental features that are not considered stable yet",
                     "url": "https://api.githubcopilot.com/mcp/x/experiments",
                     "headers": {}
                 },
                 {
-                    "name": "Github Gists",
-                    "description": "GitHub Gist related tools",
+                    "name": "Github App Gists",
+                    "description": "Github App Gist related tools",
                     "url": "https://api.githubcopilot.com/mcp/x/gists",
                     "headers": {}
                 },
                 {
-                    "name": "Github Issues",
-                    "description": "GitHub Issues related tools",
+                    "name": "Github App Issues",
+                    "description": "Github App Issues related tools",
                     "url": "https://api.githubcopilot.com/mcp/x/issues",
                     "headers": {}
                 },
                 {
-                    "name": "Github Notifications",
-                    "description": "GitHub Notifications related tools",
+                    "name": "Github App Notifications",
+                    "description": "Github App Notifications related tools",
                     "url": "https://api.githubcopilot.com/mcp/x/notifications",
                     "headers": {}
                 },
                 {
-                    "name": "Github Organizations",
-                    "description": "GitHub Organization related tools",
+                    "name": "Github App Organizations",
+                    "description": "Github App Organization related tools",
                     "url": "https://api.githubcopilot.com/mcp/x/orgs",
                     "headers": {}
                 },
                 {
-                    "name": "Github Pull Requests",
-                    "description": "GitHub Pull Request related tools",
+                    "name": "Github App Pull Requests",
+                    "description": "Github App Pull Request related tools",
                     "url": "https://api.githubcopilot.com/mcp/x/pull_requests",
                     "headers": {}
                 },
                 {
-                    "name": "Github Repositories",
-                    "description": "GitHub Repository related tools",
+                    "name": "Github App Repositories",
+                    "description": "Github App Repository related tools",
                     "url": "https://api.githubcopilot.com/mcp/x/repos",
                     "headers": {}
                 },
                 {
-                    "name": "Github Secret Protection",
+                    "name": "Github App Secret Protection",
                     "description": "Secret protection related tools, such as GitHub Secret Scanning",
                     "url": "https://api.githubcopilot.com/mcp/x/secret_protection",
                     "headers": {}
                 },
                 {
-                    "name": "Github Security Advisories",
+                    "name": "Github App Security Advisories",
                     "description": "Security advisories related tools",
                     "url": "https://api.githubcopilot.com/mcp/x/security_advisories",
                     "headers": {}
                 },
                 {
-                    "name": "Github Users",
-                    "description": "GitHub User related tools",
+                    "name": "Github App Users",
+                    "description": "Github App User related tools",
                     "url": "https://api.githubcopilot.com/mcp/x/users",
                     "headers": {}
                 },
                 {
-                    "name": "Github Copilot coding agent",
+                    "name": "Github App Copilot coding agent",
                     "description": "Perform task with GitHub Copilot coding agent",
                     "url": "https://api.githubcopilot.com/mcp/x/copilot",
                     "headers": {}
