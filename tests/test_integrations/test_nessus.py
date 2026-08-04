@@ -1,5 +1,7 @@
 import pytest
+import requests
 from autobotAI_integrations.integrations import integration_service_factory
+from autobotAI_integrations.integrations.nessus.code_sample import executor
 
 
 class TestClassNessus:
@@ -76,3 +78,67 @@ class TestClassNessus:
         res = service.is_active()
         assert not res["success"]
         assert "Failed to connect to Nessus" in res["error"] or "error" in res["error"].lower()
+
+    def test_nessus_executor_branches(self):
+        # 1. Missing client
+        res = executor({"clients": {}})
+        assert res == {"error": "Nessus client not found in context. Ensure integration is configured."}
+
+        # 2. RequestException
+        class MockClientException:
+            def list_scans(self):
+                raise requests.exceptions.RequestException("Connection failed")
+
+        res = executor({"clients": {"nessus": MockClientException()}})
+        assert "Failed to list scans due to network error: Connection failed" in res["error"]
+
+        # 3. Invalid JSON (ValueError)
+        class MockResponseInvalidJSON:
+            status_code = 200
+            def json(self):
+                raise ValueError("No JSON object could be decoded")
+
+        class MockClientInvalidJSON:
+            def list_scans(self):
+                return MockResponseInvalidJSON()
+
+        res = executor({"clients": {"nessus": MockClientInvalidJSON()}})
+        assert res == {"error": "Invalid JSON payload in response"}
+
+        # 4. Invalid response schema (not dict or scans not list)
+        class MockResponseInvalidSchema:
+            status_code = 200
+            def json(self):
+                return {"scans": "invalid_not_a_list"}
+
+        class MockClientInvalidSchema:
+            def list_scans(self):
+                return MockResponseInvalidSchema()
+
+        res = executor({"clients": {"nessus": MockClientInvalidSchema()}})
+        assert res == {"error": "Unexpected response schema from API: invalid 'scans' list"}
+
+        # 5. Success case
+        class MockResponseSuccess:
+            status_code = 200
+            def json(self):
+                return {"scans": [{"id": 1, "name": "Scan 1"}]}
+
+        class MockClientSuccess:
+            def list_scans(self):
+                return MockResponseSuccess()
+
+        res = executor({"clients": {"nessus": MockClientSuccess()}})
+        assert res == {"scans": [{"id": 1, "name": "Scan 1"}]}
+
+        # 6. Non-200 status code
+        class MockResponseNon200:
+            status_code = 403
+            text = "Forbidden"
+
+        class MockClientNon200:
+            def list_scans(self):
+                return MockResponseNon200()
+
+        res = executor({"clients": {"nessus": MockClientNon200()}})
+        assert res == {"error": "Failed to list scans. Status code: 403", "details": "Forbidden"}

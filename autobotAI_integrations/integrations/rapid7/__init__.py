@@ -1,6 +1,6 @@
 import importlib
 from typing import Type, Union, List, Optional
-from pydantic import Field
+from pydantic import Field, field_validator
 import requests
 
 from autobotAI_integrations import BaseSchema, BaseService, ConnectionInterfaces
@@ -17,7 +17,7 @@ RAPID7_REGIONS = ["us", "eu", "ap", "ca", "au", "jp"]
 
 
 class Rapid7Integration(BaseSchema):
-    api_key: Optional[str] = Field(default=None, exclude=True)
+    api_key: str = Field(..., exclude=True, description="The API Key for the Rapid7 Insight Platform")
     region: Optional[str] = Field(default="us")
     console_url: Optional[str] = Field(default=None)
     username: Optional[str] = Field(default=None, exclude=True)
@@ -30,6 +30,13 @@ class Rapid7Integration(BaseSchema):
         "real-time visibility into vulnerabilities, assets, and risk across your "
         "entire environment via the Insight Platform Cloud API (v4) and local Security Console API (v3)."
     )
+
+    @field_validator("api_key")
+    @classmethod
+    def validate_api_key(cls, v: str) -> str:
+        if v is None or not isinstance(v, str) or v.strip() == "":
+            raise ValueError("api_key is required and cannot be empty or whitespace-only")
+        return v.strip()
 
 
 class Rapid7Client:
