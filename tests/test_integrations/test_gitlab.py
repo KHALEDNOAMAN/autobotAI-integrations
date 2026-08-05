@@ -75,18 +75,23 @@ class TestClassGitlab:
         }
         assert {action.name for action in actions} == expected_names
         for action in actions:
-            assert action.code == "https://gitlab.com/api/v4/mcp"
+            assert action.code == "{base_url}/api/v4/mcp"
             assert action.executable_type == "mcp_server"
 
-        integration = sample_integration_dict(
-            "gitlab",
-            {"token": "glpat-test-token", "base_url": "https://gitlab.com/"},
-        )
-        service = integration_service_factory.get_service(None, integration)
-        creds = service.generate_mcp_creds()
-        assert creds.headers == {
-            "Authorization": "Bearer glpat-test-token",
-        }
+        for base_url in (
+            "https://gitlab.com/",
+            "https://gitlab.example.com/",
+            "http://gitlab.example.com/",
+        ):
+            integration = sample_integration_dict(
+                "gitlab",
+                {"token": "glpat-test-token", "base_url": base_url},
+            )
+            service = integration_service_factory.get_service(None, integration)
+            creds = service.generate_mcp_creds()
+            assert creds.headers == {
+                "Authorization": "Bearer glpat-test-token",
+            }
 
     # "Get applications"
     def test_actions_run(

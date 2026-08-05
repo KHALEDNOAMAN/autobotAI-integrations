@@ -201,34 +201,13 @@ class GitlabService(BaseService):
             installer_check=installer_check, install_command=install_command, envs=envs
         )
 
-    @staticmethod
-    def _is_public_gitlab_host(base_url: str) -> bool:
-        parsed = urlparse(str(base_url or ""))
-        return parsed.scheme.lower() == "https" and (parsed.hostname or "").lower() == "gitlab.com"
-
     def generate_mcp_creds(self) -> MCPCreds:
-        # Autobot GitLab integrations authenticate with a user-provided PAT.
-        # MCP uses the same token; host is restricted to exact gitlab.com.
-        #
-        # This restriction is deliberate and must stay until MCP server URLs can
-        # be resolved per integration: the URLs in mcp_servers.json are loaded by
-        # get_all_mcp_server_actions(), a classmethod with no access to this
-        # instance, so they are hardcoded to https://gitlab.com/api/v4/mcp.
-        # Letting a self-managed integration through would send that customer's
-        # private token to gitlab.com.
-        #
-        # Raise something the caller can identify and show, rather than a bare
-        # Exception that reaches the user as "something went wrong".
-        if not self._is_public_gitlab_host(self.integration.base_url):
-            host = urlparse(str(self.integration.base_url or "")).hostname or "(unset)"
-            raise ValueError(
-                f"GitLab MCP is only available for gitlab.com, but this "
-                f"integration points at '{host}'. Self-managed GitLab needs "
-                f"per-instance MCP server URLs, which are not supported yet — "
-                f"the other GitLab connection types (REST, SDK, CLI, Steampipe) "
-                f"work normally against this host."
+        parsed = urlparse(str(self.integration.base_url or ""))
+        if parsed.scheme.lower() not in ("http", "https") or not parsed.hostname:
+            raise Exception(
+                "Remote MCP requires an http(s) GitLab base_url "
+                "(gitlab.com or self-hosted)"
             )
-
         return MCPCreds(
             headers={
                 "Authorization": f"Bearer {self.integration.token}",
