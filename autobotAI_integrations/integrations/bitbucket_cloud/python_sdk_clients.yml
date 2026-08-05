@@ -1,4 +1,5 @@
 - name: bitbucket_cloud
+  doc_url: https://atlassian-python-api.readthedocs.io/bitbucket.html
   import_library_names:
     - atlassian.bitbucket
   pip_package_names:

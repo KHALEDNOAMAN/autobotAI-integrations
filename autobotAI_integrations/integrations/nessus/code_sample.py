@@ -1,17 +1,28 @@
-from autobotAI_integrations.integrations.nessus import NessusClient
+import requests
 
-# Initialize the Nessus client
-client = NessusClient(
-    url="https://localhost:8834",
-    access_key="YOUR_ACCESS_KEY",
-    secret_key="YOUR_SECRET_KEY"
-)
-
-# Fetch all scans
-response = client.list_scans()
-if response.status_code == 200:
-    scans = response.json().get("scans", [])
-    for scan in scans:
-        print(f"Scan Name: {scan['name']}, Status: {scan['status']}")
-else:
-    print(f"Error: {response.status_code}")
+def executor(context):
+    # Retrieve the initialized Nessus client from the context
+    nessus_client = context["clients"].get("nessus")
+    
+    if not nessus_client:
+        return {"error": "Nessus client not found in context. Ensure integration is configured."}
+        
+    # Example: Fetch all scans
+    try:
+        response = nessus_client.list_scans()
+    except requests.exceptions.RequestException as e:
+        return {"error": f"Failed to list scans due to network error: {e!s}"}
+    
+    if response.status_code == 200:
+        try:
+            data = response.json()
+            if not isinstance(data, dict) or not isinstance(data.get("scans"), list):
+                return {"error": "Unexpected response schema from API: invalid 'scans' list"}
+            return {"scans": data.get("scans", [])}
+        except ValueError:
+            return {"error": "Invalid JSON payload in response"}
+            
+    return {
+        "error": f"Failed to list scans. Status code: {response.status_code}", 
+        "details": response.text
+    }

@@ -1,4 +1,5 @@
 - name: shodan
+  doc_url: https://shodan.readthedocs.io/en/latest/
   import_library_names:
     - shodan
   pip_package_names:

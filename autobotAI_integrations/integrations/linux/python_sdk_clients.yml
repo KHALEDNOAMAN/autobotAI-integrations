@@ -1,15 +1,19 @@
 - name: os
+  doc_url: https://docs.python.org/3/library/os.html
   import_library_names:
     - os
 - name: subprocess
+  doc_url: https://docs.python.org/3/library/subprocess.html
   import_library_names:
     - subprocess
 - name: paramiko
+  doc_url: https://www.paramiko.org/
   import_library_names:
     - paramiko
   pip_package_names:
     - paramiko
 - name: psutil
+  doc_url: https://psutil.readthedocs.io/stable/
   import_library_names:
     - psutil
   pip_package_names:

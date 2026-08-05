@@ -3,6 +3,7 @@ import pytest
 
 from autobotAI_integrations.handlers.task_handler import handle_task
 from autobotAI_integrations.integrations import integration_service_factory
+from autobotAI_integrations.models import ConnectionInterfaces
 
 gitlab_python_code = """
 import traceback
@@ -54,6 +55,38 @@ class TestClassGitlab:
             assert action.name.strip() != ""
             print(action.model_dump_json(indent=2))
         assert len(actions) > 0
+
+    def test_mcp_server(self, sample_integration_dict):
+        service_cls = integration_service_factory.get_service_cls("gitlab")
+        assert ConnectionInterfaces.MCP_SERVER in service_cls.supported_connection_interfaces()
+
+        actions = service_cls.get_all_mcp_server_actions()
+        expected_names = {
+            "GitLab All",
+            "GitLab Issues",
+            "GitLab Merge Requests",
+            "GitLab Pipelines",
+            "GitLab Work Items",
+            "GitLab Search",
+            "GitLab Wiki",
+            "GitLab Semantic Code Search",
+            "GitLab Security Scan Profiles",
+            "GitLab MCP Server Version",
+        }
+        assert {action.name for action in actions} == expected_names
+        for action in actions:
+            assert action.code == "https://gitlab.com/api/v4/mcp"
+            assert action.executable_type == "mcp_server"
+
+        integration = sample_integration_dict(
+            "gitlab",
+            {"token": "glpat-test-token", "base_url": "https://gitlab.com/"},
+        )
+        service = integration_service_factory.get_service(None, integration)
+        creds = service.generate_mcp_creds()
+        assert creds.headers == {
+            "Authorization": "Bearer glpat-test-token",
+        }
 
     # "Get applications"
     def test_actions_run(

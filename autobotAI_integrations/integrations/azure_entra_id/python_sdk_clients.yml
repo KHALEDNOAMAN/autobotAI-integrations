@@ -1,6 +1,7 @@
 - name: msgraph
   class_name: GraphServiceClient
   module: msgraph
+  doc_url: https://learn.microsoft.com/en-us/graph/overview
   pip_package_names:
     - msgraph-sdk>=1.52.0
 - name: msgraph-beta

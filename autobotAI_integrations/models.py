@@ -74,6 +74,7 @@ class SDKClient(Client):
     model_config = ConfigDict(extra='allow')
     pip_package_names: Optional[List[str]] = None
     import_library_names: Optional[List[str]] = None
+    doc_url: Optional[str] = None
 
 
 class SDKCreds(BaseCreds):

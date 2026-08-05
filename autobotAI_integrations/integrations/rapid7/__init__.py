@@ -1,6 +1,6 @@
 import importlib
 from typing import Type, Union, List, Optional
-from pydantic import Field
+from pydantic import Field, field_validator
 import requests
 
 from autobotAI_integrations import BaseSchema, BaseService, ConnectionInterfaces
@@ -17,7 +17,7 @@ RAPID7_REGIONS = ["us", "eu", "ap", "ca", "au", "jp"]
 
 
 class Rapid7Integration(BaseSchema):
-    api_key: Optional[str] = Field(default=None, exclude=True)
+    api_key: str = Field(..., exclude=True, description="The API Key for the Rapid7 Insight Platform")
     region: Optional[str] = Field(default="us")
     console_url: Optional[str] = Field(default=None)
     username: Optional[str] = Field(default=None, exclude=True)
@@ -30,6 +30,13 @@ class Rapid7Integration(BaseSchema):
         "real-time visibility into vulnerabilities, assets, and risk across your "
         "entire environment via the Insight Platform Cloud API (v4) and local Security Console API (v3)."
     )
+
+    @field_validator("api_key")
+    @classmethod
+    def validate_api_key(cls, v: str) -> str:
+        if v is None or not isinstance(v, str) or v.strip() == "":
+            raise ValueError("api_key is required and cannot be empty or whitespace-only")
+        return v.strip()
 
 
 class Rapid7Client:
@@ -105,6 +112,72 @@ class Rapid7Client:
         return requests.get(url, headers=self._headers(), params=params, timeout=30)
 
 
+
+    def search_integration_assets(self, body: dict, page: int = 0, size: int = 50) -> requests.Response:
+        """Search Assets via Integration API."""
+        url = f"{self.base_url}/vm/v4/integration/assets"
+        params = {"page": page, "size": size}
+        return requests.post(url, headers=self._headers(), params=params, json=body, timeout=30)
+
+    def get_integration_asset(self, asset_id: str) -> requests.Response:
+        """Get Integration Asset by ID."""
+        url = f"{self.base_url}/vm/v4/integration/assets/{asset_id}"
+        return requests.get(url, headers=self._headers(), timeout=15)
+
+    def get_scans(self, page: int = 0, size: int = 50) -> requests.Response:
+        """Get Scans."""
+        url = f"{self.base_url}/vm/v4/integration/scan"
+        params = {"page": page, "size": size}
+        return requests.get(url, headers=self._headers(), params=params, timeout=30)
+
+    def start_scan(self, body: dict) -> requests.Response:
+        """Start a new Scan."""
+        url = f"{self.base_url}/vm/v4/integration/scan"
+        return requests.post(url, headers=self._headers(), json=body, timeout=30)
+
+    def get_scan_engines(self) -> requests.Response:
+        """Get Scan Engines."""
+        url = f"{self.base_url}/vm/v4/integration/scan/engine"
+        return requests.get(url, headers=self._headers(), timeout=15)
+
+    def get_scan_engine(self, engine_id: str) -> requests.Response:
+        """Get Scan Engine by ID."""
+        url = f"{self.base_url}/vm/v4/integration/scan/engine/{engine_id}"
+        return requests.get(url, headers=self._headers(), timeout=15)
+
+    def update_scan_engine_configuration(self, engine_id: str, body: dict) -> requests.Response:
+        """Update Scan Engine Configuration."""
+        url = f"{self.base_url}/vm/v4/integration/scan/engine/{engine_id}/configuration"
+        return requests.post(url, headers=self._headers(), json=body, timeout=30)
+
+    def remove_scan_engine_configuration(self, engine_id: str) -> requests.Response:
+        """Remove Scan Engine Configuration Property."""
+        url = f"{self.base_url}/vm/v4/integration/scan/engine/{engine_id}/configuration"
+        return requests.delete(url, headers=self._headers(), timeout=30)
+
+    def get_scan(self, scan_id: str) -> requests.Response:
+        """Get Scan by ID."""
+        url = f"{self.base_url}/vm/v4/integration/scan/{scan_id}"
+        return requests.get(url, headers=self._headers(), timeout=15)
+
+    def stop_scan(self, scan_id: str) -> requests.Response:
+        """Stop Scan by ID."""
+        url = f"{self.base_url}/vm/v4/integration/scan/{scan_id}/stop"
+        return requests.post(url, headers=self._headers(), timeout=30)
+
+    def search_sites(self, body: dict, page: int = 0, size: int = 50) -> requests.Response:
+        """Search Sites."""
+        url = f"{self.base_url}/vm/v4/integration/sites"
+        params = {"page": page, "size": size}
+        return requests.post(url, headers=self._headers(), params=params, json=body, timeout=30)
+
+    def search_integration_vulnerabilities(self, body: dict, page: int = 0, size: int = 50) -> requests.Response:
+        """Search Vulnerabilities via Integration API."""
+        url = f"{self.base_url}/vm/v4/integration/vulnerabilities"
+        params = {"page": page, "size": size}
+        return requests.post(url, headers=self._headers(), params=params, json=body, timeout=30)
+
+
 class Rapid7ConsoleV3Client:
     """Custom self-contained Python client for the Rapid7 InsightVM Security Console REST API (v3)."""
 
@@ -156,6 +229,51 @@ class Rapid7ConsoleV3Client:
         return requests.post(
             url, headers=self._headers(), auth=self._auth(), timeout=30
         )
+
+    def get_assets(self, page: int = 0, size: int = 500) -> requests.Response:
+        """List all assets in the InsightVM console inventory (paginated)."""
+        url = f"{self.console_url}/api/3/assets"
+        params = {"page": page, "size": size}
+        return requests.get(url, headers=self._headers(), auth=self._auth(), params=params, timeout=30)
+
+    def get_asset(self, asset_id: int) -> requests.Response:
+        """Get details for a single asset by its ID from the Security Console."""
+        url = f"{self.console_url}/api/3/assets/{asset_id}"
+        return requests.get(url, headers=self._headers(), auth=self._auth(), timeout=15)
+
+    def get_asset_vulnerabilities(self, asset_id: int, page: int = 0, size: int = 500) -> requests.Response:
+        """List all vulnerabilities found on a specific asset from the Security Console (paginated)."""
+        url = f"{self.console_url}/api/3/assets/{asset_id}/vulnerabilities"
+        params = {"page": page, "size": size}
+        return requests.get(url, headers=self._headers(), auth=self._auth(), params=params, timeout=30)
+
+    def get_vulnerabilities(self, page: int = 0, size: int = 500) -> requests.Response:
+        """List all known vulnerabilities across the console (paginated)."""
+        url = f"{self.console_url}/api/3/vulnerabilities"
+        params = {"page": page, "size": size}
+        return requests.get(url, headers=self._headers(), auth=self._auth(), params=params, timeout=30)
+
+    def get_vulnerability(self, vuln_id: str) -> requests.Response:
+        """Get details for a specific vulnerability by its ID from the console."""
+        url = f"{self.console_url}/api/3/vulnerabilities/{vuln_id}"
+        return requests.get(url, headers=self._headers(), auth=self._auth(), timeout=15)
+
+    def get_sites(self, page: int = 0, size: int = 500) -> requests.Response:
+        """List all sites configured in the console."""
+        url = f"{self.console_url}/api/3/sites"
+        params = {"page": page, "size": size}
+        return requests.get(url, headers=self._headers(), auth=self._auth(), params=params, timeout=30)
+
+    def get_site(self, site_id: int) -> requests.Response:
+        """Get details for a single site by its ID."""
+        url = f"{self.console_url}/api/3/sites/{site_id}"
+        return requests.get(url, headers=self._headers(), auth=self._auth(), timeout=15)
+
+    def get_tags(self, page: int = 0, size: int = 500) -> requests.Response:
+        """List all tags configured in the console."""
+        url = f"{self.console_url}/api/3/tags"
+        params = {"page": page, "size": size}
+        return requests.get(url, headers=self._headers(), auth=self._auth(), params=params, timeout=30)
 
 
 class Rapid7Service(BaseService):
@@ -232,7 +350,7 @@ class Rapid7Service(BaseService):
                     "type": "text/password",
                     "label": "API Key",
                     "placeholder": "Enter your Rapid7 Insight Platform API Key",
-                    "required": False,
+                    "required": True,
                     "description": (
                         "Generate an API key from the Rapid7 Insight Platform under "
                         "Administration > API Key Management (required for Cloud API v4)."

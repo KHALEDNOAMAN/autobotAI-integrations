@@ -1,4 +1,5 @@
 - name: sailpoint
+  doc_url: https://developer.sailpoint.com/docs/tools/sdk/python/getting-started
   import_library_names:
     - sailpoint.v2025
   pip_package_names:

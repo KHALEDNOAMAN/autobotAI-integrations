@@ -86,8 +86,9 @@ class AzureOpenAIService(AIBaseService):
 
     def get_integration_specific_details(self) -> dict:
         try:
-            available_models = list({
-                self.integration.test_model,
+            # Hardcoded models first so canonical names win over a
+            # case-variant test_model; then append test_model if unique.
+            model_candidates = [
                 "gpt-5.5",
                 "gpt-5",
                 "gpt-5-mini",
@@ -95,8 +96,19 @@ class AzureOpenAIService(AIBaseService):
                 "gpt-5.2",
                 "gpt-5.4",
                 "gpt-5.4-mini",
-                "gpt-5.4-nano"
-            })
+                "gpt-5.4-nano",
+                self.integration.test_model,
+            ]
+            seen = set()
+            available_models = []
+            for model in model_candidates:
+                if not model or not isinstance(model, str):
+                    continue
+                normalized = model.strip().lower()
+                if not normalized or normalized in seen:
+                    continue
+                seen.add(normalized)
+                available_models.append(model.strip())
 
             return {
                 "integration_id": self.integration.accountId,
@@ -226,7 +238,7 @@ class AzureOpenAIService(AIBaseService):
         return [
             {
                 "clients": {
-                    "openai": client,
+                    "azure_openai": client,
                 },
                 "params": self.prepare_params(
                     payload_task.params

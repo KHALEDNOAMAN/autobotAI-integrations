@@ -40,8 +40,11 @@ class MsTeamsBotIntegration(BaseSchema):
     description: Optional[str] = (
         "Bi-directional Microsoft Teams bot: talk to Optimus from Teams and "
         "let Optimus post back. Default surface is a per-user private Team "
-        "channel (reply chains). Grant Graph application permissions "
-        "User.Read.All (or User.ReadBasic.All), Team.ReadBasic.All, "
+        "channel (reply chains). App manifest RSC "
+        "ChannelMessage.Read.Group / ChatMessage.Read.Chat lets "
+        "notification_channel=teams threads receive replies without "
+        "@Optimus (reinstall/upgrade for consent). Grant Graph application "
+        "permissions User.Read.All (or User.ReadBasic.All), Team.ReadBasic.All, "
         "Group.Create, Team.Create, "
         "Channel.ReadBasic.All, AppCatalog.Read.All, and "
         "TeamsAppInstallation.ReadWriteSelfForTeam.All (or "
