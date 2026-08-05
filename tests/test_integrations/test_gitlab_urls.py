@@ -8,12 +8,14 @@ returns HTML/404 and reaches the user as a generic "something went wrong" —
 while the connection test still passed, because `_test_integration` uses
 python-gitlab, which appends the API path itself.
 """
+from unittest.mock import MagicMock
+
 import pytest
 
 from autobotAI_integrations.integrations.gitlab import GitlabService
 
 
-def _svc(base_url):
+def _svc(base_url, **extra):
     return GitlabService(
         {},
         {
@@ -23,6 +25,7 @@ def _svc(base_url):
             "alias": "gitlab-test",
             "base_url": base_url,
             "token": "tkn",
+            **extra,
         },
     )
 
@@ -105,3 +108,95 @@ class TestMcpHostRestriction:
         assert svc.generate_rest_api_creds().base_url.endswith("/api/v4")
         with pytest.raises(ValueError):
             svc.generate_mcp_creds()
+
+
+class TestVerifySsl:
+    """Self-managed GitLab is often behind a private CA or self-signed cert."""
+
+    def test_defaults_to_verifying(self):
+        """Opt-out, not opt-in — gitlab.com users must not silently lose TLS
+        verification just because the field was added."""
+        svc = _svc("https://gitlab.com/")
+        assert svc.integration.verify_ssl is True
+        assert svc.generate_rest_api_creds().verify_ssl is True
+        assert svc.generate_python_sdk_creds().envs["GITLAB_VERIFY_SSL"] == "True"
+
+    def test_disabling_reaches_rest_creds(self):
+        creds = _svc("https://git.acme.com/", verify_ssl=False).generate_rest_api_creds()
+        assert creds.verify_ssl is False
+
+    def test_disabling_reaches_sdk_envs(self):
+        envs = _svc("https://git.acme.com/", verify_ssl=False).generate_python_sdk_creds().envs
+        assert envs["GITLAB_VERIFY_SSL"] == "False"
+
+    def test_the_form_exposes_the_checkbox(self):
+        fields = {c["name"]: c for c in GitlabService.get_forms()["children"]}
+        assert fields["verify_ssl"]["type"] == "checkbox"
+        assert fields["verify_ssl"]["default"] is True
+
+    @pytest.mark.parametrize(
+        "env_value,expected",
+        [
+            ("True", True),
+            ("False", False),
+            ("false", False),
+            ("0", False),
+            ("no", False),
+            ("", False),
+            (None, True),  # key absent entirely — payloads built before this field
+        ],
+    )
+    def test_sdk_client_receives_a_real_bool(self, env_value, expected, monkeypatch):
+        """envs cross the wire as strings, so "False" must not read as truthy.
+
+        Drives the real build_python_exec_combinations_hook and captures what
+        python-gitlab would actually have been constructed with.
+        """
+        captured = {}
+
+        class _FakeGitlabModule:
+            @staticmethod
+            def Gitlab(url, private_token=None, ssl_verify=None):
+                captured["url"] = url
+                captured["ssl_verify"] = ssl_verify
+                return object()
+
+        monkeypatch.setattr(
+            "importlib.import_module", lambda *a, **k: _FakeGitlabModule
+        )
+
+        envs = {"GITLAB_ADDR": "https://git.acme.com", "GITLAB_TOKEN": "tkn"}
+        if env_value is not None:
+            envs["GITLAB_VERIFY_SSL"] = env_value
+
+        task = MagicMock()
+        task.creds.envs = envs
+        task.params = []
+
+        client_def = MagicMock()
+        client_def.import_library_names = ["gitlab"]
+
+        _svc("https://git.acme.com/").build_python_exec_combinations_hook(
+            task, [client_def]
+        )
+
+        assert captured["ssl_verify"] is expected
+
+
+def test_suite_is_running_against_the_working_tree():
+    """Guard against silently testing an installed copy.
+
+    A non-editable autobotAI_integrations can sit in site-packages (the core
+    venv has one). If sys.path resolves to that instead of the checkout, every
+    assertion above would be validating the shipped package, not the change.
+    """
+    import inspect
+    from pathlib import Path
+
+    import autobotAI_integrations
+
+    loaded = Path(inspect.getfile(autobotAI_integrations)).resolve()
+    repo = Path(__file__).resolve().parents[2] / "autobotAI_integrations"
+    assert repo in loaded.parents or loaded.parent == repo, (
+        f"tests are importing {loaded}, not the checkout at {repo}"
+    )

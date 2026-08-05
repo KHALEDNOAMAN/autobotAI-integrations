@@ -23,6 +23,12 @@ from autobotAI_integrations.models import IntegrationCategory, MCPCreds
 class GitlabIntegration(BaseSchema):
     base_url: str = Field(default="https://gitlab.com/", exclude=True)
     token: Optional[str] = Field(default=None, exclude=True)
+    # Self-managed GitLab is commonly fronted by a private CA or a self-signed
+    # certificate. Defaults to True so gitlab.com and properly-certified
+    # instances keep verifying exactly as before — this is opt-out, not opt-in.
+    verify_ssl: bool = Field(
+        default=True, description="Whether to verify SSL certificates"
+    )
 
     name: Optional[str] = "GitLab"
     category: Optional[str] = IntegrationCategory.CODE_REPOSITORY.value
@@ -43,13 +49,18 @@ class GitlabService(BaseService):
     def _test_integration(self):
         from gitlab import Gitlab
         try:
+            verify_ssl = bool(getattr(self.integration, "verify_ssl", True))
             if str(self.integration.base_url) not in ["None", None]:
                 gitlab = Gitlab(
                     url=str(self.integration.base_url),
                     private_token=str(self.integration.token),
+                    ssl_verify=verify_ssl,
                 )
             else:
-                gitlab = Gitlab(private_token=str(self.integration.token))
+                gitlab = Gitlab(
+                    private_token=str(self.integration.token),
+                    ssl_verify=verify_ssl,
+                )
             gitlab.auth()
             return {"success": True}
         except Exception as e:
@@ -78,6 +89,13 @@ class GitlabService(BaseService):
                     "help_url": "https://gitlab.com/-/profile/personal_access_tokens",
                     "help_url_text": "Generate Token ↗",
                 },
+                {
+                    "name": "verify_ssl",
+                    "type": "checkbox",
+                    "label": "Verify SSL",
+                    "default": True,
+                    "description": "Verify SSL certificates when communicating with GitLab. Uncheck for a self-managed instance using a self-signed or private-CA certificate.",
+                },
             ],
         }
 
@@ -102,12 +120,19 @@ class GitlabService(BaseService):
             client_definitions[0].import_library_names[0], package=None
         )
 
+        # Older payloads predate GITLAB_VERIFY_SSL, so default to verifying.
+        verify_ssl = (
+            str(payload_task.creds.envs.get("GITLAB_VERIFY_SSL", "True")).strip().lower()
+            not in ("false", "0", "no", "none", "")
+        )
+
         return [
             {
                 "clients": {
                     "gitlab": gitlab.Gitlab(
                         payload_task.creds.envs["GITLAB_ADDR"],
                         private_token=payload_task.creds.envs["GITLAB_TOKEN"],
+                        ssl_verify=verify_ssl,
                     )
                 },
                 "params": self.prepare_params(payload_task.params),
@@ -150,12 +175,18 @@ class GitlabService(BaseService):
         return RestAPICreds(
             base_url=base_url,
             headers=headers,
+            verify_ssl=bool(getattr(self.integration, "verify_ssl", True)),
         )
 
     def generate_python_sdk_creds(self) -> SDKCreds:
         envs = {
             "GITLAB_ADDR": str(self.integration.base_url),
             "GITLAB_TOKEN": str(self.integration.token),
+            # envs are strings on the wire; build_python_exec_combinations_hook
+            # parses this back into a bool for python-gitlab's ssl_verify.
+            "GITLAB_VERIFY_SSL": str(
+                bool(getattr(self.integration, "verify_ssl", True))
+            ),
         }
         return SDKCreds(envs=envs)
 
