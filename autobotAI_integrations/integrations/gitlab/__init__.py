@@ -21,7 +21,7 @@ from autobotAI_integrations.models import IntegrationCategory, MCPCreds
 
 
 class GitlabIntegration(BaseSchema):
-    base_url: str = Field(default="https://gitlab.com/", exclude=True)
+    base_url: str = Field(default="https://gitlab.com/")
     token: Optional[str] = Field(default=None, exclude=True)
     # Self-managed GitLab is commonly fronted by a private CA or a self-signed
     # certificate. Defaults to True so gitlab.com and properly-certified
