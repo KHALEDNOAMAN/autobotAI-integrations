@@ -1,4 +1,5 @@
 import importlib
+import re
 from typing import List, Optional, Union
 from urllib.parse import urlparse
 
@@ -134,9 +135,18 @@ class GitlabService(BaseService):
 
     def generate_rest_api_creds(self) -> RestAPICreds:
         headers = {"PRIVATE-TOKEN": str(self.integration.token)}
-        base_url = str(self.integration.base_url)
-        if self.integration.base_url.startswith("https://gitlab.com"):
-            base_url = str(self.integration.base_url).rstrip('/') + "/api/v4" 
+        base_url = str(self.integration.base_url).rstrip("/")
+        # GitLab serves its REST API at <host>/api/v4 on gitlab.com AND on every
+        # self-managed instance. This used to append the path only when the URL
+        # started with "https://gitlab.com", so a self-managed instance had all
+        # of its REST calls aimed at the web UI root instead of the API — which
+        # returns HTML/404 and surfaces as a generic failure. Note the old check
+        # was also a plain prefix match, so "https://gitlab.company.com" matched
+        # it by accident while "https://git.company.com" did not.
+        #
+        # Tolerate a user who already typed the API path so we never double it.
+        if not re.search(r"/api/v\d+$", base_url):
+            base_url = f"{base_url}/api/v4"
         return RestAPICreds(
             base_url=base_url,
             headers=headers,
@@ -168,8 +178,25 @@ class GitlabService(BaseService):
     def generate_mcp_creds(self) -> MCPCreds:
         # Autobot GitLab integrations authenticate with a user-provided PAT.
         # MCP uses the same token; host is restricted to exact gitlab.com.
+        #
+        # This restriction is deliberate and must stay until MCP server URLs can
+        # be resolved per integration: the URLs in mcp_servers.json are loaded by
+        # get_all_mcp_server_actions(), a classmethod with no access to this
+        # instance, so they are hardcoded to https://gitlab.com/api/v4/mcp.
+        # Letting a self-managed integration through would send that customer's
+        # private token to gitlab.com.
+        #
+        # Raise something the caller can identify and show, rather than a bare
+        # Exception that reaches the user as "something went wrong".
         if not self._is_public_gitlab_host(self.integration.base_url):
-            raise Exception("Remote MCP is only supported for public gitlab.com")
+            host = urlparse(str(self.integration.base_url or "")).hostname or "(unset)"
+            raise ValueError(
+                f"GitLab MCP is only available for gitlab.com, but this "
+                f"integration points at '{host}'. Self-managed GitLab needs "
+                f"per-instance MCP server URLs, which are not supported yet — "
+                f"the other GitLab connection types (REST, SDK, CLI, Steampipe) "
+                f"work normally against this host."
+            )
 
         return MCPCreds(
             headers={
