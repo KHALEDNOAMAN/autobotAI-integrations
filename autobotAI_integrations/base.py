@@ -809,7 +809,7 @@ def executor(context):
 
             logger.info("Creating request url..")
             encoded_path_params = {
-                k: quote(str(v), safe="") if isinstance(v, (str, int, float)) else v
+                k: quote(str(v), safe=":/") if isinstance(v, (str, int, float)) else v
                 for k, v in params.get("path_parameters", {}).items()
             }
             request_url = payload_task.executable.format(
