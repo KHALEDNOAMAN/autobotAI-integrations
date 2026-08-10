@@ -41,5 +41,5 @@ def executor(context):
     def test_get_details_flags(self):
         service = integration_service_factory.get_service_cls("mxtoolbox")
         details = service.get_details()
-        assert details["preview"] is True
+        assert details["preview"] is False
 
