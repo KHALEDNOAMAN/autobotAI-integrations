@@ -1,0 +1,819 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "Palo Alto Strata Cloud Manager API",
+    "description": "Common Strata Cloud Manager (SCM) configuration endpoints for devices, folders, snippets, address objects, and security rules. Paths and schemas can be extended as needed.",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "{protocol}://{host}",
+      "description": "SCM API base URL",
+      "variables": {
+        "protocol": {
+          "default": "https",
+          "enum": ["https", "http"]
+        },
+        "host": {
+          "default": "api.strata.paloaltonetworks.com"
+        }
+      }
+    }
+  ],
+  "paths": {
+    "/config/setup/v1/devices": {
+      "get": {
+        "summary": "List devices",
+        "description": "Retrieve the list of devices managed by Strata Cloud Manager.",
+        "operationId": "listDevices",
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": { "type": "integer" },
+            "description": "Maximum number of results to return."
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "schema": { "type": "integer" },
+            "description": "Pagination offset."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of devices",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": { "$ref": "#/components/schemas/Device" }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/config/setup/v1/devices/{id}": {
+      "get": {
+        "summary": "Get device by ID",
+        "description": "Retrieve a single device by its identifier (serial number).",
+        "operationId": "getDevice",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" },
+            "description": "Device ID / serial number."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Device details",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Device" }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "summary": "Update device",
+        "description": "Update writable device metadata (display_name, folder, description, labels, snippets).",
+        "operationId": "updateDevice",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" },
+            "description": "Device ID / serial number."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/DeviceUpdate" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Updated device",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Device" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/config/setup/v1/folders": {
+      "get": {
+        "summary": "List folders",
+        "description": "Retrieve configuration folders used to organize SCM resources.",
+        "operationId": "listFolders",
+        "parameters": [
+          {
+            "name": "name",
+            "in": "query",
+            "required": false,
+            "schema": { "type": "string" },
+            "description": "Filter by folder name."
+          },
+          {
+            "name": "type",
+            "in": "query",
+            "required": false,
+            "schema": { "type": "string" },
+            "description": "Filter by folder type (e.g. container, on-prem)."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of folders",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": { "$ref": "#/components/schemas/Folder" }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Create folder",
+        "description": "Create a new configuration folder.",
+        "operationId": "createFolder",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/FolderCreate" }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Created folder",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Folder" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/config/setup/v1/folders/{id}": {
+      "get": {
+        "summary": "Get folder by ID",
+        "operationId": "getFolder",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Folder details",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Folder" }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "summary": "Update folder",
+        "operationId": "updateFolder",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/FolderUpdate" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Updated folder",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Folder" }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete folder",
+        "operationId": "deleteFolder",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Folder deleted"
+          }
+        }
+      }
+    },
+    "/config/setup/v1/snippets": {
+      "get": {
+        "summary": "List snippets",
+        "description": "Retrieve reusable configuration snippets.",
+        "operationId": "listSnippets",
+        "parameters": [
+          {
+            "name": "name",
+            "in": "query",
+            "required": false,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of snippets",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": { "$ref": "#/components/schemas/Snippet" }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Create snippet",
+        "operationId": "createSnippet",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/SnippetCreate" }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Created snippet",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Snippet" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/config/setup/v1/snippets/{id}": {
+      "get": {
+        "summary": "Get snippet by ID",
+        "operationId": "getSnippet",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Snippet details",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Snippet" }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "summary": "Update snippet",
+        "operationId": "updateSnippet",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/SnippetUpdate" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Updated snippet",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Snippet" }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete snippet",
+        "operationId": "deleteSnippet",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Snippet deleted"
+          }
+        }
+      }
+    },
+    "/config/objects/v1/addresses": {
+      "get": {
+        "summary": "List address objects",
+        "description": "List address objects within a folder.",
+        "operationId": "listAddresses",
+        "parameters": [
+          {
+            "name": "folder",
+            "in": "query",
+            "required": true,
+            "schema": { "type": "string" },
+            "description": "Folder name containing the address objects."
+          },
+          {
+            "name": "name",
+            "in": "query",
+            "required": false,
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": { "type": "integer" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of address objects",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": { "$ref": "#/components/schemas/Address" }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Create address object",
+        "operationId": "createAddress",
+        "parameters": [
+          {
+            "name": "folder",
+            "in": "query",
+            "required": true,
+            "schema": { "type": "string" },
+            "description": "Folder name where the address object will be created."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/AddressCreate" }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Created address object",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Address" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/config/security/v1/security-rules": {
+      "get": {
+        "summary": "List security rules",
+        "description": "List security policy rules within a folder.",
+        "operationId": "listSecurityRules",
+        "parameters": [
+          {
+            "name": "folder",
+            "in": "query",
+            "required": true,
+            "schema": { "type": "string" },
+            "description": "Folder name containing the security rules."
+          },
+          {
+            "name": "name",
+            "in": "query",
+            "required": false,
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "position",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": ["pre", "post"]
+            },
+            "description": "Rulebase position (pre or post)."
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": { "type": "integer" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of security rules",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": { "$ref": "#/components/schemas/SecurityRule" }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Create security rule",
+        "operationId": "createSecurityRule",
+        "parameters": [
+          {
+            "name": "folder",
+            "in": "query",
+            "required": true,
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "position",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": ["pre", "post"]
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/SecurityRuleCreate" }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Created security rule",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/SecurityRule" }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Device": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string" },
+          "name": { "type": "string" },
+          "display_name": { "type": "string" },
+          "serial_number": { "type": "string" },
+          "hostname": { "type": "string" },
+          "folder": { "type": "string" },
+          "model": { "type": "string" },
+          "family": { "type": "string" },
+          "type": { "type": "string" },
+          "is_connected": { "type": "boolean" },
+          "description": { "type": "string" },
+          "labels": {
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "snippets": {
+            "type": "array",
+            "items": { "type": "string" }
+          }
+        }
+      },
+      "DeviceUpdate": {
+        "type": "object",
+        "properties": {
+          "display_name": { "type": "string" },
+          "folder": { "type": "string" },
+          "description": { "type": "string" },
+          "labels": {
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "snippets": {
+            "type": "array",
+            "items": { "type": "string" }
+          }
+        }
+      },
+      "Folder": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string" },
+          "name": { "type": "string" },
+          "parent": { "type": "string" },
+          "description": { "type": "string" },
+          "labels": {
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "snippets": {
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "type": { "type": "string" }
+        }
+      },
+      "FolderCreate": {
+        "type": "object",
+        "required": ["name", "parent"],
+        "properties": {
+          "name": { "type": "string" },
+          "parent": { "type": "string" },
+          "description": { "type": "string" },
+          "labels": {
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "snippets": {
+            "type": "array",
+            "items": { "type": "string" }
+          }
+        }
+      },
+      "FolderUpdate": {
+        "type": "object",
+        "properties": {
+          "name": { "type": "string" },
+          "parent": { "type": "string" },
+          "description": { "type": "string" },
+          "labels": {
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "snippets": {
+            "type": "array",
+            "items": { "type": "string" }
+          }
+        }
+      },
+      "Snippet": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string" },
+          "name": { "type": "string" },
+          "description": { "type": "string" },
+          "labels": {
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "type": { "type": "string" },
+          "display_name": { "type": "string" }
+        }
+      },
+      "SnippetCreate": {
+        "type": "object",
+        "required": ["name"],
+        "properties": {
+          "name": { "type": "string" },
+          "description": { "type": "string" },
+          "labels": {
+            "type": "array",
+            "items": { "type": "string" }
+          }
+        }
+      },
+      "SnippetUpdate": {
+        "type": "object",
+        "properties": {
+          "name": { "type": "string" },
+          "description": { "type": "string" },
+          "labels": {
+            "type": "array",
+            "items": { "type": "string" }
+          }
+        }
+      },
+      "Address": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string" },
+          "name": { "type": "string" },
+          "description": { "type": "string" },
+          "folder": { "type": "string" },
+          "ip_netmask": { "type": "string" },
+          "ip_range": { "type": "string" },
+          "fqdn": { "type": "string" },
+          "ip_wildcard": { "type": "string" },
+          "tag": {
+            "type": "array",
+            "items": { "type": "string" }
+          }
+        }
+      },
+      "AddressCreate": {
+        "type": "object",
+        "required": ["name"],
+        "properties": {
+          "name": { "type": "string" },
+          "description": { "type": "string" },
+          "ip_netmask": { "type": "string" },
+          "ip_range": { "type": "string" },
+          "fqdn": { "type": "string" },
+          "ip_wildcard": { "type": "string" },
+          "tag": {
+            "type": "array",
+            "items": { "type": "string" }
+          }
+        }
+      },
+      "SecurityRule": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string" },
+          "name": { "type": "string" },
+          "description": { "type": "string" },
+          "folder": { "type": "string" },
+          "disabled": { "type": "boolean" },
+          "action": { "type": "string" },
+          "from": {
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "to": {
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "source": {
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "destination": {
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "application": {
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "service": {
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "category": {
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "tag": {
+            "type": "array",
+            "items": { "type": "string" }
+          }
+        }
+      },
+      "SecurityRuleCreate": {
+        "type": "object",
+        "required": ["name", "action"],
+        "properties": {
+          "name": { "type": "string" },
+          "description": { "type": "string" },
+          "disabled": { "type": "boolean" },
+          "action": { "type": "string" },
+          "from": {
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "to": {
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "source": {
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "destination": {
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "application": {
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "service": {
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "category": {
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "tag": {
+            "type": "array",
+            "items": { "type": "string" }
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    }
+  },
+  "security": [
+    {
+      "bearerAuth": []
+    }
+  ]
+}
