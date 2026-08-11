@@ -3,7 +3,7 @@ import re
 from typing import List, Optional, Union
 from urllib.parse import urlparse
 
-from pydantic import Field
+from pydantic import Field, field_validator
 
 from autobotAI_integrations import (
     BaseSchema,
@@ -23,18 +23,26 @@ from autobotAI_integrations.models import IntegrationCategory, MCPCreds
 class GitlabIntegration(BaseSchema):
     base_url: str = Field(default="https://gitlab.com/")
     token: Optional[str] = Field(default=None, exclude=True)
-    # Self-managed GitLab is commonly fronted by a private CA or a self-signed
-    # certificate. Defaults to True so gitlab.com and properly-certified
-    # instances keep verifying exactly as before — this is opt-out, not opt-in.
-    verify_ssl: bool = Field(
-        default=True, description="Whether to verify SSL certificates"
-    )
+    # Same field / default as generic_rest_api (False = verify TLS).
+    ignore_ssl: bool = False
 
     name: Optional[str] = "GitLab"
     category: Optional[str] = IntegrationCategory.CODE_REPOSITORY.value
     description: Optional[str] = (
         " Version control platform similar to GitHub, offering additional features like project management and CI/CD pipelines."
     )
+
+    @field_validator("ignore_ssl", mode="before")
+    @classmethod
+    def validate_ignore_ssl(cls, ignore_ssl) -> bool:
+        if isinstance(ignore_ssl, bool):
+            return ignore_ssl
+        elif isinstance(ignore_ssl, str):
+            if ignore_ssl.lower() == "true":
+                return True
+            elif ignore_ssl.lower() == "false":
+                return False
+        raise ValueError("Invalid ignore_ssl passed !")
 
 
 class GitlabService(BaseService):
@@ -49,17 +57,17 @@ class GitlabService(BaseService):
     def _test_integration(self):
         from gitlab import Gitlab
         try:
-            verify_ssl = bool(getattr(self.integration, "verify_ssl", True))
+            ssl_verify = not self.integration.ignore_ssl
             if str(self.integration.base_url) not in ["None", None]:
                 gitlab = Gitlab(
                     url=str(self.integration.base_url),
                     private_token=str(self.integration.token),
-                    ssl_verify=verify_ssl,
+                    ssl_verify=ssl_verify,
                 )
             else:
                 gitlab = Gitlab(
                     private_token=str(self.integration.token),
-                    ssl_verify=verify_ssl,
+                    ssl_verify=ssl_verify,
                 )
             gitlab.auth()
             return {"success": True}
@@ -90,11 +98,16 @@ class GitlabService(BaseService):
                     "help_url_text": "Generate Token ↗",
                 },
                 {
-                    "name": "verify_ssl",
-                    "type": "checkbox",
-                    "label": "Verify SSL",
-                    "default": True,
-                    "description": "Verify SSL certificates when communicating with GitLab. Uncheck for a self-managed instance using a self-signed or private-CA certificate.",
+                    "name": "ignore_ssl",
+                    "type": "select",
+                    "label": "Ignore SSL",
+                    "placeholder": "default: 'False'",
+                    "description": "Select whether to ignore SSL certificate validation.",
+                    "options": [
+                        {"label": "True", "value": True},
+                        {"label": "False", "value": False},
+                    ],
+                    "required": False,
                 },
             ],
         }
@@ -120,10 +133,12 @@ class GitlabService(BaseService):
             client_definitions[0].import_library_names[0], package=None
         )
 
-        # Older payloads predate GITLAB_VERIFY_SSL, so default to verifying.
-        verify_ssl = (
-            str(payload_task.creds.envs.get("GITLAB_VERIFY_SSL", "True")).strip().lower()
-            not in ("false", "0", "no", "none", "")
+        # envs are strings on the wire; default False = verify TLS.
+        ignore_ssl = (
+            str(payload_task.creds.envs.get("GITLAB_IGNORE_SSL", "False"))
+            .strip()
+            .lower()
+            in ("true", "1", "yes")
         )
 
         return [
@@ -132,7 +147,7 @@ class GitlabService(BaseService):
                     "gitlab": gitlab.Gitlab(
                         payload_task.creds.envs["GITLAB_ADDR"],
                         private_token=payload_task.creds.envs["GITLAB_TOKEN"],
-                        ssl_verify=verify_ssl,
+                        ssl_verify=not ignore_ssl,
                     )
                 },
                 "params": self.prepare_params(payload_task.params),
@@ -175,18 +190,14 @@ class GitlabService(BaseService):
         return RestAPICreds(
             base_url=base_url,
             headers=headers,
-            verify_ssl=bool(getattr(self.integration, "verify_ssl", True)),
+            verify_ssl=not self.integration.ignore_ssl,
         )
 
     def generate_python_sdk_creds(self) -> SDKCreds:
         envs = {
             "GITLAB_ADDR": str(self.integration.base_url),
             "GITLAB_TOKEN": str(self.integration.token),
-            # envs are strings on the wire; build_python_exec_combinations_hook
-            # parses this back into a bool for python-gitlab's ssl_verify.
-            "GITLAB_VERIFY_SSL": str(
-                bool(getattr(self.integration, "verify_ssl", True))
-            ),
+            "GITLAB_IGNORE_SSL": str(self.integration.ignore_ssl),
         }
         return SDKCreds(envs=envs)
 
