@@ -110,48 +110,47 @@ class TestMcpHostRestriction:
             svc.generate_mcp_creds()
 
 
-class TestVerifySsl:
+class TestIgnoreSsl:
     """Self-managed GitLab is often behind a private CA or self-signed cert."""
 
     def test_defaults_to_verifying(self):
-        """Opt-out, not opt-in — gitlab.com users must not silently lose TLS
-        verification just because the field was added."""
+        """Same default as generic_rest_api: ignore_ssl=False means verify TLS."""
         svc = _svc("https://gitlab.com/")
-        assert svc.integration.verify_ssl is True
+        assert svc.integration.ignore_ssl is False
         assert svc.generate_rest_api_creds().verify_ssl is True
-        assert svc.generate_python_sdk_creds().envs["GITLAB_VERIFY_SSL"] == "True"
+        assert svc.generate_python_sdk_creds().envs["GITLAB_IGNORE_SSL"] == "False"
 
-    def test_disabling_reaches_rest_creds(self):
-        creds = _svc("https://git.acme.com/", verify_ssl=False).generate_rest_api_creds()
+    def test_enabling_reaches_rest_creds(self):
+        creds = _svc("https://git.acme.com/", ignore_ssl=True).generate_rest_api_creds()
         assert creds.verify_ssl is False
 
-    def test_disabling_reaches_sdk_envs(self):
-        envs = _svc("https://git.acme.com/", verify_ssl=False).generate_python_sdk_creds().envs
-        assert envs["GITLAB_VERIFY_SSL"] == "False"
+    def test_enabling_reaches_sdk_envs(self):
+        envs = _svc("https://git.acme.com/", ignore_ssl=True).generate_python_sdk_creds().envs
+        assert envs["GITLAB_IGNORE_SSL"] == "True"
 
-    def test_the_form_exposes_the_checkbox(self):
+    def test_the_form_exposes_ignore_ssl_select(self):
         fields = {c["name"]: c for c in GitlabService.get_forms()["children"]}
-        assert fields["verify_ssl"]["type"] == "checkbox"
-        assert fields["verify_ssl"]["default"] is True
+        assert fields["ignore_ssl"]["type"] == "select"
+        assert fields["ignore_ssl"]["options"] == [
+            {"label": "True", "value": True},
+            {"label": "False", "value": False},
+        ]
 
     @pytest.mark.parametrize(
-        "env_value,expected",
+        "env_value,expected_ssl_verify",
         [
-            ("True", True),
-            ("False", False),
-            ("false", False),
-            ("0", False),
-            ("no", False),
-            ("", False),
-            (None, True),  # key absent entirely — payloads built before this field
+            ("True", False),
+            ("False", True),
+            ("false", True),
+            ("0", True),
+            ("", True),
+            (None, True),  # key absent — verify TLS
         ],
     )
-    def test_sdk_client_receives_a_real_bool(self, env_value, expected, monkeypatch):
-        """envs cross the wire as strings, so "False" must not read as truthy.
-
-        Drives the real build_python_exec_combinations_hook and captures what
-        python-gitlab would actually have been constructed with.
-        """
+    def test_sdk_client_receives_a_real_bool(
+        self, env_value, expected_ssl_verify, monkeypatch
+    ):
+        """envs cross the wire as strings, so "False" must not read as truthy."""
         captured = {}
 
         class _FakeGitlabModule:
@@ -167,7 +166,7 @@ class TestVerifySsl:
 
         envs = {"GITLAB_ADDR": "https://git.acme.com", "GITLAB_TOKEN": "tkn"}
         if env_value is not None:
-            envs["GITLAB_VERIFY_SSL"] = env_value
+            envs["GITLAB_IGNORE_SSL"] = env_value
 
         task = MagicMock()
         task.creds.envs = envs
@@ -180,7 +179,7 @@ class TestVerifySsl:
             task, [client_def]
         )
 
-        assert captured["ssl_verify"] is expected
+        assert captured["ssl_verify"] is expected_ssl_verify
 
 
 def test_suite_is_running_against_the_working_tree():
