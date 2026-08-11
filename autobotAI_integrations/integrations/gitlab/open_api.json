@@ -12,7 +12,8 @@
     },
     "servers": [
         {
-            "url": "https://www.gitlab.com/api/v4"
+            "url": "{base_url}",
+            "description": "GitLab REST API root for gitlab.com or self-hosted. Resolved at runtime from the integration base_url as <host>/api/v4."
         }
     ],
     "security": [
