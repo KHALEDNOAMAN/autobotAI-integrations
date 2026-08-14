@@ -89,7 +89,7 @@ class PaloAltoSCMService(BaseService):
                     "Authorization": f"Bearer {token}",
                     "Accept": "application/json",
                 },
-                timeout=10,
+                timeout=30,
             )
             if response.status_code == 200:
                 return {"success": True}
