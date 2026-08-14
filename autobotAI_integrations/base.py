@@ -845,7 +845,7 @@ def executor(context):
                 },
                 json_data=params.get("json_data", None),
                 form_data=params.get("form_data", None),
-                timeout=params.get("timeout", 10),
+                timeout=params.get("timeout", 30),
                 verify_ssl=payload_task.creds.verify_ssl,
                 auth=payload_task.creds.auth,
             )
