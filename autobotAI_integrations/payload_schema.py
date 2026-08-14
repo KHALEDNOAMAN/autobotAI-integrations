@@ -15,6 +15,8 @@ import os
 class Caller(BaseModel):
     user_id: str
     root_user_id: str
+    ip_address: Optional[str] = None
+    headers: Optional[Dict[str, str]] = None
 
 
 class ExecutionDetails(BaseModel):

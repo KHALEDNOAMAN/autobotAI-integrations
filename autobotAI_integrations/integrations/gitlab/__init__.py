@@ -223,4 +223,5 @@ class GitlabService(BaseService):
             headers={
                 "Authorization": f"Bearer {self.integration.token}",
             },
+            ignore_ssl=bool(self.integration.ignore_ssl),
         )

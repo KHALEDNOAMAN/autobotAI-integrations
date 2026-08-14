@@ -67,6 +67,7 @@ class MCPRemoteServer(BaseModel):
     headers: Dict[str, str] = Field(
         default_factory=dict, description="Additional HTTP headers"
     )
+    ignore_ssl: bool = False
     # Optional IAM auth for AWS MCP Server (SigV4)
     aws_access_key_id: Optional[str] = Field(
         None, description="Temporary AWS access key for AWS MCP Server"

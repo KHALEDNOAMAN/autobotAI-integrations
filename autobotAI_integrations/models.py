@@ -96,6 +96,7 @@ class MCPCreds(BaseCreds):
     creds_type: str = ConnectionInterfaces.MCP_SERVER.value
     envs: dict = {}
     headers: dict = {}
+    ignore_ssl: bool = False
     # Optional IAM fields for AWS MCP Server (SigV4). Omitted for GitHub/Coralogix MCP.
     aws_access_key_id: Optional[str] = Field(default=None, exclude=True)
     aws_secret_access_key: Optional[str] = Field(default=None, exclude=True)

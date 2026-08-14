@@ -94,15 +94,19 @@ async def quick_llm_call(
     Returns:
         Validated Pydantic instance when output_schema is provided, else str.
     """
+    from autobotAI_integrations.utils.model_helpers import (
+        bedrock_model_rejects_temperature,
+    )
+
     model = _build_model(llm_config)
+    model_settings_kwargs: dict = {"max_tokens": max_tokens}
+    if not bedrock_model_rejects_temperature(llm_config.model):
+        model_settings_kwargs["temperature"] = temperature
     agent: Agent = Agent(
         model,
         output_type=output_schema if output_schema is not None else str,
         system_prompt=system_prompt or "",
-        model_settings=ModelSettings(
-            max_tokens=max_tokens,
-            temperature=temperature,
-        ),
+        model_settings=ModelSettings(**model_settings_kwargs),
     )
     result = await agent.run(prompt)
     return result.output
