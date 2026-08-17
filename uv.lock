@@ -10,7 +10,7 @@ overrides = [
     { name = "boto3", specifier = ">=1.42.63" },
     { name = "botocore", specifier = ">=1.42.63" },
     { name = "cryptography", specifier = ">=50.0.0" },
-    { name = "gitpython", specifier = ">=3.1.57" },
+    { name = "gitpython", specifier = ">=3.1.58" },
     { name = "h2", specifier = "==4.4.1" },
     { name = "mcp", specifier = ">=1.28.1" },
     { name = "nltk", specifier = ">=3.10.0" },
