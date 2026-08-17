@@ -67,6 +67,7 @@ class MCPRemoteServer(BaseModel):
     headers: Dict[str, str] = Field(
         default_factory=dict, description="Additional HTTP headers"
     )
+    ignore_ssl: bool = False
     # Optional IAM auth for AWS MCP Server (SigV4)
     aws_access_key_id: Optional[str] = Field(
         None, description="Temporary AWS access key for AWS MCP Server"
@@ -249,6 +250,123 @@ class GoalResolution(str, Enum):
     TIMED_OUT = "timed_out"
 
 
+class AgentKind(str, Enum):
+    """Which kind of agent a run drives.
+
+    - ``standard`` (default): the classic Optimus / DeepAgent LLM loop.
+    - ``offensive_security``: a dedicated, deterministic offensive-security run
+      (penetration testing / red teaming). The runtime does NOT build the LLM
+      agent loop for these — a deterministic driver invokes the scan engine
+      directly against the resolved, ownership-verified targets.
+    """
+
+    STANDARD = "standard"
+    OFFENSIVE_SECURITY = "offensive_security"
+
+
+class ScanMode(str, Enum):
+    """Depth of an offensive-security scan (maps to the engine's turn budget)."""
+
+    QUICK = "quick"
+    STANDARD = "standard"
+    DEEP = "deep"
+
+
+class EngagementType(str, Enum):
+    """The offensive-security engagement style.
+
+    - ``pentest`` (default): point-in-time vulnerability discovery per target.
+    - ``red_team``: multi-stage, ATT&CK-aligned adversary emulation.
+    - ``ai_red_team``: adversarial testing of the target's AI/LLM surface
+      (prompt injection, jailbreaks, data leakage, tool abuse).
+    """
+
+    PENTEST = "pentest"
+    RED_TEAM = "red_team"
+    AI_RED_TEAM = "ai_red_team"
+
+
+class OffensiveTargetType(str, Enum):
+    """Kind of a single offensive-security scan target."""
+
+    URL = "url"
+    REPO = "repo"
+    IP = "ip"
+    PATH = "path"
+
+
+class OffensiveTarget(BaseModel):
+    """One resolved, ownership-verified scan target."""
+
+    target: str = Field(..., description="URL, git repo URL, IP, or local path")
+    target_type: OffensiveTargetType = Field(
+        OffensiveTargetType.URL, description="Type of the target"
+    )
+    label: Optional[str] = Field(
+        None, description="Human-readable label (e.g. domain name or repo slug)"
+    )
+
+
+class RulesOfEngagement(BaseModel):
+    """Guardrails stamped into every offensive-security run.
+
+    Present for all engagement types; red-team modes require it to be explicit.
+    Keeps the run authorized testing rather than abuse.
+    """
+
+    allowed_hosts: List[str] = Field(
+        default_factory=list,
+        description="Hostnames/IPs the run is permitted to touch (verified scope).",
+    )
+    no_destructive_actions: bool = Field(
+        True, description="Forbid destructive/irreversible actions."
+    )
+    time_window: Optional[str] = Field(
+        None, description="Optional human-readable permitted testing window."
+    )
+    notes: Optional[str] = Field(None, description="Free-form RoE notes.")
+
+
+class OffensiveSecurityConfig(BaseModel):
+    """Typed configuration for an ``offensive_security`` run.
+
+    Built server-side from the OffensiveSecurityNode / sidebar config after
+    resolving verified domains and repositories into concrete targets. The
+    runtime driver consumes this directly — no LLM decides what/when to scan.
+    """
+
+    targets: List[OffensiveTarget] = Field(
+        default_factory=list,
+        description="Resolved, ownership-verified targets to scan.",
+    )
+    scan_mode: ScanMode = Field(
+        ScanMode.STANDARD, description="Scan depth (engine turn budget)."
+    )
+    engagement_type: EngagementType = Field(
+        EngagementType.PENTEST, description="pentest | red_team | ai_red_team"
+    )
+    application: Optional[str] = Field(
+        None,
+        description=(
+            "Workload/application slug findings are recorded under (drives task "
+            "creation via the guardian task register)."
+        ),
+    )
+    instructions_file: Optional[str] = Field(
+        None,
+        description=(
+            "Filename (under workspace/files/) of an uploaded instructions.md "
+            "whose contents brief the scan."
+        ),
+    )
+    rules_of_engagement: Optional[RulesOfEngagement] = Field(
+        None, description="Scope + guardrails for the run."
+    )
+    auth_header: Optional[str] = Field(
+        None, description="Optional Authorization header for authenticated HTTP scans."
+    )
+
+
 class DeepAgentPayload(Payload):
     """
     Extends the standard autobotAI ``Payload`` with deep-agent-specific fields.
@@ -345,6 +463,23 @@ class DeepAgentPayload(Payload):
         ),
     )
 
+    # --- Agent kind (offensive security) -----------------------------------
+    agent_kind: AgentKind = Field(
+        AgentKind.STANDARD,
+        description=(
+            "standard (classic LLM agent loop) or offensive_security (a "
+            "deterministic pentest/red-team run driven from offensive_security "
+            "config; the runtime skips the LLM agent loop entirely)."
+        ),
+    )
+    offensive_security: Optional[OffensiveSecurityConfig] = Field(
+        None,
+        description=(
+            "Typed scan configuration; required when agent_kind is "
+            "offensive_security, ignored otherwise."
+        ),
+    )
+
     @model_validator(mode="after")
     def _require_goal_when_goal_driven(self) -> "DeepAgentPayload":
         # A goal_driven run is meaningless without a goal — mirror the same
@@ -352,6 +487,18 @@ class DeepAgentPayload(Payload):
         # can't be violated from either side.
         if self.run_mode == RunMode.GOAL_DRIVEN and not (self.goal and self.goal.strip()):
             raise ValueError("run_mode=goal_driven requires a non-empty goal")
+        return self
+
+    @model_validator(mode="after")
+    def _require_offensive_config(self) -> "DeepAgentPayload":
+        # An offensive_security run needs at least one resolved target; without
+        # one the deterministic driver has nothing to scan.
+        if self.agent_kind == AgentKind.OFFENSIVE_SECURITY:
+            if self.offensive_security is None or not self.offensive_security.targets:
+                raise ValueError(
+                    "agent_kind=offensive_security requires offensive_security "
+                    "config with at least one target"
+                )
         return self
 
     # --- Memory spaces -----------------------------------------------------

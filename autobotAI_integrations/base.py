@@ -800,6 +800,7 @@ def executor(context):
             }
 
     def execute_rest_api_task(self, payload_task: PayloadTask):
+        from urllib.parse import urlparse
         logger.info("Running Rest API Task")
         results = []
         errors = []
@@ -812,8 +813,11 @@ def executor(context):
                 k: quote(str(v), safe=":/") if isinstance(v, (str, int, float)) else v
                 for k, v in params.get("path_parameters", {}).items()
             }
+            parsed_base_url = urlparse(payload_task.creds.base_url)
             request_url = payload_task.executable.format(
                 base_url=payload_task.creds.base_url.strip("/"),
+                protocol=parsed_base_url.scheme or "https",
+                host=parsed_base_url.netloc or payload_task.creds.base_url.strip("/"),
                 # Filling path params,
                 **encoded_path_params,
             )
@@ -841,7 +845,7 @@ def executor(context):
                 },
                 json_data=params.get("json_data", None),
                 form_data=params.get("form_data", None),
-                timeout=params.get("timeout", 10),
+                timeout=params.get("timeout") or 30,
                 verify_ssl=payload_task.creds.verify_ssl,
                 auth=payload_task.creds.auth,
             )

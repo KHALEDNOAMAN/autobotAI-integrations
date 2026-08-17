@@ -123,12 +123,16 @@ include = ["autobotAI_integrations*"]
 override-dependencies = [
     "aioboto3>=15.5.0",
     "aiobotocore[boto3]>=2.25.1",
+    "aiohttp>=3.14.3",
     "boto3>=1.42.63",
     "botocore>=1.42.63",
+    "cryptography>=50.0.0",
     "mcp>=1.28.1",
     "nltk>=3.10.0",
     "pillow>=12.3.0",
-    "gitpython>=3.1.52",
+    "gitpython>=3.1.58",
     "pyasn1>=0.6.4",
     "setuptools>=83.0.0",
+    "h2==4.4.1",
+    "pypdf==6.15.0"
 ]

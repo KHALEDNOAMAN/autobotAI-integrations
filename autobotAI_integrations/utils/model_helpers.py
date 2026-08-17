@@ -19,8 +19,22 @@ def is_meta_llama_model(model: str) -> bool:
     return normalized.startswith("meta.llama")
 
 
+_BEDROCK_TEMPERATURE_REJECT_MARKERS = (
+    "claude-sonnet-5",
+    "claude-opus-5",
+    "claude-fable-5",
+    "claude-opus-4-7",
+    "claude-opus-4-8",
+)
+
+
 def bedrock_model_rejects_temperature(model: str) -> bool:
-    """Claude Sonnet 5 rejects temperature in Bedrock Converse requests."""
+    """Return True when Bedrock rejects `temperature` for this model id.
+
+    Used by Bedrock Converse call sites to omit temperature instead of
+    sending a value that 400s the whole request. Safe no-op for every other
+    model: callers only skip temperature when this returns True.
+    """
     if not model:
         return False
     normalized = model.lower()
@@ -28,7 +42,8 @@ def bedrock_model_rejects_temperature(model: str) -> bool:
         if normalized.startswith(prefix):
             normalized = normalized[len(prefix) :]
             break
-    return "claude-sonnet-5" in normalized
+    needle = normalized.replace("/", "-").replace(".", "-").replace("_", "-")
+    return any(marker in needle for marker in _BEDROCK_TEMPERATURE_REJECT_MARKERS)
 
 
 def format_prompt_for_model(prompt: str, model: str) -> str:

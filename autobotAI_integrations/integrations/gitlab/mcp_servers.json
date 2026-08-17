@@ -13,61 +13,61 @@
                 {
                     "name": "GitLab All",
                     "description": "All available GitLab MCP tools (create_issue, get_issue, create_merge_request, get_merge_request, pipelines, work items, search, wiki, and more).",
-                    "url": "https://gitlab.com/api/v4/mcp",
+                    "url": "{base_url}/api/v4/mcp",
                     "headers": {}
                 },
                 {
                     "name": "GitLab Issues",
                     "description": "GitLab issue tools: create_issue, get_issue",
-                    "url": "https://gitlab.com/api/v4/mcp",
+                    "url": "{base_url}/api/v4/mcp",
                     "headers": {}
                 },
                 {
                     "name": "GitLab Merge Requests",
                     "description": "GitLab merge request tools: create_merge_request, get_merge_request, get_merge_request_commits, get_merge_request_diffs, get_merge_request_pipelines, create_merge_request_note, get_merge_request_notes",
-                    "url": "https://gitlab.com/api/v4/mcp",
+                    "url": "{base_url}/api/v4/mcp",
                     "headers": {}
                 },
                 {
                     "name": "GitLab Pipelines",
                     "description": "GitLab CI/CD tools: get_pipeline_jobs, get_job_log, manage_pipeline",
-                    "url": "https://gitlab.com/api/v4/mcp",
+                    "url": "{base_url}/api/v4/mcp",
                     "headers": {}
                 },
                 {
                     "name": "GitLab Work Items",
                     "description": "GitLab work item tools: create_workitem_note, get_workitem_notes, link_work_items, get_saved_view_work_items",
-                    "url": "https://gitlab.com/api/v4/mcp",
+                    "url": "{base_url}/api/v4/mcp",
                     "headers": {}
                 },
                 {
                     "name": "GitLab Search",
                     "description": "GitLab search tools: search, search_labels",
-                    "url": "https://gitlab.com/api/v4/mcp",
+                    "url": "{base_url}/api/v4/mcp",
                     "headers": {}
                 },
                 {
                     "name": "GitLab Wiki",
                     "description": "GitLab wiki tools: list_wiki_pages",
-                    "url": "https://gitlab.com/api/v4/mcp",
+                    "url": "{base_url}/api/v4/mcp",
                     "headers": {}
                 },
                 {
                     "name": "GitLab Semantic Code Search",
                     "description": "GitLab Duo semantic code search tool: semantic_code_search",
-                    "url": "https://gitlab.com/api/v4/mcp",
+                    "url": "{base_url}/api/v4/mcp",
                     "headers": {}
                 },
                 {
                     "name": "GitLab Security Scan Profiles",
                     "description": "GitLab security tools: attach_scan_profile",
-                    "url": "https://gitlab.com/api/v4/mcp",
+                    "url": "{base_url}/api/v4/mcp",
                     "headers": {}
                 },
                 {
                     "name": "GitLab MCP Server Version",
                     "description": "GitLab MCP meta tool: get_mcp_server_version",
-                    "url": "https://gitlab.com/api/v4/mcp",
+                    "url": "{base_url}/api/v4/mcp",
                     "headers": {}
                 }
             ]
